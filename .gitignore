@@ -1,0 +1,15 @@
+# Server
+typings/
+
+# Sass
+.sass-cache/
+*.css.map
+
+# Node
+npm-debug.log*
+node_modules/
+.npm
+
+# Logs
+logs/
+*.log
