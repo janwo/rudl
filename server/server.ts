@@ -22,17 +22,14 @@ export class ServerApp {
 
     public setMongoUrl(url: string) {
         this.mongoUrl = url;
-        console.log('Set mongo url to', url);
     }
 
     public setPort(port: number) {
         this.port = port;
-        console.log('Set port to', port);
     }
 
     public setPublicDir(dir: string) {
         this.publicDir = dir;
-        console.log('Set public dir to', dir);
     }
 
     private setRoutes(){
@@ -40,7 +37,7 @@ export class ServerApp {
         this.app.use(bodyParser.json());
         this.app.use(express.static(this.publicDir));
 
-        this.app.get("/users/:username", (req, res) => {
+        this.app.get("/api/users/:username", (req, res) => {
             User.findOne({username: req.params.username}, (err: any, user: UserInterface) => {
                 // User not found.
                 if (err) {
@@ -49,30 +46,35 @@ export class ServerApp {
                 }
 
                 // Return user.
-                console.log('Found user:', user);
-                res.status(200).json(user);
+                console.log('Found user:', user.username);
+                res.status(200).json(user.username);
             });
         });
 
-        this.app.post("/users/:username", (req, res) => {
-            var newUser = new User({
+        this.app.post("/api/users/:username", (req, res) => {
+            var user = new User({
                 username: req.params.username,
                 password: 123
             });
 
             // Save the user.
-            newUser.save((err) => {
+            user.save((err) => {
                 if (err) {
                     ServerApp.handleError(res, 'Could not create user.', err.message);
                     return;
                 }
 
-                console.log('Created user', newUser);
+                console.log('Created user', user.username);
             });
         })
     }
 
     public startServer() {
+        // Output settings.
+        console.log('mongo url:', this.mongoUrl);
+        console.log('port:', this.port);
+        console.log('public dir:', this.publicDir);
+
         // Set routes.
         this.setRoutes();
 

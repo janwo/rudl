@@ -1,15 +1,17 @@
 # Server
 typings/
-
-# Sass
-.sass-cache/
-*.css.map
-
-# Node
-npm-debug.log*
 node_modules/
+
+#Client
+client/dist
+client/node_modules/
+client/src/app/**/.sass-cache/
+client/src/app/**/*.css.map
+
+# Node.js
+npm-debug.log*
 .npm
 
 # Logs
-logs/
+logs
 *.log

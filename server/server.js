@@ -12,21 +12,18 @@ var ServerApp = (function () {
     }
     ServerApp.prototype.setMongoUrl = function (url) {
         this.mongoUrl = url;
-        console.log('Set mongo url to', url);
     };
     ServerApp.prototype.setPort = function (port) {
         this.port = port;
-        console.log('Set port to', port);
     };
     ServerApp.prototype.setPublicDir = function (dir) {
         this.publicDir = dir;
-        console.log('Set public dir to', dir);
     };
     ServerApp.prototype.setRoutes = function () {
         this.app.use(bodyParser.urlencoded({ extended: false }));
         this.app.use(bodyParser.json());
         this.app.use(express.static(this.publicDir));
-        this.app.get("/users/:username", function (req, res) {
+        this.app.get("/api/users/:username", function (req, res) {
             User.findOne({ username: req.params.username }, function (err, user) {
                 // User not found.
                 if (err) {
@@ -34,26 +31,30 @@ var ServerApp = (function () {
                     return;
                 }
                 // Return user.
-                console.log('Found user:', user);
-                res.status(200).json(user);
+                console.log('Found user:', user.username);
+                res.status(200).json(user.username);
             });
         });
-        this.app.post("/users/:username", function (req, res) {
-            var newUser = new User({
+        this.app.post("/api/users/:username", function (req, res) {
+            var user = new User({
                 username: req.params.username,
                 password: 123
             });
             // Save the user.
-            newUser.save(function (err) {
+            user.save(function (err) {
                 if (err) {
                     ServerApp.handleError(res, 'Could not create user.', err.message);
                     return;
                 }
-                console.log('Created user', newUser);
+                console.log('Created user', user.username);
             });
         });
     };
     ServerApp.prototype.startServer = function () {
+        // Output settings.
+        console.log('mongo url:', this.mongoUrl);
+        console.log('port:', this.port);
+        console.log('public dir:', this.publicDir);
         // Set routes.
         this.setRoutes();
         // Setup database.
@@ -80,4 +81,4 @@ var ServerApp = (function () {
     return ServerApp;
 }());
 exports.ServerApp = ServerApp;
-//# sourceMappingURL=serverApp.js.map
+//# sourceMappingURL=server.js.map
