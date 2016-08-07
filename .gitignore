@@ -2,7 +2,7 @@
 typings/
 node_modules/
 
-#Client
+# Client
 client/dist
 client/node_modules/
 client/src/app/**/.sass-cache/
@@ -15,3 +15,6 @@ npm-debug.log*
 # Logs
 logs
 *.log
+
+# PHPStorm
+.idea
