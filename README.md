@@ -1,24 +1,22 @@
-# General Notes
-- Use npm-package "salita" in order to upgrade package.json.
+# Meal2Share
+Description coming soon
 
-# Client
-Put everything related to the client here.
+## Client
+To get started, read the [README](client/README.md) within the */client* folder.
 
-## Do not update those dependencies yet
-- "rxjs": "5.0.0-beta.6"
-- "@angular/core": "^2.0.0-rc.2"
-- "@angular/http": "^2.0.0-rc.2"
+## Server
+To get started, read the [README](server/README.md) within the */server* folder.
 
-# Server
-Put everything related to the server here.
+## Tips
+- Run `npm salita` within the */server* or */client* folder to upgrade the npm packages in the corresponding *package.json*.
 
-# Useful resources
-## Angular 2
+## Useful resources
+### Angular 2
 https://angular.io/docs/ts/latest/quickstart.html
 
-## NodeJs
+### NodeJs
 https://nodejs.org/api/modules.html
 
-## Webpack
+### Webpack
 https://angular.io/docs/ts/latest/guide/webpack.html
 

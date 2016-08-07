@@ -18,7 +18,7 @@ module.exports = {
 		loaders: [
 			{
 				test: /\.ts$/,
-				loader: 'ts?configFileName=../tsconfig.json'
+				loader: 'ts-loader'
 			},
 			{
 				test: /\.html$/,
@@ -27,7 +27,7 @@ module.exports = {
 			{
 				test: /\.scss$/,
 				exclude: /node_modules/,
-				loader: 'raw-loader!sass-loader'
+				loaders: ['raw-loader' ,'sass-loader?sourceMap']
 			},
 			{
 				test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,

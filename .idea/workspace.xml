@@ -2,54 +2,98 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9767449c-31c3-440d-9c96-987d90d0ccce" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/watcherTasks.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/config/helpers.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/config/karma-test-shim.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/config/karma.conf.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/config/webpack.common.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/config/webpack.dev.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/config/webpack.prod.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/config/webpack.test.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/karma.conf.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/app/app.component.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/app/app.component.js.map" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/app/app.component.scss" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/app/app.component.spec.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/app/app.component.spec.js.map" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/app/app.component.spec.ts" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/app/app.component.ts" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/index.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/main.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/main.js.map" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/main.ts" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/polyfills.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/polyfills.js.map" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/polyfills.ts" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/vendor.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/vendor.js.map" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/vendor.ts" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/webpack.config.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/server.js.map" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/app/components/home.js.map" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/app/components/home.ts" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/app/main.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/app/main.js.map" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/app/main.ts" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/index.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/client/systemjs.config.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/server/serverApp.js.map" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/client/app/components/home.js" afterPath="$PROJECT_DIR$/client/src/app/app.component.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/server/serverApp.js" afterPath="$PROJECT_DIR$/server/server.js" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/server/serverApp.ts" afterPath="$PROJECT_DIR$/server/server.ts" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/README.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/app/login.component.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/app/login.component.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/app/login.component.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/app/styles/card.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/app/user-suggestions.component.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/app/user-suggestions.component.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/src/app/user-suggestions.component.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/tsconfig.json" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client/typings.json" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/README.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app.js.map" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/controllers/UserController.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/controllers/UserController.js.map" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/controllers/UserController.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/models/Token.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/routes/RoutesBinder.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/routes/RoutesBinder.js.map" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/routes/RoutesBinder.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/routes/StaticRoutes.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/routes/StaticRoutes.js.map" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/routes/StaticRoutes.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/routes/UserRoutes.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/routes/UserRoutes.js.map" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/routes/UserRoutes.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/BasicStrategy.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/FacebookStrategy.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/FacebookStrategy.js.map" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/FacebookStrategy.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/GoogleStrategy.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/GoogleStrategy.js.map" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/GoogleStrategy.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/JWTStrategy.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/JWTStrategy.js.map" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/JWTStrategy.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/StrategyBinder.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/StrategyBinder.js.map" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/StrategyBinder.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/TwitterStrategy.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/TwitterStrategy.js.map" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/strategies/TwitterStrategy.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/views/mail/confirm.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/app/views/mail/reset-password.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/config/Database.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/config/Database.js.map" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/config/Database.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/config/config.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/config/env/all.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/config/env/development.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/config/env/local.example.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/config/env/secure.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/config/env/secure.js.map" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/config/env/secure.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/config/env/test.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/config/hapi.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/config/logger.ts" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/karma.conf.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/package.json" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/scripts/generate-ssl-certs.sh" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/tsconfig.json" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/server/typings.json" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app.ts" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/src/app/app.component.spec.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/src/app/app.component.spec.js.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/client/src/app/app.component.spec.ts" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/package.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/run-server.js.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/server/app/models/UserInterface.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/server/app/models/UserInterface.js.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/server/app/models/UserInterface.ts" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/server/server.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/server/server.js.map" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/server/server.ts" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/tsconfig.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/typings.json" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/server/models/User.js" afterPath="$PROJECT_DIR$/server/app/models/User.js" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/server/models/User.js.map" afterPath="$PROJECT_DIR$/server/app/models/User.js.map" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/server/models/User.ts" afterPath="$PROJECT_DIR$/server/app/models/User.ts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/config/webpack.common.js" afterPath="$PROJECT_DIR$/client/config/webpack.common.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/config/webpack.dev.js" afterPath="$PROJECT_DIR$/client/config/webpack.dev.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/package.json" afterPath="$PROJECT_DIR$/client/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/run-server.js" afterPath="$PROJECT_DIR$/run-server.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/run-server.js.map" afterPath="$PROJECT_DIR$/run-server.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/run-server.ts" afterPath="$PROJECT_DIR$/run-server.ts" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/src/app/app.component.html" afterPath="$PROJECT_DIR$/client/src/app/app.component.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/src/app/app.component.js" afterPath="$PROJECT_DIR$/client/src/app/app.component.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/src/app/app.component.js.map" afterPath="$PROJECT_DIR$/client/src/app/app.component.js.map" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/src/app/app.component.scss" afterPath="$PROJECT_DIR$/client/src/app/app.component.scss" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/client/src/app/app.component.ts" afterPath="$PROJECT_DIR$/client/src/app/app.component.ts" />
     </list>
     <ignored path="eattogether.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -61,7 +105,6 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
@@ -70,38 +113,7 @@
     <favorites_list name="eattogether" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/client/package.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="559">
-              <caret line="57" column="27" selection-start-line="57" selection-start-column="27" selection-end-line="57" selection-end-column="27" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="192">
-              <caret line="8" column="27" selection-start-line="8" selection-start-column="27" selection-end-line="8" selection-end-column="27" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/package.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="10" column="4" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -117,57 +129,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/LICENSE" />
-        <option value="$PROJECT_DIR$/schemas/users.ts" />
-        <option value="$PROJECT_DIR$/gulpfile.js" />
-        <option value="$PROJECT_DIR$/client/app.ts" />
-        <option value="$PROJECT_DIR$/client/main.ts" />
-        <option value="$PROJECT_DIR$/client/app/components/home.ts" />
-        <option value="$PROJECT_DIR$/client/app/main.ts" />
-        <option value="$PROJECT_DIR$/models/users.ts" />
-        <option value="$PROJECT_DIR$/serverApp.ts" />
-        <option value="$PROJECT_DIR$/server.ts" />
-        <option value="$PROJECT_DIR$/tsconfig.json" />
-        <option value="$PROJECT_DIR$/server/serverApp.js" />
-        <option value="$PROJECT_DIR$/server/models/users.ts" />
-        <option value="$PROJECT_DIR$/server/models/iUser.ts" />
-        <option value="$PROJECT_DIR$/server/models/User.ts" />
-        <option value="$PROJECT_DIR$/bs-config.json" />
-        <option value="$PROJECT_DIR$/typings.json" />
-        <option value="$PROJECT_DIR$/server/serverApp.ts" />
-        <option value="$PROJECT_DIR$/client/index.html" />
-        <option value="$PROJECT_DIR$/client/systemjs.config.js" />
-        <option value="$PROJECT_DIR$/config/webpack.config.js" />
-        <option value="$PROJECT_DIR$/karma.conf.json" />
-        <option value="$PROJECT_DIR$/config/helpers.js" />
-        <option value="$PROJECT_DIR$/config/webpack.common.js" />
-        <option value="$PROJECT_DIR$/config/webpack.dev.js" />
-        <option value="$PROJECT_DIR$/config/webpack.prod.js" />
-        <option value="$PROJECT_DIR$/config/webpack.test.js" />
-        <option value="$PROJECT_DIR$/config/karma.conf.js" />
-        <option value="$PROJECT_DIR$/config/karma-test-shim.js" />
-        <option value="$PROJECT_DIR$/polyfills.ts" />
-        <option value="$PROJECT_DIR$/client/vendor.ts" />
-        <option value="$PROJECT_DIR$/client/config/helpers.js" />
-        <option value="$PROJECT_DIR$/client/config/helpers.ts" />
-        <option value="$PROJECT_DIR$/client/webpack-server.ts" />
-        <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/client/www/vendor.ts" />
-        <option value="$PROJECT_DIR$/client/www/app/app.component.scss" />
-        <option value="$PROJECT_DIR$/client/www/app/app.component.html" />
-        <option value="$PROJECT_DIR$/client/www/app/app.component.ts" />
-        <option value="$PROJECT_DIR$/client/www/app/app.component.spec.ts" />
-        <option value="$PROJECT_DIR$/client/www/main.ts" />
-        <option value="$PROJECT_DIR$/client/www/index.html" />
-        <option value="$PROJECT_DIR$/client/config/webpack.dev.js" />
-        <option value="$PROJECT_DIR$/server/server.ts" />
-        <option value="$PROJECT_DIR$/client/config/webpack.test.js" />
-        <option value="$PROJECT_DIR$/package.json" />
+        <option value="$PROJECT_DIR$/client/src/app/login.component.scss" />
+        <option value="$PROJECT_DIR$/client/src/app/user-suggestions.component.scss" />
+        <option value="$PROJECT_DIR$/client/src/app/user-suggestions.component.html" />
+        <option value="$PROJECT_DIR$/client/src/app/app.component.html" />
+        <option value="$PROJECT_DIR$/client/src/index.html" />
+        <option value="$PROJECT_DIR$/client/src/main.ts" />
+        <option value="$PROJECT_DIR$/client/src/styles/foundation.scss" />
+        <option value="$PROJECT_DIR$/client/src/app/card.style.scss" />
+        <option value="$PROJECT_DIR$/client/src/app/app.component.scss" />
+        <option value="$PROJECT_DIR$/client/src/app/login.component.ts" />
+        <option value="$PROJECT_DIR$/client/src/app/app.component.ts" />
+        <option value="$PROJECT_DIR$/client/src/app/user-suggestions.component.ts" />
+        <option value="$PROJECT_DIR$/client/src/app/login.component.html" />
+        <option value="$PROJECT_DIR$/server/config/ErrorHandler.ts" />
+        <option value="$PROJECT_DIR$/server/app/strategies/BasicStrategy.js" />
+        <option value="$PROJECT_DIR$/server/karma.conf.js" />
+        <option value="$PROJECT_DIR$/server/config/Mongoose.ts" />
+        <option value="$PROJECT_DIR$/server/typings/modules/redis/index.d.ts" />
+        <option value="$PROJECT_DIR$/server/config/env/development.ts" />
+        <option value="$PROJECT_DIR$/server/config/Config.ts" />
+        <option value="$PROJECT_DIR$/server/config/env/all.ts" />
+        <option value="$PROJECT_DIR$/server/config/Database.ts" />
+        <option value="$PROJECT_DIR$/server/config/Hapi.ts" />
+        <option value="$PROJECT_DIR$/server/app.ts" />
+        <option value="$PROJECT_DIR$/server/app/controllers/StrategyController" />
+        <option value="$PROJECT_DIR$/server/app/routes/handler/BasicStrategy.ts" />
+        <option value="$PROJECT_DIR$/server/config/env/local.example.ts" />
+        <option value="$PROJECT_DIR$/server/config/env/secure.ts" />
+        <option value="$PROJECT_DIR$/server/config/env/test.ts" />
+        <option value="$PROJECT_DIR$/server/typings/index.d.ts" />
+        <option value="$PROJECT_DIR$/server/app/controllers/UserController.js" />
+        <option value="$PROJECT_DIR$/server/app/routes/RoutesBinder.ts" />
+        <option value="$PROJECT_DIR$/server/config/Logger.ts" />
+        <option value="$PROJECT_DIR$/server/tsconfig.json" />
+        <option value="$PROJECT_DIR$/server/typings/globals/hapi/index.d.ts" />
+        <option value="$PROJECT_DIR$/server/app/strategies/StrategyBinder.ts" />
+        <option value="$PROJECT_DIR$/server/app/models/User.ts" />
+        <option value="$PROJECT_DIR$/server/app/strategies/TwitterStrategy.ts" />
+        <option value="$PROJECT_DIR$/server/app/strategies/GoogleStrategy.ts" />
+        <option value="$PROJECT_DIR$/server/app/strategies/FacebookStrategy.ts" />
+        <option value="$PROJECT_DIR$/server/app/models/Token.ts" />
+        <option value="$PROJECT_DIR$/server/app/routes/UserRoutes.ts" />
+        <option value="$PROJECT_DIR$/server/app/strategies/JWTStrategy.ts" />
+        <option value="$PROJECT_DIR$/server/app/strategies/BasicStrategy.ts" />
+        <option value="$PROJECT_DIR$/server/app/controllers/UserController.ts" />
+        <option value="$PROJECT_DIR$/server/typings.json" />
+        <option value="$PROJECT_DIR$/server/package.json" />
         <option value="$PROJECT_DIR$/client/package.json" />
-        <option value="$PROJECT_DIR$/run-server.ts" />
-        <option value="$PROJECT_DIR$/client/config/webpack.common.js" />
-        <option value="$PROJECT_DIR$/client/config/karma-test-shim.js" />
-        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/server/README.md" />
+        <option value="$PROJECT_DIR$/client/README.md" />
+        <option value="$PROJECT_DIR$/README.md" />
       </list>
     </option>
   </component>
@@ -176,6 +188,9 @@
   <component name="JsGulpfileManager">
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="PhpServers">
+    <servers />
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
   <component name="ProjectFrameBounds">
@@ -317,101 +332,7 @@
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="server" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="models" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="eattogether" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="eattogether" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="eattogether" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="eattogether" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="eattogether" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="eattogether" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="eattogether" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="eattogether" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="dist" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="eattogether" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="eattogether" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="config" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
           </PATH>
@@ -427,26 +348,31 @@
     <property name="JavaScriptLanguageLevel" value="ES5" />
     <property name="JavaScriptPreferStrict" value="true" />
     <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
-    <property name="settings.editor.selected.configurable" value="settings.typescriptcompiler" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="FullScreen" value="true" />
     <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
     <property name="nodejs_interpreter_path" value="/usr/local/bin/node" />
     <property name="typescript-compiler-editor-notification" value="false" />
+    <property name="prop_add_unversioned_files" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../vrs/amak-frontend" />
+    <property name="FullScreen" value="true" />
+    <property name="js-tslint-nodeInterpreter" value="/usr/local/bin/node" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/client/www/app" />
-      <recent name="$PROJECT_DIR$/client/www" />
-      <recent name="$PROJECT_DIR$/client" />
-      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/client/src/app/styles" />
+      <recent name="$PROJECT_DIR$/client/src/app" />
+      <recent name="$PROJECT_DIR$/server/app" />
+      <recent name="$PROJECT_DIR$/server/config/strategies" />
       <recent name="$PROJECT_DIR$/server" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/server/config" />
+      <recent name="$PROJECT_DIR$/client/src/app" />
+      <recent name="$PROJECT_DIR$/server/config/env" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/client" />
-      <recent name="$PROJECT_DIR$/server" />
     </key>
   </component>
   <component name="RunManager">
@@ -511,29 +437,50 @@
       <option name="presentableId" value="Default" />
       <updated>1466778509388</updated>
       <workItem from="1466778510607" duration="20448000" />
-      <workItem from="1466856774622" duration="22375000" />
+      <workItem from="1466856774622" duration="35087000" />
+      <workItem from="1467456842378" duration="32364000" />
+      <workItem from="1468499998662" duration="16734000" />
+      <workItem from="1468582212744" duration="9846000" />
+      <workItem from="1469476201639" duration="2188000" />
+      <workItem from="1469516169729" duration="61911000" />
+      <workItem from="1470141215735" duration="17393000" />
+      <workItem from="1470310703708" duration="8681000" />
+      <workItem from="1470572897151" duration="8970000" />
+      <workItem from="1470583415158" duration="1914000" />
+      <workItem from="1470585704331" duration="3507000" />
+      <workItem from="1470596316856" duration="8925000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="42823000" />
+    <option name="totallyTimeSpent" value="227968000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <editor active="false" />
     <layout>
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25679544" sideWeight="0.49371633" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="TypeScript Compiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="TypeScript" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26466382" sideWeight="0.49371633" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5114449" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24964234" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.48855507" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="TypeScript Compiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.49427754" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -545,20 +492,21 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="TypeScript Compiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TypeScript Compiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.49427754" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5114449" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2532189" sideWeight="0.50628364" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.48855507" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25679544" sideWeight="0.49371633" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="TypeScript" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25751072" sideWeight="0.49371633" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32891566" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -568,6 +516,14 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
@@ -576,54 +532,264 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/typings/globals/express/index.d.ts">
+    <entry file="file://$PROJECT_DIR$/server/typings/modules/jsonwebtoken/index.d.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="1512">
+          <caret line="64" column="111" selection-start-line="64" selection-start-column="111" selection-end-line="64" selection-end-column="111" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/typings/modules/mongodb/index.d.ts">
+    <entry file="file://$PROJECT_DIR$/server/karma.conf.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="387">
-          <caret line="111" column="31" selection-start-line="111" selection-start-column="31" selection-end-line="111" selection-end-column="31" />
-          <folding />
+        <state relative-caret-position="576">
+          <caret line="43" column="0" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
+    <entry file="file://$PROJECT_DIR$/server/typings/globals/node/index.d.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="11" column="18" selection-start-line="11" selection-start-column="18" selection-end-line="11" selection-end-column="18" />
-          <folding />
+        <state relative-caret-position="267">
+          <caret line="48" column="12" selection-start-line="48" selection-start-column="12" selection-end-line="48" selection-end-column="12" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LICENSE">
+    <entry file="file://$PROJECT_DIR$/server/app.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="72">
-          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <caret line="4" column="36" selection-start-line="4" selection-start-column="36" selection-end-line="4" selection-end-column="36" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/app/bootstrap.ts">
+    <entry file="file://$PROJECT_DIR$/server/app/controllers/StrategyController" />
+    <entry file="file://$PROJECT_DIR$/server/app/routes/handler/BasicStrategy.ts" />
+    <entry file="file://$PROJECT_DIR$/server/config/env/test.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="36" column="10" selection-start-line="36" selection-start-column="10" selection-end-line="36" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/typescriptCompiler/external/lib.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="267">
+          <caret line="1128" column="4" selection-start-line="1128" selection-start-column="4" selection-end-line="1128" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/app/controllers/UserController.js.map">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+      <provider editor-type-id="sourcemapFileViewerProvider">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/typings/index.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="48">
+          <caret line="2" column="48" selection-start-line="2" selection-start-column="48" selection-end-line="2" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/typings/globals/nodemailer-direct-transport/typings.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/node_modules/hapi-auth-basic/test/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="267">
+          <caret line="614" column="63" selection-start-line="614" selection-start-column="63" selection-end-line="614" selection-end-column="63" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/node_modules/hapi-auth-jwt2/lib/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="23" column="26" selection-start-line="23" selection-start-column="26" selection-end-line="23" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/node_modules/hapi-auth-cookie/example/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="267">
+          <caret line="100" column="27" selection-start-line="100" selection-start-column="27" selection-end-line="100" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/tsconfig.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="96">
+          <caret line="4" column="31" selection-start-line="4" selection-start-column="31" selection-end-line="4" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/typings/globals/hapi/index.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="339">
+          <caret line="1767" column="35" selection-start-line="1767" selection-start-column="35" selection-end-line="1767" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/app/controllers/UserController.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="58">
+          <caret line="166" column="30" selection-start-line="166" selection-start-column="30" selection-end-line="166" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/app/strategies/TwitterStrategy.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="562">
+          <caret line="55" column="11" selection-start-line="55" selection-start-column="11" selection-end-line="55" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/app/strategies/FacebookStrategy.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="40" column="42" selection-start-line="40" selection-start-column="42" selection-end-line="40" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/app/strategies/GoogleStrategy.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
-          <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
+          <caret line="5" column="26" selection-start-line="5" selection-start-column="26" selection-end-line="5" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/config/env/development.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="6" column="37" selection-start-line="6" selection-start-column="37" selection-end-line="6" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/node_modules/dot-object/bin/dot-object">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="16" column="7" selection-start-line="16" selection-start-column="7" selection-end-line="16" selection-end-column="7" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gulpfile.js">
+    <entry file="file://$PROJECT_DIR$/server/node_modules/dot-object/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="7" column="14" selection-start-line="7" selection-start-column="14" selection-end-line="7" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/node_modules/dot-object/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="9" column="32" selection-start-line="9" selection-start-column="32" selection-end-line="9" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/typings/globals/dot-object/index.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="156" column="8" selection-start-line="156" selection-start-column="8" selection-end-line="156" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/typescriptCompiler/external/lib.es6.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="603">
+          <caret line="2142" column="4" selection-start-line="2142" selection-start-column="4" selection-end-line="2142" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/app/strategies/FacebookStrategy.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="984">
+          <caret line="41" column="32" selection-start-line="41" selection-start-column="32" selection-end-line="41" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/app/strategies/BasicStrategy.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="8" column="21" selection-start-line="8" selection-start-column="21" selection-end-line="8" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/app/strategies/GoogleStrategy.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="8" column="19" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/app/strategies/JWTStrategy.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="7" selection-start-line="0" selection-start-column="7" selection-end-line="0" selection-end-column="7" />
+          <folding>
+            <element signature="e#0#43#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/app/strategies/TwitterStrategy.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1176">
+          <caret line="49" column="35" selection-start-line="49" selection-start-column="35" selection-end-line="49" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/app/strategies/StrategyBinder.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="456">
+          <caret line="19" column="39" selection-start-line="19" selection-start-column="39" selection-end-line="19" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/app/routes/UserRoutes.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="7" selection-start-line="0" selection-start-column="7" selection-end-line="0" selection-end-column="7" />
+          <folding>
+            <element signature="e#0#41#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/app/routes/StaticRoutes.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="288">
-          <caret line="12" column="35" selection-start-line="12" selection-start-column="35" selection-end-line="12" selection-end-column="35" />
+          <caret line="12" column="10" selection-start-line="12" selection-start-column="10" selection-end-line="12" selection-end-column="10" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/models/User.js">
+    <entry file="file://$PROJECT_DIR$/server/config/env/all.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="14" column="15" selection-start-line="14" selection-start-column="15" selection-end-line="14" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/config/Logger.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="264">
           <caret line="11" column="11" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="11" />
@@ -631,288 +797,71 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/models/UserInterface.ts">
+    <entry file="file://$PROJECT_DIR$/server/config/env/local.example.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="5" column="21" selection-start-line="5" selection-start-column="21" selection-end-line="5" selection-end-column="21" />
+        <state relative-caret-position="192">
+          <caret line="10" column="45" selection-start-line="10" selection-start-column="45" selection-end-line="10" selection-end-column="45" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/server/models/User.ts">
+    <entry file="file://$PROJECT_DIR$/server/config/Hapi.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="336">
-          <caret line="14" column="6" selection-start-line="14" selection-start-column="6" selection-end-line="14" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bs-config.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="1" selection-start-line="0" selection-start-column="1" selection-end-line="2" selection-end-column="47" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tsconfig.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="312">
-          <caret line="13" column="12" selection-start-line="13" selection-start-column="12" selection-end-line="13" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/backend-server.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="29" column="46" selection-start-line="29" selection-start-column="46" selection-end-line="29" selection-end-column="46" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/typings/modules/mongoose/index.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="408" column="53" selection-start-line="408" selection-start-column="53" selection-end-line="408" selection-end-column="53" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/run-server.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="13" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/systemjs.config.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="466">
-          <caret line="49" column="18" selection-start-line="49" selection-start-column="18" selection-end-line="49" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/karma.conf.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/webpack-server.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="3" column="39" selection-start-line="3" selection-start-column="23" selection-end-line="3" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="MarkdownPreviewEditor">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/morgan/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1272">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="14" column="7" selection-start-line="14" selection-start-column="7" selection-end-line="14" selection-end-column="7" />
           <folding>
-            <element signature="n#!!doc" expanded="false" />
+            <element signature="e#159#191#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/vendor.ts">
+    <entry file="file://$PROJECT_DIR$/server/config/Config.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="6" column="23" selection-start-line="6" selection-start-column="23" selection-end-line="6" selection-end-column="23" />
+        <state relative-caret-position="216">
+          <caret line="9" column="14" selection-start-line="9" selection-start-column="14" selection-end-line="9" selection-end-column="14" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/polyfills.ts">
+    <entry file="file://$PROJECT_DIR$/server/app/controllers/UserController.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="7" selection-start-line="0" selection-start-column="7" selection-end-line="0" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/app/app.component.spec.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="12" column="7" selection-start-line="12" selection-start-column="7" selection-end-line="12" selection-end-column="7" />
+        <state relative-caret-position="120">
+          <caret line="5" column="39" selection-start-line="5" selection-start-column="39" selection-end-line="5" selection-end-column="39" />
           <folding>
-            <element signature="e#0#110#0" expanded="false" />
+            <element signature="e#266#309#0" expanded="true" />
+            <marker date="1470605241000" expanded="true" signature="6750:9525" ph="..." />
+            <marker date="1470605241000" expanded="true" signature="7370:9525" ph="..." />
+            <marker date="1470605241000" expanded="true" signature="8663:9525" ph="..." />
+            <marker date="1470605241000" expanded="true" signature="9153:9525" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/app/app.component.html">
+    <entry file="file://$PROJECT_DIR$/server/app/models/User.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24">
-          <caret line="1" column="25" selection-start-line="1" selection-start-column="25" selection-end-line="1" selection-end-column="25" />
+        <state relative-caret-position="336">
+          <caret line="14" column="17" selection-start-line="14" selection-start-column="17" selection-end-line="14" selection-end-column="17" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/app/app.component.scss">
+    <entry file="file://$PROJECT_DIR$/server/app/models/Token.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+        <state relative-caret-position="96">
+          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/typings-core/dist/lib/dependencies.d.ts">
+    <entry file="file://$PROJECT_DIR$/server/app/routes/RoutesBinder.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="168">
-          <caret line="7" column="4" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="4" />
+          <caret line="7" column="30" selection-start-line="7" selection-start-column="30" selection-end-line="7" selection-end-column="30" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/typings/globals/morgan/index.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="51" column="17" selection-start-line="51" selection-start-column="17" selection-end-line="51" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/typings/globals/node/index.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="1370" column="8" selection-start-line="1370" selection-start-column="8" selection-end-line="1370" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/typings.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="312">
-          <caret line="13" column="37" selection-start-line="13" selection-start-column="37" selection-end-line="13" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/typings/globals/express-serve-static-core/index.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="85" column="8" selection-start-line="85" selection-start-column="8" selection-end-line="85" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/node_modules/@angular/platform-browser-dynamic/index.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="71" column="24" selection-start-line="71" selection-start-column="24" selection-end-line="71" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/app/app.component.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/app/app.component.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="10" column="17" selection-start-line="10" selection-start-column="17" selection-end-line="10" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/app/app.component.spec.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/main.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="48">
-          <caret line="2" column="5" selection-start-line="2" selection-start-column="5" selection-end-line="2" selection-end-column="5" />
-          <folding>
-            <element signature="e#0#51#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/server.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="62" column="23" selection-start-line="62" selection-start-column="23" selection-end-line="62" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/src/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="4" column="17" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/server/server.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="48" column="56" selection-start-line="48" selection-start-column="43" selection-end-line="48" selection-end-column="56" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/webpack.config.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="12" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/dist/app.b1d6fb782153d6ca675f.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/dist/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/run-server.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="4" column="32" selection-start-line="4" selection-start-column="32" selection-end-line="4" selection-end-column="32" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
+    <entry file="file://$PROJECT_DIR$/server/typings.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="10" column="4" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
@@ -920,74 +869,67 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client/config/webpack.prod.js">
+    <entry file="file://$PROJECT_DIR$/server/config/env/secure.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="18" column="17" selection-start-line="18" selection-start-column="17" selection-end-line="18" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/config/webpack.test.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="11" column="18" selection-start-line="11" selection-start-column="18" selection-end-line="11" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/config/webpack.dev.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="24" column="29" selection-start-line="24" selection-start-column="29" selection-end-line="24" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/config/webpack.common.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="298">
-          <caret line="43" column="28" selection-start-line="43" selection-start-column="27" selection-end-line="43" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/config/karma-test-shim.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="6" column="23" selection-start-line="6" selection-start-column="23" selection-end-line="6" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/config/karma.conf.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="48">
-          <caret line="2" column="36" selection-start-line="2" selection-start-column="36" selection-end-line="2" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/client/config/helpers.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+        <state relative-caret-position="456">
+          <caret line="53" column="26" selection-start-line="53" selection-start-column="26" selection-end-line="53" selection-end-column="26" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/client/package.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="57" column="27" selection-start-line="57" selection-start-column="27" selection-end-line="57" selection-end-column="27" />
+        <state relative-caret-position="120">
+          <caret line="5" column="42" selection-start-line="5" selection-start-column="42" selection-end-line="5" selection-end-column="42" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
+    <entry file="file://$PROJECT_DIR$/server/package.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="8" column="27" selection-start-line="8" selection-start-column="27" selection-end-line="8" selection-end-column="27" />
+        <state relative-caret-position="559">
+          <caret line="37" column="11" selection-start-line="37" selection-start-column="11" selection-end-line="37" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="168">
+            <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+            <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="144">
+            <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+            <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="48">
+            <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+            <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/server/config/Database.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="514">
+          <caret line="29" column="3" selection-start-line="29" selection-start-column="3" selection-end-line="29" selection-end-column="3" />
           <folding />
         </state>
       </provider>
