@@ -19,6 +19,6 @@ export var DecoratorsConfig : DecoratorsConfiguration = [{
         if(input instanceof Promise)
             return input.then(respondWithSuccess, respondWithError);
         else
-            return input instanceof Error ? respondWithSuccess(input) : respondWithError(input);
+            return input instanceof Error ? respondWithError(input) : respondWithSuccess(input);
     }
 }];
