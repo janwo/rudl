@@ -4,7 +4,7 @@
   "main": "app.js",
   "scripts": {
     "install": "typings install",
-    "start": "tsc && concurrently \"tsc -w\" \"nodemon app.js\"",
+    "start": "tsc && concurrently \"tsc -w\" \"nodemon run.js\"",
     "tsc": "tsc",
     "tsc:w": "tsc -w"
   },

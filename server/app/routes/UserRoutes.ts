@@ -49,7 +49,7 @@ export var RoutesConfig : RoutesConfiguration = [
         handler: BasicStrategy.handleBasic,
         config: {
             auth: {
-                strategy: 'basic'
+                strategies: ['basic']
             }
         }
     },
@@ -59,7 +59,7 @@ export var RoutesConfig : RoutesConfiguration = [
         handler: FacebookStrategy.handleFacebook,
         config: {
             auth: {
-                strategy: 'facebook'
+                strategies: ['facebook']
             }
         }
     },
@@ -69,7 +69,7 @@ export var RoutesConfig : RoutesConfiguration = [
         handler: TwitterStrategy.handleTwitter,
         config: {
             auth: {
-                strategy: 'twitter'
+                strategies: ['twitter']
             }
         }
     },
@@ -79,7 +79,7 @@ export var RoutesConfig : RoutesConfiguration = [
         handler: GoogleStrategy.handleGoogle,
         config: {
             auth: {
-                strategy: 'google'
+                strategies: ['google']
             }
         }
     }

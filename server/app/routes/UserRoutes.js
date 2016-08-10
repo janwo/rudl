@@ -48,7 +48,7 @@ exports.RoutesConfig = [
         handler: BasicStrategy.handleBasic,
         config: {
             auth: {
-                strategy: 'basic'
+                strategies: ['basic']
             }
         }
     },
@@ -58,7 +58,7 @@ exports.RoutesConfig = [
         handler: FacebookStrategy.handleFacebook,
         config: {
             auth: {
-                strategy: 'facebook'
+                strategies: ['facebook']
             }
         }
     },
@@ -68,7 +68,7 @@ exports.RoutesConfig = [
         handler: TwitterStrategy.handleTwitter,
         config: {
             auth: {
-                strategy: 'twitter'
+                strategies: ['twitter']
             }
         }
     },
@@ -78,7 +78,7 @@ exports.RoutesConfig = [
         handler: GoogleStrategy.handleGoogle,
         config: {
             auth: {
-                strategy: 'google'
+                strategies: ['google']
             }
         }
     }
