@@ -2,13 +2,14 @@
 const Fs = require('fs');
 const Https = require('https');
 const Hapi = require('hapi');
-const Logger = require('./Logger');
 const Config_1 = require("./Config");
-const RoutesBinder_1 = require("../app/routes/RoutesBinder");
-const StrategyBinder_1 = require("../app/strategies/StrategyBinder");
+const RoutesBinder_1 = require("./binders/RoutesBinder");
+const StrategiesBinder_1 = require("./binders/StrategiesBinder");
+const DecoratorsBinder_1 = require("./binders/DecoratorsBinder");
+const PluginsBinder_1 = require("./binders/PluginsBinder");
 function hapiServer() {
     // Initialize Hapi server.
-    var server = new Hapi.Server({
+    let server = new Hapi.Server({
         cache: [
             {
                 name: 'redisCache',
@@ -32,10 +33,10 @@ function hapiServer() {
             break;
         case 'secure':
             // Load SSL key and certificate.
-            var privateKey = Fs.readFileSync('./config/sslcerts/key.pem', 'utf8');
-            var certificate = Fs.readFileSync('./config/sslcerts/cert.pem', 'utf8');
+            let privateKey = Fs.readFileSync('./config/sslcerts/key.pem', 'utf8');
+            let certificate = Fs.readFileSync('./config/sslcerts/cert.pem', 'utf8');
             // Create HTTPS server.
-            var httpsServer = Https.createServer({
+            let httpsServer = Https.createServer({
                 key: privateKey,
                 cert: certificate,
                 passphrase: Config_1.Config.passphrase
@@ -49,38 +50,14 @@ function hapiServer() {
             });
             break;
     }
-    // Collect all plugins.
-    var plugins = [
-        { register: require('bell') },
-        { register: require('inert') },
-        {
-            register: require('hapi-mongoose'),
-            options: {
-                uri: Config_1.Config.db.mongo.host
-            }
-        },
-        { register: require('vision') },
-        { register: require('hapi-auth-jwt2') },
-        { register: require('hapi-auth-basic') }
-    ];
-    if (Config_1.Config.log.serverLogs.enabled) {
-        plugins.push({
-            register: require('good'),
-            options: {
-                reporters: {
-                    console: Logger.getLogReporters()
-                }
-            }
-        });
-    }
-    // Register plugins.
-    server.register(plugins, (err) => {
-        if (err)
-            console.error(err);
+    // Setup plugins.
+    PluginsBinder_1.PluginsBinder.bind(server).then(() => {
         // Setup the authentication strategies.
-        StrategyBinder_1.StrategyBinder.bind(server);
-        // Setting the app router and static folder.
+        StrategiesBinder_1.StrategiesBinder.bind(server);
+        // Setup the app router and static folder.
         RoutesBinder_1.RoutesBinder.bind(server);
+        // Setup the decorators.
+        DecoratorsBinder_1.DecoratorsBinder.bind(server);
         // Register views.
         server.views({
             engines: {
@@ -88,21 +65,11 @@ function hapiServer() {
             },
             path: './app/views'
         });
-        // Handle 404 errors.
-        server.ext('onPreResponse', (request, reply) => {
-            if (request.response.isBoom) {
-                if (request.response.statusCode === 404)
-                    return reply.view('404', {
-                        url: request.url.path
-                    });
-            }
-            return reply.continue();
-        });
         // Start server.
         server.start(() => {
             console.log(`Server is running...`);
         });
-    });
+    }).catch(err => console.error(err));
     return server;
 }
 exports.hapiServer = hapiServer;

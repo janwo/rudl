@@ -2,8 +2,10 @@ import UserController = require("../controllers/UserController");
 import {IUser} from "../models/User";
 import Boom = require("boom");
 import {Config} from "../../config/Config";
+import {StrategyConfiguration} from "../../config/binders/StrategiesBinder";
 
-export var StrategyConfig = {
+export var StrategyConfig : StrategyConfiguration = {
+    isDefault: false,
     strategyName: 'basic',
     schemeName: 'basic',
     strategyConfig: {

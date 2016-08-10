@@ -6,12 +6,12 @@ const BasicStrategy = require("../strategies/BasicStrategy");
 const FacebookStrategy = require("../strategies/FacebookStrategy");
 const TwitterStrategy = require("../strategies/TwitterStrategy");
 const GoogleStrategy = require("../strategies/GoogleStrategy");
-exports.RouteConfig = [
+exports.RoutesConfig = [
     {
         path: '/api/users/me',
         method: 'GET',
+        handler: Users.me,
         config: {
-            handler: Users.me,
             auth: {
                 scope: [
                     User_1.UserRoles.user
@@ -21,8 +21,8 @@ exports.RouteConfig = [
     }, {
         path: '/api/user/{username}',
         method: 'GET',
+        handler: Users.getUser,
         config: {
-            handler: Users.getUser,
             auth: {
                 scope: [
                     User_1.UserRoles.user
@@ -33,8 +33,8 @@ exports.RouteConfig = [
     {
         path: '/api/logout',
         method: 'GET',
+        handler: Users.signOut,
         config: {
-            handler: Users.signOut,
             auth: {
                 scope: [
                     User_1.UserRoles.user
@@ -45,8 +45,8 @@ exports.RouteConfig = [
     {
         path: '/api/login',
         method: 'POST',
+        handler: BasicStrategy.handleBasic,
         config: {
-            handler: BasicStrategy.handleBasic,
             auth: {
                 strategy: 'basic'
             }
@@ -55,8 +55,8 @@ exports.RouteConfig = [
     {
         path: Config_1.Config.providers.facebook.callbackURL,
         method: ['GET', 'POST'],
+        handler: FacebookStrategy.handleFacebook,
         config: {
-            handler: FacebookStrategy.handleFacebook,
             auth: {
                 strategy: 'facebook'
             }
@@ -65,8 +65,8 @@ exports.RouteConfig = [
     {
         path: Config_1.Config.providers.twitter.callbackURL,
         method: ['GET', 'POST'],
+        handler: TwitterStrategy.handleTwitter,
         config: {
-            handler: TwitterStrategy.handleTwitter,
             auth: {
                 strategy: 'twitter'
             }
@@ -75,8 +75,8 @@ exports.RouteConfig = [
     {
         path: Config_1.Config.providers.google.callbackURL,
         method: ['GET', 'POST'],
+        handler: GoogleStrategy.handleGoogle,
         config: {
-            handler: GoogleStrategy.handleGoogle,
             auth: {
                 strategy: 'google'
             }

@@ -1,8 +1,10 @@
 import {Config} from "../../config/Config";
 import {DecodedToken} from "../models/Token";
 import UserController = require("../controllers/UserController");
+import {StrategyConfiguration} from "../../config/binders/StrategiesBinder";
 
-export var StrategyConfig = {
+export var StrategyConfig : StrategyConfiguration = {
+    isDefault: true,
     strategyName: 'jwt',
     schemeName: 'jwt',
     strategyConfig: {

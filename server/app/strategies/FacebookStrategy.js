@@ -4,6 +4,7 @@ const UserController = require("../controllers/UserController");
 const User_1 = require("../models/User");
 const Boom = require("boom");
 exports.StrategyConfig = {
+    isDefault: false,
     strategyName: 'facebook',
     schemeName: 'bell',
     strategyConfig: {

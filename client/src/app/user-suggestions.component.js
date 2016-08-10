@@ -8,37 +8,39 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-const core_1 = require("@angular/core");
+var core_1 = require("@angular/core");
 (function (UserSuggestionsType) {
     UserSuggestionsType[UserSuggestionsType["GENERAL"] = 0] = "GENERAL";
     UserSuggestionsType[UserSuggestionsType["NEARBY"] = 1] = "NEARBY";
 })(exports.UserSuggestionsType || (exports.UserSuggestionsType = {}));
 var UserSuggestionsType = exports.UserSuggestionsType;
-class User {
-    constructor(id) {
+var User = (function () {
+    function User(id) {
         this.id = id;
     }
-}
+    return User;
+}());
 exports.User = User;
-let UserSuggestionsComponent = class UserSuggestionsComponent {
-    constructor() {
+var UserSuggestionsComponent = (function () {
+    function UserSuggestionsComponent() {
         this.type = UserSuggestionsType.GENERAL;
         this.users = [
             new User(2),
             new User(3)
         ];
     }
-};
-UserSuggestionsComponent = __decorate([
-    core_1.Component({
-        template: require('./user-suggestions.component.html'),
-        styles: [
-            require('./user-suggestions.component.scss'),
-            require('./styles/card.scss')
-        ],
-        selector: 'user-suggestions'
-    }), 
-    __metadata('design:paramtypes', [])
-], UserSuggestionsComponent);
+    UserSuggestionsComponent = __decorate([
+        core_1.Component({
+            template: require('./user-suggestions.component.html'),
+            styles: [
+                require('./user-suggestions.component.scss'),
+                require('./styles/card.scss')
+            ],
+            selector: 'user-suggestions'
+        }), 
+        __metadata('design:paramtypes', [])
+    ], UserSuggestionsComponent);
+    return UserSuggestionsComponent;
+}());
 exports.UserSuggestionsComponent = UserSuggestionsComponent;
 //# sourceMappingURL=user-suggestions.component.js.map

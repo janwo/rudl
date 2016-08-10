@@ -17,9 +17,13 @@ import {DecodedToken, UserDataCache, TokenData} from "../models/Token";
  */
 export function me(request : any, reply : any) : void {
     var user = request.auth.credentials;
-    reply({
-        user: user
-    });
+    reply.api(dot.transform({
+        id : "id",
+        username: "username",
+        firstName: "firstName",
+        lastName: "lastName",
+        createdAt: "createdAt"
+    }, user));
 }
 
 
@@ -30,18 +34,18 @@ export function me(request : any, reply : any) : void {
  */
 export function getUser(request : any, reply : any) : void {
     var user = request.params.username;
-    findByUsername(user).then(user => {
-        if(!user) return reply(Boom.notFound('User not found.'));
-        reply(dot.transform({
-            id : "id",
-            username: "username",
-            firstName: "firstName",
-            lastName: "lastName",
-            createdAt: "createdAt"
-        }, user));
-    }).catch(err => {
-        return reply(Boom.badRequest(err));
-    });
+    var promise = findByUsername(user).then((user : any) => {
+        if(!user) return Promise.reject(Boom.notFound('User not found.'));
+        return user;
+    }).then((user : IUser) => { return dot.transform({
+        id : "id",
+        username: "username",
+        firstName: "firstName",
+        lastName: "lastName",
+        createdAt: "createdAt"
+    }, user);});
+
+    reply.api(promise);
 }
 
 /*
@@ -98,7 +102,7 @@ function (user, done) {
  */
 export function signOut(request, reply) {
     unsignToken(request.auth.credentials.token).then(() => {
-
+        reply.api();
     });
 }
 
@@ -244,9 +248,7 @@ export function findByUsername(username : string, password : string | boolean = 
                 if(err || !isMatch) return Promise.reject(new Error('Combination of username and password does not match.'));
                 return resolve(user);
             });
-        }, err => {
-            return reject(err);
-        });
+        }, err => reject(err));
     });
 }
 

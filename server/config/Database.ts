@@ -1,14 +1,14 @@
-import {Config} from "./config";
 import mongoClient = require('mongoose');
 import redis = require("redis");
+import {Config} from "./Config";
 
 // Connect to mongoose.
-mongoClient.connect('mongodb://' + Config.db.mongo.user + ':' + Config.db.mongo.password + '@' + Config.db.mongo.host + ':' + Config.db.mongo.port + '/' + Config.db.mongo.database);
+mongoClient.connect(`mongodb://${Config.db.mongo.user}:${Config.db.mongo.password}@${Config.db.mongo.host}:${Config.db.mongo.port}/${Config.db.mongo.database}`);
 
 // Setup mongoose logging.
 var mongoConnection = mongoClient.connection;
 mongoConnection.once('open', () => {
-    console.log('Connected to mongo database "' + Config.db.mongo.database + '" as ' + Config.db.mongo.user + ' successfully...');
+    console.log(`Connected to mongo database "${Config.db.mongo.database}" as ${Config.db.mongo.user} successfully...`);
 
     if(Config.log.databaseLogs.mongo) {
         console.log('Listening on any errors within mongo database...');

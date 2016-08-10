@@ -1,16 +1,16 @@
 "use strict";
 const Path = require("path");
-exports.RouteConfig = [{
+exports.RoutesConfig = [{
         method: 'GET',
         path: '/{path*}',
+        handler: {
+            directory: {
+                path: Path.resolve('./../client/dist'),
+                listing: false,
+                index: true
+            }
+        },
         config: {
-            handler: {
-                directory: {
-                    path: Path.resolve('./../client/dist'),
-                    listing: false,
-                    index: true
-                }
-            },
             auth: false
         }
     }];
