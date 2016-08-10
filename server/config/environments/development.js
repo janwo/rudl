@@ -18,8 +18,8 @@ module.exports = {
     },
     log: {
         serverLogs: {
-            enabled: true,
-            options: {}
+            console: true,
+            file: false
         },
         databaseLogs: {
             redis: true,

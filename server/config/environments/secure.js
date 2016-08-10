@@ -23,11 +23,8 @@ module.exports = {
     },
     log: {
         serverLogs: {
-            enabled: true,
-            options: {
-                filter: false,
-                file: 'access.log'
-            }
+            console: false,
+            file: true
         },
         databaseLogs: {
             redis: false,

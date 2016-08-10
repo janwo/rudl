@@ -9,8 +9,8 @@ export = {
   },
   log: {
     serverLogs: {
-      enabled: true,
-      options: {}
+      console: false,
+      file: false
     },
     databaseLogs: {
       redis: false,
