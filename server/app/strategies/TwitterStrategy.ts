@@ -2,8 +2,10 @@ import {Config} from "../../config/Config";
 import UserController = require("../controllers/UserController");
 import {User, IUserProvider, IUser, UserRoles} from "../models/User";
 import Boom = require("boom");
+import {StrategyConfiguration} from "../../config/binders/StrategiesBinder";
 
-export var StrategyConfig = {
+export var StrategyConfig : StrategyConfiguration = {
+  isDefault: false,
   strategyName: 'twitter',
   schemeName: 'bell',
   strategyConfig: {

@@ -15,9 +15,13 @@ const Database_1 = require("../../config/Database");
  */
 function me(request, reply) {
     var user = request.auth.credentials;
-    reply({
-        user: user
-    });
+    reply.api(dot.transform({
+        id: "id",
+        username: "username",
+        firstName: "firstName",
+        lastName: "lastName",
+        createdAt: "createdAt"
+    }, user));
 }
 exports.me = me;
 /**
@@ -27,19 +31,20 @@ exports.me = me;
  */
 function getUser(request, reply) {
     var user = request.params.username;
-    findByUsername(user).then(user => {
+    var promise = findByUsername(user).then((user) => {
         if (!user)
-            return reply(Boom.notFound('User not found.'));
-        reply(dot.transform({
+            return Promise.reject(Boom.notFound('User not found.'));
+        return user;
+    }).then((user) => {
+        return dot.transform({
             id: "id",
             username: "username",
             firstName: "firstName",
             lastName: "lastName",
             createdAt: "createdAt"
-        }, user));
-    }).catch(err => {
-        return reply(Boom.badRequest(err));
+        }, user);
     });
+    reply.api(promise);
 }
 exports.getUser = getUser;
 /*
@@ -94,6 +99,7 @@ function (user, done) {
  */
 function signOut(request, reply) {
     unsignToken(request.auth.credentials.token).then(() => {
+        reply.api();
     });
 }
 exports.signOut = signOut;
@@ -236,9 +242,7 @@ function findByUsername(username, password = false) {
                     return Promise.reject(new Error('Combination of username and password does not match.'));
                 return resolve(user);
             });
-        }, err => {
-            return reject(err);
-        });
+        }, err => reject(err));
     });
 }
 exports.findByUsername = findByUsername;

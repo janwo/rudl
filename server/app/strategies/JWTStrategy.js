@@ -2,6 +2,7 @@
 const Config_1 = require("../../config/Config");
 const UserController = require("../controllers/UserController");
 exports.StrategyConfig = {
+    isDefault: true,
     strategyName: 'jwt',
     schemeName: 'jwt',
     strategyConfig: {

@@ -3,6 +3,7 @@ const UserController = require("../controllers/UserController");
 const Boom = require("boom");
 const Config_1 = require("../../config/Config");
 exports.StrategyConfig = {
+    isDefault: false,
     strategyName: 'basic',
     schemeName: 'basic',
     strategyConfig: {

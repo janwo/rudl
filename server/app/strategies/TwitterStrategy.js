@@ -4,6 +4,7 @@ const UserController = require("../controllers/UserController");
 const User_1 = require("../models/User");
 const Boom = require("boom");
 exports.StrategyConfig = {
+    isDefault: false,
     strategyName: 'twitter',
     schemeName: 'bell',
     strategyConfig: {
