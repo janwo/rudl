@@ -1,4 +1,4 @@
-import {Config} from "./config";
+import {Config} from "./Config";
 import mongoClient = require('mongoose');
 import redis = require("redis");
 
