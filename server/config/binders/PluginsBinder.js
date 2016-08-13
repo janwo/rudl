@@ -1,10 +1,11 @@
 "use strict";
-const glob = require("glob");
+const Glob = require("glob");
+const Path = require('path');
 class PluginsBinder {
     static bind(server) {
         return new Promise((resolve, reject) => {
             let plugins = [];
-            glob.sync(`${__dirname}/../plugins/**/*.js`).forEach(file => {
+            Glob.sync(Path.join(__dirname, `../plugins/**/*.js`)).forEach(file => {
                 plugins = plugins.concat(require(file).PluginsConfig);
             });
             server.register(plugins, (err) => {

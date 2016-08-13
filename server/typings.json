@@ -1,6 +1,7 @@
 {
   "name": "eat.together",
   "dependencies": {
+    "bluebird": "registry:npm/bluebird#3.4.1+20160811213708",
     "glob": "registry:npm/glob#6.0.0+20160723033700",
     "jsonwebtoken": "registry:npm/jsonwebtoken#5.5.4+20160208220328",
     "lodash": "registry:npm/lodash#4.0.0+20160723033700",
@@ -10,15 +11,15 @@
     "redis": "registry:npm/redis#0.12.1+20160729031738"
   },
   "globalDependencies": {
-    "bcrypt": "registry:dt/bcrypt#0.0.0+20160316155526",
-    "boom": "github:DefinitelyTyped/DefinitelyTyped/boom/boom.d.ts#cde81f5458364ef1dc43a85e1be6a9e132c94e11",
-    "dot-object": "registry:dt/dot-object#1.4.1+20160630085556",
-    "hapi": "github:DefinitelyTyped/DefinitelyTyped/hapi/hapi.d.ts#c54072093a1a3a5c28f74dd7b8a57f45d061e536",
-    "node": "registry:dt/node#6.0.0+20160805072842",
-    "nodemailer": "registry:dt/nodemailer#1.3.2+20160725233834",
-    "nodemailer-direct-transport": "registry:dt/nodemailer-direct-transport#0.0.0+20160317120654",
-    "nodemailer-smtp-transport": "registry:dt/nodemailer-smtp-transport#0.0.0+20160317120654",
-    "nodemailer-types": "registry:dt/nodemailer-types#0.0.0+20160317120654",
-    "randomstring": "registry:dt/randomstring#1.1.4+20160509083842"
+    "bcrypt": "registry:dt/bcrypt",
+    "boom": "github:DefinitelyTyped/DefinitelyTyped/boom/boom.d.ts",
+    "dot-object": "registry:dt/dot-object",
+    "handlebars": "registry:dt/handlebars#4.0.5+20160804082238",
+    "hapi": "github:DefinitelyTyped/DefinitelyTyped/hapi/hapi.d.ts",
+    "node": "registry:dt/node",
+    "nodemailer": "registry:dt/nodemailer",
+    "nodemailer-direct-transport": "registry:dt/nodemailer-direct-transport",
+    "nodemailer-smtp-transport": "registry:dt/nodemailer-smtp-transport",
+    "randomstring": "registry:dt/randomstring"
   }
 }

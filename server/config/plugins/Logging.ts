@@ -1,5 +1,6 @@
 import {Config} from "../Config";
 import {PluginsConfiguration} from "../binders/PluginsBinder";
+import Path = require('path');
 
 const whiteOutArgs = [{
     password: 'censor',
@@ -51,7 +52,7 @@ export var PluginsConfig:PluginsConfiguration = [{
                     module: 'rotating-file-stream',
                     args: ['log', {
                         interval: '1d',
-                        path: `${__dirname}/../../logs`
+                        path: Path.join(__dirname, '../../logs')
                     }]
                 }];
             }

@@ -1,5 +1,6 @@
 "use strict";
 const Config_1 = require("../Config");
+const Path = require('path');
 const whiteOutArgs = [{
         password: 'censor',
         age: 'censor'
@@ -47,7 +48,7 @@ exports.PluginsConfig = [{
                             module: 'rotating-file-stream',
                             args: ['log', {
                                     interval: '1d',
-                                    path: `${__dirname}/../../logs`
+                                    path: Path.join(__dirname, '../../logs')
                                 }]
                         }];
                 }

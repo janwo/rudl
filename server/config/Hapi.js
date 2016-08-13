@@ -2,6 +2,8 @@
 const Fs = require('fs');
 const Https = require('https');
 const Hapi = require('hapi');
+const Path = require('path');
+const Handlebars = require('handlebars');
 const Config_1 = require("./Config");
 const RoutesBinder_1 = require("./binders/RoutesBinder");
 const StrategiesBinder_1 = require("./binders/StrategiesBinder");
@@ -61,9 +63,10 @@ function hapiServer() {
         // Register views.
         server.views({
             engines: {
-                html: require('handlebars')
+                handlebars: Handlebars
             },
-            path: './app/views'
+            path: Path.join(__dirname, '../app/templates/views'),
+            helpersPath: Path.join(__dirname, '../app/templates/helpers')
         });
         // Start server.
         server.start(() => {

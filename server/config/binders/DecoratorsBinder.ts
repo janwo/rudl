@@ -1,11 +1,12 @@
 import {Server} from "hapi";
-import glob = require("glob");
+import Glob = require("glob");
+import Path = require('path');
 
 export class DecoratorsBinder {
 
     public static bind (server : Server) : void {
         let decorators = [];
-        glob.sync(`${__dirname}/../../app/decorators/**/*.js`).forEach(file => {
+        Glob.sync(Path.join(__dirname, `../../app/decorators/**/*.js`)).forEach(file => {
             decorators = decorators.concat(require(file).DecoratorsConfig);
         });
 

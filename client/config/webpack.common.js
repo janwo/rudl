@@ -1,7 +1,7 @@
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+var Webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var helpers = require('./helpers');
+var AssetsPlugin = require('assets-webpack-plugin');
+var Helpers = require('./helpers');
 
 module.exports = {
 	entry: {
@@ -35,24 +35,28 @@ module.exports = {
 			},
 			{
 				test: /\.css$/,
-				exclude: helpers.root('src', 'app'),
+				exclude: Helpers.root('src', 'app'),
 				loader: ExtractTextPlugin.extract('style', 'css?sourceMap')
 			},
 			{
 				test: /\.css$/,
-				include: helpers.root('src', 'app'),
+				include: Helpers.root('src', 'app'),
 				loader: 'raw'
 			}
 		]
 	},
 
 	plugins: [
-		new webpack.optimize.CommonsChunkPlugin({
+		new Webpack.optimize.CommonsChunkPlugin({
 			name: ['app', 'vendor', 'polyfills']
 		}),
-
-		new HtmlWebpackPlugin({
-			template: 'src/index.html'
-		})
+		(()=>{
+			let dir = Helpers.root('dist');
+			return new AssetsPlugin({
+				path: dir,
+				prettyPrint: true,
+				filename: 'webpack-assets.json'
+			});
+		})()
 	]
 };

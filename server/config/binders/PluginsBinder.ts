@@ -1,12 +1,13 @@
 import {Server} from "hapi";
-import glob = require("glob");
+import Glob = require("glob");
+import Path = require('path');
 
 export class PluginsBinder {
 
     public static bind (server : Server) : Promise<any> {
         return new Promise((resolve, reject) => {
             let plugins = [];
-            glob.sync(`${__dirname}/../plugins/**/*.js`).forEach(file => {
+            Glob.sync(Path.join(__dirname, `../plugins/**/*.js`)).forEach(file => {
                 plugins = plugins.concat(require(file).PluginsConfig);
             });
 

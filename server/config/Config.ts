@@ -1,6 +1,7 @@
 import _ = require('lodash');
-import fs = require('fs');
-import glob = require("glob");
+import Fs = require('fs');
+import Glob = require("glob");
+import Path = require("path");
 
 /**
  * Resolve environment configuration by extending each env configuration file, and lastly
@@ -8,12 +9,12 @@ import glob = require("glob");
  */
 export var Config = (function() {
   // Test environment files.
-  if (!glob.sync(`${__dirname}/environments/${process.env.NODE_ENV}.js`).length) return console.warn(`No configuration file found for "${process.env.NODE_ENV}" environment!`);
+  if (!Glob.sync(Path.join(__dirname, `environments/${process.env.NODE_ENV}.js`)).length) return console.warn(`No configuration file found for "${process.env.NODE_ENV}" environment!`);
 
   return _.merge(
       require('./environments/all'),
-      require(`${__dirname}/environments/${process.env.NODE_ENV}`) || {},
-      (fs.existsSync('./config/environments/local.js') && require('./environments/local.js')) || {}
+      require(Path.join(__dirname, `environments/${process.env.NODE_ENV}`)) || {},
+      (Fs.existsSync('./config/environments/local.js') && require('./environments/local.js')) || {}
   );
 }());
 

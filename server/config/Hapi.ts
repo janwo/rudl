@@ -2,6 +2,7 @@ import Fs = require('fs');
 import Https = require('https');
 import Hapi = require('hapi');
 import Path = require('path');
+import Handlebars = require('handlebars');
 import {Config} from "./Config";
 import {RoutesBinder} from "./binders/RoutesBinder";
 import {StrategiesBinder} from "./binders/StrategiesBinder";
@@ -67,13 +68,14 @@ export function hapiServer() {
 
     // Setup the decorators.
     DecoratorsBinder.bind(server);
-    
+
     // Register views.
     server.views({
       engines: {
-        html: require('handlebars')
+        handlebars: Handlebars
       },
-      path: './app/views'
+      path: Path.join(__dirname, '../app/templates/views'),
+      helpersPath: Path.join(__dirname, '../app/templates/helpers')
     });
 
     // Start server.

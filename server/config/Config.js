@@ -1,16 +1,17 @@
 "use strict";
 const _ = require('lodash');
-const fs = require('fs');
-const glob = require("glob");
+const Fs = require('fs');
+const Glob = require("glob");
+const Path = require("path");
 /**
  * Resolve environment configuration by extending each env configuration file, and lastly
  * merge / override that with any local repository configuration that exists in local.js
  */
 exports.Config = (function () {
     // Test environment files.
-    if (!glob.sync(`${__dirname}/environments/${process.env.NODE_ENV}.js`).length)
+    if (!Glob.sync(Path.join(__dirname, `environments/${process.env.NODE_ENV}.js`)).length)
         return console.warn(`No configuration file found for "${process.env.NODE_ENV}" environment!`);
-    return _.merge(require('./environments/all'), require(`${__dirname}/environments/${process.env.NODE_ENV}`) || {}, (fs.existsSync('./config/environments/local.js') && require('./environments/local.js')) || {});
+    return _.merge(require('./environments/all'), require(Path.join(__dirname, `environments/${process.env.NODE_ENV}`)) || {}, (Fs.existsSync('./config/environments/local.js') && require('./environments/local.js')) || {});
 }());
 // Create summary of the configuration file.
 (() => {
