@@ -1,4 +1,4 @@
-import {Component, ViewEncapsulation, Input} from "@angular/core";
+import {Component, Input} from "@angular/core";
 
 
 export enum UserSuggestionsType {
@@ -23,14 +23,13 @@ export class User {
 })
 export class UserSuggestionsComponent{
 
-    public types : UserSuggestionsType;
     @Input() type : UserSuggestionsType = UserSuggestionsType.GENERAL;
+    public types : UserSuggestionsType;
     private users : User[] = [
         new User(2),
         new User(3)
     ];
 
-    constructor() {
+    constructor(){
     }
-
 }

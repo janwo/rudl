@@ -1,11 +1,8 @@
-import {Component, ViewEncapsulation} from "@angular/core";
-import {LoginComponent} from "./login.component";
-import {UserSuggestionsComponent} from "./user-suggestions.component";
+import {Component} from "@angular/core";
 
 @Component({
     template: require('./app.component.html'),
     styles: [ require('./app.component.scss') ],
-    directives: [LoginComponent, UserSuggestionsComponent],
     selector: 'app'
 })
 export class AppComponent{
