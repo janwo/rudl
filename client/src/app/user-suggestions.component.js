@@ -29,6 +29,10 @@ var UserSuggestionsComponent = (function () {
             new User(3)
         ];
     }
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', Number)
+    ], UserSuggestionsComponent.prototype, "type", void 0);
     UserSuggestionsComponent = __decorate([
         core_1.Component({
             template: require('./user-suggestions.component.html'),

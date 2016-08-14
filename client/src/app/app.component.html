@@ -2,7 +2,7 @@
 	<div *ngIf="userId == undefined">
 		<login (login)="onLogin($event)"> CHAT</login>
 	</div>
-	<div *ngIf="userId != undefined">
-		<user-suggestions [type]="types.GENERAL"></user-suggestions>
+	<div *ngIf="userId == undefined">
+		<user-suggestions [type]="2"></user-suggestions>
 	</div>
 </div>
