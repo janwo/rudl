@@ -1,8 +1,2 @@
-<div>
-	<div *ngIf="userId == undefined">
-		<login (login)="onLogin($event)"> CHAT</login>
-	</div>
-	<div *ngIf="userId == undefined">
-		<user-suggestions [type]="2"></user-suggestions>
-	</div>
-</div>
+<landing-page *ngIf="userId == undefined"></landing-page>
+<dashboard *ngIf="userId != undefined"></dashboard>

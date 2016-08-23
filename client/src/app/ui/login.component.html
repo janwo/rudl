@@ -1,0 +1,18 @@
+<div class="social-login">
+	<!--<a class="button twitter" href="/api/login/twitter">Twitter</a>-->
+	<button [ngClass]="'auth-button-facebook'" [link]="'/api/login/facebook'" [fa]="'facebook'" [text]="'Authenticate with Facebook'"></button>
+	<button [ngClass]="'auth-button-google'" [link]="'/api/login/google'" [fa]="'google'" [text]="'Authenticate with Google'"></button>
+</div>
+
+<p class="text-divider">
+	<span>Or authenticate via mail</span>
+</p>
+
+<div *ngIf="!isCollapsed">
+	<input-field [id]="'email'" [description]="'Enter your *email address*'" [type]="'mail'"></input-field>
+	<input-field [id]="'password'" [description]="'Enter a strong *password*'" [type]="'password'"></input-field>
+</div>
+<button [ngClass]="'auth-button-mail'" [link]="'/api/login/google'" [fa]="'envelope'" [text]="'Sign Up with Mail'"></button>
+
+<small *ngIf="!isCollapsed">Have an account already? <a href="">Sign In</a></small>
+

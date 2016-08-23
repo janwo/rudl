@@ -11,8 +11,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var platform_browser_1 = require('@angular/platform-browser');
 var app_component_1 = require('./app.component');
-var login_component_1 = require("./login.component");
-var user_suggestions_component_1 = require("./user-suggestions.component");
+var login_component_1 = require("./ui/login.component");
+var user_suggestions_component_1 = require("./ui/user-suggestions.component");
+var landing_page_component_1 = require("./ui/landing-page.component");
+var dashboard_component_1 = require("./ui/dashboard.component");
+var button_component_1 = require("./ui/widgets/button.component");
+var input_field_component_1 = require("./ui/input-field.component");
 var AppModule = (function () {
     function AppModule() {
     }
@@ -21,6 +25,10 @@ var AppModule = (function () {
             declarations: [
                 app_component_1.AppComponent,
                 login_component_1.LoginComponent,
+                button_component_1.ButtonComponent,
+                input_field_component_1.InputFieldComponent,
+                landing_page_component_1.LandingPageComponent,
+                dashboard_component_1.DashboardComponent,
                 user_suggestions_component_1.UserSuggestionsComponent
             ],
             imports: [

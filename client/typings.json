@@ -8,6 +8,7 @@
     "bcrypt": "registry:dt/bcrypt#0.0.0+20160316155526",
     "core-js": "registry:dt/core-js#0.0.0+20160725163759",
     "hapi": "github:DefinitelyTyped/DefinitelyTyped/hapi/hapi.d.ts#c54072093a1a3a5c28f74dd7b8a57f45d061e536",
-    "node": "registry:dt/node#6.0.0+20160807145350"
+    "node": "registry:dt/node#6.0.0+20160807145350",
+    "webfontloader": "registry:dt/webfontloader#1.6.4+20160317120654"
   }
 }

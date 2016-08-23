@@ -1,0 +1,26 @@
+@import "ui/variables";
+
+:host {
+  display: block;
+  font-family: $base-font-family;
+  font-weight: $base-font-weight-normal;
+  font-size: $base-font-size;
+  color: map_get($base-colors, 'text');
+
+  // Set defaults.
+  a {
+    text-decoration: none;
+  }
+
+  // Set headings.
+  @each $heading in $base-heading-font-size {
+    $letter-spacing: -1em / 40;
+
+    #{$heading} {
+      font-weight: $base-font-weight-normal;
+      margin-bottom: map_get($base-padding, 'default');
+      letter-spacing: $letter-spacing;
+      font-size: map_get($base-heading-font-size, $heading);
+    }
+  }
+}

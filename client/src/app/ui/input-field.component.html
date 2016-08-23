@@ -1,0 +1,2 @@
+<label *ngIf="description" id="label_of_{{id}}" [innerHTML]="formatDescription()"></label>
+<input id="{{id}}" placeholder="{{placeholder}}" [attr.aria-labelledby]="description ? 'label_of_' + id : null">

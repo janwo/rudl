@@ -10,6 +10,7 @@ const staticAssets = ((entries, assets) => {
             types[type].push(assets[entry][type]);
         }
     }
+    console.log(types);
     return types;
 })(require('../../../client/config/webpack.common').entry, require('../../../client/dist/webpack-assets'));
 exports.RoutesConfig = [{

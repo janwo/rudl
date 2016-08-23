@@ -17,10 +17,8 @@
     "glob": "^7.0.5",
     "good": "^7.0.1",
     "good-console": "^6.1.2",
-    "rotating-file-stream": "^1.0.5",
-    "good-squeeze": "^4.0.0",
     "good-file": "^6.0.1",
-    "white-out": "^2.0.0",
+    "good-squeeze": "^4.0.0",
     "handlebars": "^4.0.5",
     "hapi": "^14.1.0",
     "hapi-auth-basic": "^4.2.0",
@@ -34,7 +32,9 @@
     "nodemailer": "^2.5.0",
     "randomstring": "^1.1.5",
     "redis": "^2.6.2",
-    "vision": "^4.1.0"
+    "rotating-file-stream": "^1.0.5",
+    "vision": "^4.1.0",
+    "white-out": "^2.0.0"
   },
   "devDependencies": {
     "concurrently": "^2.2.0",

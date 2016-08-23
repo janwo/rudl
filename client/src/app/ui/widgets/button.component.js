@@ -9,24 +9,33 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require("@angular/core");
-var LoginComponent = (function () {
-    function LoginComponent() {
+var ButtonComponent = (function () {
+    function ButtonComponent() {
+        this.text = null;
+        this.fa = null;
+        this.link = null;
     }
-    LoginComponent.prototype.onLogin = function () {
-        console.log('Clicked Login!');
-    };
-    LoginComponent = __decorate([
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], ButtonComponent.prototype, "text", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], ButtonComponent.prototype, "fa", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], ButtonComponent.prototype, "link", void 0);
+    ButtonComponent = __decorate([
         core_1.Component({
-            template: require('./login.component.html'),
-            styles: [
-                require('./login.component.scss'),
-                require('./styles/card.scss')
-            ],
-            selector: 'login'
+            template: require('./button.component.html'),
+            styles: [require('./button.component.scss')],
+            selector: 'button'
         }), 
         __metadata('design:paramtypes', [])
-    ], LoginComponent);
-    return LoginComponent;
+    ], ButtonComponent);
+    return ButtonComponent;
 }());
-exports.LoginComponent = LoginComponent;
-//# sourceMappingURL=login.component.js.map
+exports.ButtonComponent = ButtonComponent;
+//# sourceMappingURL=button.component.js.map

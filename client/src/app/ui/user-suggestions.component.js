@@ -36,10 +36,7 @@ var UserSuggestionsComponent = (function () {
     UserSuggestionsComponent = __decorate([
         core_1.Component({
             template: require('./user-suggestions.component.html'),
-            styles: [
-                require('./user-suggestions.component.scss'),
-                require('./styles/card.scss')
-            ],
+            styles: [require('./user-suggestions.component.scss')],
             selector: 'user-suggestions'
         }), 
         __metadata('design:paramtypes', [])

@@ -5,13 +5,13 @@ var Helpers = require('./helpers');
 
 module.exports = {
 	entry: {
-		'polyfills': './src/polyfills.ts',
+		'polyfill': './src/polyfill.ts',
 		'vendor': './src/vendor.ts',
 		'app': './src/main.ts'
 	},
 
 	resolve: {
-		extensions: ['', '.js', '.ts']
+		extensions: ['', '.js', '.ts', '.scss', '.css']
 	},
 
 	module: {
@@ -27,11 +27,15 @@ module.exports = {
 			{
 				test: /\.scss$/,
 				exclude: /node_modules/,
-				loaders: ['raw-loader' ,'sass-loader?sourceMap']
+				loaders: ['raw-loader' ,'sass-loader?sourceMap'/*, 'autoprefixer'*/]
 			},
 			{
-				test: /\.(png|jpe?g|gif|svg|woff|woff2|ttf|eot|ico)$/,
-				loader: 'file?name=assets/[name].[hash].[ext]'
+				test: /\.((woff2?|svg|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9]))$/, // Font-Awesome.
+				loader: 'file?name=files/[name].[hash].[ext]'
+			},
+			{
+				test: /\.(png|jpe?g|gif|svg|woff2?|ttf|eot|ico)$/,
+				loader: 'file?name=files/[name].[hash].[ext]'
 			},
 			{
 				test: /\.css$/,
@@ -48,7 +52,7 @@ module.exports = {
 
 	plugins: [
 		new Webpack.optimize.CommonsChunkPlugin({
-			name: ['app', 'vendor', 'polyfills']
+			name: ['app', 'vendor', 'polyfill']
 		}),
 		(()=>{
 			let dir = Helpers.root('dist');
