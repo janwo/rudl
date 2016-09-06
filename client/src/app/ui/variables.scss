@@ -17,9 +17,12 @@ $base-heading-font-size: (
   'h5': 1.125rem
 );
 
+@function inactive($color) {
+  @return transparentize(desaturate($color, 100%), 0.77);
+}
+
 $base-colors: (
   'primary': #fff,
   'secondary': #27c398,
-  'text': #4f4e52,
-  'inactive': #c2c2c2
+  'text': #4f4e52
 );

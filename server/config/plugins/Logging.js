@@ -1,11 +1,14 @@
 "use strict";
 const Config_1 = require("../Config");
 const Path = require('path');
-const whiteOutArgs = [{
+const whiteOutArgs = [
+    {
         password: 'censor',
         age: 'censor'
-    }];
-exports.PluginsConfig = [{
+    }
+];
+exports.PluginsConfig = [
+    {
         register: require('good'),
         options: {
             ops: {
@@ -15,26 +18,31 @@ exports.PluginsConfig = [{
                 let reporters = {};
                 // Enable logging to console?
                 if (Config_1.Config.log.serverLogs.console) {
-                    reporters.console = [{
+                    reporters.console = [
+                        {
                             module: 'good-squeeze',
                             name: 'Squeeze',
-                            args: [{
+                            args: [
+                                {
                                     log: '*',
                                     response: '*',
                                     request: '*',
                                     error: '*',
                                     ops: '*'
-                                }]
+                                }
+                            ]
                         }, {
                             module: 'good-console'
                         }, {
                             module: 'white-out',
                             args: whiteOutArgs
-                        }, 'stdout'];
+                        }, 'stdout'
+                    ];
                 }
                 // Enable console to file?
                 if (typeof Config_1.Config.log.serverLogs.file) {
-                    reporters.file = [{
+                    reporters.file = [
+                        {
                             module: 'good-squeeze',
                             name: 'Squeeze',
                             args: [{ ops: '*' }]
@@ -46,14 +54,18 @@ exports.PluginsConfig = [{
                             name: 'SafeJson'
                         }, {
                             module: 'rotating-file-stream',
-                            args: ['log', {
+                            args: [
+                                'log', {
                                     interval: '1d',
                                     path: Path.join(__dirname, '../../logs')
-                                }]
-                        }];
+                                }
+                            ]
+                        }
+                    ];
                 }
                 return reporters;
             })()
         }
-    }];
+    }
+];
 //# sourceMappingURL=Logging.js.map

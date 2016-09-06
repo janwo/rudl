@@ -10,6 +10,12 @@
   // Set defaults.
   a {
     text-decoration: none;
+    cursor: pointer;
+  }
+
+  li, ul {
+    margin: 0;
+    padding: 0;
   }
 
   // Set headings.
@@ -22,5 +28,10 @@
       letter-spacing: $letter-spacing;
       font-size: map_get($base-heading-font-size, $heading);
     }
+  }
+
+  // Set helper classes.
+  .hide {
+    display: none !important;
   }
 }

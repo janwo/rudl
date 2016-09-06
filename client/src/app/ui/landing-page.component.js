@@ -15,8 +15,7 @@ var LandingPageComponent = (function () {
     LandingPageComponent = __decorate([
         core_1.Component({
             template: require('./landing-page.component.html'),
-            styles: [require('./landing-page.component.scss')],
-            selector: 'landing-page'
+            styles: [require('./landing-page.component.scss')]
         }), 
         __metadata('design:paramtypes', [])
     ], LandingPageComponent);

@@ -1,0 +1,27 @@
+@import '../variables';
+
+$indicator-colors: (
+  'active-background': map_get($base-colors, 'secondary'),
+  'default-background': inactive(map_get($base-colors, 'text'))
+);
+
+:host {
+  display: block;
+  list-style: none;
+  text-align: center;
+
+  li {
+    display: inline-block;
+    width: 0.75rem;
+    height: 0.75rem;
+    margin: 0.25rem;
+    background-color: map_get($indicator-colors, 'default-background');
+    border-radius: 50%;
+    cursor: pointer;
+
+    &.active {
+      cursor: default;
+      background-color: map_get($indicator-colors, 'active-background');
+    }
+  }
+}

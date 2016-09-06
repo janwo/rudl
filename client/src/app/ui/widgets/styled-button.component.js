@@ -9,33 +9,39 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require("@angular/core");
-var ButtonComponent = (function () {
-    function ButtonComponent() {
+var StyledButtonComponent = (function () {
+    function StyledButtonComponent() {
         this.text = null;
         this.fa = null;
         this.link = null;
     }
+    StyledButtonComponent.prototype.onClick = function (event) {
+        if (!this.link)
+            return;
+        event.stopPropagation();
+        window.open(this.link);
+    };
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
-    ], ButtonComponent.prototype, "text", void 0);
+    ], StyledButtonComponent.prototype, "text", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
-    ], ButtonComponent.prototype, "fa", void 0);
+    ], StyledButtonComponent.prototype, "fa", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
-    ], ButtonComponent.prototype, "link", void 0);
-    ButtonComponent = __decorate([
+    ], StyledButtonComponent.prototype, "link", void 0);
+    StyledButtonComponent = __decorate([
         core_1.Component({
-            template: require('./button.component.html'),
-            styles: [require('./button.component.scss')],
-            selector: 'button'
+            template: require('./styled-button.component.html'),
+            styles: [require('./styled-button.component.scss')],
+            selector: 'styled-button'
         }), 
         __metadata('design:paramtypes', [])
-    ], ButtonComponent);
-    return ButtonComponent;
+    ], StyledButtonComponent);
+    return StyledButtonComponent;
 }());
-exports.ButtonComponent = ButtonComponent;
-//# sourceMappingURL=button.component.js.map
+exports.StyledButtonComponent = StyledButtonComponent;
+//# sourceMappingURL=styled-button.component.js.map

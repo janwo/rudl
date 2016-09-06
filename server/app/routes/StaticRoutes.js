@@ -1,7 +1,7 @@
 "use strict";
 const Path = require("path");
 // Build assets once.
-const staticAssets = ((entries, assets) => {
+exports.staticAssets = ((entries, assets) => {
     let types = {};
     for (let entry in entries) {
         for (let type in assets[entry]) {
@@ -10,10 +10,10 @@ const staticAssets = ((entries, assets) => {
             types[type].push(assets[entry][type]);
         }
     }
-    console.log(types);
     return types;
 })(require('../../../client/config/webpack.common').entry, require('../../../client/dist/webpack-assets'));
-exports.RoutesConfig = [{
+exports.RoutesConfig = [
+    {
         method: 'GET',
         path: '/assets/{path*}',
         handler: {
@@ -28,15 +28,16 @@ exports.RoutesConfig = [{
         }
     }, {
         method: 'GET',
-        path: '/',
+        path: '/{path*}',
         handler: function (request, reply) {
             reply.view('index', {
                 title: 'Welcome',
-                assets: staticAssets
+                assets: exports.staticAssets
             });
         },
         config: {
             auth: false
         }
-    }];
+    }
+];
 //# sourceMappingURL=StaticRoutes.js.map

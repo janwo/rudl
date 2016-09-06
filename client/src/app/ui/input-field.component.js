@@ -26,23 +26,6 @@ var InputFieldComponent = (function () {
             });
         return null;
     };
-    InputFieldComponent.inputAttributes = {
-        type: 'mail',
-        attributes: [
-            {
-                name: 'spellcheck',
-                value: false
-            },
-            {
-                name: 'autocomplete',
-                value: 'off'
-            },
-            {
-                name: 'type',
-                value: 'text'
-            }
-        ]
-    };
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)

@@ -1,6 +1,6 @@
 @import "variables";
 
-$login-text-divider-color: map_get($base-colors, 'inactive');
+$login-text-divider-color: inactive(map_get($base-colors, 'text'));
 $login-text-divider-line-size: $base-font-size * 0.05;
 $login-text-divider-font-size: $base-font-size * 0.75;
 
@@ -30,34 +30,34 @@ $login-text-divider-font-size: $base-font-size * 0.75;
 
       &:before {
         right: 100%;
-        margin-right: map_get($base-padding, 'default');
+        margin-right: map_get($base-padding, 'small');
       }
 
       &:after {
         left: 100%;
-        margin-left: map_get($base-padding, 'default');
+        margin-left: map_get($base-padding, 'small');
       }
     }
   }
 
-  button {
+  styled-button button {
     width: 100%;
   }
 
-  .auth-button-facebook {
+  .auth-button-facebook button {
     background-color: #3b5998;
   }
 
-  .auth-button-google {
-    background-color: #DF5138;
+  .auth-button-google button {
+    background-color: #df5138;
   }
 
-  .auth-button-twitter {
-    background-color: #4099FF;
+  .auth-button-twitter button {
+    background-color: #4099ff;
   }
 
   small {
-    color: map_get($base-colors, 'inactive');
+    color: inactive(map_get($base-colors, 'text'));
 
     a {
       font-weight: $base-font-weight-bold;

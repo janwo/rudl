@@ -29,21 +29,21 @@ module.exports = {
     providers: {
         facebook: {
             password: process.env.FACEBOOK_PASSWORD,
-            clientID: process.env.FACEBOOK_ID || 'APP_ID',
-            clientSecret: process.env.FACEBOOK_SECRET || 'APP_SECRET',
-            callbackURL: '/api/login/facebook'
+            clientID: process.env.FACEBOOK_ID,
+            clientSecret: process.env.FACEBOOK_SECRET,
+            callbackURL: '/oauth/facebook'
         },
         twitter: {
             password: 'oqbK@by0%#uoqbfdfby0%#uoqbK@by0%#u',
             clientID: process.env.TWITTER_ID || 'cVJWo8A0jf3WyG0ufbmDXVXwN',
             clientSecret: process.env.TWITTER_SECRET || 'vTyr3SLCUJU2EIEa3h9ZADZLh2ZUkomsmk1liSnG8649qnyIgo',
-            callbackURL: '/api/login/twitter'
+            callbackURL: '/oauth/twitter'
         },
         google: {
             password: process.env.GOOGLE_PASSWORD,
-            clientID: process.env.GOOGLE_ID || 'APP_ID',
-            clientSecret: process.env.GOOGLE_SECRET || 'APP_SECRET',
-            callbackURL: '/api/login/google'
+            clientID: process.env.GOOGLE_ID || '368340288629-nf8puh782soi68a3udusucbn1nh81sk2.apps.googleusercontent.com',
+            clientSecret: process.env.GOOGLE_SECRET || '32pv9JsPuA3mNzYXiF4qevyy',
+            callbackURL: '/oauth/google'
         }
     },
     mailer: {

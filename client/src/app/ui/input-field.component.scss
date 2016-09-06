@@ -6,8 +6,7 @@ $input-field-border-size: 0.1rem;
 $input-field-border-radius: 0.25rem;
 $input-field-input-padding: $input-field-input-font-size / 1.5; // --> 1 / 1.5 = 0.666
 $input-field-colors: (
-  'border-active': map_get($base-colors, 'secondary'),
-  'border-inactive': map_get($base-colors, 'inactive')
+  'border': map_get($base-colors, 'secondary')
 );
 
 :host {
@@ -32,17 +31,16 @@ $input-field-colors: (
     padding: $input-field-input-padding;
     font-size: $input-field-input-font-size;
 
-    //noinspection CssInvalidPseudoSelector
-    &::-webkit-input-placeholder {//&::placeholder {
-      color: map_get($input-field-colors, 'border-inactive');
+    &::placeholder {
+      color: inactive(map_get($input-field-colors, 'border'));
     }
 
-    border: $input-field-border-size map_get($input-field-colors, 'border-inactive') solid;
+    border: $input-field-border-size inactive(map_get($input-field-colors, 'border')) solid;
     border-radius: $input-field-border-radius;
     outline: none;
 
     &:focus {
-      border-color: map_get($input-field-colors, 'border-active');
+      border-color: map_get($input-field-colors, 'border');
     }
   }
 }

@@ -14,19 +14,19 @@ var core_1 = require("@angular/core");
     UserSuggestionsType[UserSuggestionsType["NEARBY"] = 1] = "NEARBY";
 })(exports.UserSuggestionsType || (exports.UserSuggestionsType = {}));
 var UserSuggestionsType = exports.UserSuggestionsType;
-var User = (function () {
-    function User(id) {
+var someUser = (function () {
+    function someUser(id) {
         this.id = id;
     }
-    return User;
+    return someUser;
 }());
-exports.User = User;
+exports.someUser = someUser;
 var UserSuggestionsComponent = (function () {
     function UserSuggestionsComponent() {
         this.type = UserSuggestionsType.GENERAL;
         this.users = [
-            new User(2),
-            new User(3)
+            new someUser(2),
+            new someUser(3)
         ];
     }
     __decorate([

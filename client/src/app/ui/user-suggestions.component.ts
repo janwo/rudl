@@ -4,7 +4,7 @@ export enum UserSuggestionsType {
     GENERAL, NEARBY
 }
 
-export class User {
+export class someUser {
 
     private id: number;
 
@@ -15,18 +15,18 @@ export class User {
 
 @Component({
     template: require('./user-suggestions.component.html'),
-    styles: [ require('./user-suggestions.component.scss') ],
+    styles: [require('./user-suggestions.component.scss')],
     selector: 'user-suggestions'
 })
-export class UserSuggestionsComponent{
+export class UserSuggestionsComponent {
 
-    @Input() type : UserSuggestionsType = UserSuggestionsType.GENERAL;
-    public types : UserSuggestionsType;
-    private users : User[] = [
-        new User(2),
-        new User(3)
+    @Input() type: UserSuggestionsType = UserSuggestionsType.GENERAL;
+    public types: UserSuggestionsType;
+    private users: someUser[] = [
+        new someUser(2),
+        new someUser(3)
     ];
 
-    constructor(){
+    constructor() {
     }
 }

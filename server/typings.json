@@ -16,6 +16,7 @@
     "dot-object": "registry:dt/dot-object",
     "handlebars": "registry:dt/handlebars#4.0.5+20160804082238",
     "hapi": "github:DefinitelyTyped/DefinitelyTyped/hapi/hapi.d.ts",
+    "joi": "registry:dt/joi#9.0.0+20160626220651",
     "node": "registry:dt/node",
     "nodemailer": "registry:dt/nodemailer",
     "nodemailer-direct-transport": "registry:dt/nodemailer-direct-transport",
