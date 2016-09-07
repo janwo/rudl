@@ -45,7 +45,7 @@ export function handleFacebook(request, reply): void {
 		// Create User.
 		return UserController.recommendUsername(profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then(checkResults => {
 			if (checkResults.available) return checkResults.username;
-			return checkResults.recommendations[Math.floor(Math.random() * checkResults.recommendations.length)];
+			return checkResults.recommendations[Math.trunc(Math.random() * checkResults.recommendations.length)];
 		}).then(username => {
 			return UserController.createUser({
 				firstName: profile.name.first,

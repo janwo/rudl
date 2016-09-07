@@ -2,20 +2,29 @@
 
 :host {
   display: block;
+  min-height: 100vh;
   font-family: $base-font-family;
   font-weight: $base-font-weight-normal;
   font-size: $base-font-size;
   color: map_get($base-colors, 'text');
+  background-color: map_get($base-colors, 'background');
 
-  // Set defaults.
+  // Reset text decorations.
   a {
     text-decoration: none;
     cursor: pointer;
   }
 
-  li, ul {
+  // Reset padding + margin.
+  li, ul, button {
     margin: 0;
     padding: 0;
+  }
+
+  // Reset borders.
+  button {
+    border: none;
+    outline: none;
   }
 
   // Set headings.

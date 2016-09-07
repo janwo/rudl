@@ -15,6 +15,7 @@ import {routing, appRoutingProviders} from "./app.routes";
 import {FormsModule} from "@angular/forms";
 import {AuthService} from "./auth.service";
 import {IndicatorComponent} from "./ui/widgets/indicator.component";
+import {HeaderComponent} from "./ui/header.component";
 
 @NgModule({
     declarations: [
@@ -23,6 +24,7 @@ import {IndicatorComponent} from "./ui/widgets/indicator.component";
         AuthCallbackComponent,
         StyledButtonComponent,
         InputFieldComponent,
+        HeaderComponent,
         LandingPageComponent,
         IndicatorComponent,
         DashboardComponent,
