@@ -1,9 +1,10 @@
 "use strict";
-const glob = require("glob");
+const Glob = require("glob");
+const Path = require('path');
 class DecoratorsBinder {
     static bind(server) {
         let decorators = [];
-        glob.sync(`${__dirname}/../../app/decorators/**/*.js`).forEach(file => {
+        Glob.sync(Path.join(__dirname, `../../app/decorators/**/*.js`)).forEach(file => {
             decorators = decorators.concat(require(file).DecoratorsConfig);
         });
         decorators.forEach(decorator => {

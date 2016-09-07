@@ -1,19 +1,13 @@
-import {Component, ViewEncapsulation} from "@angular/core";
-import {LoginComponent} from "./login.component";
-import {UserSuggestionsComponent} from "./user-suggestions.component";
+import {Component} from "@angular/core";
+import {AuthService} from "./auth.service";
 
 @Component({
     template: require('./app.component.html'),
-    styles: [ require('./app.component.scss') ],
-    directives: [LoginComponent, UserSuggestionsComponent],
+    styles: [require('./app.component.scss')],
     selector: 'app'
 })
-export class AppComponent{
-    private titleName: string;
-    private userId : number;
+export class AppComponent {
+    constructor(authService: AuthService) {
 
-    constructor(){
-        this.titleName = "eat.together";
-        this.userId = undefined;
     }
 }

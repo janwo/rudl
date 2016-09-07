@@ -1,0 +1,47 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var core_1 = require("@angular/core");
+(function (UserSuggestionsType) {
+    UserSuggestionsType[UserSuggestionsType["GENERAL"] = 0] = "GENERAL";
+    UserSuggestionsType[UserSuggestionsType["NEARBY"] = 1] = "NEARBY";
+})(exports.UserSuggestionsType || (exports.UserSuggestionsType = {}));
+var UserSuggestionsType = exports.UserSuggestionsType;
+var someUser = (function () {
+    function someUser(id) {
+        this.id = id;
+    }
+    return someUser;
+}());
+exports.someUser = someUser;
+var UserSuggestionsComponent = (function () {
+    function UserSuggestionsComponent() {
+        this.type = UserSuggestionsType.GENERAL;
+        this.users = [
+            new someUser(2),
+            new someUser(3)
+        ];
+    }
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', Number)
+    ], UserSuggestionsComponent.prototype, "type", void 0);
+    UserSuggestionsComponent = __decorate([
+        core_1.Component({
+            template: require('./user-suggestions.component.html'),
+            styles: [require('./user-suggestions.component.scss')],
+            selector: 'user-suggestions'
+        }), 
+        __metadata('design:paramtypes', [])
+    ], UserSuggestionsComponent);
+    return UserSuggestionsComponent;
+}());
+exports.UserSuggestionsComponent = UserSuggestionsComponent;
+//# sourceMappingURL=user-suggestions.component.js.map

@@ -1,9 +1,10 @@
 "use strict";
-const glob = require("glob");
+const Glob = require("glob");
+const Path = require('path');
 class RoutesBinder {
     static bind(server) {
         let routes = [];
-        glob.sync(`${__dirname}/../../app/routes/**/*.js`).forEach(file => {
+        Glob.sync(Path.join(__dirname, `../../app/routes/**/*.js`)).forEach(file => {
             routes = routes.concat(require(file).RoutesConfig);
         });
         server.route(routes);

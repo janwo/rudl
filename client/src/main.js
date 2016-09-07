@@ -1,5 +1,16 @@
 "use strict";
-var app_component_1 = require('./app/app.component');
 var platform_browser_dynamic_1 = require("@angular/platform-browser-dynamic");
-platform_browser_dynamic_1.bootstrap(app_component_1.AppComponent);
+var app_module_1 = require("./app/app.module");
+var WebFont = require("webfontloader");
+// Initialize Angular.
+platform_browser_dynamic_1.platformBrowserDynamic().bootstrapModule(app_module_1.AppModule);
+// Load Fonts.
+WebFont.load({
+    google: {
+        families: [
+            'Lato:400,700',
+            'Fredoka+One'
+        ]
+    }
+});
 //# sourceMappingURL=main.js.map

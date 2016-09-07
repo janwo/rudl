@@ -1,17 +1,18 @@
-import {Server} from "hapi";
-import glob = require("glob");
-import {IRouteConfiguration} from "hapi";
+import {Server, IRouteConfiguration} from "hapi";
+import Glob = require("glob");
+import Path = require('path');
 
 export class RoutesBinder {
-
-    public static bind (server : Server) : void {
-        let routes = [];
-        glob.sync(`${__dirname}/../../app/routes/**/*.js`).forEach(file => {
-            routes = routes.concat(require(file).RoutesConfig);
-        });
-
-        server.route(routes);
-    }
+	
+	public static bind(server: Server): void {
+		let routes = [];
+		Glob.sync(Path.join(__dirname, `../../app/routes/**/*.js`)).forEach(file => {
+			routes = routes.concat(require(file).RoutesConfig);
+		});
+		
+		server.route(routes);
+	}
 }
 
-export interface RoutesConfiguration extends Array<IRouteConfiguration> {}
+export interface RoutesConfiguration extends Array<IRouteConfiguration> {
+}

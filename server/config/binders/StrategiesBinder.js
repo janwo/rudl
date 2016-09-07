@@ -1,9 +1,10 @@
 "use strict";
-const glob = require("glob");
+const Glob = require("glob");
+const Path = require("path");
 class StrategiesBinder {
     static bind(server) {
         let defaultStrategiesFound = 0;
-        glob.sync(`${__dirname}/../../app/strategies/**/*.js`).forEach(file => {
+        Glob.sync(Path.join(__dirname, `../../app/strategies/**/*.js`)).forEach(file => {
             // Configure strategy.
             let config = require(file).StrategyConfig;
             server.auth.strategy(config.strategyName, config.schemeName, config.strategyConfig);

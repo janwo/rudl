@@ -23,11 +23,8 @@ module.exports = {
     },
     log: {
         serverLogs: {
-            enabled: true,
-            options: {
-                filter: false,
-                file: 'access.log'
-            }
+            console: false,
+            file: true
         },
         databaseLogs: {
             redis: false,
@@ -38,17 +35,17 @@ module.exports = {
         facebook: {
             clientID: process.env.FACEBOOK_ID || 'APP_ID',
             clientSecret: process.env.FACEBOOK_SECRET || 'APP_SECRET',
-            callbackURL: '/api/login/facebook'
+            callbackURL: '/oauth/facebook'
         },
         twitter: {
             clientID: process.env.TWITTER_KEY || 'CONSUMER_KEY',
             clientSecret: process.env.TWITTER_SECRET || 'CONSUMER_SECRET',
-            callbackURL: '/api/login/twitter'
+            callbackURL: '/oauth/twitter'
         },
         google: {
             clientID: process.env.GOOGLE_ID || 'APP_ID',
             clientSecret: process.env.GOOGLE_SECRET || 'APP_SECRET',
-            callbackURL: '/api/login/google'
+            callbackURL: '/oauth/google'
         }
     },
     mailer: {

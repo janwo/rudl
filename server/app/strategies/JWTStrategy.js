@@ -1,6 +1,10 @@
 "use strict";
 const Config_1 = require("../../config/Config");
 const UserController = require("../controllers/UserController");
+/*
+ JWT is used for mobile applications. Actually it can be used in web apps as well, but due to the
+ lack of security storing a JWT token securely, authentication via cookies is an alternative approach.
+ */
 exports.StrategyConfig = {
     isDefault: true,
     strategyName: 'jwt',
@@ -9,7 +13,7 @@ exports.StrategyConfig = {
         validateFunc: (decodedToken, request, callback) => {
             UserController.findByToken(decodedToken).then(user => {
                 if (!user)
-                    return callback(new Error('Token is invalid.'), false);
+                    return callback(null, false);
                 return callback(null, true, user);
             }).catch(err => {
                 return callback(err, false);

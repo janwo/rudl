@@ -1,8 +1,1 @@
-<div>
-	<div *ngIf="userId == undefined">
-		<login (login)="onLogin($event)"> CHAT</login>
-	</div>
-	<div *ngIf="userId != undefined">
-		<user-suggestions [type]="types.GENERAL"></user-suggestions>
-	</div>
-</div>
+<router-outlet></router-outlet>

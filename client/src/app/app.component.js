@@ -9,21 +9,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require("@angular/core");
-var login_component_1 = require("./login.component");
-var user_suggestions_component_1 = require("./user-suggestions.component");
+var auth_service_1 = require("./auth.service");
 var AppComponent = (function () {
-    function AppComponent() {
-        this.titleName = "eat.together";
-        this.userId = undefined;
+    function AppComponent(authService) {
     }
     AppComponent = __decorate([
         core_1.Component({
             template: require('./app.component.html'),
             styles: [require('./app.component.scss')],
-            directives: [login_component_1.LoginComponent, user_suggestions_component_1.UserSuggestionsComponent],
             selector: 'app'
         }), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [auth_service_1.AuthService])
     ], AppComponent);
     return AppComponent;
 }());

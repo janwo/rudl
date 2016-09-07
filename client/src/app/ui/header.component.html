@@ -1,0 +1,10 @@
+<div class="logo">
+	<img src="../../assets/logo.svg"><span>frowl</span>
+</div>
+<ul class="tabs">
+	<li *ngFor="let tabItem of tabItems; let i = index" [ngClass]="{active: tabIndex == i, notification: tabItem.notification}" (click)="setActiveTab(i)"><i class="fa fa-{{tabItem.icon}}"></i><span>{{tabItem.title}}</span></li>
+</ul>
+<button class="menu"></button>
+<ul class="menu-popup">
+	<li *ngFor="let menuItem of menuItems"><i class="fa fa-{{menuItem.icon}}"></i><span>{{menuItem.title}}</span></li>
+</ul>

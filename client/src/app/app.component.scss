@@ -1,0 +1,46 @@
+@import "ui/variables";
+
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: $base-font-family;
+  font-weight: $base-font-weight-normal;
+  font-size: $base-font-size;
+  color: map_get($base-colors, 'text');
+  background-color: map_get($base-colors, 'background');
+
+  // Reset text decorations.
+  a {
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  // Reset padding + margin.
+  li, ul, button {
+    margin: 0;
+    padding: 0;
+  }
+
+  // Reset borders.
+  button {
+    border: none;
+    outline: none;
+  }
+
+  // Set headings.
+  @each $heading in $base-heading-font-size {
+    $letter-spacing: -1em / 40;
+
+    #{$heading} {
+      font-weight: $base-font-weight-normal;
+      margin-bottom: map_get($base-padding, 'default');
+      letter-spacing: $letter-spacing;
+      font-size: map_get($base-heading-font-size, $heading);
+    }
+  }
+
+  // Set helper classes.
+  .hide {
+    display: none !important;
+  }
+}

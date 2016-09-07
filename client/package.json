@@ -8,52 +8,50 @@
     "build": "rimraf dist && webpack --config config/webpack.prod.js --progress --profile --bail"
   },
   "dependencies": {
-    "@angular/common": "^2.0.0-rc.3",
-    "@angular/compiler": "^2.0.0-rc.3",
-    "@angular/core": "^2.0.0-rc.2",
-    "@angular/forms": "^0.1.1",
-    "@angular/http": "^2.0.0-rc.2",
-    "@angular/platform-browser": "^2.0.0-rc.3",
-    "@angular/platform-browser-dynamic": "^2.0.0-rc.3",
-    "@angular/router": "^3.0.0-alpha.8",
-    "@angular/upgrade": "^2.0.0-rc.3",
-
-    "core-js": "^2.4.0",
-    "reflect-metadata": "^0.1.3",
-
-    "rxjs": "5.0.0-beta.6",
-    "zone.js": "^0.6.12"
+    "@angular/common": "^2.0.0-rc.5",
+    "@angular/compiler": "^2.0.0-rc.5",
+    "@angular/core": "^2.0.0-rc.5",
+    "@angular/forms": "^0.3.0",
+    "@angular/http": "^2.0.0-rc.5",
+    "@angular/platform-browser": "^2.0.0-rc.5",
+    "@angular/platform-browser-dynamic": "^2.0.0-rc.5",
+    "@angular/router": "^3.0.0-rc.1",
+    "@angular/upgrade": "^2.0.0-rc.5",
+    "core-js": "^2.4.1",
+    "font-awesome": "^4.6.3",
+    "normalize.css": "^4.2.0",
+    "reflect-metadata": "^0.1.8",
+    "rxjs": "^5.0.0-beta.11",
+    "webfontloader": "^1.6.26",
+    "zone.js": "^0.6.17"
   },
   "devDependencies": {
-    "rimraf": "^2.5.2",
-
-    "typescript": "^1.8.10",
-    "typings": "^1.3.0",
-
-    "node-sass": "^3.8.0",
-
-    "karma": "^1.1.0",
+    "assets-webpack-plugin": "^3.4.0",
+    "autoprefixer": "^6.4.0",
+    "css-loader": "^0.24.0",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "file-loader": "^0.9.0",
+    "html-loader": "^0.4.3",
+    "jasmine-core": "^2.4.1",
+    "karma": "^1.2.0",
     "karma-jasmine": "^1.0.2",
     "karma-phantomjs-launcher": "^1.0.1",
     "karma-sourcemap-loader": "^0.3.7",
-    "karma-webpack": "^1.7.0",
-
-    "jasmine-core": "^2.4.1",
-
-    "phantomjs-prebuilt": "^2.1.7",
-
-    "webpack": "^1.13.1",
-    "webpack-dev-server": "^1.14.1",
-    "webpack-merge": "^0.14.0",
-    "html-webpack-plugin": "^2.21.0",
-    "extract-text-webpack-plugin": "^1.0.1",
-    "style-loader": "^0.13.1",
-    "css-loader": "^0.23.1",
-    "sass-loader": "^3.2.2",
-    "raw-loader": "^0.5.1",
-    "ts-loader": "^0.8.2",
+    "karma-webpack": "^1.8.0",
+    "node-sass": "^3.8.0",
     "null-loader": "^0.1.1",
-    "file-loader": "^0.9.0",
-    "html-loader": "^0.4.3"
+    "phantomjs-prebuilt": "^2.1.12",
+    "postcss-loader": "^0.11.0",
+    "raw-loader": "^0.5.1",
+    "rimraf": "^2.5.4",
+    "sass-loader": "^4.0.0",
+    "style-loader": "^0.13.1",
+    "ts-loader": "^0.8.2",
+    "typescript": "^1.8.10",
+    "typings": "^1.3.3",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.15.0",
+    "webpack-merge": "^0.14.1"
   }
 }
