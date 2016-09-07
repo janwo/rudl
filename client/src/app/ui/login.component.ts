@@ -9,18 +9,18 @@ import {IndicatorComponent} from "./widgets/indicator.component";
 })
 export class LoginComponent {
 
-    private authService: AuthService;
-    private isCollapsed: boolean = true;
-    private signInOnly: boolean = false;
+    authService: AuthService;
+    isCollapsed: boolean = true;
+    signInOnly: boolean = false;
 
     @ViewChild(IndicatorComponent)
-    private indicatorComponent: IndicatorComponent;
+    indicatorComponent: IndicatorComponent;
 
     constructor(authService: AuthService) {
         this.authService = authService;
     }
 
-    public onToggleMethod() {
+    onToggleMethod() {
         // Unfold, if not done already.
         if (this.isCollapsed) this.isCollapsed = false;
 
@@ -31,7 +31,7 @@ export class LoginComponent {
         this.indicatorComponent.selectedIndex = 0;
     }
 
-    public onClickMailButton() {
+    onClickMailButton() {
         // Increase indicator on click.
         if (!this.isCollapsed && this.indicatorComponent.selectedIndex == 0) this.indicatorComponent.selectedIndex++;
 

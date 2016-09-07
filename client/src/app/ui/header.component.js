@@ -11,43 +11,44 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require("@angular/core");
 var HeaderComponent = (function () {
     function HeaderComponent() {
-        this.menuItems = [
-            {
-                icon: 'user-md',
-                title: 'Profil'
-            },
-            {
-                icon: 'cog',
-                title: 'Einstellungen'
-            },
-            {
-                icon: 'sign-out',
-                title: 'Abmelden'
-            }
-        ];
         this.tabItems = [
             {
                 icon: 'bell-o',
                 title: 'Verlauf',
-                notification: true
+                notification: true,
+                click: function () { console.log('bell-o'); }
             },
             {
                 icon: 'compass',
                 title: 'Entdecken',
-                notification: false
+                notification: false,
+                click: function () { console.log('compass'); }
             },
             {
                 icon: 'users',
                 title: 'Freunde',
-                notification: false
+                notification: false,
+                click: function () { console.log('users'); }
             }
         ];
-        this.setActiveTab(Math.trunc(this.tabItems.length / 2));
+        this.menuItems = [
+            {
+                icon: 'user-md',
+                title: 'Profil',
+                click: function () { console.log('user-md'); }
+            },
+            {
+                icon: 'cog',
+                title: 'Einstellungen',
+                click: function () { console.log('cog'); }
+            },
+            {
+                icon: 'sign-out',
+                title: 'Abmelden',
+                click: function () { console.log('sign-out'); }
+            }
+        ];
     }
-    HeaderComponent.prototype.setActiveTab = function (index) {
-        this.tabIndex = index;
-        this.tabItems[index].notification = false;
-    };
     HeaderComponent = __decorate([
         core_1.Component({
             template: require('./header.component.html'),

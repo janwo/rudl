@@ -18,8 +18,7 @@ export class AuthCallbackComponent {
                 token: token
             }
         }, DataService.domain);
-        console.log('test');
-
+        
         window.close();
     }
 }

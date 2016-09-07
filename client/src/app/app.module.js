@@ -16,7 +16,7 @@ var user_suggestions_component_1 = require("./ui/user-suggestions.component");
 var landing_page_component_1 = require("./ui/landing-page.component");
 var dashboard_component_1 = require("./ui/dashboard.component");
 var styled_button_component_1 = require("./ui/widgets/styled-button.component");
-var input_field_component_1 = require("./ui/input-field.component");
+var input_field_component_1 = require("./ui/widgets/input-field.component");
 var auth_callback_component_1 = require("./ui/auth-callback.component");
 var http_1 = require("@angular/http");
 var app_guard_1 = require("./app.guard");
@@ -26,6 +26,8 @@ var forms_1 = require("@angular/forms");
 var auth_service_1 = require("./auth.service");
 var indicator_component_1 = require("./ui/widgets/indicator.component");
 var header_component_1 = require("./ui/header.component");
+var popup_menu_component_1 = require("./ui/widgets/popup-menu.component");
+var tab_menu_component_1 = require("./ui/widgets/tab-menu.component");
 var AppModule = (function () {
     function AppModule() {
     }
@@ -38,6 +40,8 @@ var AppModule = (function () {
                 styled_button_component_1.StyledButtonComponent,
                 input_field_component_1.InputFieldComponent,
                 header_component_1.HeaderComponent,
+                popup_menu_component_1.PopupMenuComponent,
+                tab_menu_component_1.TabMenuComponent,
                 landing_page_component_1.LandingPageComponent,
                 indicator_component_1.IndicatorComponent,
                 dashboard_component_1.DashboardComponent,

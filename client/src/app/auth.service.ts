@@ -6,12 +6,12 @@ import {DataService} from "./data.service";
 @Injectable()
 export class AuthService {
 
-    public static callbackMessageType: string = 'AUTH_CALLBACK_MESSAGE';
-    private static localStorageKey: string = 'jwt-token';
+    static callbackMessageType: string = 'AUTH_CALLBACK_MESSAGE';
+    static localStorageKey: string = 'jwt-token';
 
-    private dataService: DataService;
-    private router: Router;
-    private token: string | boolean = false;
+	dataService: DataService;
+    router: Router;
+    token: string | boolean = false;
 
     constructor(dataService: DataService, router: Router) {
         this.dataService = dataService;
@@ -28,16 +28,16 @@ export class AuthService {
         return headers;
     }
 
-    public setToken(token: string): void {
+    setToken(token: string): void {
         this.token = token;
         localStorage.setItem(AuthService.localStorageKey, token);
     }
 
-    public getToken(): string | boolean {
+    getToken(): string | boolean {
         return this.token;
     }
 
-    public removeToken(): void {
+    removeToken(): void {
         this.token = false;
         localStorage.removeItem(AuthService.localStorageKey);
     }
@@ -46,11 +46,11 @@ export class AuthService {
         this.router.navigateByUrl('home');
     }
 
-    public signUp(username: string, password: string) {
+    signUp(username: string, password: string) {
 
     }
 
-    public signIn(username: string, password: string) {
+    signIn(username: string, password: string) {
 
     }
 
@@ -67,7 +67,7 @@ export class AuthService {
         }, false);
     }
 
-    public me() {
+    me() {
         return this.dataService.get('/api/users/me', this.createAuthorizationHeader());
     }
 }

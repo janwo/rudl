@@ -9,28 +9,28 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require("@angular/core");
-var data_service_1 = require("../data.service");
-var auth_service_1 = require("../auth.service");
-var AuthCallbackComponent = (function () {
-    function AuthCallbackComponent() {
-        var metaElement = document.querySelector('meta[name="token"]');
-        var token = metaElement.getAttribute('content');
-        window.opener.postMessage({
-            type: auth_service_1.AuthService.callbackMessageType,
-            message: {
-                token: token
-            }
-        }, data_service_1.DataService.domain);
-        window.close();
+var PopupMenuComponent = (function () {
+    function PopupMenuComponent() {
+        this.menuItems = [];
     }
-    AuthCallbackComponent = __decorate([
+    PopupMenuComponent.prototype.onClick = function (index) {
+        var menuItem = this.menuItems[index];
+        if (menuItem.click)
+            menuItem.click.call();
+    };
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', Array)
+    ], PopupMenuComponent.prototype, "menuItems", void 0);
+    PopupMenuComponent = __decorate([
         core_1.Component({
-            template: require('./auth-callback.component.html'),
-            styles: [require('./auth-callback.component.scss')]
+            template: require('./popup-menu.component.html'),
+            styles: [require('./popup-menu.component.scss')],
+            selector: 'popup-menu'
         }), 
         __metadata('design:paramtypes', [])
-    ], AuthCallbackComponent);
-    return AuthCallbackComponent;
+    ], PopupMenuComponent);
+    return PopupMenuComponent;
 }());
-exports.AuthCallbackComponent = AuthCallbackComponent;
-//# sourceMappingURL=auth-callback.component.js.map
+exports.PopupMenuComponent = PopupMenuComponent;
+//# sourceMappingURL=popup-menu.component.js.map
