@@ -7,6 +7,7 @@ import {AuthService} from "./auth.service";
     selector: 'app'
 })
 export class AppComponent {
+    
     constructor(authService: AuthService) {
 
     }

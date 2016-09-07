@@ -5,6 +5,7 @@ import {Component} from "@angular/core";
     styles: [require('./landing-page.component.scss')]
 })
 export class LandingPageComponent {
+    
     constructor() {
 
     }

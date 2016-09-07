@@ -4,8 +4,8 @@ import {AuthService} from "./auth.service";
 
 @Injectable()
 export class AppGuard implements CanActivate {
-    private authService: AuthService;
-    private router: Router;
+    authService: AuthService;
+    router: Router;
 
     constructor(authService: AuthService, router: Router) {
         this.authService = authService;

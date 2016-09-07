@@ -1,0 +1,52 @@
+@import '../variables';
+
+$tab-menu-font-size: $base-font-size;
+
+:host {
+  display: block;
+
+  ul {
+    width: 100%;
+    list-style: none;
+    display: flex;
+    justify-content: center;
+
+    & > * {
+      padding: map_get($base-padding, 'small');
+      margin-right: map_get($base-padding, 'default');
+      color: inactive(map_get($base-colors, 'text'));
+      cursor: pointer;
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      &.active {
+        color: map_get($base-colors, 'text');
+        cursor: default;
+      }
+
+      span {
+        font-size: $tab-menu-font-size;
+      }
+
+      i {
+        margin-right: map_get($base-padding, 'small');
+        font-size: $tab-menu-font-size * 1.125;
+        position: relative;
+      }
+
+      &.notification i:after {
+        content: '';
+        background-color: map_get($base-colors, 'primary');
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-radius: 50%;
+        width: 0.25rem;
+        height: 0.25rem;
+        display: block;
+      }
+    }
+  }
+}

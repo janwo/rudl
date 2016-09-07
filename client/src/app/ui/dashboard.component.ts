@@ -5,6 +5,7 @@ import {Component} from "@angular/core";
     styles: [require('./dashboard.component.scss')]
 })
 export class DashboardComponent {
+    
     constructor() {
         console.log('DASHBOARD');
     }

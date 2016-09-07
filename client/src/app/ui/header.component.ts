@@ -7,47 +7,46 @@ import {Component} from "@angular/core";
 })
 export class HeaderComponent {
     
-    private menuItems = [
-        {
-            icon: 'user-md',
-            title: 'Profil'
-        },
-        {
-            icon: 'cog',
-            title: 'Einstellungen'
-        },
-        {
-            icon: 'sign-out',
-            title: 'Abmelden'
-        }
-    ];
-    
-    private tabItems = [
+    tabItems = [
         {
             icon: 'bell-o',
             title: 'Verlauf',
-            notification: true
+            notification: true,
+            click: () => {console.log('bell-o');}
         },
         {
             icon: 'compass',
             title: 'Entdecken',
-            notification: false
+            notification: false,
+            click: () => {console.log('compass');}
         },
         {
             icon: 'users',
             title: 'Freunde',
-            notification: false
+            notification: false,
+            click: () => {console.log('users');}
         }
     ];
     
-    private tabIndex: number;
-    
-    private setActiveTab(index: number) {
-        this.tabIndex = index;
-        this.tabItems[index].notification = false;
-    }
+    menuItems = [
+        {
+            icon: 'user-md',
+            title: 'Profil',
+            click: () => {console.log('user-md');}
+        },
+        {
+            icon: 'cog',
+            title: 'Einstellungen',
+            click: () => {console.log('cog');}
+        },
+        {
+            icon: 'sign-out',
+            title: 'Abmelden',
+            click: () => {console.log('sign-out');}
+        }
+    ];
     
     constructor() {
-        this.setActiveTab(Math.trunc(this.tabItems.length / 2));
+        
     }
 }

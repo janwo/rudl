@@ -6,7 +6,7 @@ import {UserSuggestionsComponent} from "./ui/user-suggestions.component";
 import {LandingPageComponent} from "./ui/landing-page.component";
 import {DashboardComponent} from "./ui/dashboard.component";
 import {StyledButtonComponent} from "./ui/widgets/styled-button.component";
-import {InputFieldComponent} from "./ui/input-field.component";
+import {InputFieldComponent} from "./ui/widgets/input-field.component";
 import {AuthCallbackComponent} from "./ui/auth-callback.component";
 import {HttpModule, JsonpModule} from "@angular/http";
 import {AppGuard} from "./app.guard";
@@ -16,6 +16,8 @@ import {FormsModule} from "@angular/forms";
 import {AuthService} from "./auth.service";
 import {IndicatorComponent} from "./ui/widgets/indicator.component";
 import {HeaderComponent} from "./ui/header.component";
+import {PopupMenuComponent} from "./ui/widgets/popup-menu.component";
+import {TabMenuComponent} from "./ui/widgets/tab-menu.component";
 
 @NgModule({
     declarations: [
@@ -25,6 +27,8 @@ import {HeaderComponent} from "./ui/header.component";
         StyledButtonComponent,
         InputFieldComponent,
         HeaderComponent,
+        PopupMenuComponent,
+        TabMenuComponent,
         LandingPageComponent,
         IndicatorComponent,
         DashboardComponent,

@@ -6,7 +6,7 @@ export enum UserSuggestionsType {
 
 export class someUser {
 
-    private id: number;
+    id: number;
 
     constructor(id) {
         this.id = id;
@@ -21,8 +21,8 @@ export class someUser {
 export class UserSuggestionsComponent {
 
     @Input() type: UserSuggestionsType = UserSuggestionsType.GENERAL;
-    public types: UserSuggestionsType;
-    private users: someUser[] = [
+    types: UserSuggestionsType;
+    users: someUser[] = [
         new someUser(2),
         new someUser(3)
     ];

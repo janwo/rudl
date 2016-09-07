@@ -1,0 +1,55 @@
+@import '../variables';
+
+$popup-menu-arrow-size: 0.5rem;
+$popup-menu-border-size: 0.1rem;
+$popup-menu-background-color: #fff;
+$popup-menu-arrow-center-right-offset: 1rem;
+
+:host {
+  position: relative;
+  border: $popup-menu-border-size solid map_get($base-colors, 'primary');
+  list-style: none;
+  background: $popup-menu-background-color;
+  box-shadow: 0.125rem 0.125rem 0.5rem rgba(0,0,0,0.1);
+
+  li {
+    display: flex;
+    padding: map_get($base-padding, 'smaller') map_get($base-padding, 'default') map_get($base-padding, 'smaller') map_get($base-padding, 'smaller');
+    cursor: pointer;
+
+    i {
+      flex: 0 0 auto;
+      margin-right: map_get($base-padding, 'small');
+    }
+
+    span {
+      flex: 1 0 auto;
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  &:after, &:before {
+    $arrow-size: $popup-menu-arrow-size;
+
+    content: '';
+    width: 0;
+    height: 0;
+    position: absolute;
+    bottom: 100%;
+    right: $popup-menu-arrow-center-right-offset - $arrow-size;
+    border-style: solid;
+    border-width: 0 $arrow-size $arrow-size $arrow-size;
+    border-color: transparent transparent map_get($base-colors, 'primary') transparent;
+  }
+
+  &:after {
+    $arrow-size: $popup-menu-arrow-size - $popup-menu-border-size;
+
+    border-width: 0 $arrow-size $arrow-size $arrow-size;
+    right: $popup-menu-arrow-center-right-offset - $arrow-size;
+    border-color: transparent transparent $popup-menu-background-color transparent;
+  }
+}

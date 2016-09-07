@@ -1,10 +1,7 @@
 @import 'variables';
 
-$header-font-size: $base-font-size;
 $header-background-color: #fff;
 $header-content-size: 2rem;
-$header-menu-arrow-size: 0.5rem;
-$header-menu-border-size: 0.1rem;
 $header-vertical-padding: map_get($base-padding, 'smaller');
 $header-horizontal-padding: map_get($base-padding, 'default');
 
@@ -36,49 +33,14 @@ $header-horizontal-padding: map_get($base-padding, 'default');
     }
   }
 
-  .tabs {
+  tab-menu {
     flex: 1 0 auto;
-    list-style: none;
-    display: flex;
-    justify-content: center;
+  }
 
-    & > * {
-      padding: map_get($base-padding, 'small');
-      margin-right: map_get($base-padding, 'default');
-      color: inactive(map_get($base-colors, 'text'));
-      cursor: pointer;
-
-      &:last-child {
-        margin-right: 0;
-      }
-
-      &.active {
-        color: map_get($base-colors, 'text');
-        cursor: default;
-      }
-
-      span {
-        font-size: $header-font-size;
-      }
-
-      i {
-        margin-right: map_get($base-padding, 'small');
-        font-size: $header-font-size * 1.125;
-        position: relative;
-      }
-
-      &.notification i:after {
-        content: '';
-        background-color: map_get($base-colors, 'primary');
-        position: absolute;
-        top: 0;
-        left: 0;
-        border-radius: 50%;
-        width: 0.25rem;
-        height: 0.25rem;
-        display: block;
-      }
-    }
+  popup-menu {
+    position: absolute;
+    top: $header-content-size + $header-vertical-padding * 2;
+    right: $header-horizontal-padding;
   }
 
   .menu {
@@ -88,56 +50,5 @@ $header-horizontal-padding: map_get($base-padding, 'default');
     height: $header-content-size;
     border-radius: 50%;
     cursor: pointer;
-  }
-
-  .menu-popup {
-    border: $header-menu-border-size solid map_get($base-colors, 'primary');
-    position: absolute;
-    top: $header-content-size + $header-vertical-padding * 2;
-    list-style: none;
-    right: $header-horizontal-padding;
-    background: $header-background-color;
-    box-shadow: 0.125rem 0.125rem 0.5rem rgba(0,0,0,0.1);
-
-    li {
-      display: flex;
-      padding: map_get($base-padding, 'smaller') map_get($base-padding, 'default') map_get($base-padding, 'smaller') map_get($base-padding, 'smaller');
-      cursor: pointer;
-
-      i {
-        flex: 0 0 auto;
-        margin-right: map_get($base-padding, 'small');
-      }
-
-      span {
-        flex: 1 0 auto;
-      }
-
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.05);
-      }
-    }
-
-    &:after, &:before {
-      $arrow-size: $header-menu-arrow-size;
-
-      content: '';
-      width: 0;
-      height: 0;
-      position: absolute;
-      bottom: 100%;
-      right: $header-content-size / 2 - $arrow-size;
-      border-style: solid;
-      border-width: 0 $arrow-size $arrow-size $arrow-size;
-      border-color: transparent transparent map_get($base-colors, 'primary') transparent;
-    }
-
-    &:after {
-      $arrow-size: $header-menu-arrow-size - $header-menu-border-size;
-
-      border-width: 0 $arrow-size $arrow-size $arrow-size;
-      right: $header-content-size / 2 - $arrow-size;
-      border-color: transparent transparent $header-background-color transparent;
-    }
   }
 }
