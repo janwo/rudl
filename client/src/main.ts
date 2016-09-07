@@ -8,6 +8,9 @@ platformBrowserDynamic().bootstrapModule(AppModule);
 // Load Fonts.
 WebFont.load({
 	google: {
-		families: ['Lato:400,700']
+		families: [
+			'Lato:400,700',
+		    'Fredoka+One'
+		]
 	}
 });

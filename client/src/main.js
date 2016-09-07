@@ -7,7 +7,10 @@ platform_browser_dynamic_1.platformBrowserDynamic().bootstrapModule(app_module_1
 // Load Fonts.
 WebFont.load({
     google: {
-        families: ['Lato:400,700']
+        families: [
+            'Lato:400,700',
+            'Fredoka+One'
+        ]
     }
 });
 //# sourceMappingURL=main.js.map
