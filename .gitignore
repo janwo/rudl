@@ -1,12 +1,6 @@
-# Server
+# General
 typings/
 node_modules/
-
-# Client
-client/dist
-client/node_modules/
-client/src/app/**/.sass-cache/
-client/src/app/**/*.css.map
 
 # Node.js
 npm-debug.log*
@@ -18,3 +12,18 @@ logs
 
 # PHPStorm
 .idea/
+
+# Server
+server/**/*.js
+server/**/*.js.map
+!server/karma.conf.js
+
+# Client
+client/dist
+client/**/.sass-cache/
+client/**/*.css.map
+client/**/*.js
+client/**/*.js.map
+!client/webpack.config.js
+!client/karma.conf.js
+
