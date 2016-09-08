@@ -16,7 +16,7 @@ export class InputFieldComponent {
     }
 
     private formatDescription(): string {
-        if (this.description) return this.description.replace(/\*(.*)\*/, (...match) => {
+        if (this.description) return this.description.replace(/\*(.*)\*/, (...match:Array<string>) => {
             return `<span class="emphasize">${match[1]}</span>`;
         });
         return null;
