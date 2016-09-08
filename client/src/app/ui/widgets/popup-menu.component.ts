@@ -1,8 +1,8 @@
 import {Component, Input, style, animate, state, transition, trigger} from "@angular/core";
 
 @Component({
-    template: require('./popup-menu.component.html'),
-    styles: [require('./popup-menu.component.scss')],
+    templateUrl: 'popup-menu.component.html',
+    styleUrls: ['popup-menu.component.scss'],
     selector: 'popup-menu',
     animations: [
         trigger('flyInOut', [
