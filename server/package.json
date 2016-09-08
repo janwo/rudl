@@ -1,5 +1,5 @@
 {
-  "name": "eat.together.server",
+  "name": "meal2share-server",
   "version": "0.0.2",
   "main": "app.js",
   "scripts": {

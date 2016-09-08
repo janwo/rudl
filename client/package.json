@@ -1,5 +1,5 @@
 {
-  "name": "eat.together.client",
+  "name": "meal2share-client",
   "version": "0.0.1",
   "scripts": {
     "install": "typings install",
