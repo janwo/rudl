@@ -14,8 +14,8 @@ export class someUser {
 }
 
 @Component({
-    template: require('./user-suggestions.component.html'),
-    styles: [require('./user-suggestions.component.scss')],
+    templateUrl: 'user-suggestions.component.html',
+    styleUrls: ['user-suggestions.component.scss'],
     selector: 'user-suggestions'
 })
 export class UserSuggestionsComponent {

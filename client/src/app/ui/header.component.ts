@@ -1,8 +1,8 @@
 import {Component} from "@angular/core";
 
 @Component({
-    template: require('./header.component.html'),
-    styles: [require('./header.component.scss')],
+    templateUrl: 'header.component.html',
+    styleUrls: ['header.component.scss'],
     selector: 'header'
 })
 export class HeaderComponent {

@@ -1,8 +1,8 @@
 import {Component, Input} from "@angular/core";
 
 @Component({
-    template: require('./indicator.component.html'),
-    styles: [require('./indicator.component.scss')],
+    templateUrl: 'indicator.component.html',
+    styleUrls: ['indicator.component.scss'],
     selector: 'indicator'
 })
 export class IndicatorComponent {

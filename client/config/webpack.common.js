@@ -1,8 +1,8 @@
-let Helpers = require( './helpers' );
-let autoprefixer = require( 'autoprefixer' );
-let Webpack = require( "webpack" );
-let ExtractTextPlugin = require( "extract-text-webpack-plugin" );
-let AssetsWebpackPlugin = require( 'assets-webpack-plugin' );
+var Helpers = require( './helpers' );
+var autoprefixer = require( 'autoprefixer' );
+var Webpack = require( "webpack" );
+var ExtractTextPlugin = require( "extract-text-webpack-plugin" );
+var AssetsWebpackPlugin = require( 'assets-webpack-plugin' );
 
 module.exports = {
 	entry: {
@@ -50,13 +50,13 @@ module.exports = {
 	plugins: [
 		new Webpack.optimize.CommonsChunkPlugin( {
 			name: [ 'app', 'vendor', 'polyfill' ]
-		} ), (()=> {
-			let dir = Helpers.root( 'dist' );
+		} ), function() {
+			var dir = Helpers.root( 'dist' );
 			return new AssetsWebpackPlugin( {
 				path: dir,
 				prettyPrint: true,
 				filename: 'webpack-assets.json'
 			} );
-		})()
+		}()
 	]
 };
