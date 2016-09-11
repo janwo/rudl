@@ -1,17 +1,17 @@
 # General
-typings
-node_modules
+**/typings/
+**/node_modules/
 
 # Node.js
-npm-debug.log*
-.npm
+**/npm-debug.log*
+**/.npm/
 
 # Logs
-logs
-*.log
+**/logs/
+**/*.log
 
 # PHPStorm
-.idea
+**/.idea/
 
 # Server
 server/**/*.js
