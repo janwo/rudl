@@ -1,4 +1,4 @@
-@import "variables";
+@import './variables';
 
 $login-text-divider-color: inactive(map_get($base-colors, 'text'));
 $login-text-divider-line-size: $base-font-size * 0.05;
