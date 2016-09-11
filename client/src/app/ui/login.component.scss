@@ -1,4 +1,4 @@
-@import "variables";
+@import './variables';
 
 $login-text-divider-color: inactive(map_get($base-colors, 'text'));
 $login-text-divider-line-size: $base-font-size * 0.05;
@@ -40,23 +40,23 @@ $login-text-divider-font-size: $base-font-size * 0.75;
     }
   }
 
-  styled-button button {
+  styled-button /deep/ button {
     width: 100%;
   }
 
-  .auth-button-facebook button {
+  .auth-button-facebook /deep/ button {
     background-color: #3b5998;
   }
 
-  .auth-button-google button {
+  .auth-button-google /deep/ button {
     background-color: #df5138;
   }
 
-  .auth-button-twitter button {
+  .auth-button-twitter /deep/ button {
     background-color: #4099ff;
   }
 
-  small {
+  /deep/ small {
     color: inactive(map_get($base-colors, 'text'));
 
     a {

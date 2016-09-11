@@ -1,7 +1,7 @@
-let webpackMerge = require( 'webpack-merge' );
-let ExtractTextPlugin = require( 'extract-text-webpack-plugin' );
-let commonConfig = require( './webpack.common.js' );
-let Helpers = require( './helpers' );
+var webpackMerge = require( 'webpack-merge' );
+var ExtractTextPlugin = require( 'extract-text-webpack-plugin' );
+var commonConfig = require( './webpack.common.js' );
+var Helpers = require( './helpers' );
 
 module.exports = webpackMerge( commonConfig, {
 	devtool: 'cheap-module-eval-source-map',

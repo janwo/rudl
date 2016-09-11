@@ -8,7 +8,7 @@ export class someUser {
 
     id: number;
 
-    constructor(id) {
+    constructor(id: number) {
         this.id = id;
     }
 }
