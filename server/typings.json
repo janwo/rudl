@@ -1,5 +1,5 @@
 {
-  "name": "eat.together",
+  "name": "meal2share-server",
   "dependencies": {
     "bluebird": "registry:npm/bluebird#3.4.1+20160811213708",
     "glob": "registry:npm/glob#6.0.0+20160723033700",

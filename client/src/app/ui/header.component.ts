@@ -46,6 +46,12 @@ export class HeaderComponent {
         }
     ];
     
+    popupMenuIsVisible : boolean = true;
+    
+    togglePopupMenu() {
+        this.popupMenuIsVisible = !this.popupMenuIsVisible;
+    }
+    
     constructor() {
         
     }

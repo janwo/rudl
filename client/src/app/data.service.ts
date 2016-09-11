@@ -19,7 +19,7 @@ export class DataService {
         });
     }
 
-    public post(url: string, headers: Headers = new Headers(), body): Observable<Response> {
+    public post(url: string, headers: Headers = new Headers(), body: string): Observable<Response> {
         return this.jsonp.post(DataService.domain + url, body, {
             headers: headers
         });

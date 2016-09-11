@@ -48,7 +48,11 @@ var HeaderComponent = (function () {
                 click: function () { console.log('sign-out'); }
             }
         ];
+        this.popupMenuIsVisible = true;
     }
+    HeaderComponent.prototype.togglePopupMenu = function () {
+        this.popupMenuIsVisible = !this.popupMenuIsVisible;
+    };
     HeaderComponent = __decorate([
         core_1.Component({
             template: require('./header.component.html'),

@@ -16,7 +16,7 @@ var PopupMenuComponent = (function () {
     PopupMenuComponent.prototype.onClick = function (index) {
         var menuItem = this.menuItems[index];
         if (menuItem.click)
-            menuItem.click.call();
+            menuItem.click();
     };
     __decorate([
         core_1.Input(), 
@@ -26,7 +26,19 @@ var PopupMenuComponent = (function () {
         core_1.Component({
             template: require('./popup-menu.component.html'),
             styles: [require('./popup-menu.component.scss')],
-            selector: 'popup-menu'
+            selector: 'popup-menu',
+            animations: [
+                core_1.trigger('flyInOut', [
+                    core_1.state('in', core_1.style({ transform: 'translateX(0)' })),
+                    core_1.transition('void => *', [
+                        core_1.style({ transform: 'translateX(-100%)' }),
+                        core_1.animate(100)
+                    ]),
+                    core_1.transition('* => void', [
+                        core_1.animate(100, core_1.style({ transform: 'translateX(100%)' }))
+                    ])
+                ])
+            ]
         }), 
         __metadata('design:paramtypes', [])
     ], PopupMenuComponent);

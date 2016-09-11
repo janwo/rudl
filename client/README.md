@@ -6,7 +6,7 @@
 - "@angular/http": "^2.0.0-rc.2"
 
 ## Getting started
-1) Install NodeJS
-2) Run `npm install -g typings salita typescript`
-3) Run `npm install` within the */client* folder.
-4) Run `npm start` within the */client* folder.
+1. Install NodeJS
+2. Run `npm install -g typings salita typescript`
+3. Run `npm install` within the */client* folder.
+4. Run `npm start` within the */client* folder.
