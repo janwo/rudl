@@ -1,4 +1,7 @@
 import {Component} from "@angular/core";
+import {TabItem} from "./widgets/tab-menu.component";
+import {MenuItem} from "./widgets/popup-menu.component";
+import {AuthService} from "../auth.service";
 
 @Component({
     template: require('./header.component.html'),
@@ -7,46 +10,49 @@ import {Component} from "@angular/core";
 })
 export class HeaderComponent {
     
-    tabItems = [
+    tabItems : Array<TabItem> = [
         {
             icon: 'bell-o',
             title: 'Verlauf',
-            notification: true,
-            click: () => {console.log('bell-o');}
+            link: '/activity',
+            notification: false
         },
         {
             icon: 'compass',
             title: 'Entdecken',
-            notification: false,
-            click: () => {console.log('compass');}
+            link: '/explore',
+            notification: false
         },
         {
             icon: 'users',
-            title: 'Freunde',
-            notification: false,
-            click: () => {console.log('users');}
+            title: 'Leute',
+            link: '/people',
+            notification: false
         }
     ];
-    
-    menuItems = [
+    menuItems : Array<MenuItem> = [
         {
             icon: 'user-md',
             title: 'Profil',
-            click: () => {console.log('user-md');}
+            link: '/profile',
+            notification: false
         },
         {
             icon: 'cog',
             title: 'Einstellungen',
-            click: () => {console.log('cog');}
+            link: '/settings',
+            notification: false
         },
         {
             icon: 'sign-out',
             title: 'Abmelden',
-            click: () => {console.log('sign-out');}
+            click: () => this.authService.signOut(),
+            notification: false
         }
     ];
+    authService : AuthService;
     
-    constructor() {
-        
+    constructor(authService: AuthService) {
+        this.authService = authService;
     }
 }

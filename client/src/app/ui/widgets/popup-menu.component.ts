@@ -1,4 +1,6 @@
-import {Component, Input, style, animate, state, transition, trigger} from "@angular/core";
+import {Component, Input, OnDestroy, style, animate, transition, trigger} from "@angular/core";
+import {Router, NavigationEnd} from "@angular/router";
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
     template: require('./popup-menu.component.html'),
@@ -22,25 +24,50 @@ import {Component, Input, style, animate, state, transition, trigger} from "@ang
         ])
     ]
 })
-export class PopupMenuComponent {
+export class PopupMenuComponent implements OnDestroy {
     
-    @Input() menuItems : Array<{
-        icon: string,
-        title: string,
-        click?: any
-    }> = [];
+    @Input() menuItems : Array<MenuItem> = [];
     animationState : string | boolean = false;
+    routerChanges : Subscription;
+    router: Router;
+    activeMenuItem: MenuItem = null;
     
-    constructor() {
-        
+    ngOnDestroy(){
+        this.routerChanges.unsubscribe();
     }
     
     toggle() : void {
         this.animationState = this.animationState ? false : 'opened';
     }
     
-    onClick(index: number) {
-        let menuItem = this.menuItems[index];
-        if(menuItem.click) menuItem.click();
+    onClick(menuItem: MenuItem) {
+        if(menuItem.link) {
+            if(this.activeMenuItem && this.activeMenuItem.link == menuItem.link) return;
+            this.router.navigate([menuItem.link]);
+        }
+        if(menuItem.click) menuItem.click.call();
+        this.animationState = false;
     }
+    
+    constructor(router: Router) {
+        this.router = router;
+        this.routerChanges = router.events.filter(value => value instanceof NavigationEnd).subscribe((route: NavigationEnd) => {
+            this.activeMenuItem = null;
+            this.menuItems.every(( menuItem: MenuItem ) => {
+                if(menuItem.link !== route.urlAfterRedirects) return true;
+                
+                this.activeMenuItem = menuItem;
+                menuItem.notification = false;
+                return false;
+            });
+        });
+    }
+}
+
+export interface MenuItem {
+    icon: string,
+    notification: boolean,
+    title: string,
+    link?: string,
+    click?: any
 }

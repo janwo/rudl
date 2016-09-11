@@ -2,7 +2,7 @@ import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 import {AppComponent} from "./app.component";
 import {LoginComponent} from "./ui/login.component";
-import {UserSuggestionsComponent} from "./ui/user-suggestions.component";
+import {ExploreComponent} from "./ui/explore.component";
 import {LandingPageComponent} from "./ui/landing-page.component";
 import {DashboardComponent} from "./ui/dashboard.component";
 import {StyledButtonComponent} from "./ui/widgets/styled-button.component";
@@ -18,6 +18,10 @@ import {IndicatorComponent} from "./ui/widgets/indicator.component";
 import {HeaderComponent} from "./ui/header.component";
 import {PopupMenuComponent} from "./ui/widgets/popup-menu.component";
 import {TabMenuComponent} from "./ui/widgets/tab-menu.component";
+import {PeopleComponent} from "./ui/people.component";
+import {ActivityComponent} from "./ui/activity.component";
+import {SettingsComponent} from "./ui/settings.component";
+import {ProfileComponent} from "./ui/profile.component";
 
 @NgModule({
     declarations: [
@@ -32,7 +36,11 @@ import {TabMenuComponent} from "./ui/widgets/tab-menu.component";
         LandingPageComponent,
         IndicatorComponent,
         DashboardComponent,
-        UserSuggestionsComponent
+        ExploreComponent,
+        PeopleComponent,
+        ActivityComponent,
+        SettingsComponent,
+        ProfileComponent
     ],
     providers: [
         AuthService,

@@ -49,9 +49,13 @@ export class AuthService {
     signUp(username: string, password: string) {
 
     }
-
+    
     signIn(username: string, password: string) {
-
+        
+    }
+    
+    signOut() {
+        console.log('logout');
     }
 
     private registerAuthenticationMessageListener() {
