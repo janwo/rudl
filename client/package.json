@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "install": "typings install",
-    "start": "webpack-dev-server --inline --port 8079",
+    "start": "webpack-dev-server --hot --inline --port 8079",
     "test": "karma start",
     "aot": "node_modules/.bin/ngc -p .",
     "build": "rimraf dist && webpack --config config/webpack.prod.js --profile --bail"

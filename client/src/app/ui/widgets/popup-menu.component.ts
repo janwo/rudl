@@ -5,14 +5,19 @@ import {Component, Input, style, animate, state, transition, trigger} from "@ang
     styles: [require('./popup-menu.component.scss')],
     selector: 'popup-menu',
     animations: [
-        trigger('flyInOut', [
-            state('in', style({transform: 'translateX(0)'})),
-            transition('void => *', [
-                style({transform: 'translateX(-100%)'}),
+        trigger('openClose', [
+            transition('void => opened', [
+                style({
+                    transform: 'translateY(-1rem)',
+                    opacity: 0
+                }),
                 animate(100)
             ]),
-            transition('* => void', [
-                animate(100, style({transform: 'translateX(100%)'}))
+            transition('opened => void', [
+                animate(100, style({
+                    transform: 'translateY(-1rem)',
+                    opacity: 0
+                }))
             ])
         ])
     ]
@@ -24,9 +29,14 @@ export class PopupMenuComponent {
         title: string,
         click?: any
     }> = [];
+    animationState : string | boolean = false;
     
     constructor() {
         
+    }
+    
+    toggle() : void {
+        this.animationState = this.animationState ? false : 'opened';
     }
     
     onClick(index: number) {

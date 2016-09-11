@@ -1,8 +1,8 @@
 import {Component, Input} from "@angular/core";
 
 @Component({
-    templateUrl: 'styled-button.component.html',
-    styleUrls: ['styled-button.component.scss'],
+    template: require('./styled-button.component.html'),
+    styles: [require('./styled-button.component.scss')],
     selector: 'styled-button'
 })
 export class StyledButtonComponent {

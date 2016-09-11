@@ -3,8 +3,8 @@ import {AuthService} from "../auth.service";
 import {IndicatorComponent} from "./widgets/indicator.component";
 
 @Component({
-    templateUrl: 'login.component.html',
-    styleUrls: ['login.component.scss'],
+    template: require('./login.component.html'),
+    styles: [require('./login.component.scss')],
     selector: 'login'
 })
 export class LoginComponent {

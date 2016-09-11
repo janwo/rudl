@@ -2,5 +2,5 @@
 	<img src="../../assets/logo.svg"><span>frowl</span>
 </div>
 <tab-menu [(tabItems)]="tabItems"></tab-menu>
-<popup-menu [(menuItems)]="menuItems" *ngIf="popupMenuIsVisible"></popup-menu>
-<button class="menu" (click)="togglePopupMenu()"></button>
+<popup-menu [(menuItems)]="menuItems" #popupMenu></popup-menu>
+<button class="menu" (click)="popupMenu.toggle()"></button>

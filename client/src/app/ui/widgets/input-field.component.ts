@@ -1,8 +1,8 @@
 import {Component, Input} from "@angular/core";
 
 @Component({
-    templateUrl: 'input-field.component.html',
-    styleUrls: ['input-field.component.scss'],
+    template: require('./input-field.component.html'),
+    styles: [require('./input-field.component.scss')],
     selector: 'input-field'
 })
 export class InputFieldComponent {

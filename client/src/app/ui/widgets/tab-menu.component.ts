@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from "@angular/core";
 
 @Component({
-    templateUrl: 'tab-menu.component.html',
-    styleUrls: ['tab-menu.component.scss'],
+    template: require('./tab-menu.component.html'),
+    styles: [require('./tab-menu.component.scss')],
     selector: 'tab-menu'
 })
 export class TabMenuComponent implements OnInit {

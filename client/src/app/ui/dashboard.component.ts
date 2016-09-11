@@ -1,8 +1,8 @@
 import {Component} from "@angular/core";
 
 @Component({
-    templateUrl: 'dashboard.component.html',
-    styleUrls: ['dashboard.component.scss']
+    template: require('./dashboard.component.html'),
+    styles: [require('./dashboard.component.scss')]
 })
 export class DashboardComponent {
     

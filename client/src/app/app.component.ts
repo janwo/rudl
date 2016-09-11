@@ -2,8 +2,8 @@ import {Component} from "@angular/core";
 import {AuthService} from "./auth.service";
 
 @Component({
-    templateUrl: 'app.component.html',
-    styleUrls: ['app.component.scss'],
+    template: require('./app.component.html'),
+    styles: [require('./app.component.scss')],
     selector: 'app'
 })
 export class AppComponent {

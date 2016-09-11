@@ -3,8 +3,8 @@ import {DataService} from "../data.service";
 import {AuthService} from "../auth.service";
 
 @Component({
-    templateUrl: 'auth-callback.component.html',
-    styleUrls: ['auth-callback.component.scss']
+    template: require('./auth-callback.component.html'),
+    styles: [require('./auth-callback.component.scss')]
 })
 export class AuthCallbackComponent {
 

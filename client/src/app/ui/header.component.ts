@@ -1,8 +1,8 @@
 import {Component} from "@angular/core";
 
 @Component({
-    templateUrl: 'header.component.html',
-    styleUrls: ['header.component.scss'],
+    template: require('./header.component.html'),
+    styles: [require('./header.component.scss')],
     selector: 'header'
 })
 export class HeaderComponent {
@@ -45,12 +45,6 @@ export class HeaderComponent {
             click: () => {console.log('sign-out');}
         }
     ];
-    
-    popupMenuIsVisible : boolean = true;
-    
-    togglePopupMenu() {
-        this.popupMenuIsVisible = !this.popupMenuIsVisible;
-    }
     
     constructor() {
         
