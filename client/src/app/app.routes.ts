@@ -12,7 +12,7 @@ import {ProfileComponent} from "./ui/profile.component";
 
 const appRoutes: Routes = [
     {
-        path: 'signup',
+        path: 'sign-up',
         component: LandingPageComponent,
         pathMatch: 'full'
     },

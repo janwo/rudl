@@ -42,10 +42,6 @@ export class AuthService {
         localStorage.removeItem(AuthService.localStorageKey);
     }
 
-    private redirectToDashboard() {
-        this.router.navigateByUrl('home');
-    }
-
     signUp(username: string, password: string) {
 
     }
@@ -55,19 +51,20 @@ export class AuthService {
     }
     
     signOut() {
-        console.log('logout');
+        this.dataService.get('/api/sign-out', this.createAuthorizationHeader()).subscribe(response => {
+            if(response.statusCode == 200) {
+                this.removeToken();
+                this.router.navigate(['/sign-up']);
+            }
+        });
     }
 
     private registerAuthenticationMessageListener() {
         window.addEventListener('message', event => {
             if (event.origin != DataService.domain || event.data.type !== AuthService.callbackMessageType) return;
             this.setToken(event.data.message.token);
-
-            console.group('Window message received');
-            console.log(event.data.message.token);
-            console.groupEnd();
-
-            this.redirectToDashboard();
+    
+            this.router.navigate(['/']);
         }, false);
     }
 

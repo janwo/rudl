@@ -100,18 +100,22 @@ export function getUser(request: any, reply: any): void {
  */
 
 /**
- * Handles [GET] /api/sign_out
+ * Handles [GET] /api/sign-out
  * @param request Request-Object
  * @param reply Reply-Object
  */
 export function signOut(request: any, reply: any): void {
-	let promise = unsignToken(request.auth.credentials.token);
+	let decodedToken : DecodedToken = jwt.decode(request.auth.token);
+	let promise = unsignToken({
+		tokenId: decodedToken.tokenId,
+		userId: request.auth.credentials.id
+	}).then(() => {});
 	
 	reply.api(promise);
 }
 
 /**
- * Handles [POST] /api/sign_up
+ * Handles [POST] /api/sign-up
  * @param request Request-Object
  * @param reply Reply-Object
  */
@@ -132,7 +136,7 @@ export function signUp(request: any, reply: any): void {
 }
 
 /**
- * Handles [POST] /api/sign_in
+ * Handles [POST] /api/sign-in
  * @param request Request-Object
  * @param reply Reply-Object
  */
@@ -192,7 +196,7 @@ export function createUser(recipe: {
 }
 
 /**
- * Handles [POST] /api/check_username
+ * Handles [POST] /api/check-username
  * @param request Request-Object
  * @param reply Reply-Object
  */
@@ -409,9 +413,9 @@ export function findByMail(mail: string): Promise<IUser> {
 }
 
 export function findByToken(token: DecodedToken): Promise<IUser> {
-	return getTokenData(token).then((tokenData : TokenData) => User.findOne({
+	return getTokenData(token).then((tokenData : TokenData) => tokenData ? User.findOne({
 		_id: token.userId
-	}).exec());
+	}).exec() : null);
 }
 
 export function addProvider(user: IUser, provider: IUserProvider, save: boolean = false): Promise<IUser> {

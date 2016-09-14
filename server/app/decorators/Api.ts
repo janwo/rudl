@@ -8,7 +8,7 @@ export var DecoratorsConfig: DecoratorsConfiguration = [
 		method: function (input: Promise<any> | any) {
 			let respondWithSuccess = (data) => {
 				let response = {};
-				response['statusCode'] = data ? 200 : 204;
+				response['statusCode'] = 200;
 				if(data) response['data'] = data;
 				return this.response(response);
 			};

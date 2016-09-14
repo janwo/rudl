@@ -9,7 +9,7 @@ import GoogleStrategy = require("../strategies/GoogleStrategy");
 
 export var RoutesConfig: RoutesConfiguration = [
 	{
-		path: '/api/check_username',
+		path: '/api/check-username',
 		method: 'POST',
 		handler: Users.checkUsername,
 		config: {
@@ -17,7 +17,7 @@ export var RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/sign_up',
+		path: '/api/sign-up',
 		method: 'POST',
 		handler: Users.signUp,
 		config: {
@@ -25,7 +25,7 @@ export var RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/sign_in',
+		path: '/api/sign-in',
 		method: 'POST',
 		handler: Users.signIn,
 		config: {
@@ -35,7 +35,7 @@ export var RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/sign_out',
+		path: '/api/sign-out',
 		method: 'GET',
 		handler: Users.signOut,
 		config: {

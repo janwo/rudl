@@ -6,7 +6,7 @@ import {Config} from "./Config";
 mongoClient.connect(`mongodb://${Config.db.mongo.user}:${Config.db.mongo.password}@${Config.db.mongo.host}:${Config.db.mongo.port}/${Config.db.mongo.database}`);
 
 // Setup mongoose logging.
-var mongoConnection = mongoClient.connection;
+let mongoConnection = mongoClient.connection;
 mongoConnection.once('open', () => {
 	console.log(`Connected to mongo database "${Config.db.mongo.database}" as ${Config.db.mongo.user} successfully...`);
 	
@@ -17,11 +17,19 @@ mongoConnection.once('open', () => {
 });
 
 // Connect to redis.
-var redisClient = redis.createClient(Config.db.redis.port, Config.db.redis.host);
+let redisClient = redis.createClient(Config.db.redis.port, Config.db.redis.host);
 
 // Setup redis logging.
 redisClient.on('ready', () => {
 	console.log('Connected to redis successfully...');
+	
+	redisClient.on("monitor", (time, args) => {
+		console.log(time + ": " + args);
+	});
+	
+	redisClient.on("end", () => {
+		console.log('Connection to redis ended...');
+	});
 	
 	if (Config.log.databaseLogs.redis) {
 		console.log('Listening on any errors within redis database...');

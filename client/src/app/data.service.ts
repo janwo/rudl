@@ -1,33 +1,33 @@
 import {Injectable} from "@angular/core";
-import {Headers, Jsonp, Response} from "@angular/http";
-import {Observable} from "rxjs";
+import {Headers, Http, Response} from "@angular/http";
+import {Observable} from "rxjs/Observable";
 
 @Injectable()
 export class DataService {
 
     public static domain: string = 'http://localhost:8079';
 
-    private jsonp: Jsonp;
+    private http: Http;
 
-    constructor(jsonp: Jsonp) {
-        this.jsonp = jsonp;
+    constructor(http: Http) {
+        this.http = http;
     }
 
-    public get(url: string, headers: Headers = new Headers()): Observable<Response> {
-        return this.jsonp.get(DataService.domain + url, {
+    public get(url: string, headers : Headers = new Headers()): Observable<any> {
+        return this.http.get(DataService.domain + url, {
             headers: headers
-        });
+        }).map(response => response.json());
     }
 
-    public post(url: string, headers: Headers = new Headers(), body: string): Observable<Response> {
-        return this.jsonp.post(DataService.domain + url, body, {
+    public post(url: string, headers: Headers = new Headers(), body: string): Observable<any> {
+        return this.http.post(DataService.domain + url, body, {
             headers: headers
-        });
+        }).map(response => response.json());
     }
 
-    public delete(url: string, headers: Headers = new Headers()): Observable<Response> {
-        return this.jsonp.delete(DataService.domain + url, {
+    public delete(url: string, headers: Headers = new Headers()): Observable<any> {
+        return this.http.delete(DataService.domain + url, {
             headers: headers
-        });
+        }).map(response => response.json());
     }
 }
