@@ -105,11 +105,7 @@ export function getUser(request: any, reply: any): void {
  * @param reply Reply-Object
  */
 export function signOut(request: any, reply: any): void {
-	let decodedToken : DecodedToken = jwt.decode(request.auth.token);
-	let promise = unsignToken({
-		tokenId: decodedToken.tokenId,
-		userId: request.auth.credentials.id
-	}).then(() => {});
+	let promise = Promise.resolve(jwt.decode(request.auth.token)).then((decodedToken: DecodedToken) => unsignToken).then(() => {});
 	
 	reply.api(promise);
 }
@@ -310,21 +306,24 @@ export function saveUserDataCache(userDataCache: UserDataCache): Promise<UserDat
 	});
 }
 
-export function getTokenData(token: DecodedToken): Promise<TokenData> {
+export function getTokenData(token: DecodedToken, includeExpiredTokens: boolean = false): Promise<TokenData> {
 	return getUserDataCache(token.userId).then((userDataCache: UserDataCache) => {
-		// Remove old keys.
-		userDataCache.tokens = userDataCache.tokens.filter((tokenItem: TokenData) => {
-			return tokenItem.expiresAt > Date.now();
-		});
-		
 		// Search token.
 		let foundTokenData: TokenData = null;
-		for (let i = 0; i < userDataCache.tokens.length; i++) {
-			let tokenData: TokenData = userDataCache.tokens[i];
-			if (tokenData.tokenId != token.tokenId) continue;
-			tokenData.expiresAt = Date.now() + Config.jwt.expiresIn;
-			foundTokenData = tokenData;
-		}
+		userDataCache.tokens = userDataCache.tokens.filter((tokenItem: TokenData) => {
+			// Delete old expired token.
+			let now: number = Date.now();
+			if(tokenItem.expiresAt <= now + Config.jwt.deleteIn) return false;
+			
+			// Extend expiry of an successfully discovered token that is still within the expiry range.
+			if (tokenItem.tokenId === token.tokenId) {
+				if(tokenItem.expiresAt > now) tokenItem.expiresAt = now + Config.jwt.expiresIn;
+				if(includeExpiredTokens || tokenItem.expiresAt > now) foundTokenData = tokenItem;
+			}
+			
+			// Keep token.
+			return true;
+		});
 		
 		// Save changes.
 		return saveUserDataCache(userDataCache).then(() => foundTokenData);

@@ -1,7 +1,7 @@
 import {Component} from "@angular/core";
 import {TabItem} from "./widgets/tab-menu.component";
 import {MenuItem} from "./widgets/popup-menu.component";
-import {AuthService} from "../auth.service";
+import {UserService} from "../user.service";
 
 @Component({
     template: require('./header.component.html'),
@@ -46,13 +46,13 @@ export class HeaderComponent {
         {
             icon: 'sign-out',
             title: 'Abmelden',
-            click: () => this.authService.signOut(),
+            click: () => this.userService.signOut(),
             notification: false
         }
     ];
-    authService : AuthService;
+    userService : UserService;
     
-    constructor(authService: AuthService) {
-        this.authService = authService;
+    constructor(userService: UserService) {
+        this.userService = userService;
     }
 }

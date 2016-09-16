@@ -13,7 +13,7 @@ import {AppGuard} from "./app.guard";
 import {DataService} from "./data.service";
 import {routing, appRoutingProviders} from "./app.routes";
 import {FormsModule} from "@angular/forms";
-import {AuthService} from "./auth.service";
+import {UserService} from "./user.service";
 import {IndicatorComponent} from "./ui/widgets/indicator.component";
 import {HeaderComponent} from "./ui/header.component";
 import {PopupMenuComponent} from "./ui/widgets/popup-menu.component";
@@ -43,7 +43,7 @@ import {ProfileComponent} from "./ui/profile.component";
         ProfileComponent
     ],
     providers: [
-        AuthService,
+        UserService,
         DataService,
         AppGuard,
         appRoutingProviders
