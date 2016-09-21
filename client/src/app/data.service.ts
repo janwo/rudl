@@ -10,14 +10,12 @@ export class DataService {
     static callbackMessageType: string = 'AUTH_CALLBACK_MESSAGE';
     static localStorageKey: string = 'jwt-token';
     
-    router: Router;
     token: string = null;
 
-    private http: Http;
-
-    constructor(http: Http, router: Router) {
-        this.http = http;
-        this.router = router;
+    constructor(
+        private http: Http,
+        private router: Router
+    ) {
         this.token = localStorage.getItem(DataService.localStorageKey) || null;
         
         // Listen to any incoming authentication messages.

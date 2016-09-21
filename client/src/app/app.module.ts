@@ -16,31 +16,33 @@ import {FormsModule} from "@angular/forms";
 import {UserService} from "./user.service";
 import {IndicatorComponent} from "./ui/widgets/indicator.component";
 import {HeaderComponent} from "./ui/header.component";
-import {PopupMenuComponent} from "./ui/widgets/popup-menu.component";
+import {DropdownMenuComponent} from "./ui/widgets/dropdown-menu.component";
 import {TabMenuComponent} from "./ui/widgets/tab-menu.component";
 import {PeopleComponent} from "./ui/people.component";
 import {ActivityComponent} from "./ui/activity.component";
 import {SettingsComponent} from "./ui/settings.component";
 import {ProfileComponent} from "./ui/profile.component";
+import {ElevatedTabMenuComponent} from "./ui/widgets/elevated-tab-menu.component";
 
 @NgModule({
     declarations: [
-        AppComponent,
-        LoginComponent,
-        AuthCallbackComponent,
-        StyledButtonComponent,
-        InputFieldComponent,
-        HeaderComponent,
-        PopupMenuComponent,
-        TabMenuComponent,
-        LandingPageComponent,
-        IndicatorComponent,
-        DashboardComponent,
-        ExploreComponent,
-        PeopleComponent,
-        ActivityComponent,
-        SettingsComponent,
-        ProfileComponent
+	    AppComponent,
+	    LoginComponent,
+	    AuthCallbackComponent,
+	    StyledButtonComponent,
+	    InputFieldComponent,
+	    HeaderComponent,
+	    DropdownMenuComponent,
+	    TabMenuComponent,
+	    ElevatedTabMenuComponent,
+	    LandingPageComponent,
+	    IndicatorComponent,
+	    DashboardComponent,
+	    ExploreComponent,
+	    PeopleComponent,
+	    ActivityComponent,
+	    SettingsComponent,
+	    ProfileComponent
     ],
     providers: [
         UserService,

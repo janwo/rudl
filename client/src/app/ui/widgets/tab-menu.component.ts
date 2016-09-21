@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy} from "@angular/core";
+import {Component, Input, OnDestroy, OnInit} from "@angular/core";
 import {Router, NavigationEnd} from "@angular/router";
 import { Subscription } from 'rxjs/Subscription';
 
@@ -7,11 +7,10 @@ import { Subscription } from 'rxjs/Subscription';
     styles: [require('./tab-menu.component.scss')],
     selector: 'tab-menu'
 })
-export class TabMenuComponent implements OnDestroy {
+export class TabMenuComponent implements OnInit, OnDestroy {
     
     @Input() tabItems : Array<TabItem> = [];
     routerChanges : Subscription;
-    router: Router;
     activeTabItem: TabItem = null;
     
     ngOnDestroy(){
@@ -19,15 +18,19 @@ export class TabMenuComponent implements OnDestroy {
     }
     
     onClick(tabItem: TabItem) {
-        if(!this.activeTabItem || this.activeTabItem.link !== tabItem.link ) this.router.navigate([tabItem.link]);
+        if(!this.activeTabItem || this.activeTabItem.link !== tabItem.link ) this.router.navigateByUrl(tabItem.link);
     }
     
-    constructor(router: Router) {
-        this.router = router;
-        this.routerChanges = router.events.filter(value => value instanceof NavigationEnd).subscribe((route: NavigationEnd) => {
-            this.tabItems.every(( tabItem: TabItem ) => {
-                if(tabItem.link !== route.urlAfterRedirects) return true;
+    constructor(
+        private router: Router
+    ) {}
     
+    ngOnInit() {
+        this.routerChanges = this.router.events.filter(value => value instanceof NavigationEnd).subscribe((route: NavigationEnd) => {
+            this.activeTabItem = null;
+            this.tabItems.every(( tabItem: TabItem ) => {
+                if(!this.router.isActive(tabItem.link, true)) return true;
+            
                 this.activeTabItem = tabItem;
                 tabItem.notification = false;
                 return false;
@@ -37,7 +40,7 @@ export class TabMenuComponent implements OnDestroy {
 }
 
 export interface TabItem {
-    icon: string,
+    icon?: string,
     notification: boolean,
     title: string,
     link: string

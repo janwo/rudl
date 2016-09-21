@@ -1,17 +1,14 @@
-import {Injectable} from "@angular/core";
 import {DataService} from "./data.service";
 import {Router} from "@angular/router";
+import {Injectable} from "@angular/core";
 
 @Injectable()
 export class UserService {
-    
-    dataService: DataService;
-    router : Router;
 
-    constructor(dataService: DataService, router: Router) {
-        this.dataService = dataService;
-        this.router = router;
-    }
+    constructor(
+        private dataService: DataService,
+        private router: Router
+    ) {}
 
 
     signUp(username: string, password: string) {

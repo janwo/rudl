@@ -17,7 +17,5 @@ export class StyledButtonComponent {
         window.open(this.link);
     }
 
-    constructor() {
-
-    }
+    constructor() {}
 }

@@ -6,6 +6,5 @@ import {Component} from "@angular/core";
 })
 export class ActivityComponent {
 
-    constructor() {
-    }
+    constructor() {}
 }

@@ -1,11 +1,11 @@
-import {Component, Input, OnDestroy, style, animate, transition, trigger} from "@angular/core";
+import {Component, Input, OnDestroy, style, animate, transition, trigger, OnInit} from "@angular/core";
 import {Router, NavigationEnd} from "@angular/router";
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
-    template: require('./popup-menu.component.html'),
-    styles: [require('./popup-menu.component.scss')],
-    selector: 'popup-menu',
+    template: require('./dropdown-menu.component.html'),
+    styles: [require('./dropdown-menu.component.scss')],
+    selector: 'dropdown-menu',
     animations: [
         trigger('openClose', [
             transition('void => opened', [
@@ -24,12 +24,11 @@ import { Subscription } from 'rxjs/Subscription';
         ])
     ]
 })
-export class PopupMenuComponent implements OnDestroy {
+export class DropdownMenuComponent implements OnDestroy, OnInit {
     
     @Input() menuItems : Array<MenuItem> = [];
     animationState : string | boolean = false;
     routerChanges : Subscription;
-    router: Router;
     activeMenuItem: MenuItem = null;
     
     ngOnDestroy(){
@@ -43,18 +42,17 @@ export class PopupMenuComponent implements OnDestroy {
     onClick(menuItem: MenuItem) {
         if(menuItem.link) {
             if(this.activeMenuItem && this.activeMenuItem.link == menuItem.link) return;
-            this.router.navigate([menuItem.link]);
+            this.router.navigateByUrl(menuItem.link);
         }
         if(menuItem.click) menuItem.click.call();
         this.animationState = false;
     }
     
-    constructor(router: Router) {
-        this.router = router;
-        this.routerChanges = router.events.filter(value => value instanceof NavigationEnd).subscribe((route: NavigationEnd) => {
+    ngOnInit() {
+        this.routerChanges = this.router.events.filter(value => value instanceof NavigationEnd).subscribe((route: NavigationEnd) => {
             this.activeMenuItem = null;
-            this.menuItems.every(( menuItem: MenuItem ) => {
-                if(menuItem.link !== route.urlAfterRedirects) return true;
+            this.menuItems.every((menuItem: MenuItem) => {
+               if (!menuItem.link || !this.router.isActive(menuItem.link, true)) return true;
                 
                 this.activeMenuItem = menuItem;
                 menuItem.notification = false;
@@ -62,6 +60,10 @@ export class PopupMenuComponent implements OnDestroy {
             });
         });
     }
+    
+    constructor(
+        private router: Router
+    ) {}
 }
 
 export interface MenuItem {

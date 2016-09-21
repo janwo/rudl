@@ -8,7 +8,7 @@ import {DataService} from "./data.service";
 })
 export class AppComponent {
     
-    constructor(dataService: DataService) {
-
-    }
+    constructor(
+        private dataService: DataService
+    ) {}
 }

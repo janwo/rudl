@@ -1,1 +1,9 @@
-Settings
+<h1>Einstellungen</h1>
+<elevated-tab-menu [tabItems]="tabItems"></elevated-tab-menu>
+<div *ngIf="currentPage.section === 'general'">
+	general
+</div>
+
+<div *ngIf="currentPage.section === 'safety'">
+	safety
+</div>

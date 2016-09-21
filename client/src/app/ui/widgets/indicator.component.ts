@@ -9,6 +9,8 @@ export class IndicatorComponent {
 
     @Input() indicators: Array<string>;
     selectedIndex: number = 0;
+    
+    constructor() {}
 
     public onClick(clickedIndex: number) {
         this.selectedIndex = clickedIndex;

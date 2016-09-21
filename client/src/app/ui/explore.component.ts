@@ -26,6 +26,5 @@ export class ExploreComponent {
         new someUser(3)
     ];
 
-    constructor() {
-    }
+    constructor() {}
 }

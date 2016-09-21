@@ -17,6 +17,11 @@ const appRoutes: Routes = [
         pathMatch: 'full'
     },
     {
+        path: 'oauth/:strategy',
+        component: AuthCallbackComponent,
+        pathMatch: 'full'
+    },
+    {
         path: '',
         component: DashboardComponent,
         canActivate: [AppGuard],
@@ -25,15 +30,11 @@ const appRoutes: Routes = [
             { path: 'activity', component: ActivityComponent },
             { path: 'explore', component: ExploreComponent },
             { path: 'people', component: PeopleComponent },
-            { path: 'settings', component: SettingsComponent },
+            { path: 'settings', redirectTo: 'settings/general', pathMatch: 'full' },
+            { path: 'settings/:section', component: SettingsComponent },
             { path: 'profile', component: ProfileComponent }
         ]
     },
-    {
-        path: 'oauth/:strategy',
-        component: AuthCallbackComponent,
-        pathMatch: 'full'
-    }
 ];
 
 export const appRoutingProviders: any[] = [];

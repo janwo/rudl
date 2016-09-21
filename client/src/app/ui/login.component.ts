@@ -9,16 +9,15 @@ import {IndicatorComponent} from "./widgets/indicator.component";
 })
 export class LoginComponent {
     
-    userService: UserService;
     isCollapsed: boolean = true;
     signInOnly: boolean = false;
 
     @ViewChild(IndicatorComponent)
     indicatorComponent: IndicatorComponent;
 
-    constructor(userService: UserService) {
-        this.userService = userService;
-    }
+    constructor(
+        private userService: UserService
+    ) {}
 
     onToggleMethod() {
         // Unfold, if not done already.

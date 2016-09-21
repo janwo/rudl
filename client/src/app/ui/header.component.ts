@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 import {TabItem} from "./widgets/tab-menu.component";
-import {MenuItem} from "./widgets/popup-menu.component";
+import {MenuItem} from "./widgets/dropdown-menu.component";
 import {UserService} from "../user.service";
 
 @Component({
@@ -50,9 +50,8 @@ export class HeaderComponent {
             notification: false
         }
     ];
-    userService : UserService;
     
-    constructor(userService: UserService) {
-        this.userService = userService;
-    }
+    constructor(
+        private userService: UserService
+    ) {}
 }

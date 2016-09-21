@@ -1,16 +1,13 @@
-import {Injectable} from "@angular/core";
 import {CanActivate, Router} from "@angular/router";
 import {DataService} from "./data.service";
+import {Injectable} from "@angular/core";
 
 @Injectable()
 export class AppGuard implements CanActivate {
-    dataService: DataService;
-    router: Router;
 
-    constructor(authService: DataService, router: Router) {
-        this.dataService = authService;
-        this.router = router;
-    }
+    constructor(
+        private dataService: DataService,
+        private router: Router) {}
 
     canActivate() {
         let loggedIn = this.dataService.getToken() !== null;

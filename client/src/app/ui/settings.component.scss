@@ -2,4 +2,7 @@
 
 :host {
   display: block;
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: map_get($base-padding, 'default');
 }
