@@ -1,5 +1,5 @@
 import {Component, ViewChild} from "@angular/core";
-import {AuthService} from "../auth.service";
+import {UserService} from "../user.service";
 import {IndicatorComponent} from "./widgets/indicator.component";
 
 @Component({
@@ -8,17 +8,16 @@ import {IndicatorComponent} from "./widgets/indicator.component";
     selector: 'login'
 })
 export class LoginComponent {
-
-    authService: AuthService;
+    
     isCollapsed: boolean = true;
     signInOnly: boolean = false;
 
     @ViewChild(IndicatorComponent)
     indicatorComponent: IndicatorComponent;
 
-    constructor(authService: AuthService) {
-        this.authService = authService;
-    }
+    constructor(
+        private userService: UserService
+    ) {}
 
     onToggleMethod() {
         // Unfold, if not done already.
@@ -39,6 +38,6 @@ export class LoginComponent {
         if (this.isCollapsed) this.isCollapsed = false;
 
         // Try to register user.
-        this.authService.signUp('user', 'pwd');
+        this.userService.signUp('user', 'pwd');
     }
 }

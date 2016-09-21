@@ -37,7 +37,7 @@ $header-horizontal-padding: map_get($base-padding, 'default');
     flex: 1 0 auto;
   }
 
-  popup-menu {
+  dropdown-menu {
     position: absolute;
     top: $header-content-size + $header-vertical-padding * 2;
     right: $header-horizontal-padding;

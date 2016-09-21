@@ -1,0 +1,3 @@
+<ul *ngIf="animationState" [@openClose]="animationState">
+	<li *ngFor="let menuItem of menuItems" (click)="onClick(menuItem)" [ngClass]="{notification: menuItem.notification, active: activeMenuItem && menuItem.link == activeMenuItem.link}"><i class="fa fa-{{menuItem.icon}}"></i><span>{{menuItem.title}}</span></li>
+</ul>

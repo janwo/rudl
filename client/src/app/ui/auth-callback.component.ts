@@ -1,6 +1,5 @@
 import {Component} from "@angular/core";
 import {DataService} from "../data.service";
-import {AuthService} from "../auth.service";
 
 @Component({
     template: require('./auth-callback.component.html'),
@@ -13,7 +12,7 @@ export class AuthCallbackComponent {
         let token = metaElement.getAttribute('content');
 
         window.opener.postMessage({
-            type: AuthService.callbackMessageType,
+            type: DataService.callbackMessageType,
             message: {
                 token: token
             }

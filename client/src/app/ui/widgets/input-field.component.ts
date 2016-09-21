@@ -11,9 +11,7 @@ export class InputFieldComponent {
     @Input() type: string = null;
     @Input() placeholder: string = null;
 
-    constructor() {
-
-    }
+    constructor() {}
 
     private formatDescription(): string {
         if (this.description) return this.description.replace(/\*(.*)\*/, (...match:Array<string>) => {

@@ -14,11 +14,10 @@ export class someUser {
 }
 
 @Component({
-    template: require('./user-suggestions.component.html'),
-    styles: [require('./user-suggestions.component.scss')],
-    selector: 'user-suggestions'
+    template: require('./explore.component.html'),
+    styles: [require('./explore.component.scss')]
 })
-export class UserSuggestionsComponent {
+export class ExploreComponent {
 
     @Input() type: UserSuggestionsType = UserSuggestionsType.GENERAL;
     types: UserSuggestionsType;
@@ -27,6 +26,5 @@ export class UserSuggestionsComponent {
         new someUser(3)
     ];
 
-    constructor() {
-    }
+    constructor() {}
 }

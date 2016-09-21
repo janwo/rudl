@@ -1,3 +1,3 @@
 <ul>
-	<li *ngFor="let tabItem of tabItems; let i = index" (click)="setActiveTab(i)" [ngClass]="{active: tabIndex == i, notification: tabItem.notification}"><i class="fa fa-{{tabItem.icon}}"></i><span>{{tabItem.title}}</span></li>
+	<li *ngFor="let tabItem of tabItems" (click)="onClick(tabItem)" [ngClass]="{notification: tabItem.notification, active: activeTabItem && tabItem.link == activeTabItem.link}"><i class="fa fa-{{tabItem.icon}}" *ngIf="tabItem.icon"></i><span>{{tabItem.title}}</span></li>
 </ul>

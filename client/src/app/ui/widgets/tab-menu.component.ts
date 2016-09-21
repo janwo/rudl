@@ -1,31 +1,47 @@
-import {Component, Input, OnInit} from "@angular/core";
+import {Component, Input, OnDestroy, OnInit} from "@angular/core";
+import {Router, NavigationEnd} from "@angular/router";
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
     template: require('./tab-menu.component.html'),
     styles: [require('./tab-menu.component.scss')],
     selector: 'tab-menu'
 })
-export class TabMenuComponent implements OnInit {
+export class TabMenuComponent implements OnInit, OnDestroy {
     
-    @Input() tabItems : Array<{
-        icon: string,
-        notification: boolean,
-        title: string,
-        click?: any
-    }> = [];
-    @Input() tabIndex: number = 0;
+    @Input() tabItems : Array<TabItem> = [];
+    routerChanges : Subscription;
+    activeTabItem: TabItem = null;
     
-    setActiveTab(index: number) {
-        this.tabIndex = index;
-        let tabItem = this.tabItems[index];
-        tabItem.notification = false;
-        if(tabItem.click) tabItem.click.call();
+    ngOnDestroy(){
+        this.routerChanges.unsubscribe();
     }
     
-    ngOnInit(){
-        this.setActiveTab(this.tabIndex);
+    onClick(tabItem: TabItem) {
+        if(!this.activeTabItem || this.activeTabItem.link !== tabItem.link ) this.router.navigateByUrl(tabItem.link);
     }
     
-    constructor() {
+    constructor(
+        private router: Router
+    ) {}
+    
+    ngOnInit() {
+        this.routerChanges = this.router.events.filter(value => value instanceof NavigationEnd).subscribe((route: NavigationEnd) => {
+            this.activeTabItem = null;
+            this.tabItems.every(( tabItem: TabItem ) => {
+                if(!this.router.isActive(tabItem.link, true)) return true;
+            
+                this.activeTabItem = tabItem;
+                tabItem.notification = false;
+                return false;
+            });
+        });
     }
+}
+
+export interface TabItem {
+    icon?: string,
+    notification: boolean,
+    title: string,
+    link: string
 }

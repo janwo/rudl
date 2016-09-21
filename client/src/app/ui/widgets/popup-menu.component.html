@@ -1,3 +1,0 @@
-<ul *ngIf="animationState" [@openClose]="animationState">
-	<li *ngFor="let menuItem of menuItems; let i = index" (click)="onClick(i)"><i class="fa fa-{{menuItem.icon}}"></i><span>{{menuItem.title}}</span></li>
-</ul>

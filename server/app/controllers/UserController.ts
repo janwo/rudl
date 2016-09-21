@@ -100,18 +100,18 @@ export function getUser(request: any, reply: any): void {
  */
 
 /**
- * Handles [GET] /api/sign_out
+ * Handles [GET] /api/sign-out
  * @param request Request-Object
  * @param reply Reply-Object
  */
 export function signOut(request: any, reply: any): void {
-	let promise = unsignToken(request.auth.credentials.token);
+	let promise = Promise.resolve(jwt.decode(request.auth.token)).then((decodedToken: DecodedToken) => unsignToken).then(() => {});
 	
 	reply.api(promise);
 }
 
 /**
- * Handles [POST] /api/sign_up
+ * Handles [POST] /api/sign-up
  * @param request Request-Object
  * @param reply Reply-Object
  */
@@ -132,7 +132,7 @@ export function signUp(request: any, reply: any): void {
 }
 
 /**
- * Handles [POST] /api/sign_in
+ * Handles [POST] /api/sign-in
  * @param request Request-Object
  * @param reply Reply-Object
  */
@@ -192,7 +192,7 @@ export function createUser(recipe: {
 }
 
 /**
- * Handles [POST] /api/check_username
+ * Handles [POST] /api/check-username
  * @param request Request-Object
  * @param reply Reply-Object
  */
@@ -306,21 +306,24 @@ export function saveUserDataCache(userDataCache: UserDataCache): Promise<UserDat
 	});
 }
 
-export function getTokenData(token: DecodedToken): Promise<TokenData> {
+export function getTokenData(token: DecodedToken, includeExpiredTokens: boolean = false): Promise<TokenData> {
 	return getUserDataCache(token.userId).then((userDataCache: UserDataCache) => {
-		// Remove old keys.
-		userDataCache.tokens = userDataCache.tokens.filter((tokenItem: TokenData) => {
-			return tokenItem.expiresAt > Date.now();
-		});
-		
 		// Search token.
 		let foundTokenData: TokenData = null;
-		for (let i = 0; i < userDataCache.tokens.length; i++) {
-			let tokenData: TokenData = userDataCache.tokens[i];
-			if (tokenData.tokenId != token.tokenId) continue;
-			tokenData.expiresAt = Date.now() + Config.jwt.expiresIn;
-			foundTokenData = tokenData;
-		}
+		userDataCache.tokens = userDataCache.tokens.filter((tokenItem: TokenData) => {
+			// Delete old expired token.
+			let now: number = Date.now();
+			if(tokenItem.expiresAt <= now + Config.jwt.deleteIn) return false;
+			
+			// Extend expiry of an successfully discovered token that is still within the expiry range.
+			if (tokenItem.tokenId === token.tokenId) {
+				if(tokenItem.expiresAt > now) tokenItem.expiresAt = now + Config.jwt.expiresIn;
+				if(includeExpiredTokens || tokenItem.expiresAt > now) foundTokenData = tokenItem;
+			}
+			
+			// Keep token.
+			return true;
+		});
 		
 		// Save changes.
 		return saveUserDataCache(userDataCache).then(() => foundTokenData);
@@ -409,9 +412,9 @@ export function findByMail(mail: string): Promise<IUser> {
 }
 
 export function findByToken(token: DecodedToken): Promise<IUser> {
-	return getTokenData(token).then((tokenData : TokenData) => User.findOne({
+	return getTokenData(token).then((tokenData : TokenData) => tokenData ? User.findOne({
 		_id: token.userId
-	}).exec());
+	}).exec() : null);
 }
 
 export function addProvider(user: IUser, provider: IUserProvider, save: boolean = false): Promise<IUser> {

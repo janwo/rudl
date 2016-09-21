@@ -4,11 +4,37 @@ import {LandingPageComponent} from "./ui/landing-page.component";
 import {DashboardComponent} from "./ui/dashboard.component";
 import {AppGuard} from "./app.guard";
 import {AuthCallbackComponent} from "./ui/auth-callback.component";
+import {ExploreComponent} from "./ui/explore.component";
+import {ActivityComponent} from "./ui/activity.component";
+import {PeopleComponent} from "./ui/people.component";
+import {SettingsComponent} from "./ui/settings.component";
+import {ProfileComponent} from "./ui/profile.component";
 
 const appRoutes: Routes = [
-    {path: '', component: LandingPageComponent},
-    {path: 'home', component: DashboardComponent, canActivate: [AppGuard]},
-    {path: 'oauth/:strategy', component: AuthCallbackComponent}
+    {
+        path: 'sign-up',
+        component: LandingPageComponent,
+        pathMatch: 'full'
+    },
+    {
+        path: 'oauth/:strategy',
+        component: AuthCallbackComponent,
+        pathMatch: 'full'
+    },
+    {
+        path: '',
+        component: DashboardComponent,
+        canActivate: [AppGuard],
+        children: [
+            { path: '', redirectTo: 'explore', pathMatch: 'full' },
+            { path: 'activity', component: ActivityComponent },
+            { path: 'explore', component: ExploreComponent },
+            { path: 'people', component: PeopleComponent },
+            { path: 'settings', redirectTo: 'settings/general', pathMatch: 'full' },
+            { path: 'settings/:section', component: SettingsComponent },
+            { path: 'profile', component: ProfileComponent }
+        ]
+    },
 ];
 
 export const appRoutingProviders: any[] = [];
