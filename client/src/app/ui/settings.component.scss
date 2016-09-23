@@ -5,4 +5,21 @@
   max-width: 60rem;
   margin: 0 auto;
   padding: map_get($base-padding, 'default');
+
+  .tab-content {
+    border-radius: 0 $base-border-radius $base-border-radius $base-border-radius;
+    box-shadow: map_get($base-shadow, 'default');
+    background-color: map_get($base-colors, 'background-highlighted');
+    padding: map_get($base-padding, 'default');
+
+    & > div {
+      & > expander {
+        border-bottom: 0.1rem solid inactive( #ccc);
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+  }
 }

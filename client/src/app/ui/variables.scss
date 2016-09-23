@@ -4,6 +4,7 @@ $base-padding: (
   'small' : 0.75rem
 );
 $base-font-family: 'Lato';
+$base-border-radius: 0.25rem;
 $base-font-weight-normal: 400;
 $base-font-weight-bold: 700;
 $base-font-size: 1rem;
@@ -22,9 +23,19 @@ $base-heading-font-size: (
   @return transparentize(desaturate($color, 100%), 0.77);
 }
 
+$base-line-widths: (
+  'default': 0.1rem
+);
+
 $base-colors: (
   'primary': #50E3C2,
   'secondary': #00CBB9,
   'text': #4f4e52,
-  'background': #FAFAFA
+  'background': #FAFAFA,
+  'background-highlighted': #fff
+);
+
+$base-shadow: (
+  'default': 0 0.1rem 0.15rem rgba(0, 0, 0, 0.0375),
+  'elevated': 0.125rem 0.25rem 0.25rem rgba(0, 0, 0, 0.01875)
 );

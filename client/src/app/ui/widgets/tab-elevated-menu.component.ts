@@ -4,10 +4,10 @@ import {TabMenuComponent} from "./tab-menu.component";
 
 @Component({
     template: require('./tab-menu.component.html'),
-    styles: [require('./elevated-tab-menu.component.scss')],
-    selector: 'elevated-tab-menu'
+    styles: [require('./tab-elevated-menu.component.scss')],
+    selector: 'tab-elevated-menu'
 })
-export class ElevatedTabMenuComponent extends TabMenuComponent {
+export class TabElevatedMenuComponent extends TabMenuComponent {
     constructor(router: Router) {
         super(router);
     }

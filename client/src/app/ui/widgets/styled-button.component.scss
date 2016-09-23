@@ -5,9 +5,13 @@ $button-border-radius: 0.25rem;
 $button-padding: $button-font-size / 1.5; // --> 1 / 1.5 = 0.666
 $button-colors: (
   'default-background': map_get($base-colors, 'secondary'),
+  'default-inactive-background': inactive(map_get($base-colors, 'secondary')),
   'default-color': #fff,
-  'inactive-background': inactive(map_get($base-colors, 'secondary')),
-  'inactive-color': #fff
+  'default-inactive-color': #fff,
+  'minimal-color': map_get($base-colors, 'primary'),
+  'minimal-border-color': map_get($base-colors, 'primary'),
+  'minimal-inactive-color': inactive(map_get($base-colors, 'text')),
+  'minimal-inactive-border-color': inactive(map_get($base-colors, 'text'))
 );
 
 :host {
@@ -15,25 +19,44 @@ $button-colors: (
 
   button {
     transition: box-shadow 0.25s;
-    background-color: map_get($button-colors, 'default-background');
     cursor: pointer;
     margin-top: map_get($base-padding, 'small');
     margin-bottom: map_get($base-padding, 'small');
-    border: none;
-    box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.25);
     border-radius: $button-border-radius;
-    color: map_get($button-colors, 'default-color');
     font-size: $button-font-size;
     padding: $button-padding $button-padding * 1.5;
     display: block;
     text-align: center;
 
-    &:hover {
-      box-shadow: 0.15rem 0.15rem 0.15rem rgba(0, 0, 0, 0.25);
+    &.style-minimal {
+      border: map_get($base-line-widths, 'default') map_get($button-colors, 'minimal-border-color') solid;
+      color: map_get($button-colors, 'minimal-color');
+      background-color: transparent;
+
+      &[disabled] {
+        border: map_get($base-line-widths, 'default') map_get($button-colors, 'minimal-inactive-border-color') solid;
+        color: map_get($button-colors, 'minimal-inactive-color');
+      }
     }
 
-    &:active {
-      box-shadow: 0.025rem 0.025rem 0.025rem rgba(0, 0, 0, 0.125);
+    &.style-default {
+      border: none;
+      color: map_get($button-colors, 'default-color');
+      background-color: map_get($button-colors, 'default-background');
+      box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.25);
+
+      &:hover {
+        box-shadow: 0.15rem 0.15rem 0.15rem rgba(0, 0, 0, 0.25);
+      }
+
+      &:active {
+        box-shadow: 0.025rem 0.025rem 0.025rem rgba(0, 0, 0, 0.125);
+      }
+
+      &[disabled] {
+        background-color: map_get($button-colors, 'default-inactive-background');
+        color: map_get($button-colors, 'default-inactive-color');
+      }
     }
 
     &:focus {
@@ -41,8 +64,7 @@ $button-colors: (
     }
 
     &[disabled] {
-      background-color: map_get($button-colors, 'inactive-background');
-      color: map_get($button-colors, 'inactive-color');
+      cursor: default;
     }
 
     .fa {

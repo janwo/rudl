@@ -4,11 +4,11 @@ import {MenuItem} from "./widgets/dropdown-menu.component";
 import {UserService} from "../user.service";
 
 @Component({
-    template: require('./header.component.html'),
-    styles: [require('./header.component.scss')],
-    selector: 'header'
+    template: require('./navbar.component.html'),
+    styles: [require('./navbar.component.scss')],
+    selector: 'navbar'
 })
-export class HeaderComponent {
+export class NavbarComponent {
     
     tabItems : Array<TabItem> = [
         {

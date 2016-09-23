@@ -30,7 +30,7 @@ const appRoutes: Routes = [
             { path: 'activity', component: ActivityComponent },
             { path: 'explore', component: ExploreComponent },
             { path: 'people', component: PeopleComponent },
-            { path: 'settings', redirectTo: 'settings/general', pathMatch: 'full' },
+            { path: 'settings', redirectTo: 'settings/account', pathMatch: 'full' },
             { path: 'settings/:section', component: SettingsComponent },
             { path: 'profile', component: ProfileComponent }
         ]
