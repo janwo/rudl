@@ -27,3 +27,6 @@ client/**/*.js.map
 !client/config/**/*.js
 !client/webpack.config.js
 !client/karma.conf.js
+
+# Database
+db/

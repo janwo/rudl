@@ -12,11 +12,11 @@ $base-heading-font-family: 'Fredoka One';
 $base-heading-font-weight-normal: 400;
 $base-heading-font-bold-normal: $base-heading-font-weight-normal;
 $base-heading-font-size: (
-  'h1': 2rem,
-  'h2': 1.75rem,
-  'h3': 1.5rem,
-  'h4': 1.25rem,
-  'h5': 1.125rem
+  'h1': 1.75rem,
+  'h2': 1.6rem,
+  'h3': 1.45rem,
+  'h4': 1.3rem,
+  'h5': 1.15rem
 );
 
 @function inactive($color) {

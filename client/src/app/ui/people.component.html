@@ -1,1 +1,8 @@
-People
+<h1>Kennst du schon?</h1>
+<h1>Leute, denen du folgst</h1>
+<ul>
+	<li *ngFor="let followingUser of followingUsers" (click)="onClick(followingUser)">
+		<img src="">
+		<span>{{followingUser.name}}</span>
+	</li>
+</ul>

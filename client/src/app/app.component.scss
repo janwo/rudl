@@ -30,14 +30,15 @@
   }
 
   // Set headings.
-  @each $heading in $base-heading-font-size {
+  @each $heading, $size in $base-heading-font-size {
     $letter-spacing: -1em / 40;
 
-    #{$heading} {
+    /deep/ #{$heading} {
+      font-family: 'Fredoka One', sans-serif;
       font-weight: $base-font-weight-normal;
       margin-bottom: map_get($base-padding, 'default');
       letter-spacing: $letter-spacing;
-      font-size: map_get($base-heading-font-size, $heading);
+      font-size: $size;
     }
   }
 

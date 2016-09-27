@@ -45,15 +45,15 @@ $login-text-divider-font-size: $base-font-size * 0.75;
   }
 
   .auth-button-facebook /deep/ button {
-    background-color: #3b5998;
+    background-color: #3b5998 !important;
   }
 
   .auth-button-google /deep/ button {
-    background-color: #df5138;
+    background-color: #df5138 !important;
   }
 
   .auth-button-twitter /deep/ button {
-    background-color: #4099ff;
+    background-color: #4099ff !important;
   }
 
   /deep/ small {
