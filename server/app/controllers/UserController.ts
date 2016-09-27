@@ -122,7 +122,6 @@ export function signUp(request: any, reply: any): void {
 	let promise : Promise;
 	
 	// Check validity.
-	console.log(request.payload);
 	if(!request.payload ) {
 		promise = Promise.reject(Boom.badRequest('Missing payload.'));
 	} else {
@@ -132,7 +131,7 @@ export function signUp(request: any, reply: any): void {
 			password: request.payload.password,
 			firstName: request.payload.firstname,
 			lastName: request.payload.lastname
-		}).then(user => saveUser(user)).then((user: User) => signToken(user)).then((token: string) => {
+		}).then(saveUser).then((user: User) => signToken(user)).then((token: string) => {
 			return {
 				token: token
 			};
@@ -209,7 +208,6 @@ export function createUser(recipe: {
 			if(taken) return Promise.reject(Boom.badRequest('Cannot create user as the username or mail is already in use.'));
 		});
 	}).then(() => {
-		let now = Date.now();
 		return <User>{
 			firstName: recipe.firstName ? recipe.firstName : null,
 			lastName: recipe.lastName ? recipe.lastName : null,
@@ -221,9 +219,7 @@ export function createUser(recipe: {
 			auth: {
 				password: null,
 				providers: []
-			},
-			createdAt: now,
-			updatedAt: now
+			}
 		};
 	}).then((user : User) => setPassword(user, recipe.password));
 }
@@ -384,10 +380,10 @@ export function signToken(user: User): Promise<String> {
 	// Define token.
 	let token: DecodedToken = {
 		tokenId: Uuid.v4(),
-		userId: user._id
+		userId: user._key
 	};
 	
-	return getUserDataCache(user._id).then((userDataCache: UserDataCache) => {
+	return getUserDataCache(user._key).then((userDataCache: UserDataCache) => {
 		let now = Date.now();
 		
 		// Add token.
@@ -500,7 +496,17 @@ export function removeProvider(user: User, provider: UserProvider, save: boolean
 export function saveUser(user: User): Promise<User> {
 	return new Promise<User>(resolve => {
 		let userCollection = arangoClient.collection(arangoCollections.users);
-		resolve(user._key ? userCollection.replace(user._key, user) : userCollection.save(user));
+		let now = Date.now();
+		
+		if(user._key) {
+			user.updatedAt = now;
+			resolve(userCollection.replace(user._key, user));
+			return;
+		}
+		
+		user.createdAt = now;
+		user.updatedAt = now;
+		resolve(userCollection.save(user));
 	});
 }
 

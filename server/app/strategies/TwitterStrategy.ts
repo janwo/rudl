@@ -60,7 +60,7 @@ export function handleTwitter(request: any, reply: any): void {
 				mail: null /* default, Twitter does not return mails in those requests */
 			});
 		});
-	}).then((user: User) => UserController.addProvider(user, provider)).then(user => UserController.saveUser(user)).then(UserController.signToken).then(token => {
+	}).then((user: User) => UserController.addProvider(user, provider)).then(UserController.saveUser).then(UserController.signToken).then(token => {
 		reply.view('index', {
 			title: 'Authentication',
 			assets: staticAssets,

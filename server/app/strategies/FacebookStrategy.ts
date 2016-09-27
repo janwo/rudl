@@ -54,7 +54,7 @@ export function handleFacebook(request, reply): void {
 				mail: profile.email || profile.id + '@facebook.com'
 			});
 		});
-	}).then((user: User) => UserController.addProvider(user, provider)).then(user => UserController.saveUser(user)).then(UserController.signToken).then(token => {
+	}).then((user: User) => UserController.addProvider(user, provider)).then(UserController.saveUser).then(UserController.signToken).then(token => {
 		reply.view('index', {
 			title: 'Authentication',
 			assets: staticAssets,
