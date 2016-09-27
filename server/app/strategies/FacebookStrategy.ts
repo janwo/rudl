@@ -1,11 +1,11 @@
 import {Config} from "../../config/Config";
-import {IUser, IUserProvider} from "../models/User";
+import {User, UserProvider} from "../models/User";
 import {StrategyConfiguration} from "../../config/binders/StrategiesBinder";
 import {staticAssets} from "../routes/StaticRoutes";
 import UserController = require("../controllers/UserController");
 import Boom = require("boom");
 
-export var StrategyConfig: StrategyConfiguration = {
+export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
 	strategyName: 'facebook',
 	schemeName: 'bell',
@@ -27,18 +27,18 @@ export function handleFacebook(request, reply): void {
 	// Authenticated successful?
 	if (!request.auth.isAuthenticated) reply(Boom.badRequest('Authentication failed: ' + request.auth.error.message));
 	
-	var profile = request.auth.credentials.profile;
+	let profile = request.auth.credentials.profile;
 	
 	// Create provider.
-	var provider: IUserProvider = {
+	let provider: UserProvider = {
 		provider: StrategyConfig.strategyConfig.provider,
 		userIdentifier: profile.id,
 		accessToken: request.auth.credentials.token,
-		refreshBefore: request.auth.credentials.expiresIn ? request.auth.credentials.expiresIn + Date.now() / 1000 : null,
+		refreshBefore: request.auth.credentials.expiresIn ? request.auth.credentials.expiresIn + Math.trunc(Date.now() / 1000) : null,
 		refreshToken: request.auth.credentials.refreshToken || undefined
 	};
 	
-	UserController.findByProvider(provider).then((user: IUser) => {
+	UserController.findByProvider(provider).then((user: User) => {
 		// Found? Done!
 		if (user) return Promise.resolve(user);
 		
@@ -54,7 +54,7 @@ export function handleFacebook(request, reply): void {
 				mail: profile.email || profile.id + '@facebook.com'
 			});
 		});
-	}).then((user: IUser) => UserController.addProvider(user, provider)).then(user => user.save()).then(UserController.signToken).then(token => {
+	}).then((user: User) => UserController.addProvider(user, provider)).then(user => UserController.saveUser(user)).then(UserController.signToken).then(token => {
 		reply.view('index', {
 			title: 'Authentication',
 			assets: staticAssets,

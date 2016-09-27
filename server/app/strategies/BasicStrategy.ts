@@ -1,15 +1,15 @@
 import UserController = require("../controllers/UserController");
-import {IUser} from "../models/User";
+import {User} from "../models/User";
 import {StrategyConfiguration} from "../../config/binders/StrategiesBinder";
 import Boom = require("boom");
 
-export var StrategyConfig: StrategyConfiguration = {
+export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
 	strategyName: 'basic',
 	schemeName: 'basic',
 	strategyConfig: {
 		validateFunc: (request: any, username: string, password: string, callback: any) => {
-			UserController.findByUsername(username, password).then((user: IUser) => {
+			UserController.findByUsername(username, password).then((user: User) => {
 				// User found?
 				if (!user) return callback(null, false);
 				return callback(null, true, user);

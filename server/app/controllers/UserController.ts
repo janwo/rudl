@@ -4,30 +4,18 @@ import Uuid = require("node-uuid");
 import dot = require("dot-object");
 import bcrypt = require('bcrypt');
 import * as Joi from "joi";
+import {ValidationError} from "joi";
 import {Config} from "../../config/Config";
-import {User, IUser, IUserProvider, Validation, UserRoles} from "../models/User";
-import {redisClient} from "../../config/Database";
+import {User, UserProvider, Validation, UserRoles} from "../models/User";
+import {arangoClient, redisClient} from "../../config/Database";
 import {DecodedToken, UserDataCache, TokenData} from "../models/Token";
+import {Cursor} from "arangojs";
 import randomstring = require("randomstring");
 import jwt = require("jsonwebtoken");
-import {ValidationError} from "joi";
-
-/**
- * Handles [GET] /api/users/me
- * @param request Request-Object
- * @param reply Reply-Object
- */
-export function me(request: any, reply: any): void {
-	let user = request.auth.credentials;
-	reply.api(dot.transform({
-		id: "id",
-		username: "username",
-		firstName: "firstName",
-		lastName: "lastName",
-		createdAt: "createdAt"
-	}, user));
-}
-
+let arangoCollections = {
+	users: 'users',
+	activities: 'activities'
+};
 
 /**
  * Handles [GET] /api/users/{username}
@@ -35,11 +23,26 @@ export function me(request: any, reply: any): void {
  * @param reply Reply-Object
  */
 export function getUser(request: any, reply: any): void {
-	let user = request.params.username;
-	let promise = findByUsername(user).then((user: any) => {
-		if (!user) return Promise.reject(Boom.notFound('User not found.'));
-		return user;
-	}).then((user: IUser) => {
+	let promise = resolveUsername(request, reply).then((user: User) => {
+		return dot.transform({
+			id: "id",
+			username: "username",
+			firstName: "firstName",
+			lastName: "lastName",
+			createdAt: "createdAt"
+		}, user);
+	});
+	
+	reply.api(promise);
+}
+
+/**
+ * Handles [GET] /api/users/{username}/following
+ * @param request Request-Object
+ * @param reply Reply-Object
+ */
+export function getFollowees(request: any, reply: any): void {
+	let promise = resolveUsername(request, reply).then((user: User) => {
 		return dot.transform({
 			id: "id",
 			username: "username",
@@ -116,17 +119,25 @@ export function signOut(request: any, reply: any): void {
  * @param reply Reply-Object
  */
 export function signUp(request: any, reply: any): void {
-	let promise = createUser({
-		username: request.payload.username,
-		mail: request.payload.mail,
-		password: request.payload.password,
-		firstName: request.payload.firstname,
-		lastName: request.payload.lastname
-	}).then(user => user.save()).then((user : IUser) => signToken(user)).then(token => {
-		return {
-			token: token
-		};
-	});
+	let promise : Promise;
+	
+	// Check validity.
+	console.log(request.payload);
+	if(!request.payload ) {
+		promise = Promise.reject(Boom.badRequest('Missing payload.'));
+	} else {
+		promise = createUser({
+			username: request.payload.username,
+			mail: request.payload.mail,
+			password: request.payload.password,
+			firstName: request.payload.firstname,
+			lastName: request.payload.lastname
+		}).then(user => saveUser(user)).then((user: User) => signToken(user)).then((token: string) => {
+			return {
+				token: token
+			};
+		});
+	}
 	
 	reply.api(promise);
 }
@@ -147,23 +158,42 @@ export function signIn(request: any, reply: any): void {
 	reply.api(promise);
 }
 
+function resolveUsername(request: any, reply: any) {
+	// Get user.
+	let username = request.params.username;
+	return new Promise((resolve, reject) => {
+		if (username === 'me') {
+			resolve(request.auth.credentials);
+			return;
+		}
+		
+		findByUsername(username).then((user: any) => {
+			if (!user) {
+				reject(Boom.notFound('User not found.'));
+				return
+			}
+			resolve(user);
+		});
+	});
+}
+
 export function createUser(recipe: {
 	username: string;
 	mail: string;
 	password?: string;
 	firstName?: string;
 	lastName?: string;
-}): Promise<IUser> {
+}): Promise<User> {
 	return new Promise((resolve, reject) => {
 		Joi.validate(recipe, {
 			username: Validation.username,
-			password: Validation.password,
+			password: recipe.password === undefined ? Validation.password.optional() : Validation.password,
 			mail: Validation.mail,
 			firstName: Validation.firstName,
 			lastName: Validation.lastName,
 		}, (err: ValidationError, value) => {
 			if (err) {
-				reject(err);
+				reject(Boom.badRequest(err.message));
 				return;
 			}
 			resolve(value);
@@ -178,17 +208,24 @@ export function createUser(recipe: {
 			}, false);
 			if(taken) return Promise.reject(Boom.badRequest('Cannot create user as the username or mail is already in use.'));
 		});
-	}).then(() => new User({
-		firstName: recipe.firstName,
-		lastName: recipe.lastName,
-		username: recipe.username,
-		mails: {
-			primary: recipe.mail
-		},
-		scope: [
-			UserRoles.user
-		]
-	})).then(user => setPassword(user, recipe.password));
+	}).then(() => {
+		let now = Date.now();
+		return <User>{
+			firstName: recipe.firstName ? recipe.firstName : null,
+			lastName: recipe.lastName ? recipe.lastName : null,
+			username: recipe.username,
+			mails: [{mail: recipe.mail, verified: false}],
+			scope: [UserRoles.user],
+			location: null,
+			meta: {},
+			auth: {
+				password: null,
+				providers: []
+			},
+			createdAt: now,
+			updatedAt: now
+		};
+	}).then((user : User) => setPassword(user, recipe.password));
 }
 
 /**
@@ -197,7 +234,20 @@ export function createUser(recipe: {
  * @param reply Reply-Object
  */
 export function checkUsername(request: any, reply: any): void {
-	let promise = recommendUsername(request.payload.username);
+	let promise = new Promise((resolve, reject) => {
+		// Check validity.
+		if(!request.payload ) {
+			reject(Boom.badRequest('Missing payload.'));
+			return;
+		}
+		
+		if (!Joi.validate(request.payload.username, Validation.username)) {
+			reject(Boom.badRequest('Username has an invalid length or unexpected characters.'));
+			return;
+		}
+		
+		resolve(recommendUsername(request.payload.username));
+	});
 	
 	reply.api(promise);
 }
@@ -215,12 +265,12 @@ export function recommendUsername(username: string): Promise<{
 			return;
 		}
 		
-		resolve(User.find({username: {$regex: `^${username}[0-9]*$`}}).exec().then((users: Array<IUser>) => {
-			
-			return users.map(user => {
-				return user.username;
-			});
-		}).then((takenUsernames: Array<string>) => {
+		let aql = `
+		FOR u in ${arangoCollections.users} 
+			FILTER REGEX_TEST(u.username, "^${username}[0-9]*$") 
+			RETURN u
+		`;
+		resolve(arangoClient.query(aql).then(cursor => cursor.map(user => user.username)).then((takenUsernames: Array<string>) => {
 			let usernameCheckResult: any = {
 				username: username,
 				available: takenUsernames.length == 0 || takenUsernames.indexOf(username) < 0
@@ -262,8 +312,8 @@ export function recommendUsername(username: string): Promise<{
 	});
 }
 
-export function setPassword(user: IUser, password?: string): Promise<IUser> {
-	return new Promise<IUser>((resolve, reject) => {
+export function setPassword(user: User, password?: string): Promise<User> {
+	return new Promise<User>((resolve, reject) => {
 		bcrypt.hash(password ? password : randomstring.generate(10), 10, (err, hash) => {
 			if (err) {
 				reject(err);
@@ -275,7 +325,7 @@ export function setPassword(user: IUser, password?: string): Promise<IUser> {
 	});
 }
 
-export function getUserDataCache(userId: number | string): Promise<UserDataCache> {
+function getUserDataCache(userId: number | string): Promise<UserDataCache> {
 	return new Promise<UserDataCache>((resolve, reject) => {
 		// Retrieve user in redis.
 		let redisKey: string = `user-${userId}`;
@@ -292,7 +342,7 @@ export function getUserDataCache(userId: number | string): Promise<UserDataCache
 	});
 }
 
-export function saveUserDataCache(userDataCache: UserDataCache): Promise<UserDataCache> {
+function saveUserDataCache(userDataCache: UserDataCache): Promise<UserDataCache> {
 	return new Promise<UserDataCache>((resolve, reject) => {
 		// Retrieve user in redis.
 		let redisKey: string = `user-${userDataCache.userId}`;
@@ -330,20 +380,22 @@ export function getTokenData(token: DecodedToken, includeExpiredTokens: boolean 
 	});
 }
 
-export function signToken(user: IUser): Promise<String> {
+export function signToken(user: User): Promise<String> {
 	// Define token.
 	let token: DecodedToken = {
 		tokenId: Uuid.v4(),
-		userId: user.id
+		userId: user._id
 	};
 	
-	return getUserDataCache(user.id).then((userDataCache: UserDataCache) => {
+	return getUserDataCache(user._id).then((userDataCache: UserDataCache) => {
+		let now = Date.now();
+		
 		// Add token.
 		userDataCache.tokens.push({
 			tokenId: token.tokenId,
 			deviceName: 'Device', // TODO
-			createdAt: Date.now(),
-			expiresAt: Date.now() + Config.jwt.expiresIn
+			createdAt: now,
+			expiresAt: now + Config.jwt.expiresIn
 		});
 		return userDataCache;
 	}).then(saveUserDataCache).then(() => {
@@ -378,18 +430,19 @@ export function unsignToken(token: DecodedToken): Promise<UserDataCache> {
 	});
 }
 
-export function findByProvider(provider: IUserProvider): Promise<IUser> {
-	return Promise.resolve<IUser>(User.findOne({
-		$and: [
-			{'auth.providers.provider': provider.provider},
-			{'auth.providers.userIdentifier': provider.userIdentifier}
-		]
-	}).exec());
+export function findByProvider(provider: UserProvider): Promise<User> {
+	let aql = `
+	FOR u IN ${arangoCollections.users}
+		FOR p IN u.auth.providers 
+		FILTER p.provider == "${provider.provider}" && p.userIdentifier == "${provider.userIdentifier}"
+		RETURN u
+	`;
+	return Promise.resolve<User>(arangoClient.query(aql).then(cursor => handleSingleCursor<User>(cursor)));
 }
 
-export function findByUsername(username: string, password: string | boolean = false): Promise<IUser> {
-	return new Promise<IUser>((resolve, reject) => {
-		User.findOne({username: username}, (err, user: IUser) => {
+export function findByUsername(username: string, password: string | boolean = false): Promise<User> {
+	return new Promise<User>((resolve, reject) => {
+		arangoClient.collection(arangoCollections.users).byExample({username: username}, {limit: 1}).then(cursor => handleSingleCursor<User>(cursor)).then((user: User) => {
 			// If no password was given or no user was found, return (empty) result immediately.
 			if (!password || !user) return resolve(user);
 			
@@ -405,33 +458,56 @@ export function findByUsername(username: string, password: string | boolean = fa
 	});
 }
 
-export function findByMail(mail: string): Promise<IUser> {
-	return Promise.resolve<IUser>(User.findOne({
-		'mails.primary': mail
-	}).exec());
+export function findByMail(mail: string): Promise<User> {
+	let aql = `
+	FOR u IN ${arangoCollections.users}
+		FOR m IN u.mails
+            FILTER m.mail == "${mail}" && m.verified == true
+            LIMIT 1
+            RETURN u
+	`;
+	return Promise.resolve<User>(arangoClient.query(aql).then(cursor => handleSingleCursor<User>(cursor)));
 }
 
-export function findByToken(token: DecodedToken): Promise<IUser> {
-	return getTokenData(token).then((tokenData : TokenData) => tokenData ? User.findOne({
-		_id: token.userId
-	}).exec() : null);
+export function findByToken(token: DecodedToken): Promise<User> {
+	return getTokenData(token).then((tokenData : TokenData) => {
+		if(tokenData === null) return null;
+		return arangoClient.collection(arangoCollections.users).byExample({
+			_key: token.userId
+		}, {limit: 1}).then(cursor => handleSingleCursor<User>(cursor));
+	});
 }
 
-export function addProvider(user: IUser, provider: IUserProvider, save: boolean = false): Promise<IUser> {
-	return new Promise<IUser>(resolve => {
+export function addProvider(user: User, provider: UserProvider, save: boolean = false): Promise<User> {
+	return new Promise<User>(resolve => {
 		let existingProviderIndex: number = user.auth.providers.findIndex(elem => elem.provider === provider.provider && elem.userIdentifier === provider.userIdentifier);
 		if (existingProviderIndex >= 0)
 			user.auth.providers[existingProviderIndex] = provider;
 		else
 			user.auth.providers.push(provider);
-		return resolve(save ? user.save() : user);
+		return resolve(save ? saveUser(user) : user);
 	});
 }
 
-export function removeProvider(user: IUser, provider: IUserProvider, save: boolean = false): Promise<IUser> {
-	return new Promise<IUser>(resolve => {
+export function removeProvider(user: User, provider: UserProvider, save: boolean = false): Promise<User> {
+	return new Promise<User>(resolve => {
 		let existingProviderIndex: number = user.auth.providers.findIndex(elem => elem.provider === provider.provider && elem.userIdentifier === provider.userIdentifier);
 		if (existingProviderIndex >= 0) user.auth.providers.splice(existingProviderIndex, 1);
-		return resolve(save ? user.save() : user);
+		return resolve(save ? saveUser(user) : user);
 	});
+}
+
+export function saveUser(user: User): Promise<User> {
+	return new Promise<User>(resolve => {
+		let userCollection = arangoClient.collection(arangoCollections.users);
+		resolve(user._key ? userCollection.replace(user._key, user) : userCollection.save(user));
+	});
+}
+
+function handleSingleCursor<T>(cursor: Cursor) : Promise<T> {
+	return cursor.next().then(obj => obj === undefined ? null : obj);
+}
+
+function handleArrayCursor<T>(cursor: Cursor): Promise<Array<T>> {
+	return cursor.all();
 }

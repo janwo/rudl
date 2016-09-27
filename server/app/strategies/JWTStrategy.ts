@@ -8,7 +8,7 @@ import UserController = require("../controllers/UserController");
  lack of security storing a JWT token securely, authentication via cookies is an alternative approach.
  */
 
-export var StrategyConfig: StrategyConfiguration = {
+export const StrategyConfig: StrategyConfiguration = {
 	isDefault: true,
 	strategyName: 'jwt',
 	schemeName: 'jwt',

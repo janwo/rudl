@@ -18,6 +18,13 @@ export = {
 			database: process.env.MONGO_DB || 'eattogether',
 			user: process.env.MONGO_USER || 'eattogether',
 			password: process.env.MONGO_PASSWORD || 'eattogether'
+		},
+		arango: {
+			host: process.env.ARANGO_HOST || 'localhost',
+			port: process.env.ARANGO_PORT || 8000,
+			database: process.env.ARANGO_DB || 'meal2share',
+			user: process.env.ARANGO_USER || 'meal2share',
+			password: process.env.ARANGO_PASSWORD || 'meal2share'
 		}
 	},
 	log: {
