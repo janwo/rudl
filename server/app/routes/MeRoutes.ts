@@ -7,61 +7,47 @@ import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
 
-export var RoutesConfig: RoutesConfiguration = [
+export const RoutesConfig: RoutesConfiguration = [
 	{
-		path: '/api/check-username',
-		method: 'POST',
-		handler: UserController.checkUsername,
-		config: {
-			auth: false
-		}
-	},
-	{
-		path: '/api/sign-up',
-		method: 'POST',
-		handler: UserController.signUp,
-		config: {
-			auth: false
-		}
-	},
-	{
-		path: '/api/sign-in',
-		method: 'POST',
-		handler: UserController.signIn,
-		config: {
-			auth: {
-				strategies: ['basic']
-			}
-		}
-	},
-	{
-		path: '/api/sign-out',
-		method: 'GET',
-		handler: UserController.signOut,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			}
-		}
-	},
-	{
-		path: '/api/users/{username}',
-		method: 'GET',
-		handler: UserController.getUser,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			}
-		}
-	},
-	{
-		path: '/api/users/{username}/following',
+		path: '/api/me/followers/{follower}',
 		method: 'GET',
 		handler: UserController.getFollowees,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			}
+		}
+	},
+	{
+		path: '/api/me/following/{followee}',
+		method: 'GET',
+		handler: UserController.getFollowees,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			}
+		}
+	},
+	{
+		path: '/api/me/following/{followee}',
+		method: 'PUT',
+		handler: UserController.deleteFollower,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			}
+		}
+	},
+	{
+		path: '/api/me/following/{followee}',
+		method: 'DELETE',
+		handler: UserController.deleteFollower,
 		config: {
 			auth: {
 				scope: [

@@ -17,7 +17,7 @@ export const staticAssets = ((entries, assets) => {
 	require('../../../client/dist/webpack-assets')
 );
 
-export var RoutesConfig: RoutesConfiguration = [
+export const RoutesConfig: RoutesConfiguration = [
 	{
 		method: 'GET',
 		path: '/assets/{path*}',
