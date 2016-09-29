@@ -9,211 +9,59 @@ import {Config} from "../../config/Config";
 import {User, UserProvider, Validation, UserRoles} from "../models/User";
 import {arangoClient, redisClient} from "../../config/Database";
 import {DecodedToken, UserDataCache, TokenData} from "../models/Token";
-import {Cursor} from "arangojs";
 import randomstring = require("randomstring");
 import jwt = require("jsonwebtoken");
+import {Cursor} from "arangojs";
+import {Edge} from "../models/Edge";
 let arangoCollections = {
 	users: 'users',
+	userConnections: 'user-connections',
 	activities: 'activities'
 };
 
-declare module UserController {
-	/**
-	 * Handles [GET] /api/users/{username}
-	 * @param request Request-Object
-	 * @param reply Reply-Object
-	 */
-	export function getUser(request: any, reply: any): void {
-		let promise = resolveUsername(request, reply).then((user: User) => {
-			return dot.transform({
-				id: "id",
-				username: "username",
-				firstName: "firstName",
-				lastName: "lastName",
-				createdAt: "createdAt"
-			}, user);
-		});
-		
-		reply.api(promise);
-	}
+export module UserController {
 	
-	/**
-	 * Handles [GET] /api/users/{username}/following
-	 * @param request Request-Object
-	 * @param reply Reply-Object
-	 */
-	export function getFollowees(request: any, reply: any): void {
-		let promise = resolveUsername(request, reply).then((user: User) => {
-			return dot.transform({
-				id: "id",
-				username: "username",
-				firstName: "firstName",
-				lastName: "lastName",
-				createdAt: "createdAt"
-			}, user);
-		});
-		
-		reply.api(promise);
-	}
-	
-	/*
-	 var smtpTransport = Nodemailer.createTransport(Config.mailer.options);
-	 request.server.render('templates/reset-password-email', {
-	 name: user.displayName,
-	 appName: Config.app.title,
-	 url: 'http://' + request.headers.host + '/auth/reset/' + token
-	 }, function (err, emailHTML) {
-	 
-	 var mailOptions = {
-	 to: user.email,
-	 from: Config.mailer.from,
-	 subject: 'Password Reset',
-	 html: emailHTML
-	 };
-	 smtpTransport.sendMail(mailOptions, function (err) {
-	 
-	 if (!err) {
-	 reply({message: 'An email has been sent to ' + user.email + ' with further instructions.'});
-	 } else {
-	 return reply(Boom.badRequest('Failure sending email'));
-	 }
-	 
-	 done(err);
-	 });
-	 });
-	 },
-	 */
-	
-	/*
-	 function (user, done) {
-	 request.server.render('templates/reset-password-confirm-email', {
-	 name: user.displayName,
-	 appName: Config.app.title
-	 }, function (err, emailHTML) {
-	 var mailOptions = {
-	 to: user.email,
-	 from: Config.mailer.from,
-	 subject: 'Your password has been changed',
-	 html: emailHTML
-	 };
-	 
-	 smtpTransport.sendMail(mailOptions, function (err) {
-	 done(err, 'done');
-	 });
-	 });
-	 */
-	
-	/**
-	 * Handles [GET] /api/sign-out
-	 * @param request Request-Object
-	 * @param reply Reply-Object
-	 */
-	export function signOut(request: any, reply: any): void {
-		let promise = Promise.resolve(jwt.decode(request.auth.token)).then((decodedToken: DecodedToken) => unsignToken).then(() => {});
-		
-		reply.api(promise);
-	}
-	
-	/**
-	 * Handles [POST] /api/sign-up
-	 * @param request Request-Object
-	 * @param reply Reply-Object
-	 */
-	export function signUp(request: any, reply: any): void {
-		let promise: Promise;
-		
-		// Check validity.
-		if (!request.payload) {
-			promise = Promise.reject(Boom.badRequest('Missing payload.'));
-		} else {
-			promise = createUser({
-				username: request.payload.username,
-				mail: request.payload.mail,
-				password: request.payload.password,
-				firstName: request.payload.firstname,
-				lastName: request.payload.lastname
-			}).then(saveUser).then((user: User) => signToken(user)).then((token: string) => {
-				return {
-					token: token
-				};
-			});
-		}
-		
-		reply.api(promise);
-	}
-	
-	/**
-	 * Handles [POST] /api/sign-in
-	 * @param request Request-Object
-	 * @param reply Reply-Object
-	 */
-	export function signIn(request: any, reply: any): void {
-		let user = request.auth.credentials;
-		let promise = signToken(user).then(token => {
-			return {
-				token: token
-			};
-		});
-		
-		reply.api(promise);
-	}
-	
-	function resolveUsername(request: any, reply: any) {
-		// Get user.
-		let username = request.params.username;
-		return new Promise((resolve, reject) => {
-			if (username === 'me') {
-				resolve(request.auth.credentials);
-				return;
-			}
-			
-			findByUsername(username).then((user: any) => {
-				if (!user) {
-					reject(Boom.notFound('User not found.'));
-					return
-				}
-				resolve(user);
-			});
-		});
-	}
-	
-	export function createUser(recipe: {
+	interface UserRecipe {
 		username: string;
 		mail: string;
 		password?: string;
 		firstName?: string;
 		lastName?: string;
-	}): Promise<User> {
-		return new Promise((resolve, reject) => {
+	}
+	
+	export function createUser(recipe: UserRecipe): Promise<User> {
+		// Validate inputs.
+		let promise = new Promise((resolve, reject) => {
 			Joi.validate(recipe, {
 				username: Validation.username,
 				password: recipe.password === undefined ? Validation.password.optional() : Validation.password,
 				mail: Validation.mail,
 				firstName: Validation.firstName,
 				lastName: Validation.lastName,
-			}, (err: ValidationError, value) => {
+			}, (err: ValidationError, validatedRecipe: UserRecipe) => {
 				if (err) {
 					reject(Boom.badRequest(err.message));
 					return;
 				}
-				resolve(value);
+				resolve(validatedRecipe);
 			});
-		}).then(() => {
+		});
+		
+		// Does user already exist?
+		promise.then((validatedRecipe: UserRecipe) => {
 			return Promise.all([
 				findByUsername(recipe.username),
 				findByMail(recipe.mail)
-			]).then((values: Array<any>) => {
-				let taken = values.reduce((previousValue, currentValue) => {
-					return previousValue || currentValue !== null;
-				}, false);
-				if (taken) return Promise.reject(Boom.badRequest('Cannot create user as the username or mail is already in use.'));
-			});
-		}).then(() => {
+			]).then(() => validatedRecipe).catch(() => Promise.reject(Boom.badRequest('Cannot create user as the username or mail is already in use.')));
+		});
+		
+		// Create user.
+		promise.then((validatedRecipe: UserRecipe) => {
 			return <User>{
-				firstName: recipe.firstName ? recipe.firstName : null,
-				lastName: recipe.lastName ? recipe.lastName : null,
-				username: recipe.username,
-				mails: [{mail: recipe.mail, verified: false}],
+				firstName: validatedRecipe.firstName ? validatedRecipe.firstName : null,
+				lastName: validatedRecipe.lastName ? validatedRecipe.lastName : null,
+				username: validatedRecipe.username,
+				mails: [{mail: validatedRecipe.mail, verified: false}],
 				scope: [UserRoles.user],
 				location: null,
 				meta: {},
@@ -223,89 +71,62 @@ declare module UserController {
 				}
 			};
 		}).then((user: User) => setPassword(user, recipe.password));
-	}
-	
-	/**
-	 * Handles [POST] /api/check-username
-	 * @param request Request-Object
-	 * @param reply Reply-Object
-	 */
-	export function checkUsername(request: any, reply: any): void {
-		let promise = new Promise((resolve, reject) => {
-			// Check validity.
-			if (!request.payload) {
-				reject(Boom.badRequest('Missing payload.'));
-				return;
-			}
-			
-			if (!Joi.validate(request.payload.username, Validation.username)) {
-				reject(Boom.badRequest('Username has an invalid length or unexpected characters.'));
-				return;
-			}
-			
-			resolve(recommendUsername(request.payload.username));
-		});
 		
-		reply.api(promise);
+		return promise;
 	}
 	
-	export function recommendUsername(username: string): Promise<{
+	export function checkUsername(username: string): Promise<{
 		username: string;
 		available: boolean;
 		recommendations?: Array<string>
 	}> {
-		return new Promise((resolve, reject) => {
-			//TODO The recommendation array does return strings greater than 16 chars.
-			// Check validity.
-			if (!Joi.validate(username, Validation.username)) {
-				reject(Boom.badRequest('Username has an invalid length or unexpected characters.'));
-				return;
-			}
+		//TODO The recommendation array does return strings greater than 16 chars.
+		// Check validity.
+		if (!Joi.validate(username, Validation.username)) return Promise.reject(Boom.badRequest('Username has an invalid length or unexpected characters.'));
+		
+		let aqlQuery = `FOR u in @@collection FILTER REGEX_TEST(u.username, "^@username[0-9]*$") RETURN u`;
+		let aqlParams = {
+			collection: arangoCollections.users,
+			username: username
+		};
+		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.map((user: User) => user.username)).then((takenUsernames: Array<string>) => {
+			let usernameCheckResult: any = {
+				username: username,
+				available: takenUsernames.length == 0 || takenUsernames.indexOf(username) < 0
+			};
 			
-			let aql = `
-		FOR u in ${arangoCollections.users} 
-			FILTER REGEX_TEST(u.username, "^${username}[0-9]*$") 
-			RETURN u
-		`;
-			resolve(arangoClient.query(aql).then(cursor => cursor.map(user => user.username)).then((takenUsernames: Array<string>) => {
-				let usernameCheckResult: any = {
-					username: username,
-					available: takenUsernames.length == 0 || takenUsernames.indexOf(username) < 0
+			if (!usernameCheckResult.available) {
+				// Add recommendations.
+				usernameCheckResult.recommendations = [];
+				
+				let pad = (num: number) => {
+					let padNum: string = num.toString();
+					while (padNum.length < 2) padNum = "0" + padNum;
+					return padNum;
 				};
 				
-				if (!usernameCheckResult.available) {
-					// Add recommendations.
-					usernameCheckResult.recommendations = [];
-					
-					let pad = (num: number) => {
-						let padNum: string = num.toString();
-						while (padNum.length < 2) padNum = "0" + padNum;
-						return padNum;
-					};
-					
-					/*
-					 Method 1 - Append a number.
-					 Method 2 - Append a number with pad.
-					 */
-					let methods = [
-						`${username}#`,
-						`${username}##`
-					];
-					methods.forEach(method => {
-						let counter: number = 2;
-						while (true) {
-							let suggestion = method.replace('##', pad(counter)).replace('#', counter.toString());
-							if (takenUsernames.indexOf(suggestion) < 0) {
-								usernameCheckResult.recommendations.push(suggestion);
-								break;
-							}
-							counter++;
+				/*
+				 Method 1 - Append a number.
+				 Method 2 - Append a number with pad.
+				 */
+				let methods = [
+					`${username}#`,
+					`${username}##`
+				];
+				methods.forEach(method => {
+					let counter: number = 2;
+					while (true) {
+						let suggestion = method.replace('##', pad(counter)).replace('#', counter.toString());
+						if (takenUsernames.indexOf(suggestion) < 0) {
+							usernameCheckResult.recommendations.push(suggestion);
+							break;
 						}
-					});
-				}
-				
-				return usernameCheckResult;
-			}));
+						counter++;
+					}
+				});
+			}
+			
+			return usernameCheckResult;
 		});
 	}
 	
@@ -356,7 +177,7 @@ declare module UserController {
 	export function getTokenData(token: DecodedToken, includeExpiredTokens: boolean = false): Promise<TokenData> {
 		return getUserDataCache(token.userId).then((userDataCache: UserDataCache) => {
 			// Search token.
-			let foundTokenData: TokenData = null;
+			let foundTokenData: TokenData;
 			userDataCache.tokens = userDataCache.tokens.filter((tokenItem: TokenData) => {
 				// Delete old expired token.
 				let now: number = Date.now();
@@ -373,7 +194,10 @@ declare module UserController {
 			});
 			
 			// Save changes.
-			return saveUserDataCache(userDataCache).then(() => foundTokenData);
+			return saveUserDataCache(userDataCache).then(() => {
+				if (foundTokenData) return foundTokenData;
+				return Promise.reject(Boom.badRequest('Token is invalid!'));
+			});
 		});
 	}
 	
@@ -413,65 +237,87 @@ declare module UserController {
 	
 	export function unsignToken(token: DecodedToken): Promise<UserDataCache> {
 		return getUserDataCache(token.userId).then((userDataCache: UserDataCache) => {
-			return new Promise<UserDataCache>((resolve, reject) => {
-				for (let i = 0; i < userDataCache.tokens.length; i++) {
-					let tokenItem = userDataCache.tokens[i];
-					if (tokenItem.tokenId != token.tokenId) continue;
-					
-					tokenItem.expiresAt = Date.now(); // Expire.
-					resolve(userDataCache);
+			for (let i = 0; i < userDataCache.tokens.length; i++) {
+				let tokenItem = userDataCache.tokens[i];
+				if (tokenItem.tokenId != token.tokenId) continue;
+				
+				tokenItem.expiresAt = Date.now(); // Expire.
+				return userDataCache;
+			}
+			
+			return Promise.reject(Boom.badRequest('Token is invalid.'));
+		}).then(saveUserDataCache);
+	}
+	
+	export function checkPassword(user: User, password: string): Promise<User> {
+		return new Promise<User>((resolve, reject) => {
+			bcrypt.compare(password, user.auth.password, (err, isMatch) => {
+				// Match?
+				if (err || !isMatch) {
+					reject(Boom.badRequest('Combination of username and password does not match.'));
 					return;
 				}
-				reject(Boom.badRequest('Token is invalid.'));
-			}).then(saveUserDataCache);
-		});
-	}
-	
-	export function findByProvider(provider: UserProvider): Promise<User> {
-		let aql = `
-	FOR u IN ${arangoCollections.users}
-		FOR p IN u.auth.providers 
-		FILTER p.provider == "${provider.provider}" && p.userIdentifier == "${provider.userIdentifier}"
-		RETURN u
-	`;
-		return Promise.resolve<User>(arangoClient.query(aql).then(cursor => handleSingleCursor<User>(cursor)));
-	}
-	
-	export function findByUsername(username: string, password: string | boolean = false): Promise<User> {
-		return new Promise<User>((resolve, reject) => {
-			arangoClient.collection(arangoCollections.users).byExample({username: username}, {limit: 1}).then(cursor => handleSingleCursor<User>(cursor)).then((user: User) => {
-				// If no password was given or no user was found, return (empty) result immediately.
-				if (!password || !user) return resolve(user);
 				
-				// Check password.
-				bcrypt.compare(password, user.auth.password, (err, isMatch) => {
-					if (err || !isMatch) {
-						reject(Boom.badRequest('Combination of username and password does not match.'));
-						return;
-					}
-					resolve(user);
-				});
+				// Matched!
+				resolve(user);
 			});
 		});
 	}
 	
+	export function findByProvider(provider: UserProvider): Promise<User> {
+		let aqlQuery = `FOR u IN @@collection FOR p IN u.auth.providers FILTER p.provider == @provider && p.userIdentifier == @userIdentifier RETURN u`;
+		let aqlParams = {
+			collection: arangoCollections.users,
+			provider: provider.provider,
+			userIdentifier: provider.userIdentifier
+		};
+		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => <User><any>cursor.next()).then((user: User) => {
+			// No user found?
+			if (user === undefined) return Promise.reject(Boom.notFound('User not found.'));
+			return user;
+		});
+	}
+	
+	export function findByUsername(username: string): Promise<User> {
+		let aqlQuery = `FOR u IN @@collection FILTER u.username == @username LIMIT 1 RETURN u`;
+		let aqlParams = {
+			collection: arangoCollections.users,
+			username: username
+		};
+		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()).then((user: User) => {
+			// No user found?
+			if (user === undefined) return Promise.reject(Boom.notFound('User not found.'));
+			return user;
+		});
+	}
+	
 	export function findByMail(mail: string): Promise<User> {
-		let aql = `
-	FOR u IN ${arangoCollections.users}
-		FOR m IN u.mails
-            FILTER m.mail == "${mail}" && m.verified == true
-            LIMIT 1
-            RETURN u
-	`;
-		return Promise.resolve<User>(arangoClient.query(aql).then(cursor => handleSingleCursor<User>(cursor)));
+		let aqlQuery = `FOR u IN @@collection FOR m IN u.mail FILTER m.mail == @mail && m.verified == true LIMIT 1 RETURN u`;
+		let aqlParams = {
+			collection: arangoCollections.users,
+			mail: mail
+		};
+		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => <User>cursor.next()).then((user: User) => {
+			if (user === undefined) return Promise.reject(Boom.notFound('User not found.'));
+			return user;
+		});
 	}
 	
 	export function findByToken(token: DecodedToken): Promise<User> {
 		return getTokenData(token).then((tokenData: TokenData) => {
-			if (tokenData === null) return null;
-			return arangoClient.collection(arangoCollections.users).byExample({
-				_key: token.userId
-			}, {limit: 1}).then(cursor => handleSingleCursor<User>(cursor));
+			// No token found?
+			if (tokenData !== null) return Promise.reject(Boom.notFound('User not found.'));
+			
+			// Search for user.
+			let aqlQuery = `FOR u IN @@collection FILTER u._key == @key LIMIT 1 RETURN u`;
+			let aqlParams = {
+				collection: arangoCollections.users,
+				key: token.userId
+			};
+			return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => <User>cursor.next()).then((user: User) => {
+				if (user === undefined) return Promise.reject(Boom.notFound('User not found.'));
+				return user;
+			});
 		});
 	}
 	
@@ -495,27 +341,288 @@ declare module UserController {
 	}
 	
 	export function saveUser(user: User): Promise<User> {
-		return new Promise<User>(resolve => {
-			let userCollection = arangoClient.collection(arangoCollections.users);
+		// Set new timestamps.
+		let now = Date.now();
+		user.updatedAt = now;
+		if (!user._key) user.createdAt = now;
+		
+		let aqlQuery = user._key ?
+			`REPLACE @document IN @@collection RETURN NEW` :
+			`INSERT @document INTO @@collection RETURN NEW`;
+		let aqlParams = {
+			collection: arangoCollections.users,
+			document: user
+		};
+		
+		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
+	}
+	
+	export function getPublicProfile(user: User): Promise<any> {
+		dot.transform({
+			id: "id",
+			username: "username",
+			firstName: "firstName",
+			lastName: "lastName",
+			createdAt: "createdAt"
+		}, user);
+		return Promise.resolve(user);
+	}
+	
+	
+	export function getUserConnections(from: string | User, to: string | User) : Promise<User[]> {
+		let fromUseId = from instanceof User;
+		let toUseId = to instanceof User;
+		if(fromUseId) from = from['_id'];
+		if(toUseId) to = to['_id'];
+		
+		if(!from && !to) throw('Invalid arguments: At least one argument has to be an user or username.');
+		let aqlQuery = from && to ?
+			`FOR u IN @@collection FILTER ${fromUseId ? 'u._id' : 'u.username'} == @from FOR v IN OUTBOUND u._id @@edge FILTER ${toUseId ? 'v._id' : 'v.username'} = @to RETURN v` :
+			`FOR u IN @@collection FILTER ${(from && fromUseId) || (to && toUseId) ? 'u._id' : 'u.username'} == ${from ? '@from' : '@to'} FOR v IN ${from ? 'OUTBOUND' : 'INBOUND'} u._id @@edge RETURN v`;
+		let aqlParam = {
+			collection: arangoCollections.users,
+			from: from,
+			to: to
+		};
+		return arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all());
+	}
+	
+	export function addUserConnection(user: User, aimedUser: string | User) : Promise<Edge> {
+		return Promise.resolve(aimedUser).then(aimedUser instanceof User ? aimedUser : findByUsername(<string>aimedUser)).then((user: User) => user._id).then((aimedUserId: string) => {
 			let now = Date.now();
+			let edge : Edge = {
+				_from: user._id,
+				_to: aimedUserId,
+				createdAt: now,
+				updatedAt: now
+			};
 			
-			if (user._key) {
-				user.updatedAt = now;
-				resolve(userCollection.replace(user._key, user));
-				return;
-			}
-			
-			user.createdAt = now;
-			user.updatedAt = now;
-			resolve(userCollection.save(user));
+			let aqlQuery = `INSERT @document INTO @@collection RETURN NEW`;
+			let aqlParams = {
+				collection: arangoCollections.userConnections,
+				document: edge
+			};
+			return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
 		});
 	}
 	
-	function handleSingleCursor<T>(cursor: Cursor): Promise<T> {
-		return cursor.next().then(obj => obj === undefined ? null : obj);
+	export function removeUserConnection(user: User, aimedUser: string | User): Promise<Edge> {
+		return Promise.resolve(aimedUser).then(aimedUser instanceof User ? aimedUser : findByUsername(aimedUser)).then((user: User) => user._id).then((aimedUserId: string) => {
+			let aqlQuery = `FOR e IN @@collection FILTER e._from = @from && e._to = @to REMOVE e`;
+			let aqlParams = {
+				collection: arangoCollections.userConnections,
+				from: user._id,
+				to: aimedUserId
+			};
+			return arangoClient.query(aqlQuery, aqlParams).then(() => {});
+		});
 	}
 	
-	function handleArrayCursor<T>(cursor: Cursor): Promise<Array<T>> {
-		return cursor.all();
+	export namespace RouteHandlers {
+		/**
+		 * Handles [GET] /api/users/{username}
+		 * @param request Request-Object
+		 * @param request.params.username username
+		 * @param reply Reply-Object
+		 */
+		export function getUserOf(request: any, reply: any): void {
+			let username = encodeURIComponent(request.params.username);
+			let promise = findByUsername(username).then(getPublicProfile);
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [GET] /api/me/followers/{follower} AND /api/users/{username}/followers/{follower}
+		 * @param request Request-Object
+		 * @param request.params.username username
+		 * @param request.auth.credentials
+		 * @param request.params.follower follower (optional)
+		 * @param reply Reply-Object
+		 */
+		export function getFollowers(request: any, reply: any): void {
+			let user : User | string = request.params.username ?
+				encodeURIComponent(request.params.username) :
+				request.auth.credentials;
+			let follower = encodeURIComponent(request.params.follower);
+			let promise = getUserConnections(follower, user).then((followers: User[]) => {
+				return followers.map(getPublicProfile);
+			}).then((followers: any[]) => follower ? followers[0]: followers);
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [GET] /api/me/following/{followee} AND /api/users/{username}/following/{followee}
+		 * @param request Request-Object
+		 * @param request.params.username username
+		 * @param request.auth.credentials
+		 * @param request.params.followee followee (optional)
+		 * @param reply Reply-Object
+		 */
+		export function getFollowees(request: any, reply: any): void {
+			let user : User | string = request.params.username ?
+				encodeURIComponent(request.params.username) :
+				request.auth.credentials;
+			let followee = encodeURIComponent(request.params.followee);
+			let promise = getUserConnections(user, followee).then((followees: User[]) => {
+				return followees.map(getPublicProfile);
+			}).then((followees: any[]) => followee ? followees[0]: followees);
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [PUT] /api/me/following/{followee}
+		 * @param request Request-Object
+		 * @param request.auth.credentials
+		 * @param request.params.followee followee
+		 * @param reply Reply-Object
+		 */
+		export function addFollowee(request: any, reply: any): void {
+			let followee = encodeURIComponent(request.params.followee);
+			let promise = addUserConnection(request.auth.credentials, followee).then((edge: Edge) => {});
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [DELETE] /api/me/following/{followee}
+		 * @param request Request-Object
+		 * @param request.auth.credentials
+		 * @param request.params.followee followee
+		 * @param reply Reply-Object
+		 */
+		export function deleteFollowee(request: any, reply: any): void {
+			let followee = encodeURIComponent(request.params.followee);
+			let promise = removeUserConnection(request.auth.credentials, followee).then(() => {});
+			
+			reply.api(promise);
+		}
+		
+		/*
+		 var smtpTransport = Nodemailer.createTransport(Config.mailer.options);
+		 request.server.render('templates/reset-password-email', {
+		 name: user.displayName,
+		 appName: Config.app.title,
+		 url: 'http://' + request.headers.host + '/auth/reset/' + token
+		 }, function (err, emailHTML) {
+		 
+		 var mailOptions = {
+		 to: user.email,
+		 from: Config.mailer.from,
+		 subject: 'Password Reset',
+		 html: emailHTML
+		 };
+		 smtpTransport.sendMail(mailOptions, function (err) {
+		 
+		 if (!err) {
+		 reply({message: 'An email has been sent to ' + user.email + ' with further instructions.'});
+		 } else {
+		 return reply(Boom.badRequest('Failure sending email'));
+		 }
+		 
+		 done(err);
+		 });
+		 });
+		 },
+		 */
+		
+		/*
+		 function (user, done) {
+		 request.server.render('templates/reset-password-confirm-email', {
+		 name: user.displayName,
+		 appName: Config.app.title
+		 }, function (err, emailHTML) {
+		 var mailOptions = {
+		 to: user.email,
+		 from: Config.mailer.from,
+		 subject: 'Your password has been changed',
+		 html: emailHTML
+		 };
+		 
+		 smtpTransport.sendMail(mailOptions, function (err) {
+		 done(err, 'done');
+		 });
+		 });
+		 */
+		
+		/**
+		 * Handles [GET] /api/sign-out
+		 * @param request Request-Object
+		 * @param reply Reply-Object
+		 */
+		export function signOut(request: any, reply: any): void {
+			let promise = Promise.resolve(jwt.decode(request.auth.token)).then((decodedToken: DecodedToken) => unsignToken).then(() => {});
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [POST] /api/sign-up
+		 * @param request Request-Object
+		 * @param reply Reply-Object
+		 */
+		export function signUp(request: any, reply: any): void {
+			let promise: Promise<User>;
+			
+			// Check validity.
+			if (!request.payload) {
+				promise = Promise.reject(Boom.badRequest('Missing payload.'));
+			} else {
+				promise = createUser({
+					username: request.payload.username,
+					mail: request.payload.mail,
+					password: request.payload.password,
+					firstName: request.payload.firstname,
+					lastName: request.payload.lastname
+				}).then(saveUser).then((user: User) => signToken(user)).then((token: string) => {
+					return {
+						token: token
+					};
+				});
+			}
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [POST] /api/sign-in
+		 * @param request Request-Object
+		 * @param reply Reply-Object
+		 */
+		export function signIn(request: any, reply: any): void {
+			let user = request.auth.credentials;
+			let promise = signToken(user).then(token => {
+				return {
+					token: token
+				};
+			});
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [POST] /api/suggest_username
+		 * @param request Request-Object
+		 * @param reply Reply-Object
+		 */
+		export function checkUsername(request: any, reply: any): void {
+			let promise = new Promise((resolve, reject) => {
+				// Check validity.
+				if (!request.payload) {
+					reject(Boom.badRequest('Missing payload.'));
+					return;
+				}
+				
+				if (!Joi.validate(request.payload.username, Validation.username)) {
+					reject(Boom.badRequest('Username has an invalid length or unexpected characters.'));
+					return;
+				}
+				
+				resolve(UserController.checkUsername(request.payload.username));
+			});
+			
+			reply.api(promise);
+		}
 	}
 }

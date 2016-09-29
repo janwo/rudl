@@ -11,7 +11,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/users/{username}',
 		method: 'GET',
-		handler: UserController.getUser,
+		handler: UserController.RouteHandlers.getUserOf,
 		config: {
 			auth: {
 				scope: [
@@ -21,9 +21,9 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/users/{username}/followers/{follower}',
+		path: '/api/users/{username}/followers/{follower?}',
 		method: 'GET',
-		handler: UserController.getFollowers,
+		handler: UserController.RouteHandlers.getFollowers,
 		config: {
 			auth: {
 				scope: [
@@ -33,9 +33,9 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/users/{username}/following/{followee}',
+		path: '/api/users/{username}/following/{followee?}',
 		method: 'GET',
-		handler: UserController.getFollowees,
+		handler: UserController.RouteHandlers.getFollowees,
 		config: {
 			auth: {
 				scope: [

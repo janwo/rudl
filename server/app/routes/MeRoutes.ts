@@ -9,9 +9,9 @@ import GoogleStrategy = require("../strategies/GoogleStrategy");
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
-		path: '/api/me/followers/{follower}',
+		path: '/api/me/followers/{follower?}',
 		method: 'GET',
-		handler: UserController.getFollowees,
+		handler: UserController.RouteHandlers.getFollowers,
 		config: {
 			auth: {
 				scope: [
@@ -21,9 +21,9 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/me/following/{followee}',
+		path: '/api/me/following/{followee?}',
 		method: 'GET',
-		handler: UserController.getFollowees,
+		handler: UserController.RouteHandlers.getFollowees,
 		config: {
 			auth: {
 				scope: [
@@ -35,7 +35,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/me/following/{followee}',
 		method: 'PUT',
-		handler: UserController.deleteFollower,
+		handler: UserController.RouteHandlers.addFollowee,
 		config: {
 			auth: {
 				scope: [
@@ -47,7 +47,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/me/following/{followee}',
 		method: 'DELETE',
-		handler: UserController.deleteFollower,
+		handler: UserController.RouteHandlers.deleteFollowee,
 		config: {
 			auth: {
 				scope: [

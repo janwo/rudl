@@ -10,7 +10,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/suggest_username',
 		method: 'POST',
-		handler: UserController.checkUsername,
+		handler: UserController.RouteHandlers.checkUsername,
 		config: {
 			auth: false
 		}
@@ -18,7 +18,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/sign_up',
 		method: 'POST',
-		handler: UserController.signUp,
+		handler: UserController.RouteHandlers.signUp,
 		config: {
 			auth: false
 		}
@@ -26,7 +26,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/sign_in',
 		method: 'POST',
-		handler: UserController.signIn,
+		handler: UserController.RouteHandlers.signIn,
 		config: {
 			auth: {
 				strategies: ['basic']
@@ -36,7 +36,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/sign_out',
 		method: 'GET',
-		handler: UserController.signOut,
+		handler: UserController.RouteHandlers.signOut,
 		config: {
 			auth: {
 				scope: [
