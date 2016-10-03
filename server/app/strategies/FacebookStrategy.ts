@@ -2,7 +2,7 @@ import {Config} from "../../config/Config";
 import {User, UserProvider} from "../models/User";
 import {StrategyConfiguration} from "../../config/binders/StrategiesBinder";
 import {staticAssets} from "../routes/StaticRoutes";
-import UserController = require("../controllers/UserController");
+import {UserController} from "../controllers/UserController";
 import Boom = require("boom");
 
 export const StrategyConfig: StrategyConfiguration = {

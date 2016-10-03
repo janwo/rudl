@@ -75,18 +75,20 @@ export module UserController {
 		return promise;
 	}
 	
-	export function checkUsername(username: string): Promise<{
+	interface CheckUsernameResult {
 		username: string;
 		available: boolean;
 		recommendations?: Array<string>
-	}> {
+	}
+	
+	export function checkUsername(username: string): Promise<CheckUsernameResult> {
 		//TODO The recommendation array does return strings greater than 16 chars.
 		// Check validity.
-		if (!Joi.validate(username, Validation.username)) return Promise.reject(Boom.badRequest('Username has an invalid length or unexpected characters.'));
+		if (!Joi.validate(username, Validation.username)) return Promise.reject<CheckUsernameResult>(Boom.badRequest('Username has an invalid length or unexpected characters.'));
 		
 		let aqlQuery = `FOR u in @@collection FILTER REGEX_TEST(u.username, "^@username[0-9]*$") RETURN u`;
 		let aqlParams = {
-			collection: arangoCollections.users,
+			'@collection': arangoCollections.users,
 			username: username
 		};
 		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.map((user: User) => user.username)).then((takenUsernames: Array<string>) => {
@@ -194,9 +196,14 @@ export module UserController {
 			});
 			
 			// Save changes.
-			return saveUserDataCache(userDataCache).then(() => {
-				if (foundTokenData) return foundTokenData;
-				return Promise.reject(Boom.badRequest('Token is invalid!'));
+			return saveUserDataCache(userDataCache).then((userDataCache: UserDataCache) => {
+				return new Promise<TokenData>((resolve, reject) => {
+					if (foundTokenData) {
+						resolve(foundTokenData);
+						return;
+					}
+					reject(Boom.badRequest('Token is invalid!'));
+				});
 			});
 		});
 	}
@@ -237,15 +244,18 @@ export module UserController {
 	
 	export function unsignToken(token: DecodedToken): Promise<UserDataCache> {
 		return getUserDataCache(token.userId).then((userDataCache: UserDataCache) => {
-			for (let i = 0; i < userDataCache.tokens.length; i++) {
-				let tokenItem = userDataCache.tokens[i];
-				if (tokenItem.tokenId != token.tokenId) continue;
+			return new Promise<UserDataCache>((resolve, reject) => {
+				for (let i = 0; i < userDataCache.tokens.length; i++) {
+					let tokenItem = userDataCache.tokens[i];
+					if (tokenItem.tokenId != token.tokenId) continue;
+					
+					tokenItem.expiresAt = Date.now(); // Expire.
+					resolve(userDataCache);
+					return;
+				}
 				
-				tokenItem.expiresAt = Date.now(); // Expire.
-				return userDataCache;
-			}
-			
-			return Promise.reject(Boom.badRequest('Token is invalid.'));
+				reject(Boom.badRequest('Token is invalid.'));
+			});
 		}).then(saveUserDataCache);
 	}
 	
@@ -267,56 +277,77 @@ export module UserController {
 	export function findByProvider(provider: UserProvider): Promise<User> {
 		let aqlQuery = `FOR u IN @@collection FOR p IN u.auth.providers FILTER p.provider == @provider && p.userIdentifier == @userIdentifier RETURN u`;
 		let aqlParams = {
-			collection: arangoCollections.users,
+			'@collection': arangoCollections.users,
 			provider: provider.provider,
 			userIdentifier: provider.userIdentifier
 		};
-		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => <User><any>cursor.next()).then((user: User) => {
-			// No user found?
-			if (user === undefined) return Promise.reject(Boom.notFound('User not found.'));
-			return user;
+		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()).then((user: User) => {
+			return new Promise<User>((resolve, reject) => {
+				// No user found?
+				if (user === undefined) {
+					reject(Boom.notFound('User not found.'));
+					return;
+				}
+				resolve(user);
+			});
 		});
 	}
 	
 	export function findByUsername(username: string): Promise<User> {
 		let aqlQuery = `FOR u IN @@collection FILTER u.username == @username LIMIT 1 RETURN u`;
 		let aqlParams = {
-			collection: arangoCollections.users,
+			'@collection': arangoCollections.users,
 			username: username
 		};
 		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()).then((user: User) => {
-			// No user found?
-			if (user === undefined) return Promise.reject(Boom.notFound('User not found.'));
-			return user;
+			return new Promise<User>((resolve, reject) => {
+				// No user found?
+				if (user === undefined) {
+					reject(Boom.notFound('User not found.'));
+					return;
+				}
+				resolve(user);
+			});
 		});
 	}
 	
 	export function findByMail(mail: string): Promise<User> {
 		let aqlQuery = `FOR u IN @@collection FOR m IN u.mail FILTER m.mail == @mail && m.verified == true LIMIT 1 RETURN u`;
 		let aqlParams = {
-			collection: arangoCollections.users,
+			'@collection': arangoCollections.users,
 			mail: mail
 		};
-		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => <User>cursor.next()).then((user: User) => {
-			if (user === undefined) return Promise.reject(Boom.notFound('User not found.'));
-			return user;
+		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => {
+			return cursor.next();
+		}).then((user: User) => {
+			return new Promise<User>((resolve, reject) => {
+				// No user found?
+				if (user === undefined) {
+					reject(Boom.notFound('User not found.'));
+					return;
+				}
+				resolve(user);
+			});
 		});
 	}
 	
 	export function findByToken(token: DecodedToken): Promise<User> {
-		return getTokenData(token).then((tokenData: TokenData) => {
-			// No token found?
-			if (tokenData !== null) return Promise.reject(Boom.notFound('User not found.'));
-			
+		return getTokenData(token).then(() => {
 			// Search for user.
 			let aqlQuery = `FOR u IN @@collection FILTER u._key == @key LIMIT 1 RETURN u`;
 			let aqlParams = {
-				collection: arangoCollections.users,
+				'@collection': arangoCollections.users,
 				key: token.userId
 			};
-			return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => <User>cursor.next()).then((user: User) => {
-				if (user === undefined) return Promise.reject(Boom.notFound('User not found.'));
-				return user;
+			return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()).then((user: User) => {
+				return new Promise<User>((resolve, reject) => {
+					// No user found?
+					if (user === undefined) {
+						reject(Boom.notFound('User not found.'));
+						return;
+					}
+					resolve(user);
+				});
 			});
 		});
 	}
@@ -350,72 +381,67 @@ export module UserController {
 			`REPLACE @document IN @@collection RETURN NEW` :
 			`INSERT @document INTO @@collection RETURN NEW`;
 		let aqlParams = {
-			collection: arangoCollections.users,
+			'@collection': arangoCollections.users,
 			document: user
 		};
 		
 		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
 	}
 	
-	export function getPublicProfile(user: User): Promise<any> {
-		dot.transform({
-			id: "id",
-			username: "username",
-			firstName: "firstName",
-			lastName: "lastName",
-			createdAt: "createdAt"
-		}, user);
-		return Promise.resolve(user);
+	export function getPublicProfile(user: User | User[]): Promise<any> {
+		let transform = user => {
+			return dot.transform({
+				id: "id",
+				username: "username",
+				firstName: "firstName",
+				lastName: "lastName",
+				createdAt: "createdAt"
+			}, user);
+		};
+		let transformed = user instanceof Array ? user.map(transform) : transform(user);
+		return Promise.resolve(transformed);
 	}
 	
 	
-	export function getUserConnections(from: string | User, to: string | User) : Promise<User[]> {
-		let fromUseId = from instanceof User;
-		let toUseId = to instanceof User;
-		if(fromUseId) from = from['_id'];
-		if(toUseId) to = to['_id'];
-		
-		if(!from && !to) throw('Invalid arguments: At least one argument has to be an user or username.');
+	export function getUserConnections(from: User, to: User) : Promise<User[]> {
+		if(!from && !to) throw('Invalid arguments: At least one argument has to be an user.');
 		let aqlQuery = from && to ?
-			`FOR u IN @@collection FILTER ${fromUseId ? 'u._id' : 'u.username'} == @from FOR v IN OUTBOUND u._id @@edge FILTER ${toUseId ? 'v._id' : 'v.username'} = @to RETURN v` :
-			`FOR u IN @@collection FILTER ${(from && fromUseId) || (to && toUseId) ? 'u._id' : 'u.username'} == ${from ? '@from' : '@to'} FOR v IN ${from ? 'OUTBOUND' : 'INBOUND'} u._id @@edge RETURN v`;
+			`FOR u IN @@collection FILTER u._key == @from FOR v IN OUTBOUND u._id @@edge FILTER v._key == @to RETURN v` :
+			`FOR u IN @@collection FILTER u._key == ${from ? '@from' : '@to'} FOR v IN ${from ? 'OUTBOUND' : 'INBOUND'} u._id @@edge RETURN v`;
 		let aqlParam = {
-			collection: arangoCollections.users,
-			from: from,
-			to: to
+			'@collection': arangoCollections.users,
+			'@edge': arangoCollections.userConnections
 		};
+		if(to) aqlParam['to'] = to._key;
+		if(from) aqlParam['from'] = from._key;
 		return arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all());
 	}
 	
-	export function addUserConnection(user: User, aimedUser: string | User) : Promise<Edge> {
-		return Promise.resolve(aimedUser).then(aimedUser instanceof User ? aimedUser : findByUsername(<string>aimedUser)).then((user: User) => user._id).then((aimedUserId: string) => {
-			let now = Date.now();
-			let edge : Edge = {
-				_from: user._id,
-				_to: aimedUserId,
-				createdAt: now,
-				updatedAt: now
-			};
-			
-			let aqlQuery = `INSERT @document INTO @@collection RETURN NEW`;
-			let aqlParams = {
-				collection: arangoCollections.userConnections,
-				document: edge
-			};
-			return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
-		});
+	export function addUserConnection(user: User, aimedUser: User) : Promise<Edge> {
+		let now = Date.now();
+		let edge : Edge = {
+			_from: user._id,
+			_to: aimedUser._id,
+			createdAt: now,
+			updatedAt: now
+		};
+	
+		let aqlQuery = `INSERT @document INTO @@edge RETURN NEW`;
+		let aqlParams = {
+			'@edge': arangoCollections.userConnections,
+			document: edge
+		};
+		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
 	}
 	
-	export function removeUserConnection(user: User, aimedUser: string | User): Promise<Edge> {
-		return Promise.resolve(aimedUser).then(aimedUser instanceof User ? aimedUser : findByUsername(aimedUser)).then((user: User) => user._id).then((aimedUserId: string) => {
-			let aqlQuery = `FOR e IN @@collection FILTER e._from = @from && e._to = @to REMOVE e`;
-			let aqlParams = {
-				collection: arangoCollections.userConnections,
-				from: user._id,
-				to: aimedUserId
-			};
-			return arangoClient.query(aqlQuery, aqlParams).then(() => {});
-		});
+	export function removeUserConnection(user: User, aimedUser: User): Promise<void> {
+		let aqlQuery = `FOR e IN @@collection FILTER e._from = @from && e._to = @to REMOVE e`;
+		let aqlParams = {
+			'@collection': arangoCollections.userConnections,
+			from: user._id,
+			to: aimedUser._id
+		};
+		return arangoClient.query(aqlQuery, aqlParams).then(() => {});
 	}
 	
 	export namespace RouteHandlers {
@@ -440,13 +466,20 @@ export module UserController {
 		 * @param reply Reply-Object
 		 */
 		export function getFollowers(request: any, reply: any): void {
-			let user : User | string = request.params.username ?
-				encodeURIComponent(request.params.username) :
-				request.auth.credentials;
-			let follower = encodeURIComponent(request.params.follower);
-			let promise = getUserConnections(follower, user).then((followers: User[]) => {
-				return followers.map(getPublicProfile);
-			}).then((followers: any[]) => follower ? followers[0]: followers);
+			// Create user promise.
+			let userPromise : Promise<User> = Promise.resolve(request.params.username ? findByUsername(encodeURIComponent(request.params.username)) : request.auth.credentials);
+			
+			// Create follower promise.
+			let followerPromise : Promise<User> = Promise.resolve(request.params.follower ? findByUsername(encodeURIComponent(request.params.follower)) : null);
+			 
+			// Combine them.
+			let promise = Promise.all([
+				followerPromise,
+				userPromise
+			]).then((values: Array<User>) => {
+				let foundFollowersPromise : Promise<any[]> = getUserConnections(values[0], values[1]).then(getPublicProfile);
+				return foundFollowersPromise.then((followers: any[]) => values[0] ? followers[0]: followers);
+			});
 			
 			reply.api(promise);
 		}
@@ -460,13 +493,20 @@ export module UserController {
 		 * @param reply Reply-Object
 		 */
 		export function getFollowees(request: any, reply: any): void {
-			let user : User | string = request.params.username ?
-				encodeURIComponent(request.params.username) :
-				request.auth.credentials;
-			let followee = encodeURIComponent(request.params.followee);
-			let promise = getUserConnections(user, followee).then((followees: User[]) => {
-				return followees.map(getPublicProfile);
-			}).then((followees: any[]) => followee ? followees[0]: followees);
+			// Create user promise.
+			let userPromise : Promise<User> = Promise.resolve(request.params.username ? findByUsername(encodeURIComponent(request.params.username)) : request.auth.credentials);
+			
+			// Create followee promise.
+			let followeePromise : Promise<User> = Promise.resolve(request.params.followee ? findByUsername(encodeURIComponent(request.params.followee)) : null);
+			
+			// Combine them.
+			let promise = Promise.all([
+				userPromise,
+				followeePromise
+			]).then((values: User[]) => {
+				let foundFolloweesPromise : Promise<any[]>= getUserConnections(values[0], values[1]).then(getPublicProfile);
+				return foundFolloweesPromise.then((followees: any[]) => values[1] ? followees[0]: followees);
+			});
 			
 			reply.api(promise);
 		}
@@ -479,8 +519,8 @@ export module UserController {
 		 * @param reply Reply-Object
 		 */
 		export function addFollowee(request: any, reply: any): void {
-			let followee = encodeURIComponent(request.params.followee);
-			let promise = addUserConnection(request.auth.credentials, followee).then((edge: Edge) => {});
+			let followeeParam = encodeURIComponent(request.params.followee);
+			let promise = findByUsername(followeeParam).then((followee: User) => addUserConnection(request.auth.credentials, followee)).then(() => {});
 			
 			reply.api(promise);
 		}
@@ -493,8 +533,8 @@ export module UserController {
 		 * @param reply Reply-Object
 		 */
 		export function deleteFollowee(request: any, reply: any): void {
-			let followee = encodeURIComponent(request.params.followee);
-			let promise = removeUserConnection(request.auth.credentials, followee).then(() => {});
+			let followeeParam = encodeURIComponent(request.params.followee);
+			let promise = findByUsername(followeeParam).then((followee: User) => removeUserConnection(request.auth.credentials, followee)).then(() => {});
 			
 			reply.api(promise);
 		}
@@ -563,7 +603,7 @@ export module UserController {
 		 * @param reply Reply-Object
 		 */
 		export function signUp(request: any, reply: any): void {
-			let promise: Promise<User>;
+			let promise: Promise<any>;
 			
 			// Check validity.
 			if (!request.payload) {

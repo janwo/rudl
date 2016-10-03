@@ -1,6 +1,6 @@
 import {UserRoles} from "../models/User";
 import {RoutesConfiguration} from "../../config/binders/RoutesBinder";
-import UserController = require('../../app/controllers/UserController');
+import {UserController} from "../controllers/UserController";
 import Joi = require('joi');
 import BasicStrategy = require("../strategies/BasicStrategy");
 import FacebookStrategy = require("../strategies/FacebookStrategy");

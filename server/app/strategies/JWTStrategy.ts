@@ -1,7 +1,7 @@
 import {Config} from "../../config/Config";
 import {DecodedToken} from "../models/Token";
 import {StrategyConfiguration} from "../../config/binders/StrategiesBinder";
-import UserController = require("../controllers/UserController");
+import {UserController} from "../controllers/UserController";
 
 /*
  JWT is used for mobile applications. Actually it can be used in web apps as well, but due to the
