@@ -7,7 +7,7 @@ import Path = require("path");
  * Resolve environment configuration by extending each env configuration file, and lastly
  * merge / override that with any local repository configuration that exists in local.js
  */
-export var Config = (function () {
+export const Config = (function () {
 	// Test environment files.
 	if (!Glob.sync(Path.join(__dirname, `environments/${process.env.NODE_ENV}.js`)).length) return console.warn(`No configuration file found for "${process.env.NODE_ENV}" environment!`);
 	
@@ -29,7 +29,7 @@ export var Config = (function () {
 		`Server logs are ${Config.log.serverLogs.enabled ? 'enabled' : 'disabled'}`,
 		`database logs are ${(function () {
 			// Filter all active database names.
-			var activeDatabases = Object.keys(Config.log.databaseLogs).filter(elem => {
+			let activeDatabases = Object.keys(Config.log.databaseLogs).filter(elem => {
 				return Config.log.databaseLogs[elem];
 			}).join(', ');
 			
@@ -38,7 +38,7 @@ export var Config = (function () {
 	].join(', ')}`);
 	console.log(`Databases:\t${Object.keys(Config.db).map(elem => {
 		// Get host and port data of all databases.
-		return `${elem} (host: ${Config.db[elem].host}, port: ${Config.db[elem].port})`;
+		return `${elem} (host: ${Config.db[elem].host}, port: ${Config.db[elem].port}`+ (Config.db[elem].database ? `, db: ${Config.db[elem].database})` : ')');
 	}).join(', ')}`);
 	console.log('- - - - - - - - - - - - - - - -\n');
 })();

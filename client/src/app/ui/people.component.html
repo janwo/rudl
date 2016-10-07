@@ -1,8 +1,16 @@
 <h1>Kennst du schon?</h1>
+Coming soon..
+
 <h1>Leute, denen du folgst</h1>
 <ul>
 	<li *ngFor="let followingUser of followingUsers" (click)="onClick(followingUser)">
-		<img src="">
-		<span>{{followingUser.name}}</span>
+		<div class="avatar" *ngIf="!followingUser.links.avatars">
+			<span>{{followingUser.firstName.charAt(0) + followingUser.lastName.charAt(0)}}</span>
+		</div>
+		<img class="avatar" *ngIf="followingUser.links.avatars" src="{{followingUser.links.avatars.small}}" [routerLink]="['/people', followingUser.username]">
+		<div class="card" [routerLink]="['/people', followingUser.username]">
+			<span class="name" >{{followingUser.firstName}} {{followingUser.lastName}}</span>
+			<span class="relation">Ihr habt beide <a>4 gemeinsame Freunde</a>.</span>
+		</div>
 	</li>
 </ul>

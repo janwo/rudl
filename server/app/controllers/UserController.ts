@@ -3,21 +3,19 @@ import Boom = require("boom");
 import Uuid = require("node-uuid");
 import dot = require("dot-object");
 import bcrypt = require('bcrypt');
+import fs = require('fs');
+import path = require('path');
 import * as Joi from "joi";
 import {ValidationError} from "joi";
 import {Config} from "../../config/Config";
 import {User, UserProvider, Validation, UserRoles} from "../models/User";
-import {arangoClient, redisClient} from "../../config/Database";
+import {arangoClient, redisClient, arangoCollections} from "../../config/Database";
 import {DecodedToken, UserDataCache, TokenData} from "../models/Token";
 import randomstring = require("randomstring");
 import jwt = require("jsonwebtoken");
 import {Cursor} from "arangojs";
 import {Edge} from "../models/Edge";
-let arangoCollections = {
-	users: 'users',
-	userConnections: 'user-connections',
-	activities: 'activities'
-};
+import sharp = require("sharp");
 
 export module UserController {
 	
@@ -48,16 +46,24 @@ export module UserController {
 		});
 		
 		// Does user already exist?
-		promise.then((validatedRecipe: UserRecipe) => {
+		promise = promise.then((validatedRecipe: UserRecipe) => {
 			return Promise.all([
-				findByUsername(recipe.username),
-				findByMail(recipe.mail)
-			]).then(() => validatedRecipe).catch(() => Promise.reject(Boom.badRequest('Cannot create user as the username or mail is already in use.')));
+				findByUsername(recipe.username).catch(() => null),
+				findByMail(recipe.mail).catch(() => null)
+			]).then((values: User[]) => {
+				return new Promise<UserRecipe>((resolve, reject) => {
+					if(values[0] || values[1]) {
+						reject(Boom.badRequest('Cannot create user as the username or mail is already in use.'));
+						return;
+					}
+					resolve(validatedRecipe);
+				});
+			});
 		});
 		
 		// Create user.
-		promise.then((validatedRecipe: UserRecipe) => {
-			return <User>{
+		promise = promise.then((validatedRecipe: UserRecipe) => {
+			return {
 				firstName: validatedRecipe.firstName ? validatedRecipe.firstName : null,
 				lastName: validatedRecipe.lastName ? validatedRecipe.lastName : null,
 				username: validatedRecipe.username,
@@ -86,10 +92,9 @@ export module UserController {
 		// Check validity.
 		if (!Joi.validate(username, Validation.username)) return Promise.reject<CheckUsernameResult>(Boom.badRequest('Username has an invalid length or unexpected characters.'));
 		
-		let aqlQuery = `FOR u in @@collection FILTER REGEX_TEST(u.username, "^@username[0-9]*$") RETURN u`;
+		let aqlQuery = `FOR u in @@collection FILTER REGEX_TEST(u.username, "^${username}[0-9]*$") RETURN u`;//TODO Bind Parameter?
 		let aqlParams = {
-			'@collection': arangoCollections.users,
-			username: username
+			'@collection': arangoCollections.users
 		};
 		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.map((user: User) => user.username)).then((takenUsernames: Array<string>) => {
 			let usernameCheckResult: any = {
@@ -388,16 +393,37 @@ export module UserController {
 		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
 	}
 	
-	export function getPublicProfile(user: User | User[]): Promise<any> {
+	export function getPublicProfile(user: User | User[], url: string): Promise<any> {
 		let transform = user => {
+			// Add default links.
+			let links = {
+				followers: `${url}/api/users/${user.username}/followers`,
+				followees: `${url}/api/users/${user.username}/following`
+			};
+			
+			// Add avatar links?
+			if(user.hasAvatars) {
+				links['avatars'] = {
+					small: `${url}/static/avatars/${user._key}-small`,
+					medium: `${url}/static/avatars/${user._key}-medium`,
+					large: `${url}/static/avatars/${user._key}-large`
+				};
+			}
+			
+			// Build profile.
 			return dot.transform({
-				id: "id",
-				username: "username",
-				firstName: "firstName",
-				lastName: "lastName",
-				createdAt: "createdAt"
-			}, user);
+				'user._key': 'id',
+				'user.username': 'username',
+				'user.firstName': 'firstName',
+				'user.lastName': 'lastName',
+				'user.createdAt': 'createdAt',
+				'links': 'links'
+			}, {
+				user: user,
+				links: links
+			});
 		};
+		
 		let transformed = user instanceof Array ? user.map(transform) : transform(user);
 		return Promise.resolve(transformed);
 	}
@@ -406,14 +432,13 @@ export module UserController {
 	export function getUserConnections(from: User, to: User) : Promise<User[]> {
 		if(!from && !to) throw('Invalid arguments: At least one argument has to be an user.');
 		let aqlQuery = from && to ?
-			`FOR u IN @@collection FILTER u._key == @from FOR v IN OUTBOUND u._id @@edge FILTER v._key == @to RETURN v` :
-			`FOR u IN @@collection FILTER u._key == ${from ? '@from' : '@to'} FOR v IN ${from ? 'OUTBOUND' : 'INBOUND'} u._id @@edge RETURN v`;
+			`FOR u IN OUTBOUND @from @@edges FILTER u._id == @to RETURN u` :
+			`FOR u IN ${from ? 'OUTBOUND' : 'INBOUND'} @from @@edges RETURN u`;
 		let aqlParam = {
-			'@collection': arangoCollections.users,
-			'@edge': arangoCollections.userConnections
+			'@edges': arangoCollections.userConnections
 		};
-		if(to) aqlParam['to'] = to._key;
-		if(from) aqlParam['from'] = from._key;
+		if(to) aqlParam['to'] = to._id;
+		if(from) aqlParam['from'] = from._id;
 		return arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all());
 	}
 	
@@ -426,25 +451,77 @@ export module UserController {
 			updatedAt: now
 		};
 	
-		let aqlQuery = `INSERT @document INTO @@edge RETURN NEW`;
+		let aqlQuery = `INSERT @document INTO @@edges RETURN NEW`;
 		let aqlParams = {
-			'@edge': arangoCollections.userConnections,
+			'@edges': arangoCollections.userConnections,
 			document: edge
 		};
 		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
 	}
 	
 	export function removeUserConnection(user: User, aimedUser: User): Promise<void> {
-		let aqlQuery = `FOR e IN @@collection FILTER e._from = @from && e._to = @to REMOVE e`;
+		let aqlQuery = `FOR e IN @@edges FILTER e._from == @from && e._to == @to REMOVE e IN @@edges`;
 		let aqlParams = {
-			'@collection': arangoCollections.userConnections,
+			'@edges': arangoCollections.userConnections,
 			from: user._id,
 			to: aimedUser._id
 		};
 		return arangoClient.query(aqlQuery, aqlParams).then(() => {});
 	}
 	
+	export function getMutualFollowers(users: User[]): Promise<User[]> {
+		if(!users || users.length < 2) throw('Invalid arguments: At least choose two users for mutual comparison.');
+		let friendsOfUser = users.map((user: User, index: number) => `(FOR v IN ANY @user_${index} @@edges RETURN v._id)`).join(',');
+		let aqlQuery = `FOR u IN INTERSECTION (${friendsOfUser}) RETURN u`;
+		let aqlParam = {
+			'@edges': arangoCollections.userConnections
+		};
+		users.forEach((user: User, index: number) => {
+			aqlParam[`user_${index}`] = user._id;
+		});
+		return arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all());
+	}
+	
 	export namespace RouteHandlers {
+		
+		/**
+		 * Handles [POST] /api/me/avatar
+		 * @param request Request-Object
+		 * @param request.payload.file uploaded avatar file
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function uploadAvatar(request: any, reply: any): void {
+			let user = request.auth.credentials;
+			let promise = new Promise((resolve, reject) => {
+				if (request.payload.file) {
+					let uploadDir = path.resolve(__dirname, '../../', 'uploads/avatars/', user._key);
+					let small = fs.createWriteStream(`${uploadDir}-small`);
+					let medium = fs.createWriteStream(`${uploadDir}-medium`);
+					let large = fs.createWriteStream(`${uploadDir}-large`);
+					
+					let transformations = sharp();
+					transformations.clone().resize(100, 100).max().crop(sharp.strategy.entropy).toFormat('png').pipe(small).on('error', reject);
+					transformations.clone().resize(450, 450).max().crop(sharp.strategy.entropy).toFormat('png').pipe(medium).on('error', reject);
+					transformations.clone().resize(800, 800).max().crop(sharp.strategy.entropy).toFormat('png').pipe(large).on('error', reject);
+					
+					request.payload.file.pipe(transformations);
+					request.payload.file.on('end', () => {
+						user.hasAvatar = true;
+						resolve(saveUser(user));
+					});
+					return;
+				}
+				
+				reject(Boom.badData('Missing file payload.'));
+			}).catch(err => {
+				request.log(err);
+				return Promise.reject(Boom.badImplementation('An server error occurred! Please try again.'))
+			});
+			
+			reply.api(promise);
+		}
+		
 		/**
 		 * Handles [GET] /api/users/{username}
 		 * @param request Request-Object
@@ -453,60 +530,53 @@ export module UserController {
 		 */
 		export function getUserOf(request: any, reply: any): void {
 			let username = encodeURIComponent(request.params.username);
-			let promise = findByUsername(username).then(getPublicProfile);
+			let promise = findByUsername(username).then((user: User) => {
+				return getPublicProfile(user, request.connection.info.uri).then((profile: any) => {
+					return Promise.all([
+						getUserConnections(request.auth.credentials, user),
+						getUserConnections(user, request.auth.credentials),
+					    getMutualFollowers([user, request.auth.credentials])
+					]).then((values: User[][]) => {
+						profile['relation'] = {
+							followee: values[0].length > 0,
+							follower: values[1].length > 0,
+							mutual_followees: 0,
+							mutual_followers: values[2].length
+						};
+						return profile;
+					});
+				});
+			});
+			
 			reply.api(promise);
 		}
 		
 		/**
-		 * Handles [GET] /api/me/followers/{follower} AND /api/users/{username}/followers/{follower}
+		 * Handles [GET] /api/me/followers AND /api/users/{username}/followers
 		 * @param request Request-Object
 		 * @param request.params.username username
 		 * @param request.auth.credentials
-		 * @param request.params.follower follower (optional)
 		 * @param reply Reply-Object
 		 */
 		export function getFollowers(request: any, reply: any): void {
 			// Create user promise.
-			let userPromise : Promise<User> = Promise.resolve(request.params.username ? findByUsername(encodeURIComponent(request.params.username)) : request.auth.credentials);
-			
-			// Create follower promise.
-			let followerPromise : Promise<User> = Promise.resolve(request.params.follower ? findByUsername(encodeURIComponent(request.params.follower)) : null);
-			 
-			// Combine them.
-			let promise = Promise.all([
-				followerPromise,
-				userPromise
-			]).then((values: Array<User>) => {
-				let foundFollowersPromise : Promise<any[]> = getUserConnections(values[0], values[1]).then(getPublicProfile);
-				return foundFollowersPromise.then((followers: any[]) => values[0] ? followers[0]: followers);
-			});
+			let promise : Promise<User> = Promise.resolve(request.params.username ? findByUsername(encodeURIComponent(request.params.username)) : request.auth.credentials);
+			promise = promise.then((user: User) => getUserConnections(null, user)).then((users: User[]) => getPublicProfile(users, request.connection.info.uri));
 			
 			reply.api(promise);
 		}
 		
 		/**
-		 * Handles [GET] /api/me/following/{followee} AND /api/users/{username}/following/{followee}
+		 * Handles [GET] /api/me/following AND /api/users/{username}/following
 		 * @param request Request-Object
 		 * @param request.params.username username
 		 * @param request.auth.credentials
-		 * @param request.params.followee followee (optional)
 		 * @param reply Reply-Object
 		 */
 		export function getFollowees(request: any, reply: any): void {
 			// Create user promise.
-			let userPromise : Promise<User> = Promise.resolve(request.params.username ? findByUsername(encodeURIComponent(request.params.username)) : request.auth.credentials);
-			
-			// Create followee promise.
-			let followeePromise : Promise<User> = Promise.resolve(request.params.followee ? findByUsername(encodeURIComponent(request.params.followee)) : null);
-			
-			// Combine them.
-			let promise = Promise.all([
-				userPromise,
-				followeePromise
-			]).then((values: User[]) => {
-				let foundFolloweesPromise : Promise<any[]>= getUserConnections(values[0], values[1]).then(getPublicProfile);
-				return foundFolloweesPromise.then((followees: any[]) => values[1] ? followees[0]: followees);
-			});
+			let promise : Promise<User> = Promise.resolve(request.params.username ? findByUsername(encodeURIComponent(request.params.username)) : request.auth.credentials);
+			promise = promise.then((user: User) => getUserConnections(user, null)).then((users: User[]) => getPublicProfile(users, request.connection.info.uri));
 			
 			reply.api(promise);
 		}

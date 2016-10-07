@@ -20,7 +20,7 @@ export const staticAssets = ((entries, assets) => {
 export const RoutesConfig: RoutesConfiguration = [
 	{
 		method: 'GET',
-		path: '/assets/{path*}',
+		path: '/static/assets/{path*}',
 		handler: {
 			directory: {
 				path: Path.resolve('./../client/dist/assets'),
@@ -31,7 +31,22 @@ export const RoutesConfig: RoutesConfiguration = [
 		config: {
 			auth: false
 		}
-	}, {
+	},
+	{
+		method: 'GET',
+		path: '/static/{path*}',
+		handler: {
+			directory: {
+				path: Path.resolve('./uploads'),
+				listing: false,
+				index: false
+			}
+		},
+		config: {
+			auth: false
+		}
+	},
+	{
 		method: 'GET',
 		path: '/{path*}',
 		handler: function (request, reply) {

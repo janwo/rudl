@@ -8,11 +8,13 @@
   font-size: $base-font-size;
   color: map_get($base-colors, 'text');
   background-color: map_get($base-colors, 'background');
+  line-height: $base-line-height;
 
   // Reset text decorations.
   /deep/ a {
     text-decoration: none;
     cursor: pointer;
+    color: inherit;
   }
 
   // Reset padding + margin.

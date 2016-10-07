@@ -17,6 +17,7 @@
     "handlebars": "registry:dt/handlebars",
     "hapi": "github:DefinitelyTyped/DefinitelyTyped/hapi/hapi.d.ts",
     "joi": "registry:dt/joi",
+    "mocha": "registry:dt/mocha#2.2.5+20160720003353",
     "node": "registry:dt/node",
     "nodemailer": "registry:dt/nodemailer",
     "nodemailer-direct-transport": "registry:dt/nodemailer-direct-transport",

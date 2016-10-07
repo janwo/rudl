@@ -38,10 +38,7 @@ export function handleFacebook(request, reply): void {
 		refreshToken: request.auth.credentials.refreshToken || undefined
 	};
 	
-	UserController.findByProvider(provider).then((user: User) => {
-		// Found? Done!
-		if (user) return Promise.resolve(user);
-		
+	UserController.findByProvider(provider).catch((err: Error) => {
 		// Create User.
 		return UserController.checkUsername(profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then(checkResults => {
 			if (checkResults.available) return checkResults.username;

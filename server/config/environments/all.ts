@@ -8,14 +8,14 @@ export = {
 		deleteIn: 1000 * 60 * 60 * 24 * 30,
 		salt: process.env.SALT_JWT
 	},
+	maxUploadBytes: 2097152,
 	log: {
 		serverLogs: {
 			console: false,
 			file: false
 		},
 		databaseLogs: {
-			redis: false,
-			mongo: true
+			redis: false
 		}
 	}
 };

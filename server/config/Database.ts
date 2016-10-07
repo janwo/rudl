@@ -8,6 +8,12 @@ let arangoClient = new Database({
 	databaseName: Config.db.arango.database
 });
 
+let arangoCollections = {
+	users: 'users',
+	userConnections: 'user-connections',
+	activities: 'activities'
+};
+
 // Connect to redis.
 let redisClient = redis.createClient(Config.db.redis.port, Config.db.redis.host);
 
@@ -31,5 +37,6 @@ redisClient.on('ready', () => {
 
 export {
 	arangoClient,
+	arangoCollections,
 	redisClient
 };

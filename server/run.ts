@@ -8,4 +8,4 @@ if (!process.env.NODE_ENV) {
 console.log(`Server uses "${process.env.NODE_ENV}" environment...`);
 
 // Start Hapi server.
-require("./config/Hapi").hapiServer();
+require("./config/Hapi").hapiServer().catch(err => console.error(err));

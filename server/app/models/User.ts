@@ -32,14 +32,15 @@ export interface User {
 	firstName: string;
 	lastName: string;
 	username: string;
-	mails: [UserMail];
-	scope: [string];
-	location: string;
-	meta: any;
+	mails: Array<UserMail>;
+	scope: Array<string>;
+	location: Array<number>;
 	auth: {
 		password: string;
-		providers: [UserProvider];
+		providers: Array<UserProvider>;
 	};
 	createdAt: number;
 	updatedAt: number;
+	hasAvatar: boolean;
+	meta: any;
 }

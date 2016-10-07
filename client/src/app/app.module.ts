@@ -24,6 +24,7 @@ import {SettingsComponent} from "./ui/settings.component";
 import {ProfileComponent} from "./ui/profile.component";
 import {TabElevatedMenuComponent} from "./ui/widgets/tab-elevated-menu.component";
 import {ExpanderComponent} from "./ui/widgets/expander.component";
+import {MeComponent} from "./ui/me.component";
 
 @NgModule({
     declarations: [
@@ -41,6 +42,7 @@ import {ExpanderComponent} from "./ui/widgets/expander.component";
 	    DashboardComponent,
 	    ExploreComponent,
 	    PeopleComponent,
+	    MeComponent,
 	    ExpanderComponent,
 	    ActivityComponent,
 	    SettingsComponent,

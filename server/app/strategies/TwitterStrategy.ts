@@ -38,10 +38,7 @@ export function handleTwitter(request: any, reply: any): void {
 		refreshToken: request.auth.credentials.refreshToken || undefined
 	};
 	
-	UserController.findByProvider(provider).then((user: User) => {
-		// Found? Done!
-		if (user) return user;
-		
+	UserController.findByProvider(provider).catch((err: Error) => {
 		// Create the user profile
 		let displayName = profile.displayName.trim();
 		let iSpace = displayName.indexOf(' '); // index of the whitespace following the firstName

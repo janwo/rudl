@@ -9,8 +9,7 @@ import {StrategiesBinder} from "./binders/StrategiesBinder";
 import {DecoratorsBinder} from "./binders/DecoratorsBinder";
 import {PluginsBinder} from "./binders/PluginsBinder";
 
-export function hapiServer() {
-	
+export function hapiServer(): Promise<Hapi.Server>{
 	// Initialize Hapi server.
 	let server = new Hapi.Server({
 		cache: [
@@ -59,7 +58,7 @@ export function hapiServer() {
 	}
 	
 	// Setup plugins.
-	PluginsBinder.bind(server).then(() => {
+	return PluginsBinder.bind(server).then(() => {
 		
 		// Setup the authentication strategies.
 		StrategiesBinder.bind(server);
@@ -82,8 +81,7 @@ export function hapiServer() {
 		// Start server.
 		server.start(() => {
 			console.log(`Server is running...`);
+			return server;
 		});
-	}).catch(err => console.error(err));
-	
-	return server;
+	});
 }

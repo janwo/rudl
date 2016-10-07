@@ -15,10 +15,9 @@ export const StrategyConfig: StrategyConfiguration = {
 	strategyConfig: {
 		validateFunc: (decodedToken: DecodedToken, request, callback) => {
 			UserController.findByToken(decodedToken).then(user => {
-				if (!user) return callback(null, false);
 				return callback(null, true, user);
-			}).catch(err => {
-				return callback(err, false);
+			}).catch((err: Error) => {
+				return callback(null, false);
 			})
 		},
 		verifyOptions: {

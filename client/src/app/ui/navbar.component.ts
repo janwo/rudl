@@ -34,7 +34,7 @@ export class NavbarComponent {
         {
             icon: 'user-md',
             title: 'Profil',
-            link: '/profile',
+            link: '/me',
             notification: false
         },
         {

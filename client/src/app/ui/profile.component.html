@@ -1,1 +1,4 @@
-Profile
+<div *ngIf="user">
+	<h1>{{user.username}}</h1>
+	<button (click)="onToggleFollow()">{{user.relation.followee ? 'Following' : 'Follow'}}</button>
+</div>
