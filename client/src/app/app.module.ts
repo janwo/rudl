@@ -15,14 +15,16 @@ import {routing, appRoutingProviders} from "./app.routes";
 import {FormsModule} from "@angular/forms";
 import {UserService} from "./user.service";
 import {IndicatorComponent} from "./ui/widgets/indicator.component";
-import {HeaderComponent} from "./ui/header.component";
+import {NavbarComponent} from "./ui/navbar.component";
 import {DropdownMenuComponent} from "./ui/widgets/dropdown-menu.component";
 import {TabMenuComponent} from "./ui/widgets/tab-menu.component";
 import {PeopleComponent} from "./ui/people.component";
 import {ActivityComponent} from "./ui/activity.component";
 import {SettingsComponent} from "./ui/settings.component";
 import {ProfileComponent} from "./ui/profile.component";
-import {ElevatedTabMenuComponent} from "./ui/widgets/elevated-tab-menu.component";
+import {TabElevatedMenuComponent} from "./ui/widgets/tab-elevated-menu.component";
+import {ExpanderComponent} from "./ui/widgets/expander.component";
+import {MeComponent} from "./ui/me.component";
 
 @NgModule({
     declarations: [
@@ -31,15 +33,17 @@ import {ElevatedTabMenuComponent} from "./ui/widgets/elevated-tab-menu.component
 	    AuthCallbackComponent,
 	    StyledButtonComponent,
 	    InputFieldComponent,
-	    HeaderComponent,
+	    NavbarComponent,
 	    DropdownMenuComponent,
 	    TabMenuComponent,
-	    ElevatedTabMenuComponent,
+	    TabElevatedMenuComponent,
 	    LandingPageComponent,
 	    IndicatorComponent,
 	    DashboardComponent,
 	    ExploreComponent,
 	    PeopleComponent,
+	    MeComponent,
+	    ExpanderComponent,
 	    ActivityComponent,
 	    SettingsComponent,
 	    ProfileComponent

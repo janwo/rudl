@@ -8,11 +8,13 @@
   font-size: $base-font-size;
   color: map_get($base-colors, 'text');
   background-color: map_get($base-colors, 'background');
+  line-height: $base-line-height;
 
   // Reset text decorations.
   /deep/ a {
     text-decoration: none;
     cursor: pointer;
+    color: inherit;
   }
 
   // Reset padding + margin.
@@ -30,14 +32,15 @@
   }
 
   // Set headings.
-  @each $heading in $base-heading-font-size {
+  @each $heading, $size in $base-heading-font-size {
     $letter-spacing: -1em / 40;
 
-    #{$heading} {
+    /deep/ #{$heading} {
+      font-family: 'Fredoka One', sans-serif;
       font-weight: $base-font-weight-normal;
       margin-bottom: map_get($base-padding, 'default');
       letter-spacing: $letter-spacing;
-      font-size: map_get($base-heading-font-size, $heading);
+      font-size: $size;
     }
   }
 

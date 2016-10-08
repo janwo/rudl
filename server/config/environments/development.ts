@@ -3,16 +3,16 @@ export = {
 		title: 'eat-together - Development Environment'
 	},
 	db: {
-		mongo: {
-			host: process.env.MONGO_HOST || 'localhost',
-			port: process.env.MONGO_PORT || 27017,
-			database: process.env.MONGO_DB || 'eattogether',
-			user: process.env.MONGO_USER || 'eattogether',
-			password: process.env.MONGO_PASSWORD || 'eattogether'
-		},
 		redis: {
 			host: process.env.REDIS_HOST || 'localhost',
 			port: process.env.REDIS_PORT || 6379
+		},
+		arango: {
+			host: process.env.ARANGO_HOST || 'localhost',
+			port: process.env.ARANGO_PORT || 8529,
+			database: process.env.ARANGO_DB || 'meal2share',
+			user: process.env.ARANGO_USER || 'meal2share',
+			password: process.env.ARANGO_PASSWORD || 'meal2share'
 		}
 	},
 	log: {
@@ -21,8 +21,7 @@ export = {
 			file: false
 		},
 		databaseLogs: {
-			redis: true,
-			mongo: true
+			redis: true
 		}
 	},
 	providers: {

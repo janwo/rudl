@@ -1,7 +1,7 @@
 import {DecoratorsConfiguration} from "../../config/binders/DecoratorsBinder";
 import * as Boom from "boom";
 
-export var DecoratorsConfig: DecoratorsConfiguration = [
+export const DecoratorsConfig: DecoratorsConfiguration = [
 	{
 		type: 'reply',
 		property: 'api',

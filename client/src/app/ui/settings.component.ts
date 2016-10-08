@@ -10,8 +10,8 @@ export class SettingsComponent implements OnInit {
     
     pages: Array<SettingsPage> = [
         {
-            title: 'Allgemeines',
-            section: 'general'
+            title: 'Konto',
+            section: 'account'
         },
         {
             title: 'Sicherheit',
@@ -49,9 +49,9 @@ export class SettingsComponent implements OnInit {
     }
     
     ngOnInit(): void {
-        this.route.params.forEach((params: Params) => {
+        this.route.params.map((params:Params) => params['section']).subscribe((section: string) => {
             this.pages.every(page => {
-                if(page.section !== params['section']) return true;
+                if(page.section !== section) return true;
                 this.currentPage = page;
                 return false;
             });

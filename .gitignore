@@ -14,6 +14,7 @@
 **/.idea/
 
 # Server
+server/uploads/avatars/**
 server/**/*.js
 server/**/*.js.map
 !server/karma.conf.js

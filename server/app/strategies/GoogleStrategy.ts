@@ -1,11 +1,11 @@
 import {Config} from "../../config/Config";
-import {IUserProvider, IUser} from "../models/User";
+import {UserProvider, User} from "../models/User";
 import {StrategyConfiguration} from "../../config/binders/StrategiesBinder";
 import {staticAssets} from "../routes/StaticRoutes";
-import UserController = require("../controllers/UserController");
+import {UserController} from "../controllers/UserController";
 import Boom = require("boom");
 
-export var StrategyConfig: StrategyConfiguration = {
+export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
 	strategyName: 'google',
 	schemeName: 'bell',
@@ -27,10 +27,10 @@ export function handleGoogle(request, reply): void {
 	// Authenticated successful?
 	if (!request.auth.isAuthenticated) reply(Boom.badRequest('Authentication failed: ' + request.auth.error.message));
 	
-	var profile = request.auth.credentials.profile;
+	let profile = request.auth.credentials.profile;
 	
 	// Create provider.
-	var provider: IUserProvider = {
+	let provider: UserProvider = {
 		provider: StrategyConfig.strategyConfig.provider,
 		userIdentifier: profile.id,
 		accessToken: request.auth.credentials.token,
@@ -38,12 +38,9 @@ export function handleGoogle(request, reply): void {
 		refreshToken: request.auth.credentials.refreshToken || undefined
 	};
 	
-	UserController.findByProvider(provider).then((user: IUser) => {
-		// Found? Done!
-		if (user) return Promise.resolve(user);
-		
+	UserController.findByProvider(provider).catch((err: Error) => {
 		// Create User.
-		return UserController.recommendUsername(profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then(checkResults => {
+		return UserController.checkUsername(profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then(checkResults => {
 			if (checkResults.available) return checkResults.username;
 			return checkResults.recommendations[Math.trunc(Math.random() * checkResults.recommendations.length)];
 		}).then(username => {
@@ -54,7 +51,7 @@ export function handleGoogle(request, reply): void {
 				mail: profile.email
 			});
 		});
-	}).then((user: IUser) => UserController.addProvider(user, provider)).then(user => user.save()).then(UserController.signToken).then(token => {
+	}).then((user: User) => UserController.addProvider(user, provider)).then(UserController.saveUser).then(UserController.signToken).then(token => {
 		reply.view('index', {
 			title: 'Authentication',
 			assets: staticAssets,

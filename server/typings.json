@@ -1,22 +1,23 @@
 {
   "name": "meal2share-server",
   "dependencies": {
-    "bluebird": "registry:npm/bluebird#3.4.1+20160811213708",
-    "glob": "registry:npm/glob#6.0.0+20160723033700",
-    "jsonwebtoken": "registry:npm/jsonwebtoken#5.5.4+20160208220328",
-    "lodash": "registry:npm/lodash#4.0.0+20160723033700",
-    "mongodb": "registry:npm/mongodb#2.1.0+20160721204323",
-    "mongoose": "registry:npm/mongoose#4.3.5+20160628072220",
-    "node-uuid": "registry:npm/node-uuid#1.4.7+20160723033700",
-    "redis": "registry:npm/redis#0.12.1+20160729031738"
+    "bluebird": "registry:npm/bluebird",
+    "glob": "registry:npm/glob",
+    "jsonwebtoken": "registry:npm/jsonwebtoken",
+    "lodash": "registry:npm/lodash",
+    "mongodb": "registry:npm/mongodb",
+    "mongoose": "registry:npm/mongoose",
+    "node-uuid": "registry:npm/node-uuid",
+    "redis": "registry:npm/redis"
   },
   "globalDependencies": {
     "bcrypt": "registry:dt/bcrypt",
     "boom": "github:DefinitelyTyped/DefinitelyTyped/boom/boom.d.ts",
     "dot-object": "registry:dt/dot-object",
-    "handlebars": "registry:dt/handlebars#4.0.5+20160804082238",
+    "handlebars": "registry:dt/handlebars",
     "hapi": "github:DefinitelyTyped/DefinitelyTyped/hapi/hapi.d.ts",
-    "joi": "registry:dt/joi#9.0.0+20160626220651",
+    "joi": "registry:dt/joi",
+    "mocha": "registry:dt/mocha#2.2.5+20160720003353",
     "node": "registry:dt/node",
     "nodemailer": "registry:dt/nodemailer",
     "nodemailer-direct-transport": "registry:dt/nodemailer-direct-transport",

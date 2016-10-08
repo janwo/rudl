@@ -1,0 +1,25 @@
+@import './../variables';
+
+:host {
+  display: block;
+  padding-top: map_get($base-padding, 'smaller');
+  padding-bottom: map_get($base-padding, 'smaller');
+
+  header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    span {
+      flex: 1 0 auto;
+    }
+
+    /deep/ button {
+      margin: 0;
+    }
+  }
+
+  section {
+    margin-top: map_get($base-padding, 'smaller');
+  }
+}

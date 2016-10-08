@@ -1,20 +1,18 @@
-import mongoClient = require('mongoose');
 import redis = require("redis");
 import {Config} from "./Config";
+import {Database} from 'arangojs';
 
-// Connect to mongoose.
-mongoClient.connect(`mongodb://${Config.db.mongo.user}:${Config.db.mongo.password}@${Config.db.mongo.host}:${Config.db.mongo.port}/${Config.db.mongo.database}`);
-
-// Setup mongoose logging.
-let mongoConnection = mongoClient.connection;
-mongoConnection.once('open', () => {
-	console.log(`Connected to mongo database "${Config.db.mongo.database}" as ${Config.db.mongo.user} successfully...`);
-	
-	if (Config.log.databaseLogs.mongo) {
-		console.log('Listening on any errors within mongo database...');
-		mongoConnection.on('error', console.error);
-	}
+// Connect to arango.
+let arangoClient = new Database({
+	url: `http://${Config.db.arango.user}:${Config.db.arango.password}@${Config.db.arango.host}:${Config.db.arango.port}`,
+	databaseName: Config.db.arango.database
 });
+
+let arangoCollections = {
+	users: 'users',
+	userConnections: 'user-connections',
+	activities: 'activities'
+};
 
 // Connect to redis.
 let redisClient = redis.createClient(Config.db.redis.port, Config.db.redis.host);
@@ -38,6 +36,7 @@ redisClient.on('ready', () => {
 });
 
 export {
-	mongoClient,
+	arangoClient,
+	arangoCollections,
 	redisClient
 };

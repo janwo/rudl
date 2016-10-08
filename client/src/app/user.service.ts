@@ -1,6 +1,7 @@
-import {DataService} from "./data.service";
+import {DataService, JsonResponse} from "./data.service";
 import {Router} from "@angular/router";
 import {Injectable} from "@angular/core";
+import {Observable} from "rxjs";
 
 @Injectable()
 export class UserService {
@@ -20,15 +21,59 @@ export class UserService {
     }
     
     signOut() {
-        this.dataService.get('/api/sign-out', true).subscribe(response => {
+        this.dataService.get('/api/sign_out', true).subscribe(response => {
             if(response.statusCode == 200) {
                 this.dataService.removeToken();
-                this.router.navigate(['/sign-up']);
+                this.router.navigate(['/sign_up']);
             }
         });
     }
-
-    me() {
-        return this.dataService.get('/api/users/me', true);
+    
+    getUser(username: string): Observable<JsonResponse> {
+        return this.dataService.get(`/api/users/${username}`, true);
     }
+    
+    follower(username?: string): Observable<JsonResponse> {
+        return this.dataService.get(username ? `/api/users/${username}/followers` : '/api/me/followers', true);
+    }
+    
+    followees(username?: string): Observable<JsonResponse> {
+        return this.dataService.get(username ? `/api/users/${username}/following` : '/api/me/following', true);
+    }
+    
+    addFollowee(username: string): Observable<JsonResponse> {
+        return this.dataService.put(`/api/me/following/${username}`, null, true);
+    }
+    
+    deleteFollowee(username: string): Observable<JsonResponse> {
+        return this.dataService.delete(`/api/me/following/${username}`, true);
+    }
+    
+    suggestPeople(): Observable<JsonResponse> {
+        return this.dataService.get(`/api/me/suggestions/people`, true);
+    }
+}
+
+export interface User {
+    id: string;
+    firstName: string;
+    lastName: string;
+    username: string;
+    location: string;
+    meta: any;
+    createdAt: number;
+    updatedAt: number;
+    relation: UserRelation;
+    links: UserLinks;
+}
+
+export interface UserLinks {
+    
+}
+
+export interface UserRelation {
+    followee: boolean;
+    follower: boolean;
+    mutual_followers: number;
+    mutual_followees: number;
 }

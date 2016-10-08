@@ -11,7 +11,7 @@ export class AppGuard implements CanActivate {
 
     canActivate() {
         let loggedIn = this.dataService.getToken() !== null;
-        if (!loggedIn) this.router.navigate(['/sign-up']);
+        if (!loggedIn) this.router.navigate(['/sign_up']);
         return loggedIn;
     }
 }

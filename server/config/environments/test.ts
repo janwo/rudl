@@ -3,46 +3,44 @@ export = {
 		title: 'eat-together - Test Environment'
 	},
 	db: {
-		mongo: {
-			host: process.env.MONGO_HOST || 'localhost',
-			port: process.env.MONGO_PORT || 5432,
-			database: process.env.MONGO_DB || 'development',
-			user: process.env.MONGO_USER || 'hanx',
-			password: process.env.MONGO_PASSWORD || 'password'
-		},
 		redis: {
-			host: process.env.MONGO_HOST || 'localhost',
-			port: process.env.MONGO_PORT || 27017,
-			database: process.env.MONGO_DB || 'eattogether',
-			user: process.env.MONGO_USER || 'eattogether',
-			password: process.env.MONGO_PASSWORD || 'eattogether'
+			host: process.env.REDIS_HOST || 'localhost',
+			port: process.env.REDIS_PORT || 6379
+		},
+		arango: {
+			host: process.env.ARANGO_HOST || 'localhost',
+			port: process.env.ARANGO_PORT || 8529,
+			database: process.env.ARANGO_DB || 'meal2share-test',
+			user: process.env.ARANGO_USER || 'meal2share',
+			password: process.env.ARANGO_PASSWORD || 'meal2share'
 		}
 	},
-	port: 3001,
 	log: {
 		serverLogs: {
 			console: true,
 			file: false
 		},
 		databaseLogs: {
-			redis: true,
-			mongo: true
+			redis: true
 		}
 	},
 	providers: {
 		facebook: {
-			clientID: process.env.FACEBOOK_ID || 'APP_ID',
-			clientSecret: process.env.FACEBOOK_SECRET || 'APP_SECRET',
+			password: process.env.FACEBOOK_PASSWORD,
+			clientID: process.env.FACEBOOK_ID,
+			clientSecret: process.env.FACEBOOK_SECRET,
 			callbackURL: '/oauth/facebook'
 		},
 		twitter: {
-			clientID: process.env.TWITTER_KEY || 'CONSUMER_KEY',
-			clientSecret: process.env.TWITTER_SECRET || 'CONSUMER_SECRET',
+			password: 'oqbK@by0%#uoqbfdfby0%#uoqbK@by0%#u',
+			clientID: process.env.TWITTER_ID || 'cVJWo8A0jf3WyG0ufbmDXVXwN',
+			clientSecret: process.env.TWITTER_SECRET || 'vTyr3SLCUJU2EIEa3h9ZADZLh2ZUkomsmk1liSnG8649qnyIgo',
 			callbackURL: '/oauth/twitter'
 		},
 		google: {
-			clientID: process.env.GOOGLE_ID || 'APP_ID',
-			clientSecret: process.env.GOOGLE_SECRET || 'APP_SECRET',
+			password: process.env.GOOGLE_PASSWORD,
+			clientID: process.env.GOOGLE_ID || '368340288629-nf8puh782soi68a3udusucbn1nh81sk2.apps.googleusercontent.com',
+			clientSecret: process.env.GOOGLE_SECRET || '32pv9JsPuA3mNzYXiF4qevyy',
 			callbackURL: '/oauth/google'
 		}
 	},

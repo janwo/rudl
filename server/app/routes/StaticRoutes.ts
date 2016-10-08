@@ -17,10 +17,10 @@ export const staticAssets = ((entries, assets) => {
 	require('../../../client/dist/webpack-assets')
 );
 
-export var RoutesConfig: RoutesConfiguration = [
+export const RoutesConfig: RoutesConfiguration = [
 	{
 		method: 'GET',
-		path: '/assets/{path*}',
+		path: '/static/assets/{path*}',
 		handler: {
 			directory: {
 				path: Path.resolve('./../client/dist/assets'),
@@ -31,7 +31,22 @@ export var RoutesConfig: RoutesConfiguration = [
 		config: {
 			auth: false
 		}
-	}, {
+	},
+	{
+		method: 'GET',
+		path: '/static/{path*}',
+		handler: {
+			directory: {
+				path: Path.resolve('./uploads'),
+				listing: false,
+				index: false
+			}
+		},
+		config: {
+			auth: false
+		}
+	},
+	{
 		method: 'GET',
 		path: '/{path*}',
 		handler: function (request, reply) {

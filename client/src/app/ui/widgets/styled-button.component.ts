@@ -10,6 +10,7 @@ export class StyledButtonComponent {
     @Input() text: string = null;
     @Input() fa: string = null;
     @Input() link: string = null;
+    @Input() style: ButtonStyles = ButtonStyles.default;
 
     public onClick(event: Event) {
         if (!this.link) return;
@@ -18,4 +19,15 @@ export class StyledButtonComponent {
     }
 
     constructor() {}
+    
+    getStyleClass(){
+        switch(this.style) {
+            case ButtonStyles.default: return 'style-default';
+            case ButtonStyles.minimal: return 'style-minimal';
+        }
+    }
+}
+
+export enum ButtonStyles {
+    'default', 'minimal'
 }

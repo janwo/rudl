@@ -1,43 +1,17 @@
 import {UserRoles} from "../models/User";
 import {RoutesConfiguration} from "../../config/binders/RoutesBinder";
-import Users = require('../../app/controllers/UserController');
+import {UserController} from "../controllers/UserController";
 import Joi = require('joi');
 import BasicStrategy = require("../strategies/BasicStrategy");
 import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
 
-export var RoutesConfig: RoutesConfiguration = [
+export const RoutesConfig: RoutesConfiguration = [
 	{
-		path: '/api/check-username',
-		method: 'POST',
-		handler: Users.checkUsername,
-		config: {
-			auth: false
-		}
-	},
-	{
-		path: '/api/sign-up',
-		method: 'POST',
-		handler: Users.signUp,
-		config: {
-			auth: false
-		}
-	},
-	{
-		path: '/api/sign-in',
-		method: 'POST',
-		handler: Users.signIn,
-		config: {
-			auth: {
-				strategies: ['basic']
-			}
-		}
-	},
-	{
-		path: '/api/sign-out',
+		path: '/api/users/{username}',
 		method: 'GET',
-		handler: Users.signOut,
+		handler: UserController.RouteHandlers.getUserOf,
 		config: {
 			auth: {
 				scope: [
@@ -47,9 +21,9 @@ export var RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/users/me',
+		path: '/api/users/{username}/followers/{follower?}',
 		method: 'GET',
-		handler: Users.me,
+		handler: UserController.RouteHandlers.getFollowers,
 		config: {
 			auth: {
 				scope: [
@@ -57,10 +31,11 @@ export var RoutesConfig: RoutesConfiguration = [
 				]
 			}
 		}
-	}, {
-		path: '/api/user/{username}',
+	},
+	{
+		path: '/api/users/{username}/following/{followee?}',
 		method: 'GET',
-		handler: Users.getUser,
+		handler: UserController.RouteHandlers.getFollowees,
 		config: {
 			auth: {
 				scope: [

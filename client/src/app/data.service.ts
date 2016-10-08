@@ -36,7 +36,7 @@ export class DataService {
         localStorage.removeItem(DataService.localStorageKey);
     }
 
-    public get(url: string, useAuthentication: boolean = false): Observable<any> {
+    public get(url: string, useAuthentication: boolean = false): Observable<JsonResponse> {
         let requestOptions : RequestOptionsArgs = {};
         if(useAuthentication) {
             if(!this.getToken()) Observable.throw('Cannot use authentication without having a token set.');
@@ -44,8 +44,8 @@ export class DataService {
         }
         return this.http.get(DataService.domain + url, requestOptions).map(this.preHandler).catch(err => this.errorHandler(err));
     }
-
-    public post(url: string, body: string, useAuthentication: boolean = false): Observable<any> {
+    
+    public post(url: string, body: string, useAuthentication: boolean = false): Observable<JsonResponse> {
         let requestOptions : RequestOptionsArgs = {};
         if(useAuthentication) {
             if(!this.getToken()) Observable.throw('Cannot use authentication without having a token set.');
@@ -53,8 +53,17 @@ export class DataService {
         }
         return this.http.post(DataService.domain + url, body, requestOptions).map(this.preHandler).catch(err => this.errorHandler(err));
     }
+    
+    public put(url: string, body: string, useAuthentication: boolean = false): Observable<JsonResponse> {
+        let requestOptions : RequestOptionsArgs = {};
+        if(useAuthentication) {
+            if(!this.getToken()) Observable.throw('Cannot use authentication without having a token set.');
+            requestOptions.headers = this.createAuthorizationHeader(this.token);
+        }
+        return this.http.put(DataService.domain + url, body, requestOptions).map(this.preHandler).catch(err => this.errorHandler(err));
+    }
 
-    public delete(url: string, useAuthentication: boolean = false): Observable<any> {
+    public delete(url: string, useAuthentication: boolean = false): Observable<JsonResponse> {
         let requestOptions : RequestOptionsArgs = {};
         if(useAuthentication) {
             if(!this.getToken()) Observable.throw('Cannot use authentication without having a token set.');
@@ -76,7 +85,7 @@ export class DataService {
     private errorHandler(err: any) {
         if(err.status === 401) {
             this.removeToken();
-            this.router.navigate(['/sign-up']);
+            this.router.navigate(['/sign_up']);
         } else
             return Observable.throw(err);
     }
@@ -89,4 +98,9 @@ export class DataService {
             this.router.navigate(['/']);
         }, false);
     }
+}
+
+export interface JsonResponse {
+    data?: any;
+    statusCode: number;
 }

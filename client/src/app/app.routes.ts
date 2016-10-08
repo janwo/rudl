@@ -9,10 +9,11 @@ import {ActivityComponent} from "./ui/activity.component";
 import {PeopleComponent} from "./ui/people.component";
 import {SettingsComponent} from "./ui/settings.component";
 import {ProfileComponent} from "./ui/profile.component";
+import {MeComponent} from "./ui/me.component";
 
 const appRoutes: Routes = [
     {
-        path: 'sign-up',
+        path: 'sign_up',
         component: LandingPageComponent,
         pathMatch: 'full'
     },
@@ -29,10 +30,11 @@ const appRoutes: Routes = [
             { path: '', redirectTo: 'explore', pathMatch: 'full' },
             { path: 'activity', component: ActivityComponent },
             { path: 'explore', component: ExploreComponent },
-            { path: 'people', component: PeopleComponent },
-            { path: 'settings', redirectTo: 'settings/general', pathMatch: 'full' },
-            { path: 'settings/:section', component: SettingsComponent },
-            { path: 'profile', component: ProfileComponent }
+            { path: 'people', component: PeopleComponent, pathMatch: 'full' },
+            { path: 'people/:username', component: ProfileComponent },
+            { path: 'me', component: MeComponent },
+            { path: 'settings', redirectTo: 'settings/account', pathMatch: 'full' },
+            { path: 'settings/:section', component: SettingsComponent }
         ]
     },
 ];
