@@ -22,6 +22,7 @@ function generateUser(): User {
 			Number.parseFloat(casual.latitude),
 			Number.parseFloat(casual.longitude)
 		],
+		hasAvatar: false,
 		meta: {},
 		auth: {
 			password: casual.password,

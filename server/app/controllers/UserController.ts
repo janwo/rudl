@@ -428,6 +428,15 @@ export module UserController {
 		return Promise.resolve(transformed);
 	}
 	
+	export function getPeopleSuggestions(user: User): Promise<User[]> {
+		let aqlQuery = `LET followees = (FOR e IN @@edges FILTER e._from == @user RETURN e._to) FOR u IN @@collection FILTER u._id != @user FILTER u._id NOT IN followees LIMIT 5 RETURN u`;
+		let aqlParams = {
+			'@edges': arangoCollections.userConnections,
+			'@collection': arangoCollections.users,
+			user: user._id
+		};
+		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all());
+	}
 	
 	export function getUserConnections(from: User, to: User) : Promise<User[]> {
 		if(!from && !to) throw('Invalid arguments: At least one argument has to be an user.');
@@ -443,6 +452,8 @@ export module UserController {
 	}
 	
 	export function addUserConnection(user: User, aimedUser: User) : Promise<Edge> {
+		if(aimedUser._id === user._id) return Promise.reject<Edge>(Boom.badRequest('Users cannot follow themselves.'));
+		
 		let now = Date.now();
 		let edge : Edge = {
 			_from: user._id,
@@ -523,6 +534,17 @@ export module UserController {
 		}
 		
 		/**
+		 * Handles [GET] /api/me/suggestions/people
+		 * @param request Request-Object
+		 * @param request.params.username username
+		 * @param reply Reply-Object
+		 */
+		export function getPeopleSuggestions(request: any, reply: any): void {
+			let promise = UserController.getPeopleSuggestions(request.auth.credentials).then((users: User[]) => getPublicProfile(users, request.connection.info.uri));
+			reply.api(promise);
+		}
+		
+		/**
 		 * Handles [GET] /api/users/{username}
 		 * @param request Request-Object
 		 * @param request.params.username username
@@ -554,14 +576,18 @@ export module UserController {
 		/**
 		 * Handles [GET] /api/me/followers AND /api/users/{username}/followers
 		 * @param request Request-Object
-		 * @param request.params.username username
+		 * @param request.params.username username (optional)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
 		export function getFollowers(request: any, reply: any): void {
+			let user = request.auth.credentials;
+			let username = request.params.username;
+			let url = request.connection.info.uri;
+			
 			// Create user promise.
-			let promise : Promise<User> = Promise.resolve(request.params.username ? findByUsername(encodeURIComponent(request.params.username)) : request.auth.credentials);
-			promise = promise.then((user: User) => getUserConnections(null, user)).then((users: User[]) => getPublicProfile(users, request.connection.info.uri));
+			let promise : Promise<User> = Promise.resolve(username ? findByUsername(encodeURIComponent(username)) : user);
+			promise = promise.then((user: User) => getUserConnections(null, user)).then((users: User[]) => getPublicProfile(users, url));
 			
 			reply.api(promise);
 		}
@@ -569,14 +595,18 @@ export module UserController {
 		/**
 		 * Handles [GET] /api/me/following AND /api/users/{username}/following
 		 * @param request Request-Object
-		 * @param request.params.username username
+		 * @param request.params.username username (optional)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
 		export function getFollowees(request: any, reply: any): void {
+			let user = request.auth.credentials;
+			let username = request.params.username;
+			let url = request.connection.info.uri;
+			
 			// Create user promise.
-			let promise : Promise<User> = Promise.resolve(request.params.username ? findByUsername(encodeURIComponent(request.params.username)) : request.auth.credentials);
-			promise = promise.then((user: User) => getUserConnections(user, null)).then((users: User[]) => getPublicProfile(users, request.connection.info.uri));
+			let promise : Promise<User> = Promise.resolve(username ? findByUsername(encodeURIComponent(username)) : user);
+			promise = promise.then((user: User) => getUserConnections(user, null)).then((users: User[]) => getPublicProfile(users, url));
 			
 			reply.api(promise);
 		}
@@ -589,8 +619,15 @@ export module UserController {
 		 * @param reply Reply-Object
 		 */
 		export function addFollowee(request: any, reply: any): void {
+			let user = request.auth.credentials;
 			let followeeParam = encodeURIComponent(request.params.followee);
-			let promise = findByUsername(followeeParam).then((followee: User) => addUserConnection(request.auth.credentials, followee)).then(() => {});
+			let promise = findByUsername(followeeParam).then((followee: User) => {
+				// Does connection already exist?
+				return getUserConnections(user, followee).then((users: User[]) => {
+					// Add connection, if not.
+					if (users.length == 0) return addUserConnection(user, followee);
+				});
+			}).then(() => null);
 			
 			reply.api(promise);
 		}
@@ -603,8 +640,9 @@ export module UserController {
 		 * @param reply Reply-Object
 		 */
 		export function deleteFollowee(request: any, reply: any): void {
+			let user = request.auth.credentials;
 			let followeeParam = encodeURIComponent(request.params.followee);
-			let promise = findByUsername(followeeParam).then((followee: User) => removeUserConnection(request.auth.credentials, followee)).then(() => {});
+			let promise = findByUsername(followeeParam).then((followee: User) => removeUserConnection(user, followee)).then(() => null);
 			
 			reply.api(promise);
 		}

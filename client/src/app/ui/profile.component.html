@@ -1,4 +1,4 @@
 <div *ngIf="user">
-	<h1>{{user.username}}</h1>
-	<button (click)="onToggleFollow()">{{user.relation.followee ? 'Following' : 'Follow'}}</button>
+	<h1>{{user.firstName + ' ' + user.lastName}}</h1>
+	<button (click)="onToggleFollow()" [disabled]="!enableFollowButton">{{user.relation.followee ? 'Following' : 'Follow'}}</button>
 </div>

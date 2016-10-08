@@ -8,6 +8,10 @@
     margin-bottom: map_get($base-padding, 'default') + map_get($base-heading-font-size, 'h3');
 
     li {
+      &:not(first-child) {
+        margin-top: map_get($base-padding, 'default');
+      }
+
       display: flex;
       align-items: flex-start;
 
@@ -16,7 +20,10 @@
         cursor: pointer;
         flex: 0 0 auto;
         border-radius: 50%;
-        $size: map_get($base-padding, 'small') * 2 + map_get($base-heading-font-size, 'h3') * $base-line-height + map_get($base-padding, 'small') + 1rem * $base-line-height;
+        margin-top: map_get($base-padding, 'small');
+        margin-left: map_get($base-padding, 'small');
+        margin-bottom: map_get($base-padding, 'small');
+        $size: map_get($base-padding, 'small') * 2 + map_get($base-heading-font-size, 'h3') * $base-line-height + map_get($base-padding, 'small') + 1rem * $base-line-height - map_get($base-padding, 'small') * 2;
         width: $size;
         height: $size;
         justify-content: center;

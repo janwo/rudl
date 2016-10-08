@@ -10,7 +10,7 @@ import {Config} from "../../config/Config";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
-		path: '/api/me/followers/{follower?}',
+		path: '/api/me/followers',
 		method: 'GET',
 		handler: UserController.RouteHandlers.getFollowers,
 		config: {
@@ -40,7 +40,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/me/following/{followee?}',
+		path: '/api/me/following',
 		method: 'GET',
 		handler: UserController.RouteHandlers.getFollowees,
 		config: {
@@ -67,6 +67,18 @@ export const RoutesConfig: RoutesConfiguration = [
 		path: '/api/me/following/{followee}',
 		method: 'DELETE',
 		handler: UserController.RouteHandlers.deleteFollowee,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			}
+		}
+	},
+	{
+		path: '/api/me/suggestions/people',
+		method: 'GET',
+		handler: UserController.RouteHandlers.getPeopleSuggestions,
 		config: {
 			auth: {
 				scope: [

@@ -12,6 +12,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     
     user: User;
     userSubscription: Subscription;
+    enableFollowButton: boolean = true;
     
     constructor(
         private route: ActivatedRoute,
@@ -30,9 +31,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
     
     onToggleFollow(): void {
-        if(this.user.relation.followee)
-            this.userService.deleteFollowee(this.user.username).subscribe(console.log);
-        else
-            this.userService.addFollowee(this.user.username).subscribe(console.log);
+        this.enableFollowButton = false;
+        let obs = this.user.relation.followee ? this.userService.deleteFollowee(this.user.username).map(() => false) : this.userService.addFollowee(this.user.username).map(() => true);
+        obs.do((isFollowee: boolean) => {
+            this.user.relation.followee = isFollowee;
+            this.enableFollowButton = true;
+        }).subscribe();
     }
 }

@@ -48,6 +48,10 @@ export class UserService {
     deleteFollowee(username: string): Observable<JsonResponse> {
         return this.dataService.delete(`/api/me/following/${username}`, true);
     }
+    
+    suggestPeople(): Observable<JsonResponse> {
+        return this.dataService.get(`/api/me/suggestions/people`, true);
+    }
 }
 
 export interface User {

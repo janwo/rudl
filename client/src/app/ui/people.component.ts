@@ -1,5 +1,5 @@
 import {Component, OnInit, OnDestroy} from "@angular/core";
-import {UserService} from "../user.service";
+import {UserService, User} from "../user.service";
 import {Subscription} from "rxjs";
 
 @Component({
@@ -9,7 +9,9 @@ import {Subscription} from "rxjs";
 export class PeopleComponent implements OnInit, OnDestroy {
     
     followingUsersSubscription: Subscription;
-    followingUsers: Subscription;
+    followingUsers: User[];
+    suggestedUsers: User[];
+    suggestedUsersSubscription: Subscription;
     
     constructor(
         private userService: UserService
@@ -17,13 +19,11 @@ export class PeopleComponent implements OnInit, OnDestroy {
     
     ngOnInit(){
         this.followingUsersSubscription = this.userService.followees().subscribe(json => this.followingUsers = json.data);
+        this.suggestedUsersSubscription = this.userService.suggestPeople().subscribe(json => this.suggestedUsers = json.data);
     }
     
     ngOnDestroy(){
         this.followingUsersSubscription.unsubscribe();
-    }
-    
-    onClick(follower: any) {
-        
+        this.suggestedUsersSubscription.unsubscribe();
     }
 }
