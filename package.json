@@ -2,6 +2,8 @@
   "name": "meal2share",
   "version": "0.1.0",
   "scripts": {
+    "docker-build": "docker-compose build",
+    "docker": "docker-compose up",
     "babel-on-run": "babel run --out-dir run --presets es2015,stage-2",
     "start": "npm run babel-on-run && node run/index.js"
   },
