@@ -5,7 +5,7 @@ const headExtensions = [
 	'css'
 ];
 
-module.exports = function (assets, isHead = true) {
+module.exports = (assets, isHead = true) => {
 	let out = '';
 	for (let type in assets) {
 		// Exclude?

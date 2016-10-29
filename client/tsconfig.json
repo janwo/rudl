@@ -8,10 +8,10 @@
     "experimentalDecorators": true,
     "removeComments": false,
     "noImplicitAny": true,
-    "suppressImplicitAnyIndexErrors": true
-  },
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+    "suppressImplicitAnyIndexErrors": true,
+    "types": [
+      "core-js",
+      "node"
+    ]
+  }
 }

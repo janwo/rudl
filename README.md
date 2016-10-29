@@ -1,8 +1,7 @@
 # Meal2Share
 Description coming soon
 
-## Client
-To get started, read the [README](client/README.md) within the */client* folder.
-
-## Server
-To get started, read the [README](server/README.md) within the */server* folder.
+## Getting Started
+1. Install [Docker](https://www.docker.com/products/docker) globally on your machine.
+2. Run `docker-compose up`, this can take a while at the first start.
+3. You can now connect to the webserver via `http://localhost:8080`

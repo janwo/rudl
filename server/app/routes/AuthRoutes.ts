@@ -1,5 +1,5 @@
-import {Config} from "../../config/Config";
-import {RoutesConfiguration} from "../../config/binders/RoutesBinder";
+import {Config} from "../../../run/config";
+import {RoutesConfiguration} from "../binders/RoutesBinder";
 import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
@@ -46,7 +46,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: Config.providers.facebook.callbackURL,
+		path: Config.backend.providers.facebook.callbackURL,
 		method: ['GET', 'POST'],
 		handler: FacebookStrategy.handleFacebook,
 		config: {
@@ -56,7 +56,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: Config.providers.twitter.callbackURL,
+		path: Config.backend.providers.twitter.callbackURL,
 		method: ['GET', 'POST'],
 		handler: TwitterStrategy.handleTwitter,
 		config: {
@@ -66,7 +66,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: Config.providers.google.callbackURL,
+		path: Config.backend.providers.google.callbackURL,
 		method: ['GET', 'POST'],
 		handler: GoogleStrategy.handleGoogle,
 		config: {

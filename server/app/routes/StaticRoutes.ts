@@ -1,21 +1,7 @@
 import Path = require("path");
-import {RoutesConfiguration} from "../../config/binders/RoutesBinder";
-
-// Build assets once.
-export const staticAssets = ((entries, assets) => {
-	let types = {};
-	for (let entry in entries) {
-		for (let type in assets[entry]) {
-			if (!types.hasOwnProperty(type))
-				types[type] = [];
-			types[type].push(assets[entry][type]);
-		}
-	}
-	return types;
-})(
-	require('../../../client/config/webpack.common').entry,
-	require('../../../client/dist/webpack-assets')
-);
+import {RoutesConfiguration} from "../binders/RoutesBinder";
+import {Config, root} from "../../../run/config";
+import {AssetsPool} from "../AssetsPool";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
@@ -23,8 +9,8 @@ export const RoutesConfig: RoutesConfiguration = [
 		path: '/static/assets/{path*}',
 		handler: {
 			directory: {
-				path: Path.resolve('./../client/dist/assets'),
-				listing: false,
+				path: Config.generatedFiles.frontendAssetsFolder,
+				listing: Config.backend.debug,
 				index: true
 			}
 		},
@@ -37,8 +23,8 @@ export const RoutesConfig: RoutesConfiguration = [
 		path: '/static/{path*}',
 		handler: {
 			directory: {
-				path: Path.resolve('./uploads'),
-				listing: false,
+				path: root('db/files/public'),
+				listing: Config.backend.debug,
 				index: false
 			}
 		},
@@ -52,7 +38,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		handler: function (request, reply) {
 			reply.view('index', {
 				title: 'Welcome',
-				assets: staticAssets
+				assets: AssetsPool.getAssets()
 			});
 		},
 		config: {

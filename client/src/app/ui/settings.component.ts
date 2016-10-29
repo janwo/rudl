@@ -8,14 +8,14 @@ import {TabItem} from "./widgets/tab-menu.component";
 })
 export class SettingsComponent implements OnInit {
     
-    pages: Array<SettingsPage> = [
+    public static pages: Array<SettingsPage> = [
         {
             title: 'Konto',
-            section: 'account'
+            slug: 'account'
         },
         {
             title: 'Sicherheit',
-            section: 'safety'
+            slug: 'safety'
         }
     ];
     
@@ -26,32 +26,34 @@ export class SettingsComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private router: Router
-    ) {
-        // Create tab items out of the definition of pages.
-        this.tabItems = this.generateTabItems();
-    }
+    ) {}
     
     private generateTabItems(): Array<TabItem> {
-        return this.pages.reduce((tabItems: Array<TabItem>, currentPage: SettingsPage) => {
+        return SettingsComponent.pages.reduce((tabItems: Array<TabItem>, currentPage: SettingsPage) => {
             // Create link.
-            let urlTree = this.router.createUrlTree(['../', currentPage.section], {
+            let urlTree = this.router.createUrlTree(['../', currentPage.slug], {
                 relativeTo: this.route
             });
             
             // Convert.
             tabItems.push({
-                link: this.router.serializeUrl(urlTree),
+                link: urlTree,
                 title: currentPage.title,
                 notification: false
             });
+            
             return tabItems;
         }, []);
     }
     
     ngOnInit(): void {
-        this.route.params.map((params:Params) => params['section']).subscribe((section: string) => {
-            this.pages.every(page => {
-                if(page.section !== section) return true;
+        // Create tab items out of the definition of pages.
+        this.tabItems = this.generateTabItems();
+        
+        // Get params.
+        this.route.params.map((params:Params) => params['page']).subscribe((slug: string) => {
+            SettingsComponent.pages.every(page => {
+                if(page.slug !== slug) return true;
                 this.currentPage = page;
                 return false;
             });
@@ -60,6 +62,6 @@ export class SettingsComponent implements OnInit {
 }
 
 interface SettingsPage {
-    section: string,
+    slug: string;
     title: string;
 }

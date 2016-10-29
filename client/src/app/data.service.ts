@@ -6,7 +6,7 @@ import {Observable} from "rxjs/Observable";
 @Injectable()
 export class DataService {
 
-    public static domain: string = 'http://localhost:8079';
+    public static domain: string = 'http://localhost';//TODO dynamic host
     static callbackMessageType: string = 'AUTH_CALLBACK_MESSAGE';
     static localStorageKey: string = 'jwt-token';
     

@@ -21,10 +21,13 @@ import {TabMenuComponent} from "./ui/widgets/tab-menu.component";
 import {PeopleComponent} from "./ui/people.component";
 import {ActivityComponent} from "./ui/activity.component";
 import {SettingsComponent} from "./ui/settings.component";
-import {ProfileComponent} from "./ui/profile.component";
+import {ProfileComponent, RedirectProfileComponent} from "./ui/profile.component";
 import {TabElevatedMenuComponent} from "./ui/widgets/tab-elevated-menu.component";
 import {ExpanderComponent} from "./ui/widgets/expander.component";
 import {MeComponent} from "./ui/me.component";
+import {PeopleItemComponent} from "./ui/widgets/people-item.component";
+import {StatisticsComponent} from "./ui/widgets/statistics.component";
+import {AvatarComponent} from "./ui/widgets/avatar.component";
 
 @NgModule({
     declarations: [
@@ -36,17 +39,21 @@ import {MeComponent} from "./ui/me.component";
 	    NavbarComponent,
 	    DropdownMenuComponent,
 	    TabMenuComponent,
+	    StatisticsComponent,
 	    TabElevatedMenuComponent,
 	    LandingPageComponent,
 	    IndicatorComponent,
 	    DashboardComponent,
+	    AvatarComponent,
 	    ExploreComponent,
 	    PeopleComponent,
+	    PeopleItemComponent,
 	    MeComponent,
 	    ExpanderComponent,
 	    ActivityComponent,
 	    SettingsComponent,
-	    ProfileComponent
+	    ProfileComponent,
+        RedirectProfileComponent
     ],
     providers: [
         UserService,

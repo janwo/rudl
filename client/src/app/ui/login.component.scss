@@ -1,6 +1,6 @@
 @import './variables';
 
-$login-text-divider-color: inactive(map_get($base-colors, 'text'));
+$login-text-divider-color: map_get($base-colors, 'secondary-text');
 $login-text-divider-line-size: $base-font-size * 0.05;
 $login-text-divider-font-size: $base-font-size * 0.75;
 
@@ -57,11 +57,11 @@ $login-text-divider-font-size: $base-font-size * 0.75;
   }
 
   /deep/ small {
-    color: inactive(map_get($base-colors, 'text'));
+    color: map_get($base-colors, 'secondary-text');
 
     a {
       font-weight: $base-font-weight-bold;
-      color: map_get($base-colors, 'text');
+      color: map_get($base-colors, 'primary-text');
     }
   }
 

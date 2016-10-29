@@ -1,6 +1,6 @@
-import {Config} from "../../config/Config";
+import {Config} from "../../../run/config";
 import {DecodedToken} from "../models/Token";
-import {StrategyConfiguration} from "../../config/binders/StrategiesBinder";
+import {StrategyConfiguration} from "../binders/StrategiesBinder";
 import {UserController} from "../controllers/UserController";
 
 /*
@@ -24,6 +24,6 @@ export const StrategyConfig: StrategyConfiguration = {
 			algorithms: ['HS256'],
 			ignoreExpiration: true
 		},
-		key: Config.jwt.salt
+		key: Config.backend.jwt.salt
 	}
 };

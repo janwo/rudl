@@ -1,9 +1,9 @@
-import {Config} from "../../config/Config";
+import {Config} from "../../../run/config";
 import {User, UserProvider} from "../models/User";
-import {StrategyConfiguration} from "../../config/binders/StrategiesBinder";
-import {staticAssets} from "../routes/StaticRoutes";
+import {StrategyConfiguration} from "../binders/StrategiesBinder";
 import {UserController} from "../controllers/UserController";
 import Boom = require("boom");
+import {AssetsPool} from "../AssetsPool";
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -11,10 +11,10 @@ export const StrategyConfig: StrategyConfiguration = {
 	schemeName: 'bell',
 	strategyConfig: {
 		provider: 'facebook',
-		password: Config.providers.facebook.password,
-		clientId: Config.providers.facebook.clientID,
-		clientSecret: Config.providers.facebook.clientSecret,
-		isSecure: process.env.NODE_ENV === 'secure'
+		password: Config.backend.providers.facebook.password,
+		clientId: Config.backend.providers.facebook.clientID,
+		clientSecret: Config.backend.providers.facebook.clientSecret,
+		isSecure: Config.env === 'secure'
 	}
 };
 
@@ -54,7 +54,7 @@ export function handleFacebook(request, reply): void {
 	}).then((user: User) => UserController.addProvider(user, provider)).then(UserController.saveUser).then(UserController.signToken).then(token => {
 		reply.view('index', {
 			title: 'Authentication',
-			assets: staticAssets,
+			assets: AssetsPool.getAssets(),
 			metas: {
 				token: token
 			}

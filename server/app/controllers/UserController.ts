@@ -2,20 +2,20 @@ import Nodemailer = require("nodemailer");
 import Boom = require("boom");
 import Uuid = require("node-uuid");
 import dot = require("dot-object");
-import bcrypt = require('bcrypt');
+import * as CryptoJS from 'crypto-js';
 import fs = require('fs');
 import path = require('path');
 import * as Joi from "joi";
 import {ValidationError} from "joi";
-import {Config} from "../../config/Config";
+import {Config} from "../../../run/config";
 import {User, UserProvider, Validation, UserRoles} from "../models/User";
-import {arangoClient, redisClient, arangoCollections} from "../../config/Database";
+import {DatabaseManager, arangoCollections} from "../Database";
 import {DecodedToken, UserDataCache, TokenData} from "../models/Token";
 import randomstring = require("randomstring");
 import jwt = require("jsonwebtoken");
 import {Cursor} from "arangojs";
 import {Edge} from "../models/Edge";
-import sharp = require("sharp");
+import * as sharp from "sharp";
 
 export module UserController {
 	
@@ -70,7 +70,10 @@ export module UserController {
 				mails: [{mail: validatedRecipe.mail, verified: false}],
 				scope: [UserRoles.user],
 				location: null,
-				meta: {},
+				meta: {
+					hasAvatar: false,
+					profileText: null
+				},
 				auth: {
 					password: null,
 					providers: []
@@ -96,7 +99,7 @@ export module UserController {
 		let aqlParams = {
 			'@collection': arangoCollections.users
 		};
-		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.map((user: User) => user.username)).then((takenUsernames: Array<string>) => {
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.map((user: User) => user.username)).then((takenUsernames: Array<string>) => {
 			let usernameCheckResult: any = {
 				username: username,
 				available: takenUsernames.length == 0 || takenUsernames.indexOf(username) < 0
@@ -138,15 +141,9 @@ export module UserController {
 	}
 	
 	export function setPassword(user: User, password?: string): Promise<User> {
-		return new Promise<User>((resolve, reject) => {
-			bcrypt.hash(password ? password : randomstring.generate(10), 10, (err, hash) => {
-				if (err) {
-					reject(err);
-					return;
-				}
-				user.auth.password = hash;
-				resolve(user);
-			});
+		return new Promise<User>(resolve => {
+			user.auth.password = CryptoJS.AES.encrypt(password ? password : randomstring.generate(10), Config.backend.secretPassphrase).toString();
+			resolve(user);
 		});
 	}
 	
@@ -154,7 +151,7 @@ export module UserController {
 		return new Promise<UserDataCache>((resolve, reject) => {
 			// Retrieve user in redis.
 			let redisKey: string = `user-${userId}`;
-			redisClient.get(redisKey, (err, reply) => {
+			DatabaseManager.redisClient.get(redisKey, (err, reply) => {
 				if (err) {
 					reject(err);
 					return;
@@ -171,7 +168,7 @@ export module UserController {
 		return new Promise<UserDataCache>((resolve, reject) => {
 			// Retrieve user in redis.
 			let redisKey: string = `user-${userDataCache.userId}`;
-			redisClient.set(redisKey, JSON.stringify(userDataCache), err => {
+			DatabaseManager.redisClient.set(redisKey, JSON.stringify(userDataCache), err => {
 				if (err) {
 					reject(err);
 					return;
@@ -187,12 +184,12 @@ export module UserController {
 			let foundTokenData: TokenData;
 			userDataCache.tokens = userDataCache.tokens.filter((tokenItem: TokenData) => {
 				// Delete old expired token.
-				let now: number = Date.now();
-				if (tokenItem.expiresAt <= now + Config.jwt.deleteIn) return false;
+				let now: number = Date.now() / 1000;
+				if (tokenItem.expiresAt <= now + Config.backend.jwt.deleteIn) return false;
 				
 				// Extend expiry of an successfully discovered token that is still within the expiry range.
 				if (tokenItem.tokenId === token.tokenId) {
-					if (tokenItem.expiresAt > now) tokenItem.expiresAt = now + Config.jwt.expiresIn;
+					if (tokenItem.expiresAt > now) tokenItem.expiresAt = now + Config.backend.jwt.expiresIn;
 					if (includeExpiredTokens || tokenItem.expiresAt > now) foundTokenData = tokenItem;
 				}
 				
@@ -221,20 +218,20 @@ export module UserController {
 		};
 		
 		return getUserDataCache(user._key).then((userDataCache: UserDataCache) => {
-			let now = Date.now();
+			let now = Date.now() / 1000;
 			
 			// Add token.
 			userDataCache.tokens.push({
 				tokenId: token.tokenId,
 				deviceName: 'Device', // TODO
 				createdAt: now,
-				expiresAt: now + Config.jwt.expiresIn
+				expiresAt: now + Config.backend.jwt.expiresIn
 			});
 			return userDataCache;
 		}).then(saveUserDataCache).then(() => {
 			return new Promise<String>((resolve, reject) => {
 				// Sign web token.
-				jwt.sign(token, Config.jwt.salt, {
+				jwt.sign(token, Config.backend.jwt.salt, {
 					algorithm: 'HS256'
 				}, (err, token: string) => {
 					if (err) {
@@ -254,7 +251,7 @@ export module UserController {
 					let tokenItem = userDataCache.tokens[i];
 					if (tokenItem.tokenId != token.tokenId) continue;
 					
-					tokenItem.expiresAt = Date.now(); // Expire.
+					tokenItem.expiresAt = Date.now() / 1000; // Expire.
 					resolve(userDataCache);
 					return;
 				}
@@ -266,16 +263,13 @@ export module UserController {
 	
 	export function checkPassword(user: User, password: string): Promise<User> {
 		return new Promise<User>((resolve, reject) => {
-			bcrypt.compare(password, user.auth.password, (err, isMatch) => {
-				// Match?
-				if (err || !isMatch) {
-					reject(Boom.badRequest('Combination of username and password does not match.'));
-					return;
-				}
+			let decrypted = CryptoJS.AES.decrypt(user.auth.password, Config.backend.secretPassphrase).toString(CryptoJS.enc.Utf8);
+			if(password !== decrypted) {
+				reject(Boom.badRequest('Combination of username and password does not match.'));
+				return;
+			}
 				
-				// Matched!
-				resolve(user);
-			});
+			resolve(user);
 		});
 	}
 	
@@ -286,7 +280,7 @@ export module UserController {
 			provider: provider.provider,
 			userIdentifier: provider.userIdentifier
 		};
-		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()).then((user: User) => {
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()).then((user: User) => {
 			return new Promise<User>((resolve, reject) => {
 				// No user found?
 				if (user === undefined) {
@@ -304,7 +298,7 @@ export module UserController {
 			'@collection': arangoCollections.users,
 			username: username
 		};
-		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()).then((user: User) => {
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()).then((user: User) => {
 			return new Promise<User>((resolve, reject) => {
 				// No user found?
 				if (user === undefined) {
@@ -322,7 +316,7 @@ export module UserController {
 			'@collection': arangoCollections.users,
 			mail: mail
 		};
-		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => {
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => {
 			return cursor.next();
 		}).then((user: User) => {
 			return new Promise<User>((resolve, reject) => {
@@ -344,7 +338,7 @@ export module UserController {
 				'@collection': arangoCollections.users,
 				key: token.userId
 			};
-			return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()).then((user: User) => {
+			return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()).then((user: User) => {
 				return new Promise<User>((resolve, reject) => {
 					// No user found?
 					if (user === undefined) {
@@ -378,7 +372,7 @@ export module UserController {
 	
 	export function saveUser(user: User): Promise<User> {
 		// Set new timestamps.
-		let now = Date.now();
+		let now = Date.now() / 1000;
 		user.updatedAt = now;
 		if (!user._key) user.createdAt = now;
 		
@@ -390,7 +384,7 @@ export module UserController {
 			document: user
 		};
 		
-		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
 	}
 	
 	export function getPublicProfile(user: User | User[], url: string): Promise<any> {
@@ -402,13 +396,16 @@ export module UserController {
 			};
 			
 			// Add avatar links?
-			if(user.hasAvatars) {
+			if(user.meta.hasAvatar) {
 				links['avatars'] = {
 					small: `${url}/static/avatars/${user._key}-small`,
 					medium: `${url}/static/avatars/${user._key}-medium`,
 					large: `${url}/static/avatars/${user._key}-large`
 				};
 			}
+			
+			user.meta.followees = 23;
+			user.meta.followers = 43;
 			
 			// Build profile.
 			return dot.transform({
@@ -417,6 +414,10 @@ export module UserController {
 				'user.firstName': 'firstName',
 				'user.lastName': 'lastName',
 				'user.createdAt': 'createdAt',
+				'user.meta.hasAvatar': 'meta.hasAvatar',
+				'user.meta.profileText': 'meta.profileText',
+				'user.meta.followees': 'meta.followees',
+				'user.meta.followers': 'meta.followers',
 				'links': 'links'
 			}, {
 				user: user,
@@ -429,13 +430,13 @@ export module UserController {
 	}
 	
 	export function getPeopleSuggestions(user: User): Promise<User[]> {
-		let aqlQuery = `LET followees = (FOR e IN @@edges FILTER e._from == @user RETURN e._to) FOR u IN @@collection FILTER u._id != @user FILTER u._id NOT IN followees LIMIT 5 RETURN u`;
+		let aqlQuery = `LET notIn = UNION([@user], FOR e IN @@edges FILTER e._from == @user RETURN e._to) FOR u IN @@collection FILTER u._id NOT IN notIn LIMIT 5 RETURN u`;
 		let aqlParams = {
 			'@edges': arangoCollections.userConnections,
 			'@collection': arangoCollections.users,
 			user: user._id
 		};
-		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all());
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all());
 	}
 	
 	export function getUserConnections(from: User, to: User) : Promise<User[]> {
@@ -448,13 +449,13 @@ export module UserController {
 		};
 		if(to) aqlParam['to'] = to._id;
 		if(from) aqlParam['from'] = from._id;
-		return arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all());
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all());
 	}
 	
 	export function addUserConnection(user: User, aimedUser: User) : Promise<Edge> {
 		if(aimedUser._id === user._id) return Promise.reject<Edge>(Boom.badRequest('Users cannot follow themselves.'));
 		
-		let now = Date.now();
+		let now = Date.now() / 1000;
 		let edge : Edge = {
 			_from: user._id,
 			_to: aimedUser._id,
@@ -467,7 +468,7 @@ export module UserController {
 			'@edges': arangoCollections.userConnections,
 			document: edge
 		};
-		return arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
 	}
 	
 	export function removeUserConnection(user: User, aimedUser: User): Promise<void> {
@@ -477,7 +478,7 @@ export module UserController {
 			from: user._id,
 			to: aimedUser._id
 		};
-		return arangoClient.query(aqlQuery, aqlParams).then(() => {});
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then(() => {});
 	}
 	
 	export function getMutualFollowers(users: User[]): Promise<User[]> {
@@ -490,7 +491,7 @@ export module UserController {
 		users.forEach((user: User, index: number) => {
 			aqlParam[`user_${index}`] = user._id;
 		});
-		return arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all());
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all());
 	}
 	
 	export namespace RouteHandlers {
@@ -511,14 +512,14 @@ export module UserController {
 					let medium = fs.createWriteStream(`${uploadDir}-medium`);
 					let large = fs.createWriteStream(`${uploadDir}-large`);
 					
-					let transformations = sharp();
+					let transformations = new sharp(undefined, undefined);//TODO use update sharp.d.ts as soon as available
 					transformations.clone().resize(100, 100).max().crop(sharp.strategy.entropy).toFormat('png').pipe(small).on('error', reject);
 					transformations.clone().resize(450, 450).max().crop(sharp.strategy.entropy).toFormat('png').pipe(medium).on('error', reject);
 					transformations.clone().resize(800, 800).max().crop(sharp.strategy.entropy).toFormat('png').pipe(large).on('error', reject);
 					
 					request.payload.file.pipe(transformations);
 					request.payload.file.on('end', () => {
-						user.hasAvatar = true;
+						user.meta.hasAvatar = true;
 						resolve(saveUser(user));
 					});
 					return;

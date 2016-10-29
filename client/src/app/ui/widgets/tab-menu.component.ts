@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from "@angular/core";
-import {Router, NavigationEnd} from "@angular/router";
+import {Router, NavigationEnd, UrlTree} from "@angular/router";
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
@@ -18,7 +18,7 @@ export class TabMenuComponent implements OnInit, OnDestroy {
     }
     
     onClick(tabItem: TabItem) {
-        if(!this.activeTabItem || this.activeTabItem.link !== tabItem.link ) this.router.navigateByUrl(tabItem.link);
+        if(!this.activeTabItem || this.activeTabItem.link.toString() !== tabItem.link.toString() ) this.router.navigateByUrl(tabItem.link);
     }
     
     constructor(
@@ -29,7 +29,7 @@ export class TabMenuComponent implements OnInit, OnDestroy {
         this.routerChanges = this.router.events.filter(value => value instanceof NavigationEnd).subscribe((route: NavigationEnd) => {
             this.activeTabItem = null;
             this.tabItems.every(( tabItem: TabItem ) => {
-                if(!this.router.isActive(tabItem.link, true)) return true;
+                if(!this.router.isActive(tabItem.link, false)) return true;
             
                 this.activeTabItem = tabItem;
                 tabItem.notification = false;
@@ -43,5 +43,5 @@ export interface TabItem {
     icon?: string,
     notification: boolean,
     title: string,
-    link: string
+    link: UrlTree
 }

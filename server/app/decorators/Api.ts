@@ -1,4 +1,4 @@
-import {DecoratorsConfiguration} from "../../config/binders/DecoratorsBinder";
+import {DecoratorsConfiguration} from "../binders/DecoratorsBinder";
 import * as Boom from "boom";
 
 export const DecoratorsConfig: DecoratorsConfiguration = [

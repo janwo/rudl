@@ -14,7 +14,7 @@ $tab-menu-font-size: $base-font-size;
     & > * {
       padding: map_get($base-padding, 'small');
       margin-right: map_get($base-padding, 'default');
-      color: inactive(map_get($base-colors, 'text'));
+      color: inactive(map_get($base-colors, 'primary-text'));
       cursor: pointer;
 
       &:last-child {
@@ -22,7 +22,7 @@ $tab-menu-font-size: $base-font-size;
       }
 
       &.active {
-        color: map_get($base-colors, 'text');
+        color: map_get($base-colors, 'primary-text');
         cursor: default;
       }
 

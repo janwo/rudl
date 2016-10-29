@@ -1,0 +1,4 @@
+<div class="plain" *ngIf="!user.meta.hasAvatar">
+	<span>{{user.firstName.charAt(0) + user.lastName.charAt(0)}}</span>
+</div>
+<div *ngIf="user.meta.hasAvatar" [ngStyle]="{'background-image': 'url(' + user.links.avatars.small + ')'}"></div>

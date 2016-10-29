@@ -2,6 +2,7 @@ import {Component} from "@angular/core";
 import {TabItem} from "./widgets/tab-menu.component";
 import {MenuItem} from "./widgets/dropdown-menu.component";
 import {UserService} from "../user.service";
+import {Router} from "@angular/router";
 
 @Component({
     template: require('./navbar.component.html'),
@@ -14,19 +15,19 @@ export class NavbarComponent {
         {
             icon: 'bell-o',
             title: 'Verlauf',
-            link: '/activity',
+            link: this.router.createUrlTree(['/activity']),
             notification: false
         },
         {
             icon: 'compass',
             title: 'Entdecken',
-            link: '/explore',
+            link: this.router.createUrlTree(['/explore']),
             notification: false
         },
         {
             icon: 'users',
             title: 'Leute',
-            link: '/people',
+            link: this.router.createUrlTree(['/people']),
             notification: false
         }
     ];
@@ -34,13 +35,13 @@ export class NavbarComponent {
         {
             icon: 'user-md',
             title: 'Profil',
-            link: '/me',
+            link: this.router.createUrlTree(['/me']),
             notification: false
         },
         {
             icon: 'cog',
             title: 'Einstellungen',
-            link: '/settings',
+            link: this.router.createUrlTree(['/settings']),
             notification: false
         },
         {
@@ -52,6 +53,7 @@ export class NavbarComponent {
     ];
     
     constructor(
+        private router: Router,
         private userService: UserService
     ) {}
 }

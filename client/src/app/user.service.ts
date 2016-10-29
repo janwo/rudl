@@ -29,28 +29,28 @@ export class UserService {
         });
     }
     
-    getUser(username: string): Observable<JsonResponse> {
-        return this.dataService.get(`/api/users/${username}`, true);
+    getUser(username: string): Observable<User> {
+        return this.dataService.get(`/api/users/${username}`, true).map((json: JsonResponse) => json.data).share();
     }
     
-    follower(username?: string): Observable<JsonResponse> {
-        return this.dataService.get(username ? `/api/users/${username}/followers` : '/api/me/followers', true);
+    follower(username?: string): Observable<User[]> {
+        return this.dataService.get(username ? `/api/users/${username}/followers` : '/api/me/followers', true).map((json: JsonResponse) => json.data).share();
     }
     
-    followees(username?: string): Observable<JsonResponse> {
-        return this.dataService.get(username ? `/api/users/${username}/following` : '/api/me/following', true);
+    followees(username?: string): Observable<User[]> {
+        return this.dataService.get(username ? `/api/users/${username}/following` : '/api/me/following', true).map((json: JsonResponse) => json.data).share();
     }
     
-    addFollowee(username: string): Observable<JsonResponse> {
-        return this.dataService.put(`/api/me/following/${username}`, null, true);
+    addFollowee(username: string): Observable<void> {
+        return this.dataService.put(`/api/me/following/${username}`, null, true).map(() => {}).share();
     }
     
-    deleteFollowee(username: string): Observable<JsonResponse> {
-        return this.dataService.delete(`/api/me/following/${username}`, true);
+    deleteFollowee(username: string): Observable<void> {
+        return this.dataService.delete(`/api/me/following/${username}`, true).map(() => {}).share();
     }
     
-    suggestPeople(): Observable<JsonResponse> {
-        return this.dataService.get(`/api/me/suggestions/people`, true);
+    suggestPeople(): Observable<User[]> {
+        return this.dataService.get(`/api/me/suggestions/people`, true).map((json: JsonResponse) => json.data).share();
     }
 }
 
@@ -60,7 +60,7 @@ export interface User {
     lastName: string;
     username: string;
     location: string;
-    meta: any;
+    meta: UserMeta;
     createdAt: number;
     updatedAt: number;
     relation: UserRelation;
@@ -68,7 +68,16 @@ export interface User {
 }
 
 export interface UserLinks {
-    
+    avatars?: {
+        small: string;
+        medium: string;
+        large: string;
+    };
+}
+
+export interface UserMeta {
+    hasAvatar: boolean;
+    profileText: string;
 }
 
 export interface UserRelation {

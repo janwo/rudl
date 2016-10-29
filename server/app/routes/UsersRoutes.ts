@@ -1,5 +1,5 @@
 import {UserRoles} from "../models/User";
-import {RoutesConfiguration} from "../../config/binders/RoutesBinder";
+import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {UserController} from "../controllers/UserController";
 import Joi = require('joi');
 import BasicStrategy = require("../strategies/BasicStrategy");

@@ -1,6 +1,6 @@
 import {UserController} from "../controllers/UserController";
 import {User} from "../models/User";
-import {StrategyConfiguration} from "../../config/binders/StrategiesBinder";
+import {StrategyConfiguration} from "../binders/StrategiesBinder";
 import Boom = require("boom");
 
 export const StrategyConfig: StrategyConfiguration = {

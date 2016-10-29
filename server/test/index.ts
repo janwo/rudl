@@ -1,10 +1,11 @@
-process.env.NODE_ENV = 'test';
+/// <reference path="../../node_modules/@types/mocha/index.d.ts" />
+process.env.ENV = 'test';
 
-import {arangoClient, arangoCollections} from "../config/Database";
+import {DatabaseManager, arangoCollections} from "../app/Database";
 import {Cursor} from "arangojs";
 import {User, UserRoles} from "../app/models/User";
 import casual = require('casual');
-import {Config} from "../config/Config";
+import {Config} from "../../run/config";
 
 function generateUser(): User {
 	return {
@@ -22,8 +23,10 @@ function generateUser(): User {
 			Number.parseFloat(casual.latitude),
 			Number.parseFloat(casual.longitude)
 		],
-		hasAvatar: false,
-		meta: {},
+		meta: {
+			hasAvatar: false,
+			profileText: casual.short_description
+		},
 		auth: {
 			password: casual.password,
 			providers: [],
@@ -38,9 +41,9 @@ describe(`Testing ${Config.app.title}...`, () => {
 	before(() => {
 		return require("../config/Hapi").hapiServer().then(() => {
 			// Truncate.
-			arangoClient.collection(arangoCollections.users).truncate();
-			arangoClient.collection(arangoCollections.userConnections).truncate();
-			arangoClient.collection(arangoCollections.activities).truncate();
+			DatabaseManager.arangoClient.collection(arangoCollections.users).truncate();
+			DatabaseManager.arangoClient.collection(arangoCollections.userConnections).truncate();
+			DatabaseManager.arangoClient.collection(arangoCollections.activities).truncate();
 			
 			// Add users.
 			let aqlQuery = `FOR u IN @users INSERT u INTO @@collection`;
@@ -52,7 +55,7 @@ describe(`Testing ${Config.app.title}...`, () => {
 					return users;
 				})()
 			};
-			arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all());
+			DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all());
 		});
 	});
 	

@@ -1,9 +1,9 @@
-import {Config} from "../../config/Config";
+import {Config} from "../../../run/config";
 import {UserProvider, User} from "../models/User";
-import {StrategyConfiguration} from "../../config/binders/StrategiesBinder";
-import {staticAssets} from "../routes/StaticRoutes";
+import {StrategyConfiguration} from "../binders/StrategiesBinder";
 import {UserController} from "../controllers/UserController";
 import Boom = require("boom");
+import {AssetsPool} from "../AssetsPool";
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -11,10 +11,10 @@ export const StrategyConfig: StrategyConfiguration = {
 	schemeName: 'bell',
 	strategyConfig: {
 		provider: 'google',
-		password: Config.providers.google.password,
-		clientId: Config.providers.google.clientID,
-		clientSecret: Config.providers.google.clientSecret,
-		isSecure: process.env.NODE_ENV === 'secure'
+		password: Config.backend.providers.google.password,
+		clientId: Config.backend.providers.google.clientID,
+		clientSecret: Config.backend.providers.google.clientSecret,
+		isSecure: Config.env === 'secure'
 	}
 };
 
@@ -54,7 +54,7 @@ export function handleGoogle(request, reply): void {
 	}).then((user: User) => UserController.addProvider(user, provider)).then(UserController.saveUser).then(UserController.signToken).then(token => {
 		reply.view('index', {
 			title: 'Authentication',
-			assets: staticAssets,
+			assets: AssetsPool.getAssets(),
 			metas: {
 				token: token
 			}

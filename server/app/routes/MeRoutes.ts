@@ -1,12 +1,12 @@
 import {UserRoles} from "../models/User";
-import {RoutesConfiguration} from "../../config/binders/RoutesBinder";
+import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {UserController} from "../controllers/UserController";
 import Joi = require('joi');
 import BasicStrategy = require("../strategies/BasicStrategy");
 import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
-import {Config} from "../../config/Config";
+import {Config} from "../../../run/config";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
@@ -28,7 +28,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		config: {
 			payload: {
 				output: 'stream',
-				maxBytes: Config.maxUploadBytes,
+				maxBytes: Config.backend.maxUploadBytes,
 				parse: true,
 				allow: 'multipart/form-data'
 			},

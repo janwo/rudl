@@ -2,7 +2,7 @@
 
 $indicator-colors: (
   'active-background': map_get($base-colors, 'secondary'),
-  'default-background': inactive(map_get($base-colors, 'text'))
+  'default-background': map_get($base-colors, 'secondary-text')
 );
 
 :host {

@@ -26,6 +26,11 @@ export interface UserMail {
 	verified: boolean;
 }
 
+export interface UserMeta {
+	profileText: string;
+	hasAvatar: boolean;
+}
+
 export interface User {
 	_id?: string;
 	_key?: string;
@@ -41,6 +46,5 @@ export interface User {
 	};
 	createdAt: number;
 	updatedAt: number;
-	hasAvatar: boolean;
-	meta: any;
+	meta: UserMeta;
 }

@@ -1,4 +1,27 @@
-<div *ngIf="user">
-	<h1>{{user.firstName + ' ' + user.lastName}}</h1>
-	<button (click)="onToggleFollow()" [disabled]="!enableFollowButton">{{user.relation.followee ? 'Following' : 'Follow'}}</button>
+<div class="card" *ngIf="user">
+	<avatar [user]="user"></avatar>
+	<div class="about">
+		<h1>{{user.firstName + ' ' + user.lastName}}</h1>
+		<span>{{user.meta.profileText || 'This is ' + user.firstName + '!'}}</span>
+	</div>
+	<div class="statistics">
+		<statistics [statistics]="[{value: 3, subject: 'Listen'}, {value: user.meta.followees, subject: 'Folgt'}, {value: user.meta.followers, subject: 'Follower'}]"></statistics>
+		<div class="cta">
+			<styled-button [style]="user.relation.followee ? buttonStyleFollowing : buttonStyleDefault" (click)="onToggleFollow()" [disabled]="!enableFollowButton" [text]="user.relation.followee ? 'Following' : 'Follow'"></styled-button>
+			<styled-button [style]="buttonStyleDefault" [routerLink]="'/message'" [fa]="'commenting-o'"></styled-button>
+		</div>
+	</div>
+</div>
+<tab-menu [tabItems]="tabItems"></tab-menu>
+<div *ngIf="currentTab.slug === 'activity'">
+	Activity
+</div>
+<div *ngIf="currentTab.slug === 'lists'">
+Lists
+</div>
+<div *ngIf="currentTab.slug === 'followees'">
+Followees
+</div>
+<div *ngIf="currentTab.slug === 'followers'">
+Followers
 </div>

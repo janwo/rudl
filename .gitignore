@@ -1,30 +1,31 @@
 # General
-**/typings/
-**/node_modules/
+**/node_modules
 
 # Node.js
 **/npm-debug.log*
-**/.npm/
+**/.npm
 
 # Logs
-**/logs/
+**/logs
 **/*.log
 
 # PHPStorm
-**/.idea/
+**/.idea
 
 # Server
-server/uploads/avatars/**
 server/**/*.js
 server/**/*.js.map
-!server/karma.conf.js
 
 # Client
-client/dist
-client/**/.sass-cache/
+client/_generated
+client/**/.sass-cache
 client/**/*.css.map
 client/**/*.js
 client/**/*.js.map
 !client/config/**/*.js
-!client/webpack.config.js
-!client/karma.conf.js
+
+# Database
+db/
+
+# Run
+run/**/*.js

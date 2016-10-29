@@ -29,6 +29,7 @@
   /deep/ button {
     border: none;
     outline: none;
+    cursor: pointer;
   }
 
   // Set headings.
@@ -47,5 +48,13 @@
   // Set helper classes.
   /deep/ .hide {
     display: none !important;
+  }
+
+  // Define default card.
+  /deep/ .card {
+    padding: map_get($base-padding, 'smaller');
+    border-radius: $base-border-radius;
+    background-color: map_get($base-colors, 'background-highlighted');
+    box-shadow: map_get($base-shadow, 'default');
   }
 }

@@ -8,16 +8,21 @@ $button-colors: (
   'default-inactive-background': inactive(map_get($base-colors, 'secondary')),
   'default-color': #fff,
   'default-inactive-color': #fff,
-  'minimal-color': map_get($base-colors, 'primary'),
-  'minimal-border-color': map_get($base-colors, 'primary'),
-  'minimal-inactive-color': inactive(map_get($base-colors, 'text')),
-  'minimal-inactive-border-color': inactive(map_get($base-colors, 'text'))
+  'minimal-color': map_get($base-colors, 'secondary'),
+  'minimal-border-color': map_get($base-colors, 'secondary'),
+  'minimal-inactive-color': inactive(map_get($base-colors, 'primary-text')),
+  'minimal-inactive-border-color': inactive(map_get($base-colors, 'primary-text')),
+  'minimal-inverse-color': #fff,
+  'minimal-inverse-background-color': map_get($base-colors, 'secondary'),
+  'minimal-inverse-inactive-color': #fff,
+  'minimal-inverse-inactive-background-color': inactive(map_get($base-colors, 'primary-text')),
 );
 
 :host {
-  display: block;
+  display: inline-block;
 
   button {
+    line-height: 1;
     transition: box-shadow 0.25s;
     cursor: pointer;
     margin-top: map_get($base-padding, 'small');
@@ -25,8 +30,10 @@ $button-colors: (
     border-radius: $button-border-radius;
     font-size: $button-font-size;
     padding: $button-padding $button-padding * 1.5;
-    display: block;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 
     &.style-minimal {
       border: map_get($base-line-widths, 'default') map_get($button-colors, 'minimal-border-color') solid;
@@ -34,13 +41,24 @@ $button-colors: (
       background-color: transparent;
 
       &[disabled] {
-        border: map_get($base-line-widths, 'default') map_get($button-colors, 'minimal-inactive-border-color') solid;
+        border-color: map_get($button-colors, 'minimal-inactive-border-color');
         color: map_get($button-colors, 'minimal-inactive-color');
       }
     }
 
+    &.style-minimal-inverse {
+      border: map_get($base-line-widths, 'default') transparent solid;
+      color: map_get($button-colors, 'minimal-inverse-color');
+      background-color: map_get($button-colors, 'minimal-inverse-background-color');
+
+      &[disabled] {
+        color: map_get($button-colors, 'minimal-inactive-color');
+        background-color: map_get($button-colors, 'minimal-inverse-inactive-background-color');
+      }
+    }
+
     &.style-default {
-      border: none;
+      border: map_get($base-line-widths, 'default') transparent solid;
       color: map_get($button-colors, 'default-color');
       background-color: map_get($button-colors, 'default-background');
       box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.25);
@@ -68,7 +86,11 @@ $button-colors: (
     }
 
     .fa {
-      margin-right: map_get($base-padding, 'small');
+      transform: scale(1.25);
+
+      &:not(:only-child) {
+        margin-right: map_get($base-padding, 'small');
+      }
     }
   }
 }

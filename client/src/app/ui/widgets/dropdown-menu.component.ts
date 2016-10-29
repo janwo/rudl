@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, style, animate, transition, trigger, OnInit} from "@angular/core";
-import {Router, NavigationEnd} from "@angular/router";
+import {Router, NavigationEnd, UrlTree} from "@angular/router";
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
@@ -70,6 +70,6 @@ export interface MenuItem {
     icon: string,
     notification: boolean,
     title: string,
-    link?: string,
+    link?: UrlTree,
     click?: any
 }

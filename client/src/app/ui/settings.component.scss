@@ -11,7 +11,7 @@
 
     & > div {
       & > expander {
-        border-bottom: 0.1rem solid inactive( #ccc);
+        border-bottom: 0.1rem solid map_get($base-colors, 'secondary-text');
 
         &:last-child {
           border-bottom: none;
