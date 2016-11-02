@@ -104,6 +104,7 @@ export default {
 	backend: {
 		host: process.env.BACKEND_SERVER_HOST || 'app',
 		port: process.env.BACKEND_SERVER_PORT || 80,
+		exposedHost: 'http://localhost',
 		debug: process.env.DEBUG_BACKEND || false,
 		watchAssets: true,
 		ssl: {
@@ -129,7 +130,10 @@ export default {
 				password: process.env.ARANGO_PASSWORD || 'meal2share'
 			}
 		},
-		maxUploadBytes: 2097152,
+		uploads: {
+			dir: root('db/files/'),
+			maxUploadBytes: 2097152
+		},
 		log: {
 			serverLogs: {
 				console: {

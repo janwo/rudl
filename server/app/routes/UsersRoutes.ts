@@ -1,4 +1,4 @@
-import {UserRoles} from "../models/User";
+import {UserRoles} from "../models/users/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {UserController} from "../controllers/UserController";
 import Joi = require('joi');
@@ -43,5 +43,29 @@ export const RoutesConfig: RoutesConfiguration = [
 				]
 			}
 		}
-	}
+	},
+	{
+		path: '/api/users/{username}/lists',
+		method: 'GET',
+		handler: UserController.RouteHandlers.getLists,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			}
+		}
+	},
+	{
+		path: '/api/users/{username}/activities',
+		method: 'GET',
+		handler: UserController.RouteHandlers.getActivities,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			}
+		}
+	},
 ];

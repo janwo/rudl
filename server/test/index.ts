@@ -3,7 +3,7 @@ process.env.ENV = 'test';
 
 import {DatabaseManager, arangoCollections} from "../app/Database";
 import {Cursor} from "arangojs";
-import {User, UserRoles} from "../app/models/User";
+import {User, UserRoles} from "../app/models/users/User";
 import casual = require('casual');
 import {Config} from "../../run/config";
 
@@ -42,7 +42,7 @@ describe(`Testing ${Config.app.title}...`, () => {
 		return require("../config/Hapi").hapiServer().then(() => {
 			// Truncate.
 			DatabaseManager.arangoClient.collection(arangoCollections.users).truncate();
-			DatabaseManager.arangoClient.collection(arangoCollections.userConnections).truncate();
+			DatabaseManager.arangoClient.collection(arangoCollections.userFollowsUser).truncate();
 			DatabaseManager.arangoClient.collection(arangoCollections.activities).truncate();
 			
 			// Add users.

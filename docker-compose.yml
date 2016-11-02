@@ -23,6 +23,7 @@ services:
     volumes:
       - ./db/redis:/data
   arango:
+    command: arangod --server.authentication-unix-sockets true
     volumes:
       - ./db/arango:/var/lib/arangodb3
     environment:

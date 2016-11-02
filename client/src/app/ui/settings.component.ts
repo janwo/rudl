@@ -8,16 +8,16 @@ import {TabItem} from "./widgets/tab-menu.component";
 })
 export class SettingsComponent implements OnInit {
     
-    public static pages: Array<SettingsPage> = [
-        {
+    public static pages: {[key: string]: SettingsPage} = {
+        account: {
             title: 'Konto',
             slug: 'account'
         },
-        {
+       safety: {
             title: 'Sicherheit',
             slug: 'safety'
         }
-    ];
+    };
     
     tabItems: Array<TabItem>;
     
@@ -29,18 +29,20 @@ export class SettingsComponent implements OnInit {
     ) {}
     
     private generateTabItems(): Array<TabItem> {
-        return SettingsComponent.pages.reduce((tabItems: Array<TabItem>, currentPage: SettingsPage) => {
+        return Object.keys(SettingsComponent.pages).reduce((tabItems: Array<TabItem>, pageKey: string) => {
+            let page = SettingsComponent.pages[pageKey];
+            
             // Create link.
-            let urlTree = this.router.createUrlTree(['../', currentPage.slug], {
+            let urlTree = this.router.createUrlTree(['../', page.slug], {
                 relativeTo: this.route
             });
             
             // Convert.
-            tabItems.push({
+            tabItems[pageKey] = {
                 link: urlTree,
-                title: currentPage.title,
+                title: page.title,
                 notification: false
-            });
+            };
             
             return tabItems;
         }, []);
@@ -52,7 +54,7 @@ export class SettingsComponent implements OnInit {
         
         // Get params.
         this.route.params.map((params:Params) => params['page']).subscribe((slug: string) => {
-            SettingsComponent.pages.every(page => {
+            Object.keys(SettingsComponent.pages).map(key => SettingsComponent.pages[key]).every(page => {
                 if(page.slug !== slug) return true;
                 this.currentPage = page;
                 return false;

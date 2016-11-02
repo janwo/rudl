@@ -1,4 +1,11 @@
 import {Component, Input} from "@angular/core";
+import {Router} from "@angular/router";
+
+interface StatisticItem {
+    subject: string;
+    value: string;
+    link?: any;
+}
 
 @Component({
     template: require('./statistics.component.html'),
@@ -6,16 +13,14 @@ import {Component, Input} from "@angular/core";
     selector: 'statistics'
 })
 export class StatisticsComponent {
-
-    @Input() statistics: Array<{
-        subject: string;
-        value: string;
-    }>;
-    selectedIndex: number = 0;
     
-    constructor() {}
-
-    public onClick(clickedIndex: number) {
-        this.selectedIndex = clickedIndex;
+    @Input() statistics: Array<StatisticItem>;
+    
+    constructor(
+        private router: Router
+    ){}
+    
+    onClick(item: StatisticItem) {
+        if(item.link) this.router.navigateByUrl(item.link);
     }
 }

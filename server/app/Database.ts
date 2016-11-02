@@ -6,8 +6,13 @@ import {RedisClient} from "redis";
 
 export const arangoCollections = {
 	users: 'users',
-	userConnections: 'user-connections',
-	activities: 'activities'
+	userFollowsUser: 'user-follows-user',
+	userFollowsList: 'user-follows-list',
+	userOwnsList: 'user-owns-list',
+	userFollowsActivity: 'user-follows-activity',
+	activities: 'activities',
+	lists: 'lists',
+	listIsItem: 'list-is-item'
 };
 
 const RETRY_ARANGO_MILLIS = 1000;

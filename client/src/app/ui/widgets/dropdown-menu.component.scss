@@ -8,6 +8,7 @@ $popup-menu-arrow-center-right-offset: 1rem;
 :host {
   ul {
     position: relative;
+    z-index: 20;
     border: $popup-menu-border-size solid map_get($base-colors, 'primary');
     list-style: none;
     background: $popup-menu-background-color;

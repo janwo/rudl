@@ -14,10 +14,10 @@ export const DecoratorsConfig: DecoratorsConfiguration = [
 			};
 			
 			let respondWithError = (err) => {
-				if (err instanceof Error === false)
-					err = Boom.badImplementation(err);
-				else if (!err.isBoom)
-					err = Boom.badImplementation(err.message);
+				if (err instanceof Error === false) err = Boom.badImplementation(err);
+				
+				// Convert to Boom for proper api handling.
+				if (!err.isBoom) err = Boom.badImplementation(err);
 				return this.response(err);
 			};
 			

@@ -1,4 +1,5 @@
 import * as Joi from "joi";
+import {Document} from "../Document";
 
 export class UserRoles {
 	static user = 'user';
@@ -31,9 +32,7 @@ export interface UserMeta {
 	hasAvatar: boolean;
 }
 
-export interface User {
-	_id?: string;
-	_key?: string;
+export interface User extends Document {
 	firstName: string;
 	lastName: string;
 	username: string;
@@ -44,7 +43,5 @@ export interface User {
 		password: string;
 		providers: Array<UserProvider>;
 	};
-	createdAt: number;
-	updatedAt: number;
 	meta: UserMeta;
 }

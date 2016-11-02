@@ -23,7 +23,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		path: '/static/{path*}',
 		handler: {
 			directory: {
-				path: root('db/files/public'),
+				path: Config.backend.uploads.dir,
 				listing: Config.backend.debug,
 				index: false
 			}

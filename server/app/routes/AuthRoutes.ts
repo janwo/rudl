@@ -4,7 +4,7 @@ import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
 import {UserController} from "../controllers/UserController";
-import {UserRoles} from "../models/User";
+import {UserRoles} from "../models/users/User";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{

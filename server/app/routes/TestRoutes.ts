@@ -17,5 +17,29 @@ export const RoutesConfig: RoutesConfiguration = [
 		config: {
 			auth: false
 		}
+	},
+	{
+		path: '/api/test/create-activities/{count?}',
+		method: 'POST',
+		handler: TestController.createActivities,
+		config: {
+			auth: false
+		}
+	},
+	{
+		path: '/api/test/create-user-follows-user/{count?}',
+		method: 'POST',
+		handler: TestController.createUserFollowsUser,
+		config: {
+			auth: false
+		}
+	},
+	{
+		path: '/api/test/create-user-follows-activity/{count?}',
+		method: 'POST',
+		handler: TestController.createUserFollowsActivity,
+		config: {
+			auth: false
+		}
 	}
 ];

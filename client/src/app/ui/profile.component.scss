@@ -22,8 +22,7 @@ $profile-avatar-size: 6rem;
     }
 
     .statistics {
-      min-width: 13rem;
-      flex: 0 0 auto;
+      flex: 1 1;
 
       .cta {
         display: flex;
@@ -44,7 +43,7 @@ $profile-avatar-size: 6rem;
     }
 
     .about {
-      flex: 1 0 auto;
+      flex: 2 1;
 
       h1 {
         margin-top: 0;
@@ -60,5 +59,14 @@ $profile-avatar-size: 6rem;
   tab-menu {
     margin-top: map_get($base-padding, 'default');
     margin-bottom: map_get($base-padding, 'default');
+  }
+
+  ul {
+    list-style: none;
+    margin-bottom: map_get($base-padding, 'default');
+
+    li:not(first-child) {
+      margin-top: map_get($base-padding, 'smaller');
+    }
   }
 }

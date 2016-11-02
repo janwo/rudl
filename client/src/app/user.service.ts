@@ -33,12 +33,20 @@ export class UserService {
         return this.dataService.get(`/api/users/${username}`, true).map((json: JsonResponse) => json.data).share();
     }
     
-    follower(username?: string): Observable<User[]> {
+    followers(username?: string): Observable<User[]> {
         return this.dataService.get(username ? `/api/users/${username}/followers` : '/api/me/followers', true).map((json: JsonResponse) => json.data).share();
     }
     
     followees(username?: string): Observable<User[]> {
         return this.dataService.get(username ? `/api/users/${username}/following` : '/api/me/following', true).map((json: JsonResponse) => json.data).share();
+    }
+    
+    lists(username?: string): Observable<List[]> {
+        return this.dataService.get(username ? `/api/users/${username}/lists` : '/api/me/lists', true).map((json: JsonResponse) => json.data).share();
+    }
+    
+    activities(username?: string): Observable<Activity[]> {
+        return this.dataService.get(username ? `/api/users/${username}/activities` : '/api/me/activities', true).map((json: JsonResponse) => json.data).share();
     }
     
     addFollowee(username: string): Observable<void> {
@@ -54,16 +62,20 @@ export class UserService {
     }
 }
 
-export interface User {
+export interface Document {
     id: string;
+    createdAt: number;
+    updatedAt: number;
+}
+
+export interface User extends Document {
     firstName: string;
     lastName: string;
     username: string;
     location: string;
     meta: UserMeta;
-    createdAt: number;
-    updatedAt: number;
-    relation: UserRelation;
+    relations: UserRelations;
+    statistics: UserStatistics;
     links: UserLinks;
 }
 
@@ -80,9 +92,31 @@ export interface UserMeta {
     profileText: string;
 }
 
-export interface UserRelation {
+export interface UserRelations {
     followee: boolean;
     follower: boolean;
     mutual_followers: number;
     mutual_followees: number;
+}
+
+export interface UserStatistics {
+    followers: number;
+    followees: number;
+    lists: number;
+    activities: number;
+}
+
+export interface Translations {
+    de?: string;
+    en?: string;
+    es?: string;
+    fr?: string;
+}
+
+export interface List extends Document{
+    name: Translations
+}
+
+export interface Activity extends Document{
+    name: Translations
 }

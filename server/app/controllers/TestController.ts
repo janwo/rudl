@@ -4,16 +4,24 @@ import Uuid = require("node-uuid");
 import dot = require("dot-object");
 import fs = require('fs');
 import path = require('path');
-import {User, UserRoles} from "../models/User";
+import _ = require('lodash');
+import {User, UserRoles} from "../models/users/User";
 import randomstring = require("randomstring");
 import jwt = require("jsonwebtoken");
 import {Cursor} from "arangojs";
 import casual = require('casual');
 import {arangoCollections, DatabaseManager} from "../Database";
+import {Activity} from "../models/activities/Activity";
+import {UserController} from "./UserController";
+import {UserFollowsUser} from "../models/users/UserFollowsUser";
 
 export module TestController {
 	
 	function generateUser(): User {
+		let date = [
+			casual.unix_time,
+			casual.unix_time
+		].sort();
 		return {
 			firstName: casual.first_name,
 			lastName: casual.last_name,
@@ -37,14 +45,33 @@ export module TestController {
 				password: casual.password,
 				providers: [],
 			},
-			createdAt: casual.unix_time,
-			updatedAt: casual.unix_time,
+			createdAt: date[0],
+			updatedAt: date[1],
 		};
 	}
 	
+	function generateActivity(): Activity {
+		let translations = ['de', 'en', 'fr', 'es'];
+		let date = [
+			casual.unix_time,
+			casual.unix_time
+		].sort();
+		let activity : Activity = {
+			name: {},
+			createdAt: date[0],
+			updatedAt: date[1]
+		};
+		
+		// Generate random translations.
+		_.sampleSize(translations, Math.round(Math.random() * (translations.length - 1)) + 1).forEach(translation => {
+			activity.name[translation] = `${casual.words(Math.random() * 5 + 3)} (${translation})`;
+		});
+		
+		return activity;
+	}
 	
 	/**
-	 * Handles [GET] /api/test/truncate/{collection?}
+	 * Handles [POST] /api/test/truncate/{collection?}
 	 * @param request Request-Object
 	 * @param request.params.collection collection (optional
 	 * @param reply Reply-Object
@@ -69,7 +96,7 @@ export module TestController {
 	}
 	
 	/**
-	 * Handles [GET] /api/test/create-users
+	 * Handles [POST /api/test/create-users/{count?}
 	 * @param request Request-Object
 	 * @param request.param.count number of users
 	 * @param reply Reply-Object
@@ -87,7 +114,71 @@ export module TestController {
 		};
 		
 		// Insert users.
-		let promise = DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all()).then(() => `${aqlParam.users.length} user(s) had been added!`);
+		let promise = DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all()).then(() => `${aqlParam.users.length} users had been added!`);
+		reply.api(promise);
+	}
+	
+	/**
+	 * Handles [POST] /api/test/create-activities/{count?)
+	 * @param request Request-Object
+	 * @param request.param.count number of activities
+	 * @param reply Reply-Object
+	 */
+	export function createActivities(request: any, reply: any): void {
+		// Prepare activities.
+		let aqlQuery = `FOR a IN @activities INSERT a INTO @@collection`;
+		let aqlParam = {
+			'@collection': arangoCollections.activities,
+			activities: (() => {
+				let activities = [];
+				for(let i = 0; i < (request.params.count || 100); i++) activities.push(generateActivity());
+				return activities;
+			})()
+		};
+		
+		// Insert activities.
+		let promise = DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all()).then(() => `${aqlParam.activities.length} activities had been added!`);
+		reply.api(promise);
+	}
+	
+	/**
+	 * Handles [POST] /api/test/create-user-follows-user/{count?}
+	 * @param request Request-Object
+	 * @param request.param.count number of max followers per user
+	 * @param reply Reply-Object
+	 */
+	export function createUserFollowsUser(request: any, reply: any): void {
+		// Prepare.
+		let aqlQuery = `FOR u IN @@collection LET followers = (FOR f IN @@collection SORT RAND() FILTER f._key != u._key LIMIT @count RETURN f) RETURN {from: u, followers: followers}`;
+		let aqlParam = {
+			'@collection': arangoCollections.users,
+			count : Number.parseInt(request.params.count) || 100
+		};
+		
+		// Insert edges.
+		let promise = DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all()).then((result : any) => {
+			let jobs : Array<Promise<UserFollowsUser>> = [];
+			result.forEach((user: {
+				from: User,
+				followers: Array<User>
+			}) => user.followers.forEach(follower => jobs.push(UserController.addUserConnection(user.from, follower))));
+			return Promise.all(jobs).then(() => `Users randomly following users!`);
+		});
+		reply.api(promise);
+	}
+	
+	/**
+	 * Handles [POST] /api/test/create-user-follows-activity/{count?}
+	 * @param request Request-Object
+	 * @param request.param.count number of max activities per user
+	 * @param reply Reply-Object
+	 */
+	export function createUserFollowsActivity(request: any, reply: any): void {
+		// Prepare.
+		let aqlQuery = `FOR u IN @user INSERT a INTO @@collection`;
+		
+		// Insert edges.
+		let promise = DatabaseManager.arangoClient.query(aqlQuery).then((cursor: Cursor) => cursor.all()).then(() => `Users randomly following activities!`);
 		reply.api(promise);
 	}
 }

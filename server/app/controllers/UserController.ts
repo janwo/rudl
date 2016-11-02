@@ -8,14 +8,17 @@ import path = require('path');
 import * as Joi from "joi";
 import {ValidationError} from "joi";
 import {Config} from "../../../run/config";
-import {User, UserProvider, Validation, UserRoles} from "../models/User";
+import {User, UserProvider, Validation, UserRoles} from "../models/users/User";
 import {DatabaseManager, arangoCollections} from "../Database";
 import {DecodedToken, UserDataCache, TokenData} from "../models/Token";
 import randomstring = require("randomstring");
 import jwt = require("jsonwebtoken");
 import {Cursor} from "arangojs";
-import {Edge} from "../models/Edge";
+import _ = require("lodash");
 import * as sharp from "sharp";
+import {UserFollowsUser} from "../models/users/UserFollowsUser";
+import {List} from "../models/lists/List";
+import {Activity} from "../models/activities/Activity";
 
 export module UserController {
 	
@@ -184,7 +187,7 @@ export module UserController {
 			let foundTokenData: TokenData;
 			userDataCache.tokens = userDataCache.tokens.filter((tokenItem: TokenData) => {
 				// Delete old expired token.
-				let now: number = Date.now() / 1000;
+				let now: number = Math.trunc(Date.now() / 1000);
 				if (tokenItem.expiresAt <= now + Config.backend.jwt.deleteIn) return false;
 				
 				// Extend expiry of an successfully discovered token that is still within the expiry range.
@@ -218,7 +221,7 @@ export module UserController {
 		};
 		
 		return getUserDataCache(user._key).then((userDataCache: UserDataCache) => {
-			let now = Date.now() / 1000;
+			let now = Math.trunc(Date.now() / 1000);
 			
 			// Add token.
 			userDataCache.tokens.push({
@@ -251,7 +254,7 @@ export module UserController {
 					let tokenItem = userDataCache.tokens[i];
 					if (tokenItem.tokenId != token.tokenId) continue;
 					
-					tokenItem.expiresAt = Date.now() / 1000; // Expire.
+					tokenItem.expiresAt = Math.trunc(Date.now() / 1000); // Expire.
 					resolve(userDataCache);
 					return;
 				}
@@ -372,7 +375,7 @@ export module UserController {
 	
 	export function saveUser(user: User): Promise<User> {
 		// Set new timestamps.
-		let now = Date.now() / 1000;
+		let now = Math.trunc(Date.now() / 1000);
 		user.updatedAt = now;
 		if (!user._key) user.createdAt = now;
 		
@@ -387,76 +390,178 @@ export module UserController {
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
 	}
 	
-	export function getPublicProfile(user: User | User[], url: string): Promise<any> {
-		let transform = user => {
-			// Add default links.
-			let links = {
-				followers: `${url}/api/users/${user.username}/followers`,
-				followees: `${url}/api/users/${user.username}/following`
-			};
+	export function measureTime(prefix: string, treshold: number = 70) {
+		let now = Date.now();
+		return (input: any) => {
+			let duration = Date.now() - now;
+			if(duration >= treshold) console.log(prefix + ' ' + duration + ' ms');
+			return input;
+		}
+	}
+	
+	export function getPublicUser(user: User | User[], relatedUser: User = null): Promise<any> {
+	
+		let createPublicUser = user => {
+			let lookups = [];
 			
-			// Add avatar links?
-			if(user.meta.hasAvatar) {
-				links['avatars'] = {
-					small: `${url}/static/avatars/${user._key}-small`,
-					medium: `${url}/static/avatars/${user._key}-medium`,
-					large: `${url}/static/avatars/${user._key}-large`
+			// Add statistics.
+			lookups.push(Promise.all([
+				getUserConnections(user, null, true),
+				getUserConnections(null, user, true),
+				getLists(user, true),
+				getActivities(user, true)
+			]).then((values: Array<any>) => {
+				return {
+					statistics: {
+						followees: values[0],
+						followers: values[1],
+						lists: values[2],
+						activities: values[3]
+					}
 				};
-			}
+			}));
 			
-			user.meta.followees = 23;
-			user.meta.followers = 43;
+			// Add relations.
+			if(relatedUser) lookups.push(Promise.all<number>([
+				getUserConnections(relatedUser, user, true),
+				getUserConnections(user, relatedUser, true),
+				getMutualConnections([user, relatedUser], false, true),
+				getMutualConnections([user, relatedUser], true, true)
+			]).then((values: Array<number>) => {
+				return {
+					relations: {
+						followee: values[0] > 0,
+						follower: values[1] > 0,
+						mutual_followees: values[2],
+						mutual_followers: values[3]
+						//TODO mutual_activities, mutual_lists
+					}
+				};
+			}));
 			
-			// Build profile.
-			return dot.transform({
-				'user._key': 'id',
-				'user.username': 'username',
-				'user.firstName': 'firstName',
-				'user.lastName': 'lastName',
-				'user.createdAt': 'createdAt',
-				'user.meta.hasAvatar': 'meta.hasAvatar',
-				'user.meta.profileText': 'meta.profileText',
-				'user.meta.followees': 'meta.followees',
-				'user.meta.followers': 'meta.followers',
-				'links': 'links'
-			}, {
-				user: user,
-				links: links
+			// Run lookups.
+			return Promise.all<User>(lookups).then((values: Array<any>) => {
+				return _.assign.apply(this, [user].concat(values))
+			}).then(user => {
+				// Define default links.
+				let links = {
+					followers: `${Config.backend.exposedHost}/api/users/${user.username}/followers`,
+					followees: `${Config.backend.exposedHost}/api/users/${user.username}/following`
+				};
+				
+				// Define avatar links?
+				if(user.meta.hasAvatar) {
+					links['avatars'] = {
+						small: `${Config.backend.exposedHost}/static/avatars/${user._key}-small`,
+						medium: `${Config.backend.exposedHost}/static/avatars/${user._key}-medium`,
+						large: `${Config.backend.exposedHost}/static/avatars/${user._key}-large`
+					};
+				}
+				
+				// Build profile.
+				return dot.transform({
+					'user._key': 'id',
+					'user.username': 'username',
+					'user.firstName': 'firstName',
+					'user.lastName': 'lastName',
+					'user.meta.hasAvatar': 'meta.hasAvatar',
+					'user.meta.profileText': 'meta.profileText',
+					'user.statistics': 'statistics',
+					'user.relations': 'relations',
+					'links': 'links',
+					'user.createdAt': 'createdAt',
+				}, {
+					user: user,
+					links: links
+				});
 			});
 		};
 		
-		let transformed = user instanceof Array ? user.map(transform) : transform(user);
-		return Promise.resolve(transformed);
+		let now = Date.now();
+		let transformed = user instanceof Array ? Promise.all(user.map(createPublicUser)) : createPublicUser(user);
+		return transformed.then((result : any | Array<any>) => {
+			console.log(`Building profile of ${result instanceof Array ? result.length + ' users' : '1 user'} took ${Date.now() - now} millis`);
+			return result;
+		});
+	}
+	
+	export function getPublicList(list: List | List[]) {
+		let createPublicList = list => {
+			return getPublicUser(list.owner).then(user => {
+				// Exchange owner.
+				list.owner = user;
+				
+				// Add default links.
+				let links = {};
+				
+				// Build profile.
+				return dot.transform({
+					'list._key': 'id',
+					'list.name': 'name',
+					'list.owner': 'owner',
+					'list.followedByYou': 'followedByYou',
+					'links': 'links'
+				}, {
+					list: list,
+					links: links
+				});
+			});
+		};
+
+		return list instanceof Array ? Promise.all(list.map(createPublicList)) : createPublicList(list);
+	}
+	
+	export function getPublicActivity(activity: Activity | Activity[]) {
+		let transform = activity => {
+			// Add default links.
+			let links = {
+			};
+			
+			// Build profile.
+			return Promise.resolve(dot.transform({
+				'activity._key': 'id',
+				'activity.name': 'name',
+				'activity.owner': 'owner',
+				'activity.followedByYou': 'followedByYou',
+				'activity': 'links'
+			}, {
+				activity: activity,
+				links: links
+			}));
+		};
+		
+		let transformed = activity instanceof Array ? Promise.all(activity.map(transform)) : transform(activity);
+		return transformed;
 	}
 	
 	export function getPeopleSuggestions(user: User): Promise<User[]> {
 		let aqlQuery = `LET notIn = UNION([@user], FOR e IN @@edges FILTER e._from == @user RETURN e._to) FOR u IN @@collection FILTER u._id NOT IN notIn LIMIT 5 RETURN u`;
 		let aqlParams = {
-			'@edges': arangoCollections.userConnections,
+			'@edges': arangoCollections.userFollowsUser,
 			'@collection': arangoCollections.users,
 			user: user._id
 		};
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all());
 	}
 	
-	export function getUserConnections(from: User, to: User) : Promise<User[]> {
+	export function getUserConnections(from: User, to: User, countOnly: boolean = false) : Promise<User[] | number> {
 		if(!from && !to) throw('Invalid arguments: At least one argument has to be an user.');
 		let aqlQuery = from && to ?
-			`FOR u IN OUTBOUND @from @@edges FILTER u._id == @to RETURN u` :
-			`FOR u IN ${from ? 'OUTBOUND' : 'INBOUND'} @from @@edges RETURN u`;
+			`FOR u IN OUTBOUND @from @@edges FILTER u._id == @to LIMIT 1 ${countOnly ? 'COLLECT WITH COUNT INTO length RETURN length' : 'RETURN u'}` :
+			`FOR u IN ${from ? 'OUTBOUND' : 'INBOUND'} @from @@edges ${countOnly ? 'COLLECT WITH COUNT INTO length RETURN length' : 'RETURN u'}`;
 		let aqlParam = {
-			'@edges': arangoCollections.userConnections
+			'@edges': arangoCollections.userFollowsUser
 		};
-		if(to) aqlParam['to'] = to._id;
-		if(from) aqlParam['from'] = from._id;
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all());
+		if(from && to) aqlParam['to'] = to._id;
+		aqlParam['from'] = from ? from._id : to._id;
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => countOnly ? cursor.next() : cursor.all());
 	}
 	
-	export function addUserConnection(user: User, aimedUser: User) : Promise<Edge> {
-		if(aimedUser._id === user._id) return Promise.reject<Edge>(Boom.badRequest('Users cannot follow themselves.'));
+	export function addUserConnection(user: User, aimedUser: User) : Promise<UserFollowsUser> {
+		if(aimedUser._id === user._id) return Promise.reject<UserFollowsUser>(Boom.badRequest('Users cannot follow themselves.'));
 		
-		let now = Date.now() / 1000;
-		let edge : Edge = {
+		let now = Math.trunc(Date.now() / 1000);
+		let edge : UserFollowsUser = {
 			_from: user._id,
 			_to: aimedUser._id,
 			createdAt: now,
@@ -465,7 +570,7 @@ export module UserController {
 	
 		let aqlQuery = `INSERT @document INTO @@edges RETURN NEW`;
 		let aqlParams = {
-			'@edges': arangoCollections.userConnections,
+			'@edges': arangoCollections.userFollowsUser,
 			document: edge
 		};
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
@@ -474,24 +579,45 @@ export module UserController {
 	export function removeUserConnection(user: User, aimedUser: User): Promise<void> {
 		let aqlQuery = `FOR e IN @@edges FILTER e._from == @from && e._to == @to REMOVE e IN @@edges`;
 		let aqlParams = {
-			'@edges': arangoCollections.userConnections,
+			'@edges': arangoCollections.userFollowsUser,
 			from: user._id,
 			to: aimedUser._id
 		};
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then(() => {});
 	}
 	
-	export function getMutualFollowers(users: User[]): Promise<User[]> {
+	export function getLists(user: User, countOnly: boolean = false) : Promise<List[] | number>{
+		let aqlQuery = countOnly ?
+			`FOR list IN OUTBOUND @from @@edgesFollows COLLECT WITH COUNT INTO length RETURN length` :
+			`FOR list IN OUTBOUND @from @@edgesFollows FOR user IN INBOUND list @@edgesOwns RETURN MERGE({owner: user}, list)`;
+		let aqlParams = {
+			'@edgesFollows': arangoCollections.userFollowsList,
+			from: user
+		};
+		if(!countOnly) aqlParams['@edgesOwns'] = arangoCollections.userOwnsList;
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => countOnly ? cursor.next() : cursor.all());
+	}
+	
+	export function getActivities(user: User, countOnly: boolean = false) : Promise<Activity[] | number>{
+		let aqlQuery = `FOR activity IN OUTBOUND @from @@edges ${countOnly ? 'COLLECT WITH COUNT INTO length RETURN length' : 'RETURN activity'}`;
+		let aqlParams = {
+			'@edges': arangoCollections.userFollowsActivity,
+			from: user
+		};
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => countOnly ? cursor.next() : cursor.all());
+	}
+	
+	export function getMutualConnections(users: User[], inbound = true, countOnly: boolean = false): Promise<User[] | number> {
 		if(!users || users.length < 2) throw('Invalid arguments: At least choose two users for mutual comparison.');
-		let friendsOfUser = users.map((user: User, index: number) => `(FOR v IN ANY @user_${index} @@edges RETURN v._id)`).join(',');
-		let aqlQuery = `FOR u IN INTERSECTION (${friendsOfUser}) RETURN u`;
+		let friendsOfUser = users.map((user: User, index: number) => `(FOR v IN ${inbound ? 'INBOUND' : 'OUTBOUND'} @user_${index} @@edges RETURN v._id)`).join(',');
+		let aqlQuery = `FOR u IN INTERSECTION (${friendsOfUser}) ${countOnly ? 'COLLECT WITH COUNT INTO length RETURN length' : 'RETURN u'}`;
 		let aqlParam = {
-			'@edges': arangoCollections.userConnections
+			'@edges': arangoCollections.userFollowsUser
 		};
 		users.forEach((user: User, index: number) => {
 			aqlParam[`user_${index}`] = user._id;
 		});
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all());
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => countOnly ? cursor.next() : cursor.all());
 	}
 	
 	export namespace RouteHandlers {
@@ -507,10 +633,10 @@ export module UserController {
 			let user = request.auth.credentials;
 			let promise = new Promise((resolve, reject) => {
 				if (request.payload.file) {
-					let uploadDir = path.resolve(__dirname, '../../', 'uploads/avatars/', user._key);
-					let small = fs.createWriteStream(`${uploadDir}-small`);
-					let medium = fs.createWriteStream(`${uploadDir}-medium`);
-					let large = fs.createWriteStream(`${uploadDir}-large`);
+					let uploadDir = path.resolve(Config.backend.uploads.dir, 'avatars/');
+					let small = fs.createWriteStream(path.resolve(uploadDir, user._key + '-small'));
+					let medium = fs.createWriteStream(path.resolve(uploadDir, user._key + '-medium'));
+					let large = fs.createWriteStream(path.resolve(uploadDir, user._key + '-large'));
 					
 					let transformations = new sharp(undefined, undefined);//TODO use update sharp.d.ts as soon as available
 					transformations.clone().resize(100, 100).max().crop(sharp.strategy.entropy).toFormat('png').pipe(small).on('error', reject);
@@ -518,6 +644,7 @@ export module UserController {
 					transformations.clone().resize(800, 800).max().crop(sharp.strategy.entropy).toFormat('png').pipe(large).on('error', reject);
 					
 					request.payload.file.pipe(transformations);
+					request.payload.file.on('error', reject);
 					request.payload.file.on('end', () => {
 						user.meta.hasAvatar = true;
 						resolve(saveUser(user));
@@ -541,7 +668,7 @@ export module UserController {
 		 * @param reply Reply-Object
 		 */
 		export function getPeopleSuggestions(request: any, reply: any): void {
-			let promise = UserController.getPeopleSuggestions(request.auth.credentials).then((users: User[]) => getPublicProfile(users, request.connection.info.uri));
+			let promise = UserController.getPeopleSuggestions(request.auth.credentials).then((users: User[]) => getPublicUser(users, request.auth.credentials));
 			reply.api(promise);
 		}
 		
@@ -553,23 +680,42 @@ export module UserController {
 		 */
 		export function getUserOf(request: any, reply: any): void {
 			let username = encodeURIComponent(request.params.username);
-			let promise = findByUsername(username).then((user: User) => {
-				return getPublicProfile(user, request.connection.info.uri).then((profile: any) => {
-					return Promise.all([
-						getUserConnections(request.auth.credentials, user),
-						getUserConnections(user, request.auth.credentials),
-					    getMutualFollowers([user, request.auth.credentials])
-					]).then((values: User[][]) => {
-						profile['relation'] = {
-							followee: values[0].length > 0,
-							follower: values[1].length > 0,
-							mutual_followees: 0,
-							mutual_followers: values[2].length
-						};
-						return profile;
-					});
-				});
-			});
+			let promise = findByUsername(username).then((user: User) => getPublicUser(user, request.auth.credentials));
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [GET] /api/me/lists AND /api/users/{username}/lists
+		 * @param request Request-Object
+		 * @param request.params.username username (optional)
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function getLists(request: any, reply: any): void {
+			let user = request.auth.credentials;
+			let username = request.params.username;
+			
+			// Create user promise.
+			let promise : Promise<User> = Promise.resolve(username ? findByUsername(encodeURIComponent(username)) : user);
+			promise = promise.then((user: User) => UserController.getLists(user)).then((lists: List[]) => UserController.getPublicList(lists));
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [GET] /api/me/activities AND /api/users/{username}/activities
+		 * @param request Request-Object
+		 * @param request.params.username username (optional)
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function getActivities(request: any, reply: any): void {
+			let user = request.auth.credentials;
+			let username = request.params.username;
+			
+			// Create user promise.
+			let promise : Promise<User> = Promise.resolve(username ? findByUsername(encodeURIComponent(username)) : user);
+			promise = promise.then((user: User) => UserController.getActivities(user)).then((activities: Activity[]) => UserController.getPublicActivity(activities));
 			
 			reply.api(promise);
 		}
@@ -584,11 +730,10 @@ export module UserController {
 		export function getFollowers(request: any, reply: any): void {
 			let user = request.auth.credentials;
 			let username = request.params.username;
-			let url = request.connection.info.uri;
 			
 			// Create user promise.
 			let promise : Promise<User> = Promise.resolve(username ? findByUsername(encodeURIComponent(username)) : user);
-			promise = promise.then((user: User) => getUserConnections(null, user)).then((users: User[]) => getPublicProfile(users, url));
+			promise = promise.then((user: User) => getUserConnections(null, user)).then((users: User[]) => getPublicUser(users, request.auth.credentials));
 			
 			reply.api(promise);
 		}
@@ -603,11 +748,10 @@ export module UserController {
 		export function getFollowees(request: any, reply: any): void {
 			let user = request.auth.credentials;
 			let username = request.params.username;
-			let url = request.connection.info.uri;
 			
 			// Create user promise.
 			let promise : Promise<User> = Promise.resolve(username ? findByUsername(encodeURIComponent(username)) : user);
-			promise = promise.then((user: User) => getUserConnections(user, null)).then((users: User[]) => getPublicProfile(users, url));
+			promise = promise.then((user: User) => getUserConnections(user, null)).then((users: User[]) => getPublicUser(users, request.auth.credentials));
 			
 			reply.api(promise);
 		}

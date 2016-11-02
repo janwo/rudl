@@ -1,5 +1,5 @@
 import {UserController} from "../controllers/UserController";
-import {User} from "../models/User";
+import {User} from "../models/users/User";
 import {StrategyConfiguration} from "../binders/StrategiesBinder";
 import Boom = require("boom");
 

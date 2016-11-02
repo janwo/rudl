@@ -9,17 +9,9 @@ import { Subscription } from 'rxjs/Subscription';
 })
 export class TabMenuComponent implements OnInit, OnDestroy {
     
-    @Input() tabItems : Array<TabItem> = [];
+    @Input() tabItems : { [key: string]: TabItem } = {};
     routerChanges : Subscription;
     activeTabItem: TabItem = null;
-    
-    ngOnDestroy(){
-        this.routerChanges.unsubscribe();
-    }
-    
-    onClick(tabItem: TabItem) {
-        if(!this.activeTabItem || this.activeTabItem.link.toString() !== tabItem.link.toString() ) this.router.navigateByUrl(tabItem.link);
-    }
     
     constructor(
         private router: Router
@@ -28,7 +20,7 @@ export class TabMenuComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.routerChanges = this.router.events.filter(value => value instanceof NavigationEnd).subscribe((route: NavigationEnd) => {
             this.activeTabItem = null;
-            this.tabItems.every(( tabItem: TabItem ) => {
+            Object.keys(this.tabItems).map(key => this.tabItems[key]).forEach(( tabItem: TabItem ) => {
                 if(!this.router.isActive(tabItem.link, false)) return true;
             
                 this.activeTabItem = tabItem;
@@ -36,6 +28,18 @@ export class TabMenuComponent implements OnInit, OnDestroy {
                 return false;
             });
         });
+    }
+    
+    ngOnDestroy(){
+        this.routerChanges.unsubscribe();
+    }
+    
+    private getIterable() {
+        return Object.keys(this.tabItems).map(tabKey => this.tabItems[tabKey]);
+    }
+    
+    private onClick(tabItem: TabItem) {
+        if(!this.activeTabItem || this.activeTabItem.link.toString() !== tabItem.link.toString() ) this.router.navigateByUrl(tabItem.link);
     }
 }
 

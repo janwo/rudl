@@ -1,5 +1,5 @@
 <ul>
-	<li (click)="onClick(i)" *ngFor="let statistic of statistics; let i = index">
+	<li *ngFor="let statistic of statistics" (click)="onClick(statistic)" >
 		<span class="value">{{statistic.value}}</span>
 		<span class="subject">{{statistic.subject}}</span>
 	</li>

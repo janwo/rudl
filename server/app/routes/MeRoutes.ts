@@ -1,4 +1,4 @@
-import {UserRoles} from "../models/User";
+import {UserRoles} from "../models/users/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {UserController} from "../controllers/UserController";
 import Joi = require('joi');
@@ -28,7 +28,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		config: {
 			payload: {
 				output: 'stream',
-				maxBytes: Config.backend.maxUploadBytes,
+				maxBytes: Config.backend.uploads.maxUploadBytes,
 				parse: true,
 				allow: 'multipart/form-data'
 			},
@@ -67,6 +67,18 @@ export const RoutesConfig: RoutesConfiguration = [
 		path: '/api/me/following/{followee}',
 		method: 'DELETE',
 		handler: UserController.RouteHandlers.deleteFollowee,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			}
+		}
+	},
+	{
+		path: '/api/me/lists',
+		method: 'GET',
+		handler: UserController.RouteHandlers.getLists,
 		config: {
 			auth: {
 				scope: [

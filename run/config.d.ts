@@ -36,6 +36,7 @@ export const Config : {
 	backend: {
 		host: string,
 		port: number,
+		exposedHost: string,
 		debug: boolean,
 		watchAssets: boolean,
 		ssl: {
@@ -48,8 +49,11 @@ export const Config : {
 			deleteIn: number,
 			salt: string,
 		},
-		maxUploadBytes: number,
-			log: {
+		uploads: {
+			dir: string;
+			maxUploadBytes: number,
+		},
+		log: {
 			serverLogs: {
 				console: {
 					enabled: boolean

@@ -1,5 +1,5 @@
 import {Config} from "../../../run/config";
-import {User, UserProvider} from "../models/User";
+import {User, UserProvider} from "../models/users/User";
 import {StrategyConfiguration} from "../binders/StrategiesBinder";
 import {UserController} from "../controllers/UserController";
 import Boom = require("boom");
@@ -34,7 +34,7 @@ export function handleFacebook(request, reply): void {
 		provider: StrategyConfig.strategyConfig.provider,
 		userIdentifier: profile.id,
 		accessToken: request.auth.credentials.token,
-		refreshBefore: request.auth.credentials.expiresIn ? request.auth.credentials.expiresIn + Math.trunc(Date.now() / 1000) : null,
+		refreshBefore: request.auth.credentials.expiresIn ? Math.trunc(request.auth.credentials.expiresIn + Date.now() / 1000) : null,
 		refreshToken: request.auth.credentials.refreshToken || undefined
 	};
 	
