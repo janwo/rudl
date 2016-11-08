@@ -6,12 +6,13 @@ import BasicStrategy = require("../strategies/BasicStrategy");
 import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
+import {ActivityController} from "../controllers/ActivityController";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
-		path: '/api/users/{username}',
+		path: '/api/activities/=/{key}',
 		method: 'GET',
-		handler: UserController.RouteHandlers.getUserOf,
+		handler: ActivityController.RouteHandlers.getActivity,
 		config: {
 			auth: {
 				scope: [
@@ -21,9 +22,9 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/users/{username}/followers/{follower?}',
+		path: '/api/activities/in/{list}',
 		method: 'GET',
-		handler: UserController.RouteHandlers.getFollowers,
+		handler: ActivityController.RouteHandlers.getActivitiesIn,
 		config: {
 			auth: {
 				scope: [
@@ -33,38 +34,19 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/users/{username}/following/{followee?}',
+		path: '/api/activities/like/{query}',
 		method: 'GET',
-		handler: UserController.RouteHandlers.getFollowees,
+		handler: ActivityController.RouteHandlers.getActivitiesLike,
 		config: {
 			auth: {
 				scope: [
 					UserRoles.user
 				]
-			}
-		}
-	},
-	{
-		path: '/api/users/{username}/lists',
-		method: 'GET',
-		handler: UserController.RouteHandlers.getLists,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			}
-		}
-	},
-	{
-		path: '/api/users/{username}/activities',
-		method: 'GET',
-		handler: UserController.RouteHandlers.getActivities,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
+			},
+			validate: {
+				params: {
+					query: Joi.string().min(3)
+				}
 			}
 		}
 	},

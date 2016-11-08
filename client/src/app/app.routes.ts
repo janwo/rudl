@@ -11,6 +11,7 @@ import {SettingsComponent} from "./ui/settings.component";
 import {ProfileComponent} from "./ui/profile.component";
 import {MeComponent} from "./ui/me.component";
 import {RedirectComponent} from "./redirect.component";
+import {ListComponent} from "./ui/List.component";
 
 const appRoutes: Routes = [
     {
@@ -34,6 +35,7 @@ const appRoutes: Routes = [
             { path: 'people', component: PeopleComponent, pathMatch: 'full' },
             { path: 'people/:username', component: RedirectComponent , data: { redirect: ['activity'] }, pathMatch: 'full' },
             { path: 'people/:username/:tab', component: ProfileComponent },
+            { path: 'lists/:key', component: ListComponent },
             { path: 'me', component: MeComponent },
             { path: 'settings', redirectTo: 'settings/account', pathMatch: 'full' },
             { path: 'settings/:page', component: SettingsComponent }

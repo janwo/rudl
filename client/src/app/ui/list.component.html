@@ -1,0 +1,11 @@
+<div class="card" *ngIf="list">
+	<h1>{{string(list.name)}}</h1>
+	<span>{{''}}</span>
+</div>
+
+<h1>Aktivitäten</h1>
+<ul>
+	<li *ngFor="let activity of activities">
+		<activity-item [activity]="activity"></activity-item>
+	</li>
+</ul>

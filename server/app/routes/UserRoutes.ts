@@ -1,4 +1,4 @@
-import {UserRoles} from "../models/users/User";
+import {UserRoles, UserValidation} from "../models/users/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {UserController} from "../controllers/UserController";
 import Joi = require('joi');
@@ -6,11 +6,29 @@ import BasicStrategy = require("../strategies/BasicStrategy");
 import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
-import {Config} from "../../../run/config";
+
+const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.string().regex(/^me$/));
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
-		path: '/api/me/followers',
+		path: '/api/users/=/{username}',
+		method: 'GET',
+		handler: UserController.RouteHandlers.getUser,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					username: UsernameValidation
+				}
+			}
+		}
+	},
+	{
+		path: '/api/users/followers/{username}',
 		method: 'GET',
 		handler: UserController.RouteHandlers.getFollowers,
 		config: {
@@ -18,29 +36,16 @@ export const RoutesConfig: RoutesConfiguration = [
 				scope: [
 					UserRoles.user
 				]
-			}
-		}
-	},
-	{
-		path: '/api/me/avatar',
-		method: 'POST',
-		handler: UserController.RouteHandlers.uploadAvatar,
-		config: {
-			payload: {
-				output: 'stream',
-				maxBytes: Config.backend.uploads.maxUploadBytes,
-				parse: true,
-				allow: 'multipart/form-data'
 			},
-			auth: {
-				scope: [
-					UserRoles.user
-				]
+			validate: {
+				params: {
+					username: UsernameValidation
+				}
 			}
 		}
 	},
 	{
-		path: '/api/me/following',
+		path: '/api/users/following/{username}',
 		method: 'GET',
 		handler: UserController.RouteHandlers.getFollowees,
 		config: {
@@ -48,11 +53,16 @@ export const RoutesConfig: RoutesConfiguration = [
 				scope: [
 					UserRoles.user
 				]
+			},
+			validate: {
+				params: {
+					username: UsernameValidation
+				}
 			}
 		}
 	},
 	{
-		path: '/api/me/following/{followee}',
+		path: '/api/users/follow/{followee}',
 		method: 'PUT',
 		handler: UserController.RouteHandlers.addFollowee,
 		config: {
@@ -60,11 +70,16 @@ export const RoutesConfig: RoutesConfiguration = [
 				scope: [
 					UserRoles.user
 				]
+			},
+			validate: {
+				params: {
+					followee: UserValidation.username
+				}
 			}
 		}
 	},
 	{
-		path: '/api/me/following/{followee}',
+		path: '/api/users/follow/{followee}',
 		method: 'DELETE',
 		handler: UserController.RouteHandlers.deleteFollowee,
 		config: {
@@ -72,31 +87,12 @@ export const RoutesConfig: RoutesConfiguration = [
 				scope: [
 					UserRoles.user
 				]
+			},
+			validate: {
+				params: {
+					followee: UserValidation.username
+				}
 			}
 		}
 	},
-	{
-		path: '/api/me/lists',
-		method: 'GET',
-		handler: UserController.RouteHandlers.getLists,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			}
-		}
-	},
-	{
-		path: '/api/me/suggestions/people',
-		method: 'GET',
-		handler: UserController.RouteHandlers.getPeopleSuggestions,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			}
-		}
-	}
 ];

@@ -10,10 +10,10 @@ import {InputFieldComponent} from "./ui/widgets/input-field.component";
 import {AuthCallbackComponent} from "./ui/auth-callback.component";
 import {HttpModule, JsonpModule} from "@angular/http";
 import {AppGuard} from "./app.guard";
-import {DataService} from "./data.service";
+import {DataService} from "./services/data.service";
 import {routing, appRoutingProviders} from "./app.routes";
 import {FormsModule} from "@angular/forms";
-import {UserService} from "./user.service";
+import {UserService} from "./services/user.service";
 import {IndicatorComponent} from "./ui/widgets/indicator.component";
 import {NavbarComponent} from "./ui/navbar.component";
 import {DropdownMenuComponent} from "./ui/widgets/dropdown-menu.component";
@@ -30,6 +30,8 @@ import {StatisticsComponent} from "./ui/widgets/statistics.component";
 import {AvatarComponent} from "./ui/widgets/avatar.component";
 import {RedirectComponent} from "./redirect.component";
 import {ListItemComponent} from "./ui/widgets/list-item.component";
+import {ListComponent} from "./ui/List.component";
+import {ActivityItemComponent} from "./ui/widgets/activity-item.component";
 
 @NgModule({
     declarations: [
@@ -41,6 +43,8 @@ import {ListItemComponent} from "./ui/widgets/list-item.component";
 	    NavbarComponent,
 	    DropdownMenuComponent,
 	    TabMenuComponent,
+	    ActivityItemComponent,
+	    ListComponent,
 	    StatisticsComponent,
 	    TabElevatedMenuComponent,
 	    LandingPageComponent,

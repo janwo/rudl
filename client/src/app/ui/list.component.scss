@@ -1,0 +1,14 @@
+@import 'variables.scss';
+
+:host {
+  display: block;
+
+  ul {
+    list-style: none;
+    margin-bottom: map_get($base-padding, 'default');
+
+    li:not(first-child) {
+      margin-top: map_get($base-padding, 'smaller');
+    }
+  }
+}

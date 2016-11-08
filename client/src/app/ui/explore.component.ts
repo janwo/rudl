@@ -14,8 +14,8 @@ export class someUser {
 }
 
 @Component({
-    template: require('./explore.component.html'),
-    styles: [require('./explore.component.scss')]
+    templateUrl: './explore.component.html',
+    styleUrls: ['./explore.component.scss']
 })
 export class ExploreComponent {
 

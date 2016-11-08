@@ -3,7 +3,10 @@ import {User, UserProvider} from "../models/users/User";
 import {StrategyConfiguration} from "../binders/StrategiesBinder";
 import {UserController} from "../controllers/UserController";
 import Boom = require("boom");
+import randomstring = require("randomstring");
 import {AssetsPool} from "../AssetsPool";
+import {AuthController} from "../controllers/AuthController";
+import {AccountController} from "../controllers/AccountController";
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -40,18 +43,19 @@ export function handleFacebook(request, reply): void {
 	
 	UserController.findByProvider(provider).catch((err: Error) => {
 		// Create User.
-		return UserController.checkUsername(profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then(checkResults => {
+		return AccountController.checkUsername(profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then(checkResults => {
 			if (checkResults.available) return checkResults.username;
 			return checkResults.recommendations[Math.trunc(Math.random() * checkResults.recommendations.length)];
 		}).then(username => {
-			return UserController.createUser({
+			return AccountController.createUser({
 				firstName: profile.name.first,
 				lastName: profile.name.last,
 				username: username,
+				password: randomstring.generate(10),
 				mail: profile.email || profile.id + '@facebook.com'
 			});
 		});
-	}).then((user: User) => UserController.addProvider(user, provider)).then(UserController.saveUser).then(UserController.signToken).then(token => {
+	}).then((user: User) => AccountController.addProvider(user, provider)).then(AccountController.saveUser).then(AuthController.signToken).then(token => {
 		reply.view('index', {
 			title: 'Authentication',
 			assets: AssetsPool.getAssets(),

@@ -1,13 +1,15 @@
 import {Component, OnInit, OnDestroy} from "@angular/core";
-import {UserService, User, List} from "../user.service";
+import {UserService} from "../services/user.service";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {ButtonStyles} from "./widgets/styled-button.component";
 import {TabItem} from "./widgets/tab-menu.component";
+import {User} from "../models/user";
+import {List} from "../models/list";
 
 @Component({
-    template: require('./profile.component.html'),
-    styles: [require('./profile.component.scss')]
+    templateUrl: './profile.component.html',
+    styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit, OnDestroy {
     

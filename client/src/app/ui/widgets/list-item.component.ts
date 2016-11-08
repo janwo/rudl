@@ -1,9 +1,9 @@
 import {Component, Input} from "@angular/core";
-import {List} from "../../user.service";
+import {List} from "../../models/list";
 
 @Component({
-	template: require('./list-item.component.html'),
-	styles: [require('./list-item.component.scss')],
+	templateUrl: './list-item.component.html',
+	styleUrls: ['./list-item.component.scss'],
 	selector: 'list-item'
 })
 export class ListItemComponent {

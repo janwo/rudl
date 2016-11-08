@@ -1,9 +1,9 @@
 import {Input, Component} from "@angular/core";
-import {User} from "../../user.service";
+import {User} from "../../models/user";
 
 @Component({
-	template: require('./avatar.component.html'),
-	styles: [require('./avatar.component.scss')],
+	templateUrl: './avatar.component.html',
+	styleUrls: ['./avatar.component.scss'],
 	selector: 'avatar'
 })
 export class AvatarComponent {

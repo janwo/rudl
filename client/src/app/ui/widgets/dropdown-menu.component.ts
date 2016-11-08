@@ -3,8 +3,8 @@ import {Router, NavigationEnd, UrlTree} from "@angular/router";
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
-    template: require('./dropdown-menu.component.html'),
-    styles: [require('./dropdown-menu.component.scss')],
+    templateUrl: './dropdown-menu.component.html',
+    styleUrls: ['./dropdown-menu.component.scss'],
     selector: 'dropdown-menu',
     animations: [
         trigger('openClose', [

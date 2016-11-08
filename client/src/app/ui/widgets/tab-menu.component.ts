@@ -3,8 +3,8 @@ import {Router, NavigationEnd, UrlTree} from "@angular/router";
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({
-    template: require('./tab-menu.component.html'),
-    styles: [require('./tab-menu.component.scss')],
+    templateUrl: './tab-menu.component.html',
+    styleUrls: ['./tab-menu.component.scss'],
     selector: 'tab-menu'
 })
 export class TabMenuComponent implements OnInit, OnDestroy {

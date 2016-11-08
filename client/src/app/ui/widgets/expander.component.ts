@@ -2,8 +2,8 @@ import {Input, Component} from "@angular/core";
 import {ButtonStyles} from "./styled-button.component";
 
 @Component({
-	template: require('./expander.component.html'),
-	styles: [require('./expander.component.scss')],
+	templateUrl: './expander.component.html',
+	styleUrls: ['./expander.component.scss'],
 	selector: 'expander'
 })
 export class ExpanderComponent {

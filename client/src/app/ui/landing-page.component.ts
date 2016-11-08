@@ -1,8 +1,8 @@
 import {Component} from "@angular/core";
 
 @Component({
-    template: require('./landing-page.component.html'),
-    styles: [require('./landing-page.component.scss')]
+    templateUrl: './landing-page.component.html',
+    styleUrls: ['./landing-page.component.scss']
 })
 export class LandingPageComponent {
     

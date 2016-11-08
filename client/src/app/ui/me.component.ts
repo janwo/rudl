@@ -1,8 +1,8 @@
 import {Component} from "@angular/core";
 
 @Component({
-    template: require('./me.component.html'),
-    styles: [require('./me.component.scss')]
+    templateUrl: './me.component.html',
+    styleUrls: ['./me.component.scss']
 })
 export class MeComponent {
 

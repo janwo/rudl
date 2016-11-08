@@ -6,7 +6,7 @@
 	</div>
 	<div class="statistics">
 		<statistics [statistics]="[
-		{value: user.statistics.lists, subject: 'Listen', link: tabItems['lists'].link},
+		{value: user.statistics.lists, subject: 'Liste(n)', link: tabItems['lists'].link},
 		{value: user.statistics.followees, subject: 'Folgt', link: tabItems['followees'].link},
 		{value: user.statistics.followers, subject: 'Follower', link: tabItems['followers'].link}
 		]"></statistics>
@@ -17,7 +17,7 @@
 	</div>
 </div>
 <tab-menu #tabMenu [tabItems]="tabItems"></tab-menu>
-<div *ngIf="currentTab.slug === 'activity'">
+<div *ngIf="currentTab.slug === 'activity'" i18n>
 	Activity
 </div>
 <div *ngIf="currentTab.slug === 'lists'">

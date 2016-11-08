@@ -1,5 +1,6 @@
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {TestController} from "../controllers/TestController";
+import * as Joi from "joi";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
@@ -7,7 +8,12 @@ export const RoutesConfig: RoutesConfiguration = [
 		method: 'POST',
 		handler: TestController.truncate,
 		config: {
-			auth: false
+			auth: false,
+			validate: {
+				params: {
+					collection: Joi.string()
+				}
+			}
 		}
 	},
 	{
@@ -15,7 +21,12 @@ export const RoutesConfig: RoutesConfiguration = [
 		method: 'POST',
 		handler: TestController.createUsers,
 		config: {
-			auth: false
+			auth: false,
+			validate: {
+				params: {
+					count: Joi.number()
+				}
+			}
 		}
 	},
 	{
@@ -23,7 +34,12 @@ export const RoutesConfig: RoutesConfiguration = [
 		method: 'POST',
 		handler: TestController.createActivities,
 		config: {
-			auth: false
+			auth: false,
+			validate: {
+				params: {
+					count: Joi.number()
+				}
+			}
 		}
 	},
 	{
@@ -31,7 +47,12 @@ export const RoutesConfig: RoutesConfiguration = [
 		method: 'POST',
 		handler: TestController.createUserFollowsUser,
 		config: {
-			auth: false
+			auth: false,
+			validate: {
+				params: {
+					count: Joi.number()
+				}
+			}
 		}
 	},
 	{
@@ -39,7 +60,12 @@ export const RoutesConfig: RoutesConfiguration = [
 		method: 'POST',
 		handler: TestController.createUserFollowsActivity,
 		config: {
-			auth: false
+			auth: false,
+			validate: {
+				params: {
+					count: Joi.number()
+				}
+			}
 		}
 	}
 ];

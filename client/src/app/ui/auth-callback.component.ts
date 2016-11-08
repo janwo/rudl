@@ -1,9 +1,9 @@
 import {Component} from "@angular/core";
-import {DataService} from "../data.service";
+import {DataService} from "../services/data.service";
 
 @Component({
-    template: require('./auth-callback.component.html'),
-    styles: [require('./auth-callback.component.scss')]
+    templateUrl: './auth-callback.component.html',
+    styleUrls: ['./auth-callback.component.scss']
 })
 export class AuthCallbackComponent {
 

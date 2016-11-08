@@ -1,10 +1,11 @@
 import {Component, OnInit, OnDestroy} from "@angular/core";
-import {UserService, User} from "../user.service";
+import {User} from "../models/user";
+import {UserService} from "../services/user.service";
 import {Subscription} from "rxjs";
 
 @Component({
-    template: require('./people.component.html'),
-    styles: [require('./people.component.scss')]
+    templateUrl: './people.component.html',
+    styleUrls: ['./people.component.scss']
 })
 export class PeopleComponent implements OnInit, OnDestroy {
     

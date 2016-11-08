@@ -1,9 +1,9 @@
 import {Component, Input} from "@angular/core";
-import {User} from "../../user.service";
+import {User} from "../../models/user";
 
 @Component({
-	template: require('./people-item.component.html'),
-	styles: [require('./people-item.component.scss')],
+	templateUrl: './people-item.component.html',
+	styleUrls: ['./people-item.component.scss'],
 	selector: 'people-item'
 })
 export class PeopleItemComponent {

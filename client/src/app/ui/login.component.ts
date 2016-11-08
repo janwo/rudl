@@ -1,10 +1,10 @@
 import {Component, ViewChild} from "@angular/core";
-import {UserService} from "../user.service";
+import {UserService} from "../services/user.service";
 import {IndicatorComponent} from "./widgets/indicator.component";
 
 @Component({
-    template: require('./login.component.html'),
-    styles: [require('./login.component.scss')],
+    templateUrl: './login.component.html',
+    styleUrls: ['/login.component.scss'],
     selector: 'login'
 })
 export class LoginComponent {

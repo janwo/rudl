@@ -17,6 +17,15 @@ import {UserFollowsUser} from "../models/users/UserFollowsUser";
 
 export module TestController {
 	
+	export function measureTime(prefix: string, treshold: number = 70) {
+		let now = Date.now();
+		return (input: any) => {
+			let duration = Date.now() - now;
+			if(duration >= treshold) console.log(prefix + ' ' + duration + ' ms');
+			return input;
+		}
+	}
+	
 	function generateUser(): User {
 		let date = [
 			casual.unix_time,
@@ -25,7 +34,7 @@ export module TestController {
 		return {
 			firstName: casual.first_name,
 			lastName: casual.last_name,
-			username: casual.username,
+			username: casual.username.toLowerCase().replace(/[^0-9a-z_-]/, '-'),
 			mails: [{
 				mail: casual.email,
 				verified: true

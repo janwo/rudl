@@ -3,8 +3,8 @@ import {ActivatedRoute, Params, Router} from "@angular/router";
 import {TabItem} from "./widgets/tab-menu.component";
 
 @Component({
-    template: require('./settings.component.html'),
-    styles: [require('./settings.component.scss')]
+    templateUrl: './settings.component.html',
+    styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
     

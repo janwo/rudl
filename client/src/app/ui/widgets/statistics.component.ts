@@ -8,8 +8,8 @@ interface StatisticItem {
 }
 
 @Component({
-    template: require('./statistics.component.html'),
-    styles: [require('./statistics.component.scss')],
+    templateUrl: './statistics.component.html',
+    styleUrls: ['./statistics.component.scss'],
     selector: 'statistics'
 })
 export class StatisticsComponent {
@@ -19,6 +19,13 @@ export class StatisticsComponent {
     constructor(
         private router: Router
     ){}
+    
+    ngOnInit(){
+        this.statistics = this.statistics.map(statistic => {
+            statistic.subject = statistic.subject.replace(/\(.*\)/gi, replace => replace.replace(/[()]/gi, ''));
+            return statistic;
+        });
+    }
     
     onClick(item: StatisticItem) {
         if(item.link) this.router.navigateByUrl(item.link);

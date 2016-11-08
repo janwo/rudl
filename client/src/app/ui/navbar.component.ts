@@ -1,12 +1,12 @@
 import {Component} from "@angular/core";
 import {TabItem} from "./widgets/tab-menu.component";
 import {MenuItem} from "./widgets/dropdown-menu.component";
-import {UserService} from "../user.service";
+import {UserService} from "../services/user.service";
 import {Router} from "@angular/router";
 
 @Component({
-    template: require('./navbar.component.html'),
-    styles: [require('./navbar.component.scss')],
+    templateUrl: './navbar.component.html',
+    styleUrls: ['./navbar.component.scss'],
     selector: 'navbar'
 })
 export class NavbarComponent {
