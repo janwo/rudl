@@ -1,4 +1,4 @@
-import {Document} from "./Document";
+import {Document} from "./document";
 
 export interface User extends Document {
 	firstName: string;

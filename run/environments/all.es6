@@ -28,9 +28,9 @@ export default {
 						},
 						
 						entry: {
-							'polyfill': root( 'client/src/polyfill.ts' ),
-							'vendor': root( 'client/src/vendor.ts' ),
-							'app': root( 'client/src/main.ts' )
+							'polyfill': root( 'client/polyfill.ts' ),
+							'vendor': root( 'client/vendor.ts' ),
+							'app': root( 'client/main.ts' )
 						},
 						
 						module: {
@@ -43,7 +43,7 @@ export default {
 									]
 								}, {
 									test: /\.html$/,
-									loader: 'html-loader'
+									loader: 'html'
 								}, {
 									test: /\.scss$/,
 									use: [
@@ -66,13 +66,14 @@ export default {
 									loader: 'file-loader?name=files/[name].[hash].[ext]'
 								}, {
 									test: /\.css$/,
-									exclude: root( 'client/src', 'app' ),
+									exclude: root( 'client', 'app' ),
 									loader: ExtractTextPlugin.extract( {
-										loader: 'css-loader?sourceMap'
+										fallbackLoader: "style-loader",
+										loader: "css-loader"
 									} )
 								}, {
 									test: /\.css$/,
-									include: root( 'client/src', 'app' ),
+									include: root( 'client', 'app' ),
 									loader: 'raw-loader'
 								}
 							]
