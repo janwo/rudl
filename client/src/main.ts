@@ -1,8 +1,7 @@
 import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
 import {AppModule} from "./app/app.module";
 import * as WebFont from "webfontloader";
-import { enableProdMode, TRANSLATIONS, TRANSLATIONS_FORMAT, LOCALE_ID } from '@angular/core';
-import { TRANSLATION } from './app/locale/messages.de-DE';
+import { enableProdMode} from '@angular/core';
 import './app/rxjs-operators';
 
 let ENV: any = process.env.ENV || 'development';
@@ -19,9 +18,4 @@ WebFont.load({
 });
 
 // Initialize Angular.
-platformBrowserDynamic().bootstrapModule(AppModule, {
-	providers: [
-	{provide: TRANSLATIONS, useValue: TRANSLATION},
-	{provide:TRANSLATIONS_FORMAT, useValue:'xlf'},
-	{provide:LOCALE_ID, useValue:'fr'}
-]});
+platformBrowserDynamic().bootstrapModule(AppModule);

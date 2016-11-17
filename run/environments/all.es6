@@ -43,7 +43,7 @@ export default {
 									]
 								}, {
 									test: /\.html$/,
-									loader: 'html'
+									loader: 'html-loader'
 								}, {
 									test: /\.scss$/,
 									use: [
@@ -60,21 +60,20 @@ export default {
 									]
 								}, {
 									test: /\.((woff2?|svg|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9]))$/, // Font-Awesome.
-									loader: 'file?name=files/[name].[hash].[ext]'
+									loader: 'file-loader?name=files/[name].[hash].[ext]'
 								}, {
 									test: /\.(png|jpe?g|gif|svg|woff2?|ttf|eot|ico)$/,
-									loader: 'file?name=files/[name].[hash].[ext]'
+									loader: 'file-loader?name=files/[name].[hash].[ext]'
 								}, {
 									test: /\.css$/,
 									exclude: root( 'client/src', 'app' ),
 									loader: ExtractTextPlugin.extract( {
-										fallbackLoader: 'style',
-										loader: 'css?sourceMap'
+										loader: 'css-loader?sourceMap'
 									} )
 								}, {
 									test: /\.css$/,
 									include: root( 'client/src', 'app' ),
-									loader: 'raw'
+									loader: 'raw-loader'
 								}
 							]
 						},

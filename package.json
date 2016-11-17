@@ -92,7 +92,7 @@
     "rotating-file-stream": "^1.1.0",
     "rxjs": "^5.0.0-rc.3",
     "sass-loader": "^4.0.2",
-    "sharp": "github:janwo/sharp#0a42696",
+    "sharp": "github:lovell/sharp",
     "style-loader": "^0.13.1",
     "typescript": "^2.0.10",
     "url-loader": "^0.5.7",
