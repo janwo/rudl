@@ -82,12 +82,13 @@ export class DataService {
         return response.json();
     }
     
-    private errorHandler(err: any) {
+    private errorHandler(err: any) : Observable<any> {
         if(err.status === 401) {
             this.removeToken();
             this.router.navigate(['/sign_up']);
-        } else
-            return Observable.throw(err);
+        }
+    
+        return Observable.throw(err);
     }
     
     private registerAuthenticationMessageListener() {

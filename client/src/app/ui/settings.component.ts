@@ -19,7 +19,7 @@ export class SettingsComponent implements OnInit {
         }
     };
     
-    tabItems: Array<TabItem>;
+    tabItems: {[key: string]: TabItem};
     
     currentPage: SettingsPage;
     
@@ -28,8 +28,8 @@ export class SettingsComponent implements OnInit {
         private router: Router
     ) {}
     
-    private generateTabItems(): Array<TabItem> {
-        return Object.keys(SettingsComponent.pages).reduce((tabItems: Array<TabItem>, pageKey: string) => {
+    private generateTabItems(): {[key: string]: TabItem} {
+        return Object.keys(SettingsComponent.pages).reduce((tabItems: {[key: string]: TabItem}, pageKey: string) => {
             let page = SettingsComponent.pages[pageKey];
             
             // Create link.
@@ -45,7 +45,7 @@ export class SettingsComponent implements OnInit {
             };
             
             return tabItems;
-        }, []);
+        }, {});
     }
     
     ngOnInit(): void {

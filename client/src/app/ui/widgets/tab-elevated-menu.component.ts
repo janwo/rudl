@@ -1,6 +1,6 @@
-import {Component, OnInit} from "@angular/core";
-import {Router, NavigationEnd} from "@angular/router";
-import {TabMenuComponent} from "./tab-menu.component";
+import {Component, Input} from "@angular/core";
+import {Router} from "@angular/router";
+import {TabMenuComponent, TabItem} from "./tab-menu.component";
 
 @Component({
     templateUrl: './tab-menu.component.html',
@@ -8,6 +8,9 @@ import {TabMenuComponent} from "./tab-menu.component";
     selector: 'tab-elevated-menu'
 })
 export class TabElevatedMenuComponent extends TabMenuComponent {
+    
+    @Input() tabItems : { [key: string]: TabItem } = {};
+    
     constructor(router: Router) {
         super(router);
     }

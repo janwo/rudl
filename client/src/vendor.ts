@@ -14,7 +14,7 @@ import * as WebFont from "webfontloader";
 // <-- Pending Bug, see http://stackoverflow.com/questions/38995709/webpacks-commonschunkplugin-and-the-use-of-import-as
 
 // Font Awesome.
-import "../../node_modules/font-awesome/css/font-awesome";
+import "../node_modules/font-awesome/css/font-awesome";
 
 // Normalize.css.
-import "../../node_modules/normalize.css";
+import "../node_modules/normalize.css";

@@ -7,8 +7,8 @@ export default {
 	frontend: {
 		webpack: {
 			devServer: {
-				host: process.env.WEBPACK_SERVER_HOST || 'app',
-				port: process.env.WEBPACK_SERVER_PORT || 80,
+				host: process.env.WEBPACK_SERVER_HOST || 'localhost',
+				port: process.env.WEBPACK_SERVER_PORT || 8080,
 				config: [
 					( Config ) => {
 						return {
@@ -46,7 +46,7 @@ export default {
 		},
 	},
 	backend: {
-		host: process.env.BACKEND_SERVER_HOST || 'app',
+		host: process.env.BACKEND_SERVER_HOST || 'localhost',
 		port: process.env.BACKEND_SERVER_PORT || 3000,
 		debug: true,
 		db: {

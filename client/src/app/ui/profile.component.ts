@@ -47,8 +47,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
     };
     
-    tabItems: Array<TabItem>;
+    tabItems: {[key: string]: TabItem};
     currentTab: ProfileTab = null;
+    
     private lists: List[];
     private followers: User[];
     private followees: User[];
@@ -59,8 +60,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
         private userService: UserService
     ) {}
     
-    private generateTabItems(): Array<TabItem> {
-        return Object.keys(ProfileComponent.tabs).reduce((tabItems: Array<TabItem>, tabKey: string) => {
+    private generateTabItems(): {[key: string]: TabItem} {
+        return Object.keys(ProfileComponent.tabs).reduce((tabItems: {[key: string]: TabItem}, tabKey: string) => {
             // Get tab item.
             let tab = ProfileComponent.tabs[tabKey];
             
@@ -78,7 +79,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             };
             
             return tabItems;
-        }, []);
+        }, {});
     }
     
     ngOnInit(): void {

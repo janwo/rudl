@@ -1,24 +1,25 @@
 # General
-**/node_modules
+**/node_modules/
+_generated/
 
 # Node.js
 **/npm-debug.log*
-**/.npm
+**/.npm/
 
 # Logs
-**/logs
+**/logs/
 **/*.log
 
 # PHPStorm
-**/.idea
+**/.idea/
 
 # Server
 server/**/*.js
 server/**/*.js.map
 
 # Client
-client/_generated
-client/**/.sass-cache
+client/aot
+client/**/.sass-cache/
 client/**/*.css.map
 client/**/*.js
 client/**/*.js.map

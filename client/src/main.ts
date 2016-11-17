@@ -5,7 +5,8 @@ import { enableProdMode, TRANSLATIONS, TRANSLATIONS_FORMAT, LOCALE_ID } from '@a
 import { TRANSLATION } from './app/locale/messages.de-DE';
 import './app/rxjs-operators';
 
-if (process.env.production) enableProdMode();
+let ENV: any = process.env.ENV || 'development';
+if (ENV === 'secure') enableProdMode();
 
 // Load Fonts.
 WebFont.load({
