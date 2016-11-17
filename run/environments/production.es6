@@ -11,9 +11,8 @@ export default {
 				( Config ) => {
 					return {
 						plugins: [
-							new Webpack.NoErrorsPlugin(),
-							new Webpack.optimize.DedupePlugin(),
 							new Webpack.optimize.UglifyJsPlugin(),
+							new Webpack.NoErrorsPlugin(),
 							new ExtractTextPlugin( '[name].[hash].css' )
 						]
 					}

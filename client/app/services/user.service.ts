@@ -2,9 +2,9 @@ import {DataService, JsonResponse} from "./data.service";
 import {Router} from "@angular/router";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
-import {List} from "../models/List";
-import {User} from "../models/User";
-import {Activity} from "../models/Activity";
+import {List} from "../models/list";
+import {User} from "../models/user";
+import {Activity} from "../models/activity";
 
 @Injectable()
 export class UserService {

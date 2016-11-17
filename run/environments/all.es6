@@ -1,5 +1,6 @@
 import Webpack from "webpack";
 import Path from "path";
+import {AotPlugin} from '@ngtools/webpack';
 import ExtractTextPlugin from "extract-text-webpack-plugin";
 import AssetsPlugin from "assets-webpack-plugin";
 import {root} from "../config";
@@ -37,13 +38,10 @@ export default {
 							rules: [
 								{
 									test: /\.ts$/,
-									loaders: [
-										'awesome-typescript-loader?tsconfig=client/tsconfig.json',
-										'angular2-template-loader'
-									]
+									loader: '@ngtools/webpack'
 								}, {
 									test: /\.html$/,
-									loader: 'html'
+									loader: 'html-loader'
 								}, {
 									test: /\.scss$/,
 									use: [
@@ -87,14 +85,17 @@ export default {
 						},
 						
 						plugins: [
-							new Webpack.optimize.CommonsChunkPlugin( {
-								name: [ 'app', 'vendor', 'polyfill' ]
-							} ), new Webpack.DefinePlugin( {
+							new AotPlugin({
+								tsConfigPath: root('client/tsconfig.json'),
+								entryModule: root('client/app/app.module#AppModule')
+							}),
+							new Webpack.DefinePlugin({
 								'ENV': JSON.stringify( Config.env )
-							} ), new AssetsPlugin( {
+							}),
+							new AssetsPlugin({
 								path: Path.dirname( Config.generatedFiles.frontendAssetsJson ),
 								filename: Path.basename( Config.generatedFiles.frontendAssetsJson )
-							} )
+							})
 						],
 					}
 				}
@@ -102,7 +103,7 @@ export default {
 		}
 	},
 	backend: {
-		host: process.env.BACKEND_SERVER_HOST || 'app',
+		host: process.env.BACKEND_SERVER_HOST || 'localhost',
 		port: process.env.BACKEND_SERVER_PORT || 80,
 		exposedHost: 'http://localhost',
 		debug: process.env.DEBUG_BACKEND || false,

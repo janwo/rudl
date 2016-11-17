@@ -63,7 +63,7 @@ export class SettingsComponent implements OnInit {
     }
 }
 
-interface SettingsPage {
+export interface SettingsPage {
     slug: string;
     title: string;
 }

@@ -1,7 +1,7 @@
 import {Component, Input} from "@angular/core";
 import {Router} from "@angular/router";
 
-interface StatisticItem {
+export interface StatisticItem {
     subject: string;
     value: string;
     link?: any;

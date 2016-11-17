@@ -127,7 +127,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
 }
 
-interface ProfileTab {
+export interface ProfileTab {
     slug: string;
     title: string;
     icon: string;

@@ -12,7 +12,6 @@ export default {
 					return {
 						plugins: [
 							new Webpack.NoErrorsPlugin(),
-							new Webpack.optimize.DedupePlugin(),
 							new Webpack.optimize.UglifyJsPlugin(),
 							new ExtractTextPlugin( '[name].[hash].css' )
 						]

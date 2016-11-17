@@ -109,7 +109,7 @@ class StartupManager {
 		// Run standalone.
 		if ( !Config.frontend.webpack.devServer ) {
 			console.log( 'Starting webpack...' );
-			webpackCompiler.run();
+			webpackCompiler.run((err, stats) => {});
 		}
 	}
 }

@@ -43,7 +43,7 @@ export default {
 					}
 				}
 			]
-		},
+		}
 	},
 	backend: {
 		host: process.env.BACKEND_SERVER_HOST || 'app',
