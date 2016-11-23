@@ -1,4 +1,7 @@
 import ExtractTextPlugin from "extract-text-webpack-plugin";
+import {AotPlugin} from '@ngtools/webpack';
+import {root} from "../config";
+import Webpack from "webpack";
 
 export default {
 	app: {
@@ -33,12 +36,24 @@ export default {
 			config: [
 				( Config ) => {
 					return {
-						devtool: 'cheap-module-eval-source-map',
+						devtool: 'inline-source-map',
 						entry: {
 							'webpack-dev-server': `webpack-dev-server/client?${Config.backend.ssl.enabled ? 'https': 'http'}://localhost:${Config.frontend.webpack.devServer.port}/`,
 						},
+						module: {
+							rules: [
+								{
+									test: /\.ts$/,
+									loaders: [
+										'awesome-typescript-loader?tsconfig=client/tsconfig.json',
+										'angular2-template-loader'
+									]
+								}
+							]
+						},
 						plugins: [
-							new ExtractTextPlugin( '[name].css' )
+							new ExtractTextPlugin( '[name].css' ),
+							new Webpack.ContextReplacementPlugin( /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/, root('client/') )
 						]
 					}
 				}

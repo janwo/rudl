@@ -11,7 +11,7 @@ export class AssetsPool {
 	}
 	
 	public static updateAssets() {
-		console.log('Generating assets...');
+		console.log(`Update assets in compliance with "${Config.generatedFiles.frontendAssetsJson}"-file...`);
 		AssetsPool.assets = (() => {
 			try {
 				// Read assets.
@@ -33,6 +33,7 @@ export class AssetsPool {
 				return null;
 			}
 		})();
+		console.log('Assets had been updated...');
 	}
 	
 	public static watchAssets() {

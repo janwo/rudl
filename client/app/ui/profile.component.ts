@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy} from "@angular/core";
+import {Component, OnInit, OnDestroy, Input} from "@angular/core";
 import {UserService} from "../services/user.service";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Params, Router} from "@angular/router";
@@ -24,31 +24,41 @@ export class ProfileComponent implements OnInit, OnDestroy {
     buttonStyleDefault: ButtonStyles = ButtonStyles.minimal;
     buttonStyleFollowing: ButtonStyles = ButtonStyles.minimalInverse;
     
-    public static tabs: { [key: string]: ProfileTab } = {
+    tabItems: {[key: string]: TabItem} = {
         activity: {
             icon: 'bell-o',
             title: 'Verlauf',
-            slug: 'activity'
+            link: this.router.createUrlTree(['../', 'activity'], {
+                relativeTo: this.route
+            }),
+            notification: false
         },
         lists: {
             icon: 'list',
             title: 'Listen',
-            slug: 'lists'
+            link: this.router.createUrlTree(['../', 'lists'], {
+                relativeTo: this.route
+            }),
+            notification: false
         },
         followees: {
             icon: 'users',
             title: 'Folgt',
-            slug: 'followees'
+            link: this.router.createUrlTree(['../', 'followees'], {
+                relativeTo: this.route
+            }),
+            notification: false
         },
         followers: {
             icon: 'users',
             title: 'Follower',
-            slug: 'followers'
+            link: this.router.createUrlTree(['../', 'followers'], {
+                relativeTo: this.route
+            }),
+            notification: false
         }
     };
-    
-    tabItems: {[key: string]: TabItem};
-    currentTab: ProfileTab = null;
+    @Input() currentTab: TabItem;
     
     private lists: List[];
     private followers: User[];
@@ -60,41 +70,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
         private userService: UserService
     ) {}
     
-    private generateTabItems(): {[key: string]: TabItem} {
-        return Object.keys(ProfileComponent.tabs).reduce((tabItems: {[key: string]: TabItem}, tabKey: string) => {
-            // Get tab item.
-            let tab = ProfileComponent.tabs[tabKey];
-            
-            // Create link.
-            let urlTree = this.router.createUrlTree(['../', tab.slug], {
-                relativeTo: this.route
-            });
-            
-            // Convert.
-            tabItems[tabKey] = {
-                icon: tab.icon,
-                link: urlTree,
-                title: tab.title,
-                notification: false
-            };
-            
-            return tabItems;
-        }, {});
-    }
-    
     ngOnInit(): void {
-        // Create tab items out of the definition of profile tabs.
-        this.tabItems = this.generateTabItems();
-        
         // Get params.
         this.route.params.forEach((params: Params) => {
             // Get selected tab.
             let slug = params['tab'];
-            Object.keys(ProfileComponent.tabs).map(key => ProfileComponent.tabs[key]).every(tab => {
-                if(tab.slug !== slug) return true;
-                this.currentTab = tab;
-                return false;
-            });
+            if(this.tabItems[slug]) this.currentTab = this.tabItems[slug];
             
             // Get user.
             let username = params['username'];
@@ -102,10 +83,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
             
             // Tab specific resources.
             if(!this.userSubscription) this.userSubscription = this.userService.getUser(username).subscribe((user: User) => this.user = user);
-            if(!this.userListsSubscription && this.currentTab == ProfileComponent.tabs['lists']) this.userListsSubscription = this.userService.lists(username).subscribe((lists: List[]) => this.lists = lists);
+            if(!this.userListsSubscription && this.currentTab == this.tabItems['lists']) this.userListsSubscription = this.userService.lists(username).subscribe((lists: List[]) => this.lists = lists);
             //if(!this.userActivitySubscription && this.currentTab == ProfileComponent.tabs['activity']) this.userActivitySubscription = this.userService.getUser(username).subscribe((user: User) => this.user = user);
-            if(!this.userFollowersSubscription && this.currentTab == ProfileComponent.tabs['followers']) this.userFollowersSubscription = this.userService.followers(username).subscribe((followers: User[]) => this.followers = followers);
-            if(!this.userFolloweesSubscription && this.currentTab == ProfileComponent.tabs['followees']) this.userFolloweesSubscription = this.userService.followees(username).subscribe((followees: User[]) => this.followees = followees);
+            if(!this.userFollowersSubscription && this.currentTab == this.tabItems['followers']) this.userFollowersSubscription = this.userService.followers(username).subscribe((followers: User[]) => this.followers = followers);
+            if(!this.userFolloweesSubscription && this.currentTab == this.tabItems['followees']) this.userFolloweesSubscription = this.userService.followees(username).subscribe((followees: User[]) => this.followees = followees);
         });
     }
     
@@ -125,10 +106,4 @@ export class ProfileComponent implements OnInit, OnDestroy {
             this.enableFollowButton = true;
         }).subscribe();
     }
-}
-
-export interface ProfileTab {
-    slug: string;
-    title: string;
-    icon: string;
 }

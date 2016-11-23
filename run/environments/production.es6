@@ -1,5 +1,7 @@
 import Webpack from "webpack";
 import ExtractTextPlugin from "extract-text-webpack-plugin";
+import {AotPlugin} from '@ngtools/webpack';
+import {root} from "../config";
 
 export default {
 	app: {
@@ -10,8 +12,28 @@ export default {
 			config: [
 				( Config ) => {
 					return {
+						module: {
+							rules: [
+								{
+									test: /\.ts$/,
+									loader: '@ngtools/webpack'
+								}
+							]
+						},
 						plugins: [
-							new Webpack.optimize.UglifyJsPlugin(),
+							new AotPlugin({
+								tsConfigPath: root('client/tsconfig.json'),
+								entryModule: root('client/app/app.module#AppModule')
+							}),
+							new Webpack.optimize.UglifyJsPlugin({
+								compress: {
+									warnings: false
+								},
+								output: {
+									comments: false
+								},
+								sourceMap: false
+							}),
 							new Webpack.NoErrorsPlugin(),
 							new ExtractTextPlugin( '[name].[hash].css' )
 						]

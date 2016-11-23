@@ -27,7 +27,7 @@ class StartupManager {
 	
 	static createBackendServer(debug = false, onStart = () => {}){
 		let command = [
-			debug ? `npm run nodemon -- --debug --watch ${root('server')}` : 'node',
+			debug ? `npm run nodemon -- -e js --debug --watch ${root('server')}` : 'node',
 			'run/backend-server.js'
 		];
 		
@@ -84,13 +84,17 @@ class StartupManager {
 		const webpackCompiler = Webpack(Config.frontend.webpack.config);
 		
 		// Listen on "done" to start backend server.
+		let typeScriptMonitorStarted = false;
 		webpackCompiler.plugin('done', (stats) => {
 			// Output stats.
 			console.log('Webpack is done compiling...');
 			console.log(stats.toString('minimal'));
 			
 			// Generate typescript files.
-			typeScriptMonitor.start();
+			if(!typeScriptMonitorStarted) {
+				typeScriptMonitor.start();
+				typeScriptMonitorStarted = true;
+			}
 		});
 		
 		// Listen on "error" to inject it into the console.

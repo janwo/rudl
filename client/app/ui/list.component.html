@@ -1,11 +1,16 @@
-<div class="card" *ngIf="list">
+<div *ngIf="list">
 	<h1>{{string(list.name)}}</h1>
-	<span>{{''}}</span>
+	<div class="card">
+		<statistics [statistics]="[
+		{value: activities.length, subject: 'Activities'},
+		{value: 12, subject: 'Follower', link: 'follower'}
+		]"></statistics>
+	</div>
+	
+	<h3>Activities</h3>
+	<ul>
+		<li *ngFor="let activity of activities">
+			<activity-item [activity]="activity"></activity-item>
+		</li>
+	</ul>
 </div>
-
-<h1>Aktivitäten</h1>
-<ul>
-	<li *ngFor="let activity of activities">
-		<activity-item [activity]="activity"></activity-item>
-	</li>
-</ul>

@@ -1,17 +1,20 @@
 import {CanActivate, Router} from "@angular/router";
-import {DataService} from "./services/data.service";
 import {Injectable} from "@angular/core";
+import {UserService} from "./services/user.service";
+import {Observable} from "rxjs";
 
 @Injectable()
 export class AppGuard implements CanActivate {
 
     constructor(
-        private dataService: DataService,
-        private router: Router) {}
+        private userService: UserService,
+        private router: Router
+    ) {}
 
-    canActivate() {
-        let loggedIn = this.dataService.getToken() !== null;
-        if (!loggedIn) this.router.navigate(['/sign_up']);
-        return loggedIn;
+    canActivate() : Observable<boolean> {
+        return this.userService.getAuthenticatedUser().map(user => {
+            if (!user) this.router.navigate(['/sign_up']);
+            return !!user;
+        });
     }
 }

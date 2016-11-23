@@ -1,6 +1,5 @@
 import Webpack from "webpack";
 import Path from "path";
-import {AotPlugin} from '@ngtools/webpack';
 import ExtractTextPlugin from "extract-text-webpack-plugin";
 import AssetsPlugin from "assets-webpack-plugin";
 import {root} from "../config";
@@ -27,22 +26,18 @@ export default {
 							extensions: [ '.js', '.ts', '.scss', '.css' ],
 							modules: [ 'node_modules' ],
 						},
-						
 						entry: {
 							'polyfill': root( 'client/polyfill.ts' ),
 							'vendor': root( 'client/vendor.ts' ),
 							'app': root( 'client/main.ts' )
 						},
-						
 						module: {
 							rules: [
 								{
-									test: /\.ts$/,
-									loader: '@ngtools/webpack'
-								}, {
 									test: /\.html$/,
 									loader: 'html-loader'
-								}, {
+								},
+								{
 									test: /\.scss$/,
 									use: [
 										'raw-loader', {
@@ -56,39 +51,37 @@ export default {
 											}
 										}, 'sass-loader'
 									]
-								}, {
-									test: /\.((woff2?|svg|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9]))$/, // Font-Awesome.
+								},
+								{
+									test: /\.((woff2?|svg|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9]))$/,
 									loader: 'file-loader?name=files/[name].[hash].[ext]'
-								}, {
+								},
+								{
 									test: /\.(png|jpe?g|gif|svg|woff2?|ttf|eot|ico)$/,
 									loader: 'file-loader?name=files/[name].[hash].[ext]'
-								}, {
+								},
+								{
 									test: /\.css$/,
 									exclude: root( 'client', 'app' ),
 									loader: ExtractTextPlugin.extract( {
 										fallbackLoader: "style-loader",
 										loader: "css-loader"
 									} )
-								}, {
+								},
+								{
 									test: /\.css$/,
 									include: root( 'client', 'app' ),
 									loader: 'raw-loader'
 								}
 							]
 						},
-						
 						output: {
 							path: Config.generatedFiles.frontendAssetsFolder,
 							publicPath: '/static/assets/',
 							filename: '[name].[hash].js',
 							chunkFilename: '[id].[hash].chunk.js'
 						},
-						
 						plugins: [
-							new AotPlugin({
-								tsConfigPath: root('client/tsconfig.json'),
-								entryModule: root('client/app/app.module#AppModule')
-							}),
 							new Webpack.DefinePlugin({
 								'ENV': JSON.stringify( Config.env )
 							}),

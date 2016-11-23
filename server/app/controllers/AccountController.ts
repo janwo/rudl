@@ -6,7 +6,6 @@ import * as CryptoJS from 'crypto-js';
 import fs = require('fs');
 import path = require('path');
 import * as Joi from "joi";
-import {ValidationError} from "joi";
 import {Config} from "../../../run/config";
 import {User, UserProvider, UserValidation, UserRoles} from "../models/users/User";
 import {DatabaseManager, arangoCollections} from "../Database";

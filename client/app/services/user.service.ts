@@ -1,19 +1,45 @@
 import {DataService, JsonResponse} from "./data.service";
 import {Router} from "@angular/router";
 import {Injectable} from "@angular/core";
-import {Observable} from "rxjs";
+import {Observable, BehaviorSubject, ReplaySubject} from "rxjs";
 import {List} from "../models/list";
 import {User} from "../models/user";
 import {Activity} from "../models/activity";
 
+export interface AuthenticatedUser {
+    username: string;
+    language: Array<string>;
+}
+
 @Injectable()
 export class UserService {
+    
+    private authenticatedProfile: ReplaySubject<AuthenticatedUser>;
 
     constructor(
         private dataService: DataService,
         private router: Router
-    ) {}
-
+    ) {
+        // Setup authenticated profile observable.
+        this.authenticatedProfile = new ReplaySubject<AuthenticatedUser>(1);
+        this.authenticatedProfile.asObservable().subscribe(authenticatedUser => {
+            console.log('userProfile in UserService set to ' + JSON.stringify(authenticatedUser));
+        });
+        
+        // Listen on token events in data service.
+        this.dataService.getTokenObservable().flatMap((tokenString: string) => this.getUser()).subscribe((user: User) => {
+            this.authenticatedProfile.next({
+                username: user.username,
+                language: [
+                    'en-US'
+                ]
+            });
+        });
+    }
+    
+    getAuthenticatedUser() : Observable<AuthenticatedUser> {
+        return this.authenticatedProfile.asObservable();
+    }
 
     signUp(username: string, password: string) {
 

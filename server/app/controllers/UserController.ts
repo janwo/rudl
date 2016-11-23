@@ -245,8 +245,9 @@ export module UserController {
 		 * @param reply Reply-Object
 		 */
 		export function getUser(request: any, reply: any): void {
+			let user = request.auth.credentials;
 			let username = encodeURIComponent(request.params.username);
-			let promise = findByUsername(username).then((user: User) => getPublicUser(user, request.auth.credentials));
+			let promise : Promise<User> = Promise.resolve(username != 'me' ? findByUsername(username) : user).then((user: User) => getPublicUser(user, request.auth.credentials));
 			reply.api(promise);
 		}
 		

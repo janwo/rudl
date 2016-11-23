@@ -7,8 +7,18 @@ export default {
 			config: [
 				( Config ) => {
 					return {
-						devtool: 'cheap-module-eval-source-map',
-						debug: true,
+						devtool: 'inline-source-map',
+						module: {
+							rules: [
+								{
+									test: /\.ts$/,
+									loaders: [
+										'awesome-typescript-loader?tsconfig=client/tsconfig.json',
+										'angular2-template-loader'
+									]
+								}
+							]
+						},
 						plugins: [
 							new ExtractTextPlugin( '[name].css' )
 						]

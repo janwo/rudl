@@ -24,13 +24,12 @@ import {SettingsComponent} from "./ui/settings.component";
 import {ProfileComponent} from "./ui/profile.component";
 import {TabElevatedMenuComponent} from "./ui/widgets/tab-elevated-menu.component";
 import {ExpanderComponent} from "./ui/widgets/expander.component";
-import {MeComponent} from "./ui/me.component";
 import {PeopleItemComponent} from "./ui/widgets/people-item.component";
 import {StatisticsComponent} from "./ui/widgets/statistics.component";
 import {AvatarComponent} from "./ui/widgets/avatar.component";
 import {RedirectComponent} from "./redirect.component";
 import {ListItemComponent} from "./ui/widgets/list-item.component";
-import {ListComponent} from "./ui/List.component";
+import {ListComponent} from "./ui/list.component";
 import {ActivityItemComponent} from "./ui/widgets/activity-item.component";
 
 @NgModule({
@@ -54,7 +53,6 @@ import {ActivityItemComponent} from "./ui/widgets/activity-item.component";
 	    ExploreComponent,
 	    PeopleComponent,
 	    PeopleItemComponent,
-	    MeComponent,
 	    RedirectComponent,
 	    ExpanderComponent,
 	    ActivityComponent,

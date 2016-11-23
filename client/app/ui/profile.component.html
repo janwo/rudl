@@ -16,28 +16,30 @@
 		</div>
 	</div>
 </div>
-<tab-menu #tabMenu [tabItems]="tabItems"></tab-menu>
-<div *ngIf="currentTab.slug === 'activity'" i18n>
-	Activity
-</div>
-<div *ngIf="currentTab.slug === 'lists'">
-	<ul>
-		<li *ngFor="let list of lists">
-			<list-item [list]="list"></list-item>
-		</li>
-	</ul>
-</div>
-<div *ngIf="currentTab.slug === 'followees'">
-	<ul>
-		<li *ngFor="let followee of followees">
-			<people-item [user]="followee"></people-item>
-		</li>
-	</ul>
-</div>
-<div *ngIf="currentTab.slug === 'followers'">
-	<ul>
-		<li *ngFor="let follower of followers">
-			<people-item [user]="follower"></people-item>
-		</li>
-	</ul>
+<div class="content" *ngIf="user">
+	<tab-menu [tabItems]="tabItems"></tab-menu>
+	<div *ngIf="currentTab === tabItems['activity']" i18n>
+		Activity
+	</div>
+	<div *ngIf="currentTab === tabItems['lists']">
+		<ul>
+			<li *ngFor="let list of lists">
+				<list-item [list]="list"></list-item>
+			</li>
+		</ul>
+	</div>
+	<div *ngIf="currentTab === tabItems['followees']">
+		<ul>
+			<li *ngFor="let followee of followees">
+				<people-item [user]="followee"></people-item>
+			</li>
+		</ul>
+	</div>
+	<div *ngIf="currentTab === tabItems['followers']">
+		<ul>
+			<li *ngFor="let follower of followers">
+				<people-item [user]="follower"></people-item>
+			</li>
+		</ul>
+	</div>
 </div>

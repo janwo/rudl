@@ -1,55 +1,73 @@
 import {Injectable} from "@angular/core";
-import {Router} from "@angular/router";
 import {Headers, Http, RequestOptionsArgs, Response} from "@angular/http";
 import {Observable} from "rxjs/Observable";
+import {BehaviorSubject} from "rxjs";
 
 @Injectable()
 export class DataService {
 
-    public static domain: string = 'http://localhost';//TODO dynamic host
+    static domain: string = 'http://localhost';//TODO dynamic host
     static callbackMessageType: string = 'AUTH_CALLBACK_MESSAGE';
     static localStorageKey: string = 'jwt-token';
-    
-    token: string = null;
+    private token: BehaviorSubject<string>;
 
     constructor(
-        private http: Http,
-        private router: Router
+        private http: Http
     ) {
-        this.token = localStorage.getItem(DataService.localStorageKey) || null;
+        // Create token observable.
+        this.token = new BehaviorSubject<string>(localStorage.getItem(DataService.localStorageKey) || null);
+        this.token.subscribe((tokenString: string) => {
+            if(tokenString) {
+                // Save item, if set.
+                localStorage.setItem(DataService.localStorageKey, tokenString);
+                return;
+            }
+            
+            // Otherwise remove item.
+            localStorage.removeItem(DataService.localStorageKey);
+        });
         
         // Listen to any incoming authentication messages.
         this.registerAuthenticationMessageListener();
     }
     
-    setToken(token: string): void {
-        this.token = token;
-        localStorage.setItem(DataService.localStorageKey, token);
+    private registerAuthenticationMessageListener() {
+        window.addEventListener('message', event => {
+            if (event.origin != DataService.domain || event.data.type !== DataService.callbackMessageType) return;
+            this.token.next(event.data.message.token);
+        }, false);
+    }
+    
+    setToken(tokenString: string): void {
+        this.token.next(tokenString);
+    }
+    
+    removeToken(): void {
+        this.token.next(null);
     }
 
     getToken(): string {
-        return this.token;
+        return this.token.getValue();
     }
-
-    removeToken(): void {
-        this.token = null;
-        localStorage.removeItem(DataService.localStorageKey);
+    
+    getTokenObservable() {
+        return this.token.asObservable();
     }
-
-    public get(url: string, useAuthentication: boolean = false): Observable<JsonResponse> {
+    
+    get(url: string, useAuthentication: boolean = false): Observable<JsonResponse> {
         let requestOptions : RequestOptionsArgs = {};
         if(useAuthentication) {
             if(!this.getToken()) Observable.throw('Cannot use authentication without having a token set.');
-            requestOptions.headers = this.createAuthorizationHeader(this.token);
+            requestOptions.headers = this.createAuthorizationHeader(this.getToken());
         }
         return this.http.get(DataService.domain + url, requestOptions).map(this.preHandler).catch(err => this.errorHandler(err));
     }
     
-    public post(url: string, body: string, useAuthentication: boolean = false): Observable<JsonResponse> {
+    post(url: string, body: string, useAuthentication: boolean = false): Observable<JsonResponse> {
         let requestOptions : RequestOptionsArgs = {};
         if(useAuthentication) {
             if(!this.getToken()) Observable.throw('Cannot use authentication without having a token set.');
-            requestOptions.headers = this.createAuthorizationHeader(this.token);
+            requestOptions.headers = this.createAuthorizationHeader(this.getToken());
         }
         return this.http.post(DataService.domain + url, body, requestOptions).map(this.preHandler).catch(err => this.errorHandler(err));
     }
@@ -58,7 +76,7 @@ export class DataService {
         let requestOptions : RequestOptionsArgs = {};
         if(useAuthentication) {
             if(!this.getToken()) Observable.throw('Cannot use authentication without having a token set.');
-            requestOptions.headers = this.createAuthorizationHeader(this.token);
+            requestOptions.headers = this.createAuthorizationHeader(this.getToken());
         }
         return this.http.put(DataService.domain + url, body, requestOptions).map(this.preHandler).catch(err => this.errorHandler(err));
     }
@@ -67,7 +85,7 @@ export class DataService {
         let requestOptions : RequestOptionsArgs = {};
         if(useAuthentication) {
             if(!this.getToken()) Observable.throw('Cannot use authentication without having a token set.');
-            requestOptions.headers = this.createAuthorizationHeader(this.token);
+            requestOptions.headers = this.createAuthorizationHeader(this.getToken());
         }
         return this.http.delete(DataService.domain + url, requestOptions).map(this.preHandler).catch(err => this.errorHandler(err));
     }
@@ -83,21 +101,9 @@ export class DataService {
     }
     
     private errorHandler(err: any) : Observable<any> {
-        if(err.status === 401) {
-            this.removeToken();
-            this.router.navigate(['/sign_up']);
-        }
+        if(err.status === 401) this.removeToken();
     
         return Observable.throw(err);
-    }
-    
-    private registerAuthenticationMessageListener() {
-        window.addEventListener('message', event => {
-            if (event.origin != DataService.domain || event.data.type !== DataService.callbackMessageType) return;
-            this.setToken(event.data.message.token);
-            
-            this.router.navigate(['/']);
-        }, false);
     }
 }
 

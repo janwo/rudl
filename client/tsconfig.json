@@ -3,27 +3,26 @@
     "target": "es5",
     "module": "es2015",
     "moduleResolution": "node",
-    "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "removeComments": false,
     "noImplicitAny": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "typeRoots": [
-      "../node_modules/@types/"
-    ],
+    "sourceMap": true,
+    "pretty": true,
+    "removeComments": true,
+    "noEmit": true,
     "types": [
-      "core-js",
       "node"
+    ],
+    "lib": [
+      "es2015", "dom"
     ]
   },
-  "files": [
-    "./app/app.module.ts",
-    "./main.ts"
-  ],
   "angularCompilerOptions": {
     "debug": true,
-    "skipMetadataEmit" : true
+    "skipMetadataEmit": true
+  },
+  "awesomeTypescriptLoaderOptions": {
+    "useWebpackText": true // Allows other loaders to be chained to awesome-typescript-loader.
   },
   "exclude": [
     "../node_modules/"
