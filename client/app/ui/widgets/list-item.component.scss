@@ -18,7 +18,6 @@
   .card {
     cursor: pointer;
     flex: 1 1 auto;
-    margin-left: map_get($base-padding, 'default');
 
     .name {
       font-family: $base-heading-font-family;

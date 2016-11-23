@@ -164,6 +164,7 @@ export module UserController {
 					'user.meta.profileText': 'meta.profileText',
 					'user.statistics': 'statistics',
 					'user.relations': 'relations',
+					'user.languages': 'languages',
 					'links': 'links',
 					'user.createdAt': 'createdAt',
 				}, {

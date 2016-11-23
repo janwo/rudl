@@ -1,4 +1,5 @@
 import {Document} from "./document";
+import {Locale} from "./locale";
 
 export interface User extends Document {
 	firstName: string;
@@ -9,6 +10,7 @@ export interface User extends Document {
 	relations: UserRelations;
 	statistics: UserStatistics;
 	links: UserLinks;
+	languages: Array<Locale.Language>;
 }
 
 export interface UserLinks {

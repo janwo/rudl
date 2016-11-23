@@ -1,7 +1,7 @@
 import {Component, OnDestroy} from "@angular/core";
 import {TabItem} from "./widgets/tab-menu.component";
 import {MenuItem} from "./widgets/dropdown-menu.component";
-import {UserService} from "../services/user.service";
+import {UserService, UserStatus} from "../services/user.service";
 import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
 
@@ -21,7 +21,7 @@ export class NavbarComponent implements OnDestroy {
         private userService: UserService
     ) {
         // Wait for user information.
-        this.authenticatedUserSubscription = this.userService.getAuthenticatedUser().subscribe(user => {
+        this.authenticatedUserSubscription = this.userService.getAuthenticatedUserObservable().subscribe((user: UserStatus) => {
             this.menuItems = [
                 {
                     icon: 'user-md',

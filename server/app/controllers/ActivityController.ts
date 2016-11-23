@@ -26,7 +26,7 @@ export module ActivityController {
 			// Build profile.
 			return Promise.resolve(dot.transform({
 				'activity._key': 'id',
-				'activity.name': 'name',
+				'activity.translations': 'translations',
 				'activity.owner': 'owner',
 				'activity.followedByYou': 'followedByYou',
 				'activity': 'links'

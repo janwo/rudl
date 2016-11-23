@@ -49,6 +49,11 @@ export module AccountController {
 				mails: [{mail: recipe.mail, verified: false}],
 				scope: [UserRoles.user],
 				location: null,
+				languages: [
+					//TODO: dynamic language
+					'de-DE',
+				    'en-US'
+				],
 				meta: {
 					hasAvatar: false,
 					profileText: null

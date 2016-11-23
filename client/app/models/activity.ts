@@ -1,6 +1,7 @@
-import {Translations} from "./translations";
+import {Locale} from "./locale";
 import {Document} from "./document";
 
 export interface Activity extends Document {
-	name: Translations
+	name: string;
+	translations: Locale.Translations;
 }

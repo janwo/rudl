@@ -27,7 +27,7 @@ export module ListController {
 				// Build profile.
 				return dot.transform({
 					'list._key': 'id',
-					'list.name': 'name',
+					'list.translations': 'translations',
 					'list.owner': 'owner',
 					'list.followedByYou': 'followedByYou',
 					'links': 'links'

@@ -39,6 +39,7 @@ export interface User extends Document {
 	mails: Array<UserMail>;
 	scope: Array<string>;
 	location: Array<number>;
+	languages: Array<string>;
 	auth: {
 		password: string;
 		providers: Array<UserProvider>;

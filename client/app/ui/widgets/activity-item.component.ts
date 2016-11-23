@@ -11,8 +11,4 @@ export class ActivityItemComponent {
 	@Input() activity: Activity = null;
 	
 	constructor() {}
-	
-	string(string: string) {
-		return JSON.stringify(string);
-	}
 }

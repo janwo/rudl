@@ -40,8 +40,4 @@ export class ListComponent implements OnInit, OnDestroy {
     ngOnDestroy(){
         this.listSubscription.unsubscribe();
     }
-    
-    string(string: string) {
-        return JSON.stringify(string);
-    }
 }

@@ -34,6 +34,11 @@ export module TestController {
 		return {
 			firstName: casual.first_name,
 			lastName: casual.last_name,
+			languages: [
+				//TODO Dynamic languages
+				'de',
+			    'en'
+			],
 			username: casual.username.toLowerCase().replace(/[^0-9a-z_-]/, '-'),
 			mails: [{
 				mail: casual.email,

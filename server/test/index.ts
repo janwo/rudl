@@ -12,6 +12,11 @@ function generateUser(): User {
 		firstName: casual.first_name,
 		lastName: casual.last_name,
 		username: casual.username,
+		languages: [
+			//TODO: Dynamic languages
+			'de',
+		    'en'
+		],
 		mails: [{
 			mail: casual.email,
 			verified: true
