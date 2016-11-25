@@ -43,12 +43,10 @@ $header-horizontal-padding: map_get($base-padding, 'default');
     right: $header-horizontal-padding;
   }
 
-  .menu {
+  avatar {
     flex: 0 0 auto;
-    background: red;
     width: $header-content-size;
     height: $header-content-size;
-    border-radius: 50%;
     cursor: pointer;
   }
 }

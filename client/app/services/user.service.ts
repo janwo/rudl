@@ -9,8 +9,7 @@ import {Locale} from "../models/locale";
 
 export interface UserStatus {
     loggedIn: boolean;
-    username: string;
-    languages: Array<Locale.Language>;
+    user: User
 }
 
 @Injectable()
@@ -24,14 +23,20 @@ export class UserService {
     ) {
         // Setup authenticated profile observable.
         this.authenticatedProfile = new BehaviorSubject<UserStatus>(null);
-        this.getAuthenticatedUserObservable().subscribe(authenticatedUser => console.log(`authenticatedProfile was set: username = ${authenticatedUser.username}, language = ${authenticatedUser.languages ? authenticatedUser.languages[0] : 'none'}.`));
+        this.getAuthenticatedUserObservable().subscribe(authenticatedUser => {
+            if(authenticatedUser.loggedIn)
+                console.log(`authenticatedProfile was set to: username = ${authenticatedUser.user.username}, language = ${authenticatedUser.user.languages ? authenticatedUser.user.languages[0] : 'none'}.`);
+            else
+                console.log(`authenticatedProfile got removed.`);
+        });
         
         // Listen on token events in data service and redirect it to the authenticatedProfile observer.
-        this.dataService.getTokenObservable().flatMap((tokenString: string) => tokenString ? this.getUser() : null).subscribe((user: User) => {
+        this.dataService.getTokenObservable().flatMap((tokenString: string) => {
+            return tokenString ? this.getUser() : Observable.of(null);
+        }).subscribe((user: User) => {
             this.authenticatedProfile.next({
                 loggedIn: !!user,
-                username: user ? user.username : null,
-                languages: user ? user.languages : []
+                user: user
             });
         });
     }
@@ -53,7 +58,7 @@ export class UserService {
     }
     
     signOut() : void {
-        this.dataService.get('/api/sign_out', true).subscribe(response => {
+        this.dataService.get('/api/sign-out', true).subscribe(response => {
             if(response.statusCode == 200) {
                 this.dataService.removeToken();
                 this.authenticatedProfile.next(null);
@@ -74,10 +79,18 @@ export class UserService {
         return this.dataService.get(`/api/users/following/${username}`, true).map((json: JsonResponse) => json.data).share();
     }
     
+    followUser(username: string): Observable<User> {
+        return this.dataService.put(`/api/users/follow/${username}`, null, true).map((json: JsonResponse) => json.data as User).share();
+    }
+    
+    unfollowUser(username: string): Observable<User> {
+        return this.dataService.delete(`/api/users/follow/${username}`, true).map((json: JsonResponse) => json.data as User).share();
+    }
+    
     lists(username: string = 'me'): Observable<List[]> {
         return this.dataService.get(`/api/lists/by/${username}`, true).map((json: JsonResponse) => {
             return json.data.map((list: List) => {
-                list.name = Locale.getBestTranslation(list.translations, this.getAuthenticatedUser().languages);
+                list.name = Locale.getBestTranslation(list.translations, this.getAuthenticatedUser().user.languages);
                 return list;
             });
         }).share();
@@ -85,26 +98,26 @@ export class UserService {
     
     list(key: string): Observable<List> {
         return this.dataService.get(`/api/lists/=/${key}`, true).map((json: JsonResponse) => json.data as List).map((list: List) => {
-            list.name = Locale.getBestTranslation(list.translations, this.getAuthenticatedUser().languages);
+            list.name = Locale.getBestTranslation(list.translations, this.getAuthenticatedUser().user.languages);
             return list;
         }).share();
+    }
+    
+    followList(listId: string): Observable<List> {
+        return this.dataService.put(`/api/lists/follow/${listId}`, null, true).map((json: JsonResponse) => json.data as List).share();
+    }
+    
+    unfollowList(listId: string): Observable<List> {
+        return this.dataService.delete(`/api/lists/follow/${listId}`, true).map((json: JsonResponse) => json.data as List).share();
     }
     
     activities(list: string): Observable<Activity[]> {
         return this.dataService.get(`/api/activities/in/${list}`, true).map((json: JsonResponse) => {
             return json.data.map((activity: Activity) => {
-                activity.name = Locale.getBestTranslation(activity.translations, this.getAuthenticatedUser().languages);
+                activity.name = Locale.getBestTranslation(activity.translations, this.getAuthenticatedUser().user.languages);
                 return activity;
             });
         }).share();
-    }
-    
-    addFollowee(username: string): Observable<void> {
-        return this.dataService.put(`/api/users/follow/${username}`, null, true).map(() => {}).share();
-    }
-    
-    deleteFollowee(username: string): Observable<void> {
-        return this.dataService.delete(`/api/users/follow/${username}`, true).map(() => {}).share();
     }
     
     suggestPeople(): Observable<User[]> {

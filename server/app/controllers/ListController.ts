@@ -15,30 +15,70 @@ import {UserController} from "./UserController";
 
 export module ListController {
 	
-	export function getPublicList(list: List | List[]) {
+	export function getPublicList(list: List | List[], relatedUser: User) {
 		let createPublicList = list => {
-			return UserController.getPublicUser(list.owner).then(user => {
-				// Exchange owner.
+			return UserController.getPublicUser(list.owner, relatedUser).then(user => {
+				// Set owner.
 				list.owner = user;
 				
-				// Add default links.
-				let links = {};
-				
-				// Build profile.
-				return dot.transform({
-					'list._key': 'id',
-					'list.translations': 'translations',
-					'list.owner': 'owner',
-					'list.followedByYou': 'followedByYou',
-					'links': 'links'
-				}, {
-					list: list,
-					links: links
+				// Set list statistics.
+				return getListStatistics(list, relatedUser).then((statistics : ListStatistics) => {
+					// Add default links.
+					let links = {};
+					
+					// Build profile.
+					return dot.transform({
+						'list._key': 'id',
+						'list.translations': 'translations',
+						'list.owner': 'owner',
+						'relations': 'relations',
+						'followers': 'followers',
+						'links': 'links'
+					}, {
+						list: list,
+						relations: {
+							owning: statistics.owning,
+							following: statistics.following
+						},
+						links: links,
+						followers: statistics.followers
+					});
 				});
 			});
 		};
 		
-		return list instanceof Array ? Promise.all(list.map(createPublicList)) : createPublicList(list);
+		let now = Date.now();
+		let transformed = list instanceof Array ? Promise.all(list.map(createPublicList)) : createPublicList(list);
+		return transformed.then((result : any | Array<any>) => {
+			console.log(`Building profile of ${result instanceof Array ? result.length + ' lists' : '1 list'} took ${Date.now() - now} millis`);
+			return result;
+		});
+	}
+	
+	export interface ListStatistics {
+		owning: boolean;
+		following: boolean;
+		followers: number;
+	}
+	
+	export function getListStatistics(list: List, user: User) : Promise<ListStatistics> {
+		let aqlQuery = `LET followers = (FOR follower IN INBOUND @listId @@edgesFollows RETURN follower) LET follows = (FOR list IN OUTBOUND @userId @@edgesFollows FILTER list._id == @listId RETURN list) let owns = (FOR list IN OUTBOUND @userId @@edgesOwns FILTER list._id == @listId RETURN list) RETURN {owning: LENGTH(owns) > 0, following: LENGTH(follows) > 0, followers: LENGTH(followers)}`;
+		let aqlParams = {
+			'@edgesFollows': arangoCollections.userFollowsList,
+			'@edgesOwns': arangoCollections.userOwnsList,
+			listId: list._id,
+			userId: user._id
+		};
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
+	}
+	
+	export function getListFollowers(list: List, countOnly: boolean = false) : Promise<User[] | number> {
+		let aqlQuery = `FOR user IN INBOUND @listId @@edgesFollows ${countOnly ? 'COLLECT WITH COUNT INTO length RETURN length' : 'RETURN user'}`;
+		let aqlParams = {
+			'@edgesFollows': arangoCollections.userFollowsList,
+			listId: list._id
+		};
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => countOnly ? cursor.next() : cursor.all());
 	}
 	
 	export function getListsBy(user: User, countOnly: boolean = false) : Promise<List[] | number>{
@@ -86,7 +126,7 @@ export module ListController {
 			let paramKey = encodeURIComponent(request.params.key);
 			
 			// Create promise.
-			let promise: Promise<List> = ListController.getList(paramKey).then(getPublicList);
+			let promise: Promise<List> = ListController.getList(paramKey).then(list => getPublicList(list, request.auth.credentials));
 			
 			reply.api(promise);
 		}
@@ -99,12 +139,11 @@ export module ListController {
 		 * @param reply Reply-Object
 		 */
 		export function getListsBy(request: any, reply: any): void {
-			let user = request.auth.credentials;
 			let paramUsername = encodeURIComponent(request.params.username);
 			
 			// Create promise.
-			let promise : Promise<User> = Promise.resolve(paramUsername != 'me' ? UserController.findByUsername(paramUsername) : user);
-			promise = promise.then(ListController.getListsBy).then((lists: List[]) => getPublicList(lists));
+			let promise : Promise<User> = Promise.resolve(paramUsername != 'me' ? UserController.findByUsername(paramUsername) : request.auth.credentials);
+			promise = promise.then(ListController.getListsBy).then((lists: List[]) => getPublicList(lists, request.auth.credentials));
 			
 			reply.api(promise);
 		}
@@ -120,7 +159,7 @@ export module ListController {
 			let paramQuery = encodeURIComponent(request.params.query);
 			
 			// Create promise.
-			let promise : Promise<List[]> = ListController.getListsLike(paramQuery).then((lists: List[]) => getPublicList(lists));
+			let promise : Promise<List[]> = ListController.getListsLike(paramQuery).then((lists: List[]) => getPublicList(lists, request.auth.credentials));
 			
 			reply.api(promise);
 		}

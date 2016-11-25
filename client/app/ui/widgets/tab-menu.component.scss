@@ -1,6 +1,6 @@
 @import './../variables.scss';
 
-$tab-menu-font-size: $base-font-size;
+$tab-menu-font-size: map_get($base-font-size, 'default');
 
 :host {
   display: block;

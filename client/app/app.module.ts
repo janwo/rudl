@@ -31,6 +31,7 @@ import {RedirectComponent} from "./redirect.component";
 import {ListItemComponent} from "./ui/widgets/list-item.component";
 import {ListComponent} from "./ui/list.component";
 import {ActivityItemComponent} from "./ui/widgets/activity-item.component";
+import {ListWrapperComponent} from "./ui/widgets/list-wrapper.component";
 
 @NgModule({
     declarations: [
@@ -43,6 +44,7 @@ import {ActivityItemComponent} from "./ui/widgets/activity-item.component";
 	    DropdownMenuComponent,
 	    TabMenuComponent,
 	    ActivityItemComponent,
+	    ListWrapperComponent,
 	    ListComponent,
 	    StatisticsComponent,
 	    TabElevatedMenuComponent,

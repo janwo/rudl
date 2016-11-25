@@ -15,16 +15,16 @@ export class DataService {
         private http: Http
     ) {
         // Create token observable.
-        this.token = new BehaviorSubject<string>(localStorage.getItem(DataService.localStorageKey) || null);
+        this.token = new BehaviorSubject<string>(window.localStorage.getItem(DataService.localStorageKey) || null);
         this.token.subscribe((tokenString: string) => {
             if(tokenString) {
                 // Save item, if set.
-                localStorage.setItem(DataService.localStorageKey, tokenString);
+                window.localStorage.setItem(DataService.localStorageKey, tokenString);
                 return;
             }
             
             // Otherwise remove item.
-            localStorage.removeItem(DataService.localStorageKey);
+            window.localStorage.removeItem(DataService.localStorageKey);
         });
         
         // Listen to any incoming authentication messages.

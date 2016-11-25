@@ -1,13 +1,21 @@
-<div *ngIf="list">
-	<h1>{{list.name}}</h1>
-	<div class="card">
-		<statistics [statistics]="[
-		{value: activities.length, subject: 'Activities'},
-		{value: 12, subject: 'Follower', link: 'follower'}
-		]"></statistics>
+<div class="card" *ngIf="list">
+	<div class="user" [routerLink]="['/people', list.owner.username]">
+		<avatar [user]="list.owner"></avatar>
+		<div>
+			<span class="name">{{list.owner.firstName + ' ' + list.owner.lastName}}</span>
+			<span class="username">{{list.owner.username}}</span>
+		</div>
 	</div>
-	
-	<h3>Activities</h3>
+	<h1>{{list.name}}</h1>
+	<statistics [statistics]="[
+	{value: activities.length, subject: 'Activities'},
+	{value: list.followers, subject: 'Follower', link: 'follower'}
+	]"></statistics>
+	<div class="cta" *ngIf="!!list.owner.relations">
+		<styled-button [style]="list.relations.following ? buttonStyleFollowing : buttonStyleDefault" (click)="onToggleFollow()" [disabled]="pendingFollowRequest" [text]="list.relations.following ? 'Following' : 'Follow'"></styled-button>
+	</div>
+</div>
+<div class="content" *ngIf="list">
 	<ul>
 		<li *ngFor="let activity of activities">
 			<activity-item [activity]="activity"></activity-item>

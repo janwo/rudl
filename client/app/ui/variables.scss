@@ -8,7 +8,10 @@ $base-font-family: 'Lato';
 $base-border-radius: 0.25rem;
 $base-font-weight-normal: 400;
 $base-font-weight-bold: 700;
-$base-font-size: 1rem;
+$base-font-size: (
+  'default': 1rem,
+  'small': 0.9rem
+);
 $base-line-height: 1.15;
 $base-heading-font-family: 'Fredoka One';
 $base-heading-font-weight-normal: 400;

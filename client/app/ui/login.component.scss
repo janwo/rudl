@@ -1,8 +1,8 @@
 @import './variables.scss';
 
 $login-text-divider-color: map_get($base-colors, 'secondary-text');
-$login-text-divider-line-size: $base-font-size * 0.05;
-$login-text-divider-font-size: $base-font-size * 0.75;
+$login-text-divider-line-size: map_get($base-font-size, 'default') * 0.05;
+$login-text-divider-font-size: map_get($base-font-size, 'default') * 0.75;
 
 :host {
   display: block;

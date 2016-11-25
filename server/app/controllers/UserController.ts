@@ -96,7 +96,7 @@ export module UserController {
 		});
 	}
 	
-	export function getPublicUser(user: User | User[], relatedUser: User = null): Promise<any> {
+	export function getPublicUser(user: User | User[], relatedUser: User): Promise<any> {
 		let createPublicUser = user => {
 			let lookups = [];
 			
@@ -118,7 +118,7 @@ export module UserController {
 			}));
 			
 			// Add relations.
-			if(relatedUser) lookups.push(Promise.all<number>([
+			if(relatedUser._key != user._key) lookups.push(Promise.all<number>([
 				getUserConnections(relatedUser, user, true),
 				getUserConnections(user, relatedUser, true),
 				getMutualConnections([user, relatedUser], false, true),
@@ -246,9 +246,8 @@ export module UserController {
 		 * @param reply Reply-Object
 		 */
 		export function getUser(request: any, reply: any): void {
-			let user = request.auth.credentials;
 			let username = encodeURIComponent(request.params.username);
-			let promise : Promise<User> = Promise.resolve(username != 'me' ? findByUsername(username) : user).then((user: User) => getPublicUser(user, request.auth.credentials));
+			let promise : Promise<User> = Promise.resolve(username != 'me' ? findByUsername(username) : request.auth.credentials).then((user: User) => getPublicUser(user, request.auth.credentials));
 			reply.api(promise);
 		}
 		
@@ -260,11 +259,10 @@ export module UserController {
 		 * @param reply Reply-Object
 		 */
 		export function getFollowers(request: any, reply: any): void {
-			let user = request.auth.credentials;
 			let username = encodeURIComponent(request.params.username);
 			
 			// Create user promise.
-			let promise : Promise<User> = Promise.resolve(username != 'me' ? findByUsername(username) : user);
+			let promise : Promise<User> = Promise.resolve(username != 'me' ? findByUsername(username) : request.auth.credentials);
 			promise = promise.then((user: User) => getUserConnections(null, user)).then((users: User[]) => getPublicUser(users, request.auth.credentials));
 			
 			reply.api(promise);
@@ -278,11 +276,10 @@ export module UserController {
 		 * @param reply Reply-Object
 		 */
 		export function getFollowees(request: any, reply: any): void {
-			let user = request.auth.credentials;
 			let paramUsername = encodeURIComponent(request.params.username);
 			
 			// Create user promise.
-			let promise : Promise<User> = Promise.resolve(paramUsername != 'me' ? findByUsername(paramUsername) : user);
+			let promise : Promise<User> = Promise.resolve(paramUsername != 'me' ? findByUsername(paramUsername) : request.auth.credentials);
 			promise = promise.then((user: User) => getUserConnections(user, null)).then((users: User[]) => getPublicUser(users, request.auth.credentials));
 			
 			reply.api(promise);
@@ -296,15 +293,14 @@ export module UserController {
 		 * @param reply Reply-Object
 		 */
 		export function addFollowee(request: any, reply: any): void {
-			let user = request.auth.credentials;
 			let paramFollowee = encodeURIComponent(request.params.followee);
 			let promise = findByUsername(paramFollowee).then((followee: User) => {
 				// Does connection already exist?
-				return getUserConnections(user, followee).then((users: User[]) => {
+				return getUserConnections(request.auth.credentials, followee).then((users: User[]) => {
 					// Add connection, if not.
-					if (users.length == 0) return addUserConnection(user, followee);
-				});
-			}).then(() => null);
+					if (users.length == 0) return addUserConnection(request.auth.credentials, followee);
+				}).then(() => getPublicUser(followee, request.auth.credentials));
+			});
 			
 			reply.api(promise);
 		}
@@ -317,9 +313,10 @@ export module UserController {
 		 * @param reply Reply-Object
 		 */
 		export function deleteFollowee(request: any, reply: any): void {
-			let user = request.auth.credentials;
-			let paramFollowee = request.payload.followee;
-			let promise = findByUsername(paramFollowee).then((followee: User) => removeUserConnection(user, followee)).then(() => null);
+			let paramFollowee = encodeURIComponent(request.params.followee);
+			let promise = findByUsername(paramFollowee).then((followee: User) => {
+				return removeUserConnection(request.auth.credentials, followee).then(() => getPublicUser(followee, request.auth.credentials));
+			});
 			
 			reply.api(promise);
 		}

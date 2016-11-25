@@ -1,5 +1,5 @@
 import {Component, OnInit, OnDestroy, Input} from "@angular/core";
-import {UserService} from "../services/user.service";
+import {UserService, UserStatus} from "../services/user.service";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {ButtonStyles} from "./widgets/styled-button.component";
@@ -13,14 +13,19 @@ import {List} from "../models/list";
 })
 export class ProfileComponent implements OnInit, OnDestroy {
     
+    @Input() currentTab: TabItem;
+    
     user: User;
+    lists: List[] = [];
+    followers: User[] = [];
+    followees: User[] = [];
     userSubscription: Subscription;
     userListsSubscription: Subscription;
     userActivitySubscription: Subscription;
     userFollowersSubscription: Subscription;
     userFolloweesSubscription: Subscription;
     
-    enableFollowButton: boolean = true;
+    pendingFollowRequest: boolean = false;
     buttonStyleDefault: ButtonStyles = ButtonStyles.minimal;
     buttonStyleFollowing: ButtonStyles = ButtonStyles.minimalInverse;
     
@@ -58,11 +63,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
             notification: false
         }
     };
-    @Input() currentTab: TabItem;
-    
-    private lists: List[];
-    private followers: User[];
-    private followees: User[];
     
     constructor(
         private route: ActivatedRoute,
@@ -99,11 +99,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
     
     onToggleFollow(): void {
-        this.enableFollowButton = false;
-        let obs = this.user.relations.followee ? this.userService.deleteFollowee(this.user.username).map(() => false) : this.userService.addFollowee(this.user.username).map(() => true);
-        obs.do((isFollowee: boolean) => {
-            this.user.relations.followee = isFollowee;
-            this.enableFollowButton = true;
+        this.pendingFollowRequest = true;
+        let obs = this.user.relations.followee ? this.userService.unfollowUser(this.user.username) : this.userService.followUser(this.user.username);
+        obs.do((updatedUser: User) => {
+            this.user = updatedUser;
+            this.pendingFollowRequest = false;
         }).subscribe();
     }
 }

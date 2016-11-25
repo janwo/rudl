@@ -4,6 +4,7 @@ import {MenuItem} from "./widgets/dropdown-menu.component";
 import {UserService, UserStatus} from "../services/user.service";
 import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
+import {User} from "../models/user";
 
 @Component({
     templateUrl: './navbar.component.html',
@@ -12,6 +13,7 @@ import {Subscription} from "rxjs";
 })
 export class NavbarComponent implements OnDestroy {
     
+    authenticatedUser: User;
     tabItems: {[key: string]: TabItem};
     menuItems : Array<MenuItem>;
     authenticatedUserSubscription : Subscription;
@@ -21,12 +23,16 @@ export class NavbarComponent implements OnDestroy {
         private userService: UserService
     ) {
         // Wait for user information.
-        this.authenticatedUserSubscription = this.userService.getAuthenticatedUserObservable().subscribe((user: UserStatus) => {
+        this.authenticatedUserSubscription = this.userService.getAuthenticatedUserObservable().subscribe((userStatus: UserStatus) => {
+            // Set user.
+            this.authenticatedUser = userStatus.user;
+            
+            // Set menu items.
             this.menuItems = [
                 {
                     icon: 'user-md',
                     title: 'Profil',
-                    link: this.router.createUrlTree(['/people', user.username]),
+                    link: this.router.createUrlTree(['/people', userStatus.user.username]),
                     notification: false
                 },
                 {
@@ -42,7 +48,8 @@ export class NavbarComponent implements OnDestroy {
                     notification: false
                 }
             ];
-            
+    
+            // Set tab items.
             this.tabItems = {
                 activity: {
                     icon: 'bell-o',

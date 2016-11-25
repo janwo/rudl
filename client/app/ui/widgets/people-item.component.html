@@ -1,5 +1,5 @@
 <avatar [routerLink]="['/people', user.username]" [user]="user"></avatar>
 <div class="card" [routerLink]="['/people', user.username]">
 	<span class="name">{{user.firstName}} {{user.lastName}}</span>
-	<span class="relation">Ihr habt beide <a>4 gemeinsame Freunde</a>.</span>
+	<span class="relation">{{relation}}</span>
 </div>

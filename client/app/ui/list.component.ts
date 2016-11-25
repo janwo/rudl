@@ -4,6 +4,7 @@ import {Subscription, Observable} from "rxjs";
 import {List} from "../models/list";
 import {ActivatedRoute, Params} from "@angular/router";
 import {Activity} from "../models/activity";
+import {ButtonStyles} from "./widgets/styled-button.component";
 
 @Component({
     templateUrl: './list.component.html',
@@ -14,6 +15,9 @@ export class ListComponent implements OnInit, OnDestroy {
     list: List;
     activities: Activity[];
     listSubscription: Subscription;
+    pendingFollowRequest: boolean = false;
+    buttonStyleDefault: ButtonStyles = ButtonStyles.minimal;
+    buttonStyleFollowing: ButtonStyles = ButtonStyles.minimalInverse;
     
     constructor(
         private userService: UserService,
@@ -39,5 +43,14 @@ export class ListComponent implements OnInit, OnDestroy {
     
     ngOnDestroy(){
         this.listSubscription.unsubscribe();
+    }
+    
+    onToggleFollow(): void {
+        this.pendingFollowRequest = true;
+        let obs = this.list.relations.following ? this.userService.unfollowList(this.list.id) : this.userService.followList(this.list.id);
+        obs.do((updatedList: List) => {
+            this.list = updatedList;
+            this.pendingFollowRequest = false;
+        }).subscribe();
     }
 }

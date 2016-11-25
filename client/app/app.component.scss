@@ -5,7 +5,7 @@
   min-height: 100vh;
   font-family: $base-font-family;
   font-weight: $base-font-weight-normal;
-  font-size: $base-font-size;
+  font-size: map_get($base-font-size, 'default');
   color: map_get($base-colors, 'text');
   background-color: map_get($base-colors, 'background');
   line-height: $base-line-height;
@@ -52,7 +52,7 @@
 
   // Define default card.
   /deep/ .card {
-    padding: map_get($base-padding, 'smaller');
+    padding: map_get($base-padding, 'small');
     border-radius: $base-border-radius;
     background-color: map_get($base-colors, 'background-highlighted');
     box-shadow: map_get($base-shadow, 'default');

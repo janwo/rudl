@@ -2,7 +2,8 @@
 	<avatar [user]="user"></avatar>
 	<div class="about">
 		<h1>{{user.firstName + ' ' + user.lastName}}</h1>
-		<span>{{user.meta.profileText || 'This is ' + user.firstName + '!'}}</span>
+		<span class="username">{{user.username}}</span>
+		<span class="description">{{user.meta.profileText || 'This is ' + user.firstName + '!'}}</span>
 	</div>
 	<div class="statistics">
 		<statistics [statistics]="[
@@ -10,36 +11,33 @@
 		{value: user.statistics.followees, subject: 'Folgt', link: tabItems['followees'].link},
 		{value: user.statistics.followers, subject: 'Follower', link: tabItems['followers'].link}
 		]"></statistics>
-		<div class="cta">
-			<styled-button [style]="user.relations.followee ? buttonStyleFollowing : buttonStyleDefault" (click)="onToggleFollow()" [disabled]="!enableFollowButton" [text]="user.relations.followee ? 'Following' : 'Follow'"></styled-button>
+		<div class="cta" *ngIf="!!user.relations">
+			<styled-button [style]="user.relations.followee ? buttonStyleFollowing : buttonStyleDefault" (click)="onToggleFollow()" [disabled]="pendingFollowRequest" [text]="user.relations.followee ? 'Following' : 'Follow'"></styled-button>
 			<styled-button [style]="buttonStyleDefault" [routerLink]="'/message'" [fa]="'commenting-o'"></styled-button>
 		</div>
 	</div>
 </div>
 <div class="content" *ngIf="user">
 	<tab-menu [tabItems]="tabItems"></tab-menu>
-	<div *ngIf="currentTab === tabItems['activity']" i18n>
+	<list-wrapper *ngIf="currentTab === tabItems['activity']" i18n>
 		Activity
-	</div>
-	<div *ngIf="currentTab === tabItems['lists']">
-		<ul>
-			<li *ngFor="let list of lists">
-				<list-item [list]="list"></list-item>
-			</li>
-		</ul>
-	</div>
-	<div *ngIf="currentTab === tabItems['followees']">
-		<ul>
-			<li *ngFor="let followee of followees">
-				<people-item [user]="followee"></people-item>
-			</li>
-		</ul>
-	</div>
-	<div *ngIf="currentTab === tabItems['followers']">
-		<ul>
-			<li *ngFor="let follower of followers">
-				<people-item [user]="follower"></people-item>
-			</li>
-		</ul>
-	</div>
+	</list-wrapper>
+	<list-wrapper [twoColumnLayout]="true" *ngIf="currentTab === tabItems['lists']">
+		<li *ngFor="let list of lists">
+			<list-item [list]="list"></list-item>
+		</li>
+		<span *ngIf="lists.length == 0">No Lists yet</span>
+	</list-wrapper>
+	<list-wrapper *ngIf="currentTab === tabItems['followees']">
+		<li *ngFor="let followee of followees">
+			<people-item [user]="followee"></people-item>
+		</li>
+		<span *ngIf="followees.length == 0">No Followees yet</span>
+	</list-wrapper>
+	<list-wrapper *ngIf="currentTab === tabItems['followers']">
+		<li *ngFor="let follower of followers">
+			<people-item [user]="follower"></people-item>
+		</li>
+		<span *ngIf="followers.length == 0">No Followers yet</span>
+	</list-wrapper>
 </div>

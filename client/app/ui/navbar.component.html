@@ -3,4 +3,4 @@
 </div>
 <tab-menu [(tabItems)]="tabItems"></tab-menu>
 <dropdown-menu [(menuItems)]="menuItems" #dropdownMenu></dropdown-menu>
-<button class="menu" (click)="dropdownMenu.toggle()"></button>
+<avatar [user]="authenticatedUser" (click)="dropdownMenu.toggle()"></avatar>

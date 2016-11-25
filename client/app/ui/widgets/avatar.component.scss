@@ -2,6 +2,7 @@
 
 :host {
   position: relative;
+  display: block;
 
   div {
     position: absolute;
@@ -19,10 +20,11 @@
       align-items: center;
       background-color: map_get($base-colors, 'primary');
 
-      span {
-        font-size: map_get($base-heading-font-size, 'h2');
+      svg {
+        width: 100%;
+        height: 100%;
         font-family: $base-heading-font-family;
-        color: map_get($base-colors, 'background');
+        fill: map_get($base-colors, 'background');
       }
     }
   }
