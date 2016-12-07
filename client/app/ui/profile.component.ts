@@ -1,5 +1,5 @@
 import {Component, OnInit, OnDestroy, Input} from "@angular/core";
-import {UserService, UserStatus} from "../services/user.service";
+import {UserService} from "../services/user.service";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {ButtonStyles} from "./widgets/styled-button.component";

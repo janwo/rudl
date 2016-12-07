@@ -2,4 +2,9 @@
 
 :host {
   display: block;
+
+  stack {
+    margin: 0 auto map_get($base-padding, 'large');
+    max-width: 30rem;
+  }
 }

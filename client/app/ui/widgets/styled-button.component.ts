@@ -23,9 +23,9 @@ export class StyledButtonComponent {
     
     getStyleClass(){
         switch(this.style) {
-            case ButtonStyles.default: return 'style-default';
-            case ButtonStyles.minimal: return 'style-minimal';
-            case ButtonStyles.minimalInverse: return 'style-minimal-inverse';
+            case ButtonStyles.default: return 'default';
+            case ButtonStyles.minimal: return 'minimal';
+            case ButtonStyles.minimalInverse: return 'minimal-inverse';
         }
     }
 }

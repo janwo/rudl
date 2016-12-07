@@ -32,6 +32,8 @@ import {ListItemComponent} from "./ui/widgets/list-item.component";
 import {ListComponent} from "./ui/list.component";
 import {ActivityItemComponent} from "./ui/widgets/activity-item.component";
 import {ListWrapperComponent} from "./ui/widgets/list-wrapper.component";
+import {StackCardComponent, StackComponent} from "./ui/widgets/stack.component";
+import {ModalComponent} from "./ui/widgets/modal.component";
 
 @NgModule({
     declarations: [
@@ -47,6 +49,7 @@ import {ListWrapperComponent} from "./ui/widgets/list-wrapper.component";
 	    ListWrapperComponent,
 	    ListComponent,
 	    StatisticsComponent,
+	    ModalComponent,
 	    TabElevatedMenuComponent,
 	    LandingPageComponent,
 	    IndicatorComponent,
@@ -54,19 +57,21 @@ import {ListWrapperComponent} from "./ui/widgets/list-wrapper.component";
 	    AvatarComponent,
 	    ExploreComponent,
 	    PeopleComponent,
+	    StackComponent,
 	    PeopleItemComponent,
 	    RedirectComponent,
 	    ExpanderComponent,
 	    ActivityComponent,
 	    SettingsComponent,
 	    ListItemComponent,
+	    StackCardComponent,
 	    ProfileComponent
     ],
     providers: [
-        UserService,
-        DataService,
-        AppGuard,
-        appRoutingProviders
+	    UserService,
+	    DataService,
+	    AppGuard,
+	    appRoutingProviders
     ],
     imports: [
         FormsModule,
@@ -81,3 +86,4 @@ import {ListWrapperComponent} from "./ui/widgets/list-wrapper.component";
 })
 export class AppModule {
 }
+

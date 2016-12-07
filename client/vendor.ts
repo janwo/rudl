@@ -28,3 +28,6 @@ import "../node_modules/normalize.css";
 
 // Font Awesome.
 import "../node_modules/font-awesome/css/font-awesome.css";
+
+// HammerJS
+import "hammerjs"

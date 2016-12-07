@@ -1,5 +1,9 @@
 @import "./ui/variables.scss";
 
+/deep/ * {
+  box-sizing: border-box;
+}
+
 :host {
   display: block;
   min-height: 100vh;
@@ -9,6 +13,8 @@
   color: map_get($base-colors, 'text');
   background-color: map_get($base-colors, 'background');
   line-height: $base-line-height;
+  width: 100vw;
+  overflow: hidden;
 
   // Reset text decorations.
   /deep/ a {

@@ -6,6 +6,10 @@
   section {
     max-width: 55rem;
     margin: 0 auto;
-    padding: map_get($base-padding, 'default');
+    padding: map_get($base-padding, 'smaller');
+
+    @include breakpoint('small'){
+      padding: map_get($base-padding, 'default');
+    }
   }
 }

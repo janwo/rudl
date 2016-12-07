@@ -1,5 +1,4 @@
 import {Component, Input} from "@angular/core";
-import {List} from "../../models/list";
 
 @Component({
 	templateUrl: './list-wrapper.component.html',

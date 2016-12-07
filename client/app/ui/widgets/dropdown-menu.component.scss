@@ -1,17 +1,17 @@
 @import './../variables.scss';
 
-$popup-menu-arrow-size: 0.5rem;
-$popup-menu-border-size: 0.1rem;
-$popup-menu-background-color: #fff;
-$popup-menu-arrow-center-right-offset: 1rem;
+$dropdown-menu-arrow-size: 0.5rem;
+$dropdown-menu-border-size: 0.1rem;
+$dropdown-menu-background-color: #fff;
+$dropdown-menu-arrow-center-right-offset: 1rem;
 
 :host {
   ul {
     position: relative;
     z-index: 20;
-    border: $popup-menu-border-size solid map_get($base-colors, 'primary');
+    border: $dropdown-menu-border-size solid map_get($base-colors, 'primary');
     list-style: none;
-    background: $popup-menu-background-color;
+    background: $dropdown-menu-background-color;
     box-shadow: 0.125rem 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
 
     li {
@@ -38,25 +38,25 @@ $popup-menu-arrow-center-right-offset: 1rem;
     }
 
     &:after, &:before {
-      $arrow-size: $popup-menu-arrow-size;
+      $arrow-size: $dropdown-menu-arrow-size;
 
       content: '';
       width: 0;
       height: 0;
       position: absolute;
       bottom: 100%;
-      right: $popup-menu-arrow-center-right-offset - $arrow-size;
+      right: $dropdown-menu-arrow-center-right-offset - $arrow-size;
       border-style: solid;
       border-width: 0 $arrow-size $arrow-size $arrow-size;
       border-color: transparent transparent map_get($base-colors, 'primary') transparent;
     }
 
     &:after {
-      $arrow-size: $popup-menu-arrow-size - $popup-menu-border-size;
+      $arrow-size: $dropdown-menu-arrow-size - $dropdown-menu-border-size;
 
       border-width: 0 $arrow-size $arrow-size $arrow-size;
-      right: $popup-menu-arrow-center-right-offset - $arrow-size;
-      border-color: transparent transparent $popup-menu-background-color transparent;
+      right: $dropdown-menu-arrow-center-right-offset - $arrow-size;
+      border-color: transparent transparent $dropdown-menu-background-color transparent;
     }
   }
 }

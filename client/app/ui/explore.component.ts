@@ -1,30 +1,40 @@
-import {Component, Input} from "@angular/core";
+import {Component, Input, OnDestroy} from "@angular/core";
+import {Activity} from "../models/activity";
+import {UserService} from "../services/user.service";
+import {Subscription, Observable} from "rxjs";
 
 export enum UserSuggestionsType {
     GENERAL, NEARBY
-}
-
-export class someUser {
-
-    id: number;
-
-    constructor(id: number) {
-        this.id = id;
-    }
 }
 
 @Component({
     templateUrl: './explore.component.html',
     styleUrls: ['./explore.component.scss']
 })
-export class ExploreComponent {
-
+export class ExploreComponent implements OnDestroy {
+    
     @Input() type: UserSuggestionsType = UserSuggestionsType.GENERAL;
-    types: UserSuggestionsType;
-    users: someUser[] = [
-        new someUser(2),
-        new someUser(3)
-    ];
+    suggestedActivitiesStream: Observable<Activity[]>;
 
-    constructor() {}
+    constructor(userService: UserService) {
+        this.suggestedActivitiesStream = userService.activities("888243").map((activities: Activity[]) => {
+            let returnedOnes: Activity[] = [];
+            activities.forEach(activity => {
+                for(let i = 0; i < 10; i++){
+                    activity = JSON.parse(JSON.stringify(activity));
+                    activity.name += ' id: ' + i;
+                    returnedOnes.push(activity);
+                }
+            });
+            return returnedOnes;
+        });
+    }
+    
+    ngOnDestroy(): void {
+        
+    }
+    
+    markActivityAs(activity: Activity, markedAs: 'like' | 'dislike') {
+       console.log(activity.name + ' was marked as ' + markedAs);
+    }
 }

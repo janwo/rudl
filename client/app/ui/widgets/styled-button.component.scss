@@ -35,7 +35,7 @@ $button-colors: (
     justify-content: center;
     width: 100%;
 
-    &.style-minimal {
+    &.minimal {
       border: map_get($base-line-widths, 'default') map_get($button-colors, 'minimal-border-color') solid;
       color: map_get($button-colors, 'minimal-color');
       background-color: transparent;
@@ -44,9 +44,13 @@ $button-colors: (
         border-color: map_get($button-colors, 'minimal-inactive-border-color');
         color: map_get($button-colors, 'minimal-inactive-color');
       }
+
+      &:active span {
+        transform: scale(0.95);
+      }
     }
 
-    &.style-minimal-inverse {
+    &.minimal-inverse {
       border: map_get($base-line-widths, 'default') transparent solid;
       color: map_get($button-colors, 'minimal-inverse-color');
       background-color: map_get($button-colors, 'minimal-inverse-background-color');
@@ -55,9 +59,13 @@ $button-colors: (
         color: map_get($button-colors, 'minimal-inactive-color');
         background-color: map_get($button-colors, 'minimal-inverse-inactive-background-color');
       }
+
+      &:active span {
+        transform: scale(0.95);
+      }
     }
 
-    &.style-default {
+    &.default {
       border: map_get($base-line-widths, 'default') transparent solid;
       color: map_get($button-colors, 'default-color');
       background-color: map_get($button-colors, 'default-background');
