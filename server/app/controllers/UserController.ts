@@ -25,7 +25,7 @@ export module UserController {
 			provider: provider.provider,
 			userIdentifier: provider.userIdentifier
 		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()).then((user: User) => {
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User).then((user: User) => {
 			return new Promise<User>((resolve, reject) => {
 				// No user found?
 				if (user === undefined) {
@@ -43,7 +43,7 @@ export module UserController {
 			'@collection': arangoCollections.users,
 			username: username
 		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()).then((user: User) => {
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User).then((user: User) => {
 			return new Promise<User>((resolve, reject) => {
 				// No user found?
 				if (user === undefined) {
@@ -61,9 +61,7 @@ export module UserController {
 			'@collection': arangoCollections.users,
 			mail: mail
 		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => {
-			return cursor.next();
-		}).then((user: User) => {
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User).then((user: User) => {
 			return new Promise<User>((resolve, reject) => {
 				// No user found?
 				if (user === undefined) {
@@ -83,7 +81,7 @@ export module UserController {
 				'@collection': arangoCollections.users,
 				key: token.userId
 			};
-			return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()).then((user: User) => {
+			return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User).then((user: User) => {
 				return new Promise<User>((resolve, reject) => {
 					// No user found?
 					if (user === undefined) {
@@ -192,7 +190,7 @@ export module UserController {
 		};
 		if(from && to) aqlParam['to'] = to._id;
 		aqlParam['from'] = from ? from._id : to._id;
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => countOnly ? cursor.next() : cursor.all());
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => countOnly ? cursor.next(): cursor.all()) as any as Promise<User[] | number>;
 	}
 	
 	export function addUserConnection(user: User, aimedUser: User) : Promise<UserFollowsUser> {
@@ -211,7 +209,7 @@ export module UserController {
 			'@edges': arangoCollections.userFollowsUser,
 			document: edge
 		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<UserFollowsUser>;
 	}
 	
 	export function removeUserConnection(user: User, aimedUser: User): Promise<void> {
@@ -234,42 +232,43 @@ export module UserController {
 		users.forEach((user: User, index: number) => {
 			aqlParam[`user_${index}`] = user._id;
 		});
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => countOnly ? cursor.next() : cursor.all());
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => countOnly ? cursor.next() : cursor.all()) as any as Promise<User[] | number>;
 	}
 	
 	export namespace RouteHandlers {
 		
 		/**
-		 * Handles [GET] /api/users/={username}
+		 * Handles [GET] /api/users/{username}
 		 * @param request Request-Object
 		 * @param request.params.username username
 		 * @param reply Reply-Object
 		 */
 		export function getUser(request: any, reply: any): void {
-			let username = encodeURIComponent(request.params.username);
-			let promise : Promise<User> = Promise.resolve(username != 'me' ? findByUsername(username) : request.auth.credentials).then((user: User) => getPublicUser(user, request.auth.credentials));
+			let paramUsername = encodeURIComponent(request.params.username);
+			let promise : Promise<User> = Promise.resolve(paramUsername != 'me' ? findByUsername(paramUsername) : request.auth.credentials).then((user: User) => getPublicUser(user, request.auth.credentials));
 			reply.api(promise);
 		}
 		
 		/**
-		 * Handles [GET] /api/users/followers/{username}
+		 * Handles [GET] /api/users/{username}/followers
 		 * @param request Request-Object
 		 * @param request.params.username username (optional)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
 		export function getFollowers(request: any, reply: any): void {
-			let username = encodeURIComponent(request.params.username);
+			let paramUsername = encodeURIComponent(request.params.username);
 			
 			// Create user promise.
-			let promise : Promise<User> = Promise.resolve(username != 'me' ? findByUsername(username) : request.auth.credentials);
-			promise = promise.then((user: User) => getUserConnections(null, user)).then((users: User[]) => getPublicUser(users, request.auth.credentials));
+			let promise : Promise<User> = Promise.resolve(paramUsername != 'me' ? findByUsername(paramUsername) : request.auth.credentials).then((user: User) => {
+				return getUserConnections(null, user);
+			}).then((users: User[]) => getPublicUser(users, request.auth.credentials));
 			
 			reply.api(promise);
 		}
 		
 		/**
-		 * Handles [GET] /api/users/following/{username}
+		 * Handles [GET] /api/users/{username}/followees
 		 * @param request Request-Object
 		 * @param request.params.username username (optional)
 		 * @param request.auth.credentials
@@ -279,14 +278,15 @@ export module UserController {
 			let paramUsername = encodeURIComponent(request.params.username);
 			
 			// Create user promise.
-			let promise : Promise<User> = Promise.resolve(paramUsername != 'me' ? findByUsername(paramUsername) : request.auth.credentials);
-			promise = promise.then((user: User) => getUserConnections(user, null)).then((users: User[]) => getPublicUser(users, request.auth.credentials));
+			let promise : Promise<User> = Promise.resolve(paramUsername != 'me' ? findByUsername(paramUsername) : request.auth.credentials).then((user: User) => {
+				return getUserConnections(user, null);
+			}).then((users: User[]) => getPublicUser(users, request.auth.credentials));
 			
 			reply.api(promise);
 		}
 		
 		/**
-		 * Handles [PUT] /api/users/follow/{followee}
+		 * Handles [POST] /api/users/follow/{followee}
 		 * @param request Request-Object
 		 * @param request.auth.credentials
 		 * @param request.params.followee followee
@@ -294,6 +294,7 @@ export module UserController {
 		 */
 		export function addFollowee(request: any, reply: any): void {
 			let paramFollowee = encodeURIComponent(request.params.followee);
+			
 			let promise = findByUsername(paramFollowee).then((followee: User) => {
 				// Does connection already exist?
 				return getUserConnections(request.auth.credentials, followee).then((users: User[]) => {
@@ -306,7 +307,7 @@ export module UserController {
 		}
 		
 		/**
-		 * Handles [DELETE] /api/users/follow/{followee}
+		 * Handles [POST] /api/users/unfollow/{followee}
 		 * @param request Request-Object
 		 * @param request.auth.credentials
 		 * @param request.params.followee followee
@@ -314,6 +315,7 @@ export module UserController {
 		 */
 		export function deleteFollowee(request: any, reply: any): void {
 			let paramFollowee = encodeURIComponent(request.params.followee);
+			
 			let promise = findByUsername(paramFollowee).then((followee: User) => {
 				return removeUserConnection(request.auth.credentials, followee).then(() => getPublicUser(followee, request.auth.credentials));
 			});

@@ -11,9 +11,11 @@ import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/toPromise';
 
+// HammerJS
+import "hammerjs"
+
 // Web Font Loader.
 import * as WebFont from "webfontloader";
-// <-- Pending Bug, see http://stackoverflow.com/questions/38995709/webpacks-commonschunkplugin-and-the-use-of-import-as
 WebFont.load({
 	google: {
 		families: [
@@ -23,11 +25,8 @@ WebFont.load({
 	}
 });
 
-// Normalize.css.
-import "../node_modules/normalize.css";
+// Normalize.css
+require("../node_modules/normalize.css");
 
-// Font Awesome.
-import "../node_modules/font-awesome/css/font-awesome.css";
-
-// HammerJS
-import "hammerjs"
+// Font Awesome
+require("../node_modules/font-awesome/css/font-awesome.css");

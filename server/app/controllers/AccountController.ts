@@ -26,46 +26,54 @@ export module AccountController {
 	}
 	
 	export function createUser(recipe: UserRecipe): Promise<User> {
-		// Does user already exist?
-		let promise = Promise.all([
-			UserController.findByUsername(recipe.username).catch(() => null),
-			UserController.findByMail(recipe.mail).catch(() => null)
-		]).then((values: User[]) => {
-			return new Promise((resolve, reject) => {
-				if(values[0] || values[1]) {
-					reject(Boom.badRequest('Cannot create user as the username or mail is already in use.'));
-					return;
-				}
-				resolve();
+		return new Promise<User>(resolve => {
+			// Does user already exist?
+			let promise = Promise.all([
+				UserController.findByUsername(recipe.username).catch(() => null),
+				UserController.findByMail(recipe.mail).catch(() => null)
+			]).then((values: User[]) => {
+				return new Promise((resolve, reject) => {
+					if(values[0] || values[1]) {
+						reject(Boom.badRequest('Cannot create user as the username or mail is already in use.'));
+						return;
+					}
+					resolve();
+				});
 			});
+			
+			// Create user.
+			promise.then(() => {
+				return {
+					firstName: recipe.firstName ? recipe.firstName : null,
+					lastName: recipe.lastName ? recipe.lastName : null,
+					username: recipe.username,
+					mails: [
+						{
+							mail: recipe.mail,
+							verified: false
+						}
+					],
+					scope: [UserRoles.user],
+					location: null,
+					languages: [
+						//TODO: dynamic language
+						'de-DE',
+						'en-US'
+					],
+					meta: {
+						hasAvatar: false,
+						profileText: null
+					},
+					auth: {
+						password: recipe.password,
+						providers: []
+					},
+					createdAt: null,
+					updatedAt: null
+				};
+			}).then((user: User) => setPassword(user, user.auth.password)).then(resolve);
 		});
 		
-		// Create user.
-		promise = promise.then(() => {
-			return {
-				firstName: recipe.firstName ? recipe.firstName : null,
-				lastName: recipe.lastName ? recipe.lastName : null,
-				username: recipe.username,
-				mails: [{mail: recipe.mail, verified: false}],
-				scope: [UserRoles.user],
-				location: null,
-				languages: [
-					//TODO: dynamic language
-					'de-DE',
-				    'en-US'
-				],
-				meta: {
-					hasAvatar: false,
-					profileText: null
-				},
-				auth: {
-					password: recipe.password,
-					providers: []
-				}
-			};
-		}).then((user: User) => setPassword(user, user.auth.password));
-		
-		return promise;
 	}
 	
 	interface CheckUsernameResult {
@@ -176,7 +184,7 @@ export module AccountController {
 			document: user
 		};
 		
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next());
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<User>;
 	}
 	
 	export namespace RouteHandlers {

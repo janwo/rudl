@@ -45,7 +45,7 @@ export default {
 								{
 									test: /\.ts$/,
 									loaders: [
-										'awesome-typescript-loader?tsconfig=client/tsconfig.json',
+										`awesome-typescript-loader?configFileName=${root('client/tsconfig.json')}`,
 										'angular2-template-loader'
 									]
 								}

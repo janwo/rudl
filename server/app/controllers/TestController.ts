@@ -71,14 +71,14 @@ export module TestController {
 			casual.unix_time
 		].sort();
 		let activity : Activity = {
-			name: {},
+			translations: {},
 			createdAt: date[0],
 			updatedAt: date[1]
 		};
 		
 		// Generate random translations.
 		_.sampleSize(translations, Math.round(Math.random() * (translations.length - 1)) + 1).forEach(translation => {
-			activity.name[translation] = `${casual.words(Math.random() * 5 + 3)} (${translation})`;
+			activity.translations[translation] = `${casual.words(Math.random() * 5 + 3)} (${translation})`;
 		});
 		
 		return activity;

@@ -8,6 +8,9 @@ $button-colors: (
   'default-inactive-background': inactive(map_get($base-colors, 'secondary')),
   'default-color': #fff,
   'default-inactive-color': #fff,
+  'uncolored-color': map_get($base-colors, 'primary-text'),
+  'uncolored-inactive-color': inactive(map_get($base-colors, 'primary-text')),
+  'uncolored-background': map_get($base-colors, 'background'),
   'minimal-color': map_get($base-colors, 'secondary'),
   'minimal-border-color': map_get($base-colors, 'secondary'),
   'minimal-inactive-color': inactive(map_get($base-colors, 'primary-text')),
@@ -69,19 +72,38 @@ $button-colors: (
       border: map_get($base-line-widths, 'default') transparent solid;
       color: map_get($button-colors, 'default-color');
       background-color: map_get($button-colors, 'default-background');
-      box-shadow: 0.1rem 0.1rem 0.1rem rgba(0, 0, 0, 0.25);
+      box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.15);
 
       &:hover {
-        box-shadow: 0.15rem 0.15rem 0.15rem rgba(0, 0, 0, 0.25);
+        box-shadow: 0.05rem 0.05rem 0.2rem rgba(0, 0, 0, 0.25);
       }
 
       &:active {
-        box-shadow: 0.025rem 0.025rem 0.025rem rgba(0, 0, 0, 0.125);
+        box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.125);
       }
 
       &[disabled] {
         background-color: map_get($button-colors, 'default-inactive-background');
         color: map_get($button-colors, 'default-inactive-color');
+      }
+    }
+
+    &.uncolored {
+      border: map_get($base-line-widths, 'default') transparent solid;
+      color: map_get($button-colors, 'uncolored-color');
+      background-color: map_get($button-colors, 'uncolored-background');
+      box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.15);
+
+      &:hover {
+        box-shadow: 0.05rem 0.05rem 0.2rem rgba(0, 0, 0, 0.25);
+      }
+
+      &:active {
+        box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.125);
+      }
+
+      &[disabled] {
+        color: map_get($button-colors, 'uncolored-inactive-color');
       }
     }
 

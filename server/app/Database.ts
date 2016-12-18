@@ -9,6 +9,7 @@ export const arangoCollections = {
 	userFollowsUser: 'user-follows-user',
 	userFollowsList: 'user-follows-list',
 	userOwnsList: 'user-owns-list',
+	userRatedActivity: 'user-rated-activity',
 	userFollowsActivity: 'user-follows-activity',
 	activities: 'activities',
 	lists: 'lists',
@@ -24,7 +25,7 @@ export class DatabaseManager {
 	public static redisClient: RedisClient;
 	
 	public static connect(): Promise<void> {
-		return new Promise(resolve => {
+		return new Promise<void>(resolve => {
 			let arangoConnected = false;
 			let redisConnected = false;
 			

@@ -25,11 +25,12 @@ export class StyledButtonComponent {
         switch(this.style) {
             case ButtonStyles.default: return 'default';
             case ButtonStyles.minimal: return 'minimal';
+            case ButtonStyles.uncolored: return 'uncolored';
             case ButtonStyles.minimalInverse: return 'minimal-inverse';
         }
     }
 }
 
 export enum ButtonStyles {
-    default, minimal, minimalInverse
+    default, minimal, minimalInverse, uncolored
 }

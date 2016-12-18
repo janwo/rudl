@@ -64,11 +64,16 @@ export class DataService {
     }
     
     post(url: string, body: string, useAuthentication: boolean = false): Observable<JsonResponse> {
-        let requestOptions : RequestOptionsArgs = {};
+        let requestOptions : RequestOptionsArgs = {
+            headers: new Headers()
+        };
+        
         if(useAuthentication) {
             if(!this.getToken()) Observable.throw('Cannot use authentication without having a token set.');
             requestOptions.headers = this.createAuthorizationHeader(this.getToken());
         }
+    
+        requestOptions.headers.append('Content-Type', 'application/x-www-form-urlencoded');
         return this.http.post(DataService.domain + url, body, requestOptions).map(this.preHandler).catch(err => this.errorHandler(err));
     }
     

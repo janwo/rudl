@@ -10,30 +10,6 @@ import {ActivityController} from "../controllers/ActivityController";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
-		path: '/api/activities/=/{key}',
-		method: 'GET',
-		handler: ActivityController.RouteHandlers.getActivity,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			}
-		}
-	},
-	{
-		path: '/api/activities/in/{list}',
-		method: 'GET',
-		handler: ActivityController.RouteHandlers.getActivitiesIn,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			}
-		}
-	},
-	{
 		path: '/api/activities/like/{query}',
 		method: 'GET',
 		handler: ActivityController.RouteHandlers.getActivitiesLike,
@@ -46,6 +22,41 @@ export const RoutesConfig: RoutesConfiguration = [
 			validate: {
 				params: {
 					query: Joi.string().min(3)
+				}
+			}
+		}
+	},
+	{
+		path: '/api/activities/=/{key}',
+		method: 'GET',
+		handler: ActivityController.RouteHandlers.getActivity,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					key: Joi.string()
+				}
+			}
+		}
+	},
+	{
+		path: '/api/activities/set-rating',
+		method: 'POST',
+		handler: ActivityController.RouteHandlers.setRating,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				payload: {
+					activity: Joi.string(),
+					rating: Joi.number().integer().min(-1).max(1)
 				}
 			}
 		}

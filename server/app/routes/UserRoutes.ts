@@ -28,7 +28,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/users/followers/{username}',
+		path: '/api/users/=/{username}/followers',
 		method: 'GET',
 		handler: UserController.RouteHandlers.getFollowers,
 		config: {
@@ -45,7 +45,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/users/following/{username}',
+		path: '/api/users/=/{username}/followees',
 		method: 'GET',
 		handler: UserController.RouteHandlers.getFollowees,
 		config: {
@@ -63,7 +63,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	},
 	{
 		path: '/api/users/follow/{followee}',
-		method: 'PUT',
+		method: 'POST',
 		handler: UserController.RouteHandlers.addFollowee,
 		config: {
 			auth: {
@@ -79,8 +79,8 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/users/follow/{followee}',
-		method: 'DELETE',
+		path: '/api/users/unfollow/{followee}',
+		method: 'POST',
 		handler: UserController.RouteHandlers.deleteFollowee,
 		config: {
 			auth: {

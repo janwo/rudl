@@ -142,6 +142,7 @@ $swipe-activity-swipe-area-ratio: 100 / 75; // total width|height / stack width|
           font-family: $base-heading-font-family;
           font-size: map_get($base-heading-font-size, 'h1') * 0.75;
           color: map_get($base-colors, 'primary');
+          text-align: center;
 
           @media screen and (min-width: 30rem) {
             font-size: map_get($base-heading-font-size, 'h1');
@@ -165,6 +166,10 @@ $swipe-activity-swipe-area-ratio: 100 / 75; // total width|height / stack width|
 
     styled-button {
       flex: 0 0 auto;
+
+      /deep/ button {
+        transform: scale(1.5);
+      }
 
       &.like /deep/ button {
         border-color: map_get($base-colors, 'swipe-like');

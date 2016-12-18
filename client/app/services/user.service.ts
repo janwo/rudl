@@ -6,6 +6,7 @@ import {List} from "../models/list";
 import {User} from "../models/user";
 import {Activity} from "../models/activity";
 import {Locale} from "../models/locale";
+import Translations = Locale.Translations;
 
 export interface UserStatus {
     loggedIn: boolean;
@@ -72,19 +73,19 @@ export class UserService {
     }
     
     followers(username: string = 'me'): Observable<User[]> {
-        return this.dataService.get(`/api/users/followers/${username}`, true).map((json: JsonResponse) => json.data).share();
+        return this.dataService.get(`/api/users/=/${username}/followers`, true).map((json: JsonResponse) => json.data).share();
     }
     
     followees(username: string = 'me'): Observable<User[]> {
-        return this.dataService.get(`/api/users/following/${username}`, true).map((json: JsonResponse) => json.data).share();
+        return this.dataService.get(`/api/users/=/${username}/followees`, true).map((json: JsonResponse) => json.data).share();
     }
     
     followUser(username: string): Observable<User> {
-        return this.dataService.put(`/api/users/follow/${username}`, null, true).map((json: JsonResponse) => json.data as User).share();
+        return this.dataService.post(`/api/users/follow/${username}`, null, true).map((json: JsonResponse) => json.data as User).share();
     }
     
     unfollowUser(username: string): Observable<User> {
-        return this.dataService.delete(`/api/users/follow/${username}`, true).map((json: JsonResponse) => json.data as User).share();
+        return this.dataService.post(`/api/users/unfollow/${username}`, null, true).map((json: JsonResponse) => json.data as User).share();
     }
     
     lists(username: string = 'me'): Observable<List[]> {
@@ -103,16 +104,23 @@ export class UserService {
         }).share();
     }
     
+    createList(translations: Translations, activities: Activity[] = []): Observable<List> {
+        return this.dataService.post(`/api/lists/create`, `${JSON.stringify({
+            translations: translations,
+            activities: activities
+        })}`, true).map((json: JsonResponse) => json.data as List).share();
+    }
+    
     followList(listId: string): Observable<List> {
-        return this.dataService.put(`/api/lists/follow/${listId}`, null, true).map((json: JsonResponse) => json.data as List).share();
+        return this.dataService.post(`/api/lists/follow/${listId}`, null, true).map((json: JsonResponse) => json.data as List).share();
     }
     
     unfollowList(listId: string): Observable<List> {
-        return this.dataService.delete(`/api/lists/follow/${listId}`, true).map((json: JsonResponse) => json.data as List).share();
+        return this.dataService.post(`/api/lists/unfollow/${listId}`, null, true).map((json: JsonResponse) => json.data as List).share();
     }
     
     activities(list: string): Observable<Activity[]> {
-        return this.dataService.get(`/api/activities/in/${list}`, true).map((json: JsonResponse) => {
+        return this.dataService.get(`/api/lists/=/${list}/activities`, true).map((json: JsonResponse) => {
             return json.data.map((activity: Activity) => {
                 activity.name = Locale.getBestTranslation(activity.translations, this.getAuthenticatedUser().user.languages);
                 return activity;
