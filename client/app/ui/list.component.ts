@@ -1,10 +1,11 @@
-import {Component, OnInit, OnDestroy} from "@angular/core";
+import {Component, OnInit, OnDestroy, ViewChild} from "@angular/core";
 import {UserService} from "../services/user.service";
 import {Subscription, Observable} from "rxjs";
 import {List} from "../models/list";
 import {ActivatedRoute, Params} from "@angular/router";
 import {Activity} from "../models/activity";
 import {ButtonStyles} from "./widgets/styled-button.component";
+import {ModalComponent} from "./widgets/modal.component";
 
 @Component({
     templateUrl: './list.component.html',
@@ -18,6 +19,19 @@ export class ListComponent implements OnInit, OnDestroy {
     pendingFollowRequest: boolean = false;
     buttonStyleDefault: ButtonStyles = ButtonStyles.minimal;
     buttonStyleFollowing: ButtonStyles = ButtonStyles.minimalInverse;
+    @ViewChild(ModalComponent) unfollowModal: ModalComponent;
+    modalChoices = [{
+        buttonStyle: ButtonStyles.default,
+        text: 'Abbrechen',
+        callback: () => this.unfollowModal.close()
+    }, {
+        buttonStyle: ButtonStyles.uncolored,
+        text: 'Entfolgen',
+        callback: () => {
+            this.unfollowModal.close();
+            this.onToggleFollow();
+        }
+    }];
     
     constructor(
         private userService: UserService,
@@ -31,8 +45,8 @@ export class ListComponent implements OnInit, OnDestroy {
             let key = params['key'];
     
             this.listSubscription = Observable.zip(
-                this.userService.list(key),
-                this.userService.activities(key),
+                this.userService.getList(key),
+                this.userService.activitiesOfList(key),
                 (list: List, activities: Activity[]) => {
                     this.list = list;
                     this.activities = activities;
@@ -45,9 +59,14 @@ export class ListComponent implements OnInit, OnDestroy {
         this.listSubscription.unsubscribe();
     }
     
-    onToggleFollow(): void {
+    onToggleFollow(checkOwnerStatus: boolean = false): void {
+        if(checkOwnerStatus && this.list.relations.isOwned) {
+            this.unfollowModal.open();
+            return;
+        }
+        
         this.pendingFollowRequest = true;
-        let obs = this.list.relations.following ? this.userService.unfollowList(this.list.id) : this.userService.followList(this.list.id);
+        let obs = this.list.relations.isFollowed ? this.userService.unfollowList(this.list.id) : this.userService.followList(this.list.id);
         obs.do((updatedList: List) => {
             this.list = updatedList;
             this.pendingFollowRequest = false;

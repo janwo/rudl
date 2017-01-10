@@ -4,23 +4,22 @@ import Uuid = require("node-uuid");
 import dot = require("dot-object");
 import fs = require('fs');
 import path = require('path');
-import * as Joi from "joi";
-import {User, UserValidation} from "../models/users/User";
-import {DatabaseManager, arangoCollections} from "../Database";
+import {DatabaseManager} from "../Database";
 import randomstring = require("randomstring");
 import jwt = require("jsonwebtoken");
 import {Cursor} from "arangojs";
 import _ = require("lodash");
 import {UserController} from "./UserController";
 import {AccountController} from "./AccountController";
+import {User} from "../models/users/User";
 
 export module SuggestionController {
 	
 	export function getPeopleSuggestions(user: User): Promise<User[]> {
 		let aqlQuery = `LET notIn = UNION([@user], FOR e IN @@edges FILTER e._from == @user RETURN e._to) FOR u IN @@collection FILTER u._id NOT IN notIn LIMIT 5 RETURN u`;
 		let aqlParams = {
-			'@edges': arangoCollections.userFollowsUser,
-			'@collection': arangoCollections.users,
+			'@edges': DatabaseManager.arangoCollections.userFollowsUser.name,
+			'@collection': DatabaseManager.arangoCollections.users.name,
 			user: user._id
 		};
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all());
@@ -45,7 +44,7 @@ export module SuggestionController {
 		 * @param reply Reply-Object
 		 */
 		export function checkUsername(request: any, reply: any): void {
-			let promise = new Promise((resolve, reject) => {
+			let promise = new Promise(resolve => {
 				// Check validity.
 				resolve(AccountController.checkUsername(request.payload.username));
 			});

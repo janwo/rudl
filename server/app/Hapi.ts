@@ -87,8 +87,8 @@ export function hapiServer(): Promise<Hapi.Server>{
 		// Update assets.
 		if(Config.backend.watchAssets) AssetsPool.watchAssets();
 		
-		// Connect to database.
-		return DatabaseManager.connect();
+		// Connect to database + create collections.
+		return DatabaseManager.connect().then(() => DatabaseManager.createArangoData());
 	}).then(() => {
 		// Start server.
 		server.start(() => {

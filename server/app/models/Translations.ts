@@ -7,6 +7,10 @@ export interface Translations {
 	fr?: string;
 }
 
+export const TranslationsKeys = [
+	'de', 'en', 'es', 'fr'
+];
+
 export const TranslationsValidation = Joi.object().keys({
 	de: Joi.string().min(3),
 	en: Joi.string().min(3),

@@ -1,0 +1,31 @@
+<input i18n-placeholder="What are you looking for?" placeholder="What are you looking for?" #searchInput (keyup)="onKey($event)">
+<section *ngIf="searchValue">
+	<h2 i18n>Activities</h2>
+	<item-wrapper class="results" [ngClass]="{collapsed: collapsedActivities}">
+		<li class="card create" i18n (click)="hideOverlay()">
+			<span class="title">Create new activity "<span class="highlight">{{searchValue}}</span>"</span>
+		</li>
+		<li *ngFor="let activity of activities" (click)="hideOverlay()">
+			<activity-item [highlight]="searchValue" [activity]="activity"></activity-item>
+		</li>
+	</item-wrapper>
+</section>
+<section *ngIf="searchValue">
+	<h2 i18n>Lists</h2>
+	<item-wrapper class="results" [ngClass]="{collapsed: collapsedLists}">
+		<li class="card create" i18n (click)="hideOverlay()">
+			<span class="title">Create new list "<span class="highlight">{{searchValue}}</span>"</span>
+		</li>
+		<li *ngFor="let list of lists" (click)="hideOverlay()">
+			<list-item [highlight]="searchValue" [list]="list"></list-item>
+		</li>
+	</item-wrapper>
+</section>
+<section *ngIf="users && users.length > 0">
+	<h2 i18n>People</h2>
+	<item-wrapper class="results" [ngClass]="{collapsed: collapsedUsers}">
+		<li *ngFor="let user of users" (click)="hideOverlay()">
+			<people-item [highlight]="searchValue" [user]="user"></people-item>
+		</li>
+	</item-wrapper>
+</section>

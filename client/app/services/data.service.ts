@@ -73,7 +73,7 @@ export class DataService {
             requestOptions.headers = this.createAuthorizationHeader(this.getToken());
         }
     
-        requestOptions.headers.append('Content-Type', 'application/x-www-form-urlencoded');
+        requestOptions.headers.append('Content-Type', 'application/json');
         return this.http.post(DataService.domain + url, body, requestOptions).map(this.preHandler).catch(err => this.errorHandler(err));
     }
     

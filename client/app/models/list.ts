@@ -6,9 +6,12 @@ export interface List extends Document {
 	name: string;
 	owner: User;
 	relations: {
-		following: boolean;
-		owning: boolean;
+		isFollowed: boolean;
+		isOwned: boolean;
 	};
-	followers: number;
+	statistics: {
+		followers: number;
+		activities: number;
+	};
 	translations: Locale.Translations;
 }

@@ -1,0 +1,6 @@
+<div class="background" [@backgroundVisibility]="service.expandState" *ngIf="service.expandState"></div>
+<div class="content-wrapper" [@contentVisibility]="service.expandState" (@contentVisibility.done)="$event.toState === true && onExpanded.emit()" *ngIf="service.expandState">
+	<div class="content">
+		<ng-content></ng-content>
+	</div>
+</div>

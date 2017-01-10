@@ -1,4 +1,6 @@
 <stack [inboundStream]="suggestedActivitiesStream" (outboundStream)="markActivityAs($event.content, $event.markedAs)"></stack>
+
+<button (click)="createList(box.value)">create list</button><input #box>
 <h3>Zurzeit beliebt</h3>
 <modal [title]="'Add Activity'" *ngIf="">
 	

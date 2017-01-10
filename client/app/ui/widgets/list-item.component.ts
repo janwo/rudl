@@ -9,6 +9,5 @@ import {List} from "../../models/list";
 export class ListItemComponent {
 	
 	@Input() list: List = null;
-	
-	constructor() {}
+	@Input() highlight: string;
 }

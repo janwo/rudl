@@ -8,7 +8,7 @@ $button-colors: (
   'default-inactive-background': inactive(map_get($base-colors, 'secondary')),
   'default-color': #fff,
   'default-inactive-color': #fff,
-  'uncolored-color': map_get($base-colors, 'primary-text'),
+  'uncolored-color': map_get($base-colors, 'secondary'),
   'uncolored-inactive-color': inactive(map_get($base-colors, 'primary-text')),
   'uncolored-background': map_get($base-colors, 'background'),
   'minimal-color': map_get($base-colors, 'secondary'),

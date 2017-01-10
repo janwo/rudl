@@ -40,6 +40,7 @@ $login-text-divider-font-size: map_get($base-font-size, 'default') * 0.75;
     }
   }
 
+  styled-button,
   styled-button /deep/ button {
     width: 100%;
   }
@@ -56,8 +57,10 @@ $login-text-divider-font-size: map_get($base-font-size, 'default') * 0.75;
     background-color: #4099ff !important;
   }
 
-  /deep/ small {
+  small {
     color: map_get($base-colors, 'secondary-text');
+    display: block;
+    text-align: center;
 
     a {
       font-weight: $base-font-weight-bold;
@@ -65,4 +68,7 @@ $login-text-divider-font-size: map_get($base-font-size, 'default') * 0.75;
     }
   }
 
+  indicator {
+    margin-bottom: map_get($base-padding, 'smaller');
+  }
 }

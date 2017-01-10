@@ -8,11 +8,11 @@
 	</div>
 	<h1>{{list.name}}</h1>
 	<statistics [statistics]="[
-	{value: activities.length, subject: 'Activities'},
-	{value: list.followers, subject: 'Follower', link: 'follower'}
+		{value: list.statistics.activities, subject: 'Activities'},
+		{value: list.statistics.followers, subject: 'Follower', link: 'follower'}
 	]"></statistics>
-	<div class="cta" *ngIf="!!list.owner.relations">
-		<styled-button [style]="list.relations.following ? buttonStyleFollowing : buttonStyleDefault" (click)="onToggleFollow()" [disabled]="pendingFollowRequest" [text]="list.relations.following ? 'Following' : 'Follow'"></styled-button>
+	<div class="cta">
+		<styled-button [style]="list.relations.isFollowed ? buttonStyleFollowing : buttonStyleDefault" (click)="onToggleFollow(true)" [disabled]="pendingFollowRequest" [text]="list.relations.isFollowed ? 'Following' : 'Follow'"></styled-button>
 	</div>
 </div>
 <div class="content" *ngIf="list">
@@ -22,3 +22,6 @@
 		</li>
 	</ul>
 </div>
+<modal #modal>
+	<question [choices]="modalChoices" [title]="'Are you sure to unfollow list?'" [description]='"Du bist der Ersteller dieser Liste. Durch das Entfolgen geht die Liste in den Besitz eines anderen Followers über. Listen ohne andere Follower werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."'></question>
+</modal>

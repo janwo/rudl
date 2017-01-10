@@ -1,6 +1,5 @@
 import {UserRoles} from "../models/users/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
-import {UserController} from "../controllers/UserController";
 import Joi = require('joi');
 import BasicStrategy = require("../strategies/BasicStrategy");
 import FacebookStrategy = require("../strategies/FacebookStrategy");
@@ -10,7 +9,7 @@ import {ActivityController} from "../controllers/ActivityController";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
-		path: '/api/activities/like/{query}',
+		path: '/api/activities/like/{query}/{offset?}',
 		method: 'GET',
 		handler: ActivityController.RouteHandlers.getActivitiesLike,
 		config: {
@@ -21,7 +20,8 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					query: Joi.string().min(3)
+					query: Joi.string().min(3),
+					offset: Joi.number().min(0).default(0)
 				}
 			}
 		}

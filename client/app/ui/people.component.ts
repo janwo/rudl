@@ -19,8 +19,8 @@ export class PeopleComponent implements OnInit, OnDestroy {
     ) {}
     
     ngOnInit(){
-        this.followingUsersSubscription = this.userService.followees().subscribe((users: User[]) => this.followingUsers = users);
-        this.suggestedUsersSubscription = this.userService.suggestPeople().subscribe((users: User[]) => {
+        this.followingUsersSubscription = this.userService.followeesOfUser().subscribe((users: User[]) => this.followingUsers = users);
+        this.suggestedUsersSubscription = this.userService.suggestedPeople().subscribe((users: User[]) => {
             users.splice(3, Math.max(0, users.length - 3));
             this.suggestedUsers = users;
         });

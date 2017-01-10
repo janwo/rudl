@@ -31,9 +31,15 @@ import {RedirectComponent} from "./redirect.component";
 import {ListItemComponent} from "./ui/widgets/list-item.component";
 import {ListComponent} from "./ui/list.component";
 import {ActivityItemComponent} from "./ui/widgets/activity-item.component";
-import {ListWrapperComponent} from "./ui/widgets/list-wrapper.component";
+import {ItemWrapperComponent} from "./ui/widgets/item-wrapper.component";
 import {StackCardComponent, StackComponent} from "./ui/widgets/stack.component";
 import {ModalComponent} from "./ui/widgets/modal.component";
+import {FullScreenOverlayComponent} from "./ui/widgets/fullscreen-overlay.component";
+import {SearchComponent} from "./ui/search.component";
+import {HighlightPipe} from "./pipes/highlight.pipe";
+import {FormatPipe} from "./pipes/format.pipe";
+import {HistoryComponent} from "./ui/history.component";
+import {QuestionComponent} from "./ui/widgets/question.component";
 
 @NgModule({
     declarations: [
@@ -46,14 +52,17 @@ import {ModalComponent} from "./ui/widgets/modal.component";
 	    DropdownMenuComponent,
 	    TabMenuComponent,
 	    ActivityItemComponent,
-	    ListWrapperComponent,
+	    ItemWrapperComponent,
 	    ListComponent,
+	    ActivityComponent,
 	    StatisticsComponent,
 	    ModalComponent,
+	    QuestionComponent,
 	    TabElevatedMenuComponent,
 	    LandingPageComponent,
 	    IndicatorComponent,
 	    DashboardComponent,
+	    HistoryComponent,
 	    AvatarComponent,
 	    ExploreComponent,
 	    PeopleComponent,
@@ -61,11 +70,15 @@ import {ModalComponent} from "./ui/widgets/modal.component";
 	    PeopleItemComponent,
 	    RedirectComponent,
 	    ExpanderComponent,
+	    HighlightPipe,
+	    FormatPipe,
 	    ActivityComponent,
 	    SettingsComponent,
 	    ListItemComponent,
 	    StackCardComponent,
-	    ProfileComponent
+	    SearchComponent,
+	    ProfileComponent,
+        FullScreenOverlayComponent
     ],
     providers: [
 	    UserService,

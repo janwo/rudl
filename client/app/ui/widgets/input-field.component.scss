@@ -18,7 +18,7 @@ $input-field-colors: (
     font-size: $input-field-label-font-size;
     display: inline-block;
 
-    .emphasize {
+    /deep/ .bold {
       font-weight: $base-font-weight-bold;
     }
   }

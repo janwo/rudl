@@ -83,10 +83,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
             
             // Tab specific resources.
             if(!this.userSubscription) this.userSubscription = this.userService.getUser(username).subscribe((user: User) => this.user = user);
-            if(!this.userListsSubscription && this.currentTab == this.tabItems['lists']) this.userListsSubscription = this.userService.lists(username).subscribe((lists: List[]) => this.lists = lists);
+            if(!this.userListsSubscription && this.currentTab == this.tabItems['lists']) this.userListsSubscription = this.userService.listsOfUser(username).subscribe((lists: List[]) => this.lists = lists);
             //if(!this.userActivitySubscription && this.currentTab == ProfileComponent.tabs['activity']) this.userActivitySubscription = this.userService.getUser(username).subscribe((user: User) => this.user = user);
-            if(!this.userFollowersSubscription && this.currentTab == this.tabItems['followers']) this.userFollowersSubscription = this.userService.followers(username).subscribe((followers: User[]) => this.followers = followers);
-            if(!this.userFolloweesSubscription && this.currentTab == this.tabItems['followees']) this.userFolloweesSubscription = this.userService.followees(username).subscribe((followees: User[]) => this.followees = followees);
+            if(!this.userFollowersSubscription && this.currentTab == this.tabItems['followers']) this.userFollowersSubscription = this.userService.followersOfUser(username).subscribe((followers: User[]) => this.followers = followers);
+            if(!this.userFolloweesSubscription && this.currentTab == this.tabItems['followees']) this.userFolloweesSubscription = this.userService.followeesOfUser(username).subscribe((followees: User[]) => this.followees = followees);
         });
     }
     
@@ -100,7 +100,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     
     onToggleFollow(): void {
         this.pendingFollowRequest = true;
-        let obs = this.user.relations.followee ? this.userService.unfollowUser(this.user.username) : this.userService.followUser(this.user.username);
+        let obs = this.user.relations.isFollowee ? this.userService.unfollowUser(this.user.username) : this.userService.followUser(this.user.username);
         obs.do((updatedUser: User) => {
             this.user = updatedUser;
             this.pendingFollowRequest = false;

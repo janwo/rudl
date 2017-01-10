@@ -1,4 +1,4 @@
-<h1>Kennst du schon?</h1>
+<h1 i18n>People like you</h1>
 <ul>
 	<li *ngFor="let suggestedUser of suggestedUsers">
 		<people-item [user]="suggestedUser"></people-item>
@@ -6,7 +6,7 @@
 </ul>
 
 
-<h1>Leute, denen du folgst</h1>
+<h1 i18n>People you are following</h1>
 <ul>
 	<li *ngFor="let followingUser of followingUsers">
 		<people-item [user]="followingUser"></people-item>

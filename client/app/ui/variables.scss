@@ -11,19 +11,23 @@ $base-border-radius: 0.25rem;
 $base-font-weight-normal: 400;
 $base-font-weight-bold: 700;
 $base-font-size: (
+  'large': 1.15rem,
   'default': 1rem,
-  'small': 0.9rem
+  'small': 0.85rem
 );
-$base-line-height: 1.15;
+$base-line-height: (
+  'default': 1.15,
+  'multiline': 1.5
+);
 $base-heading-font-family: 'Fredoka One';
 $base-heading-font-weight-normal: 400;
 $base-heading-font-bold-normal: $base-heading-font-weight-normal;
 $base-heading-font-size: (
-  'h1': 1.75rem,
-  'h2': 1.6rem,
-  'h3': 1.45rem,
-  'h4': 1.3rem,
-  'h5': 1.15rem
+  'h1': 1.7rem,
+  'h2': 1.4rem,
+  'h3': 1.15rem,
+  'h4': 1rem,
+  'h5': 0.85rem
 );
 
 @function inactive($color) {
@@ -31,9 +35,9 @@ $base-heading-font-size: (
 }
 
 $base-line-widths: (
-  'default': 0.1rem,
+  'large': 0.5rem,
   'larger': 0.25rem,
-  'large': 0.5rem
+  'default': 0.1rem
 );
 
 $base-colors: (
@@ -49,7 +53,8 @@ $base-colors: (
 
 $base-shadow: (
   'default': 0 0.1rem 0.15rem rgba(0, 0, 0, 0.0375),
-  'elevated': 0.125rem 0.25rem 0.25rem rgba(0, 0, 0, 0.01875)
+  'elevated': 0 0.25rem 0.25rem rgba(0, 0, 0, 0.01875),
+  'modal': 0 0.5rem 1rem rgba(0, 0, 0, 0.1)
 );
 
 $base-breakpoints: (

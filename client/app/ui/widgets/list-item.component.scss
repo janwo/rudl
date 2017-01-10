@@ -10,7 +10,7 @@
     margin-top: map_get($base-padding, 'small');
     margin-left: map_get($base-padding, 'small');
     margin-bottom: map_get($base-padding, 'small');
-    $size: map_get($base-padding, 'small') * 2 + map_get($base-heading-font-size, 'h3') * $base-line-height + map_get($base-padding, 'small') + 1rem * $base-line-height - map_get($base-padding, 'small') * 2;
+    $size: map_get($base-padding, 'small') * 2 + map_get($base-heading-font-size, 'h3') * map_get($base-line-height, 'default') + map_get($base-padding, 'small') + 1rem * map_get($base-line-height, 'default') - map_get($base-padding, 'small') * 2;
     width: $size;
     height: $size;
   }
@@ -23,6 +23,10 @@
       font-family: $base-heading-font-family;
       font-size: map_get($base-heading-font-size, 'h3');
       display: block;
+
+      /deep/ .highlight {
+        color: map_get($base-colors, 'primary');
+      }
     }
 
     .relation {

@@ -13,7 +13,7 @@ import {User} from "../models/user";
 })
 export class NavbarComponent implements OnDestroy {
     
-    authenticatedUser: User;
+    userStatus: UserStatus;
     tabItems: {[key: string]: TabItem};
     menuItems : Array<MenuItem>;
     authenticatedUserSubscription : Subscription;
@@ -24,14 +24,14 @@ export class NavbarComponent implements OnDestroy {
     ) {
         // Wait for user information.
         this.authenticatedUserSubscription = this.userService.getAuthenticatedUserObservable().subscribe((userStatus: UserStatus) => {
-            // Set user.
-            this.authenticatedUser = userStatus.user;
+            // Set user status.
+            this.userStatus = userStatus;
             
             // Set menu items.
             this.menuItems = [
                 {
                     icon: 'user-md',
-                    title: 'Profil',
+                    title: 'Profil',//TODO TRANSLATE
                     link: this.router.createUrlTree(['/people', userStatus.user.username]),
                     notification: false
                 },
@@ -54,7 +54,7 @@ export class NavbarComponent implements OnDestroy {
                 activity: {
                     icon: 'bell-o',
                     title: 'Verlauf',
-                    link: this.router.createUrlTree(['/activity']),
+                    link: this.router.createUrlTree(['/history']),
                     notification: false
                 },
                 explore: {

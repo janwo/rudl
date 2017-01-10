@@ -28,7 +28,25 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/users/=/{username}/followers',
+		path: '/api/users/like/{query}/{offset?}',
+		method: 'GET',
+		handler: UserController.RouteHandlers.getUsersLike,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					query: Joi.string().min(3),
+					offset: Joi.number().min(0).default(0)
+				}
+			}
+		}
+	},
+	{
+		path: '/api/users/=/{username}/followers/{offset?}',
 		method: 'GET',
 		handler: UserController.RouteHandlers.getFollowers,
 		config: {
@@ -39,13 +57,14 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					username: UsernameValidation
+					username: UsernameValidation,
+					offset: Joi.number().min(0).default(0)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/users/=/{username}/followees',
+		path: '/api/users/=/{username}/followees/{offset?}',
 		method: 'GET',
 		handler: UserController.RouteHandlers.getFollowees,
 		config: {
@@ -56,7 +75,8 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					username: UsernameValidation
+					username: UsernameValidation,
+					offset: Joi.number().min(0).default(0)
 				}
 			}
 		}

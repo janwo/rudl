@@ -10,8 +10,8 @@ export const UserValidation = {
 	username: Joi.string().min(5).max(16).regex(/^[a-z0-9-_]*$/).required(),
 	mail: Joi.string().email().required(),
 	password: Joi.string().min(6).max(32).required(),
-	firstName: Joi.string().min(1).max(24),
-	lastName: Joi.string().min(1).max(24)
+	firstName: Joi.string().min(1).max(24).required(),
+	lastName: Joi.string().min(1).max(24).required()
 };
 
 export interface UserProvider {
@@ -30,6 +30,7 @@ export interface UserMail {
 export interface UserMeta {
 	profileText: string;
 	hasAvatar: boolean;
+	fulltextSearchData: string;
 }
 
 export interface User extends Document {

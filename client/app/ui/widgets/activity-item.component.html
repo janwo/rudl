@@ -1,4 +1,4 @@
-<div class="card" [routerLink]="['/activity', activity._key]">
-	<span class="name">{{activity.name}}</span>
+<div class="card" [routerLink]="['/activities', activity.id]">
+	<span class="name" [innerHTML]="highlight ? (activity.name | highlight: highlight) : activity.name"></span>
 	<span class="relation"></span>
 </div>

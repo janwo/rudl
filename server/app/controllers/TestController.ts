@@ -10,10 +10,11 @@ import randomstring = require("randomstring");
 import jwt = require("jsonwebtoken");
 import {Cursor} from "arangojs";
 import casual = require('casual');
-import {arangoCollections, DatabaseManager} from "../Database";
+import {DatabaseManager} from "../Database";
 import {Activity} from "../models/activities/Activity";
 import {UserController} from "./UserController";
 import {UserFollowsUser} from "../models/users/UserFollowsUser";
+import {AccountController} from "./AccountController";
 
 export module TestController {
 	
@@ -31,7 +32,8 @@ export module TestController {
 			casual.unix_time,
 			casual.unix_time
 		].sort();
-		return {
+		
+		 let user: User = {
 			firstName: casual.first_name,
 			lastName: casual.last_name,
 			languages: [
@@ -53,7 +55,8 @@ export module TestController {
 			],
 			meta: {
 				hasAvatar: false,
-				profileText: casual.short_description
+				profileText: casual.short_description,
+				fulltextSearchData: null
 			},
 			auth: {
 				password: casual.password,
@@ -62,6 +65,12 @@ export module TestController {
 			createdAt: date[0],
 			updatedAt: date[1],
 		};
+		
+		// Apply fulltext search data.
+		AccountController.updateFulltextSearchData(user);
+		
+		// Return.
+		return user;
 	}
 	
 	function generateActivity(): Activity {
@@ -93,15 +102,15 @@ export module TestController {
 	export function truncate(request: any, reply: any): void {
 		let collection = request.params.collection;
 		let collections = [];
-		if(collection && Object.keys(arangoCollections).reduce((found, currentCollection) => found || arangoCollections[currentCollection] == collection, false)) {
-			collections.push(collection);
+		if(collection && Object.keys(DatabaseManager.arangoCollections).reduce((found, currentCollection) => found || DatabaseManager.arangoCollections[currentCollection].name == collection.name, false)) {
+			collections.push(collection.name);
 		} else if(!collection) {
-			collections = collections.concat(Object.keys(arangoCollections).map(key => arangoCollections[key]))
+			collections = collections.concat(Object.keys(DatabaseManager.arangoCollections).map(key => DatabaseManager.arangoCollections[key].name))
 		}
 		
 		// Truncate collection(s).
 		let promise = Promise.all(collections.map(collectionName => {
-			return DatabaseManager.arangoClient.collection(collectionName).truncate().then(() => collectionName)
+			return DatabaseManager.arangoClient.collection(collectionName).truncate().then(() => collectionName);
 		})).then((deletedCollections: Array<string>) => {
 			if(deletedCollections.length == 0) return Promise.reject(Boom.badRequest('Collection not found!'));
 			return Promise.resolve(`${deletedCollections.join(', ')} had been truncated!`);
@@ -119,7 +128,7 @@ export module TestController {
 		// Prepare users.
 		let aqlQuery = `FOR u IN @users INSERT u INTO @@collection`;
 		let aqlParam = {
-			'@collection': arangoCollections.users,
+			'@collection': DatabaseManager.arangoCollections.users.name,
 			users: (() => {
 				let users = [];
 				for(let i = 0; i < (request.params.count || 100); i++) users.push(generateUser());
@@ -142,7 +151,7 @@ export module TestController {
 		// Prepare activities.
 		let aqlQuery = `FOR a IN @activities INSERT a INTO @@collection`;
 		let aqlParam = {
-			'@collection': arangoCollections.activities,
+			'@collection': DatabaseManager.arangoCollections.activities.name,
 			activities: (() => {
 				let activities = [];
 				for(let i = 0; i < (request.params.count || 100); i++) activities.push(generateActivity());
@@ -165,7 +174,7 @@ export module TestController {
 		// Prepare.
 		let aqlQuery = `FOR u IN @@collection LET followers = (FOR f IN @@collection SORT RAND() FILTER f._key != u._key LIMIT @count RETURN f) RETURN {from: u, followers: followers}`;
 		let aqlParam = {
-			'@collection': arangoCollections.users,
+			'@collection': DatabaseManager.arangoCollections.users.name,
 			count : Number.parseInt(request.params.count) || 100
 		};
 		
@@ -190,7 +199,7 @@ export module TestController {
 	export function createUserFollowsActivity(request: any, reply: any): void {
 		// Prepare.
 		let aqlQuery = `FOR u IN @user INSERT a INTO @@collection`;
-		
+		//TODO
 		// Insert edges.
 		let promise = DatabaseManager.arangoClient.query(aqlQuery).then((cursor: Cursor) => cursor.all()).then(() => `Users randomly following activities!`);
 		reply.api(promise);

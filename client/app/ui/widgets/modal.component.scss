@@ -1,27 +1,55 @@
 @import './../variables.scss';
 
+$modal-background: rgba(0, 0, 0, 0.1);
+$modal-padding: map_get($base-padding, 'default');
+$modal-close-button-size: $modal-padding * 0.675;
+
 :host {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 
-  .modal {
-    max-width: 30rem;
-    width: 100%;
-    flex: 0 0 auto;
+  .background,
+  .modal-wrapper {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+  }
 
-    header {
-      .title {
+  .background {
+    background-color: $modal-background;
+  }
 
-      }
+  .modal-wrapper {
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .modal {
+      pointer-events: auto;
+      position: relative;
+      padding: $modal-padding;
+      border-radius: $base-border-radius;
+      background-color: map_get($base-colors, 'background-highlighted');
+      box-shadow: map_get($base-shadow, 'modal');
+      max-width: 20rem;
+      width: 100%;
+      flex: 0 0 auto;
 
       .close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: $modal-padding;
+        height: $modal-padding;
+        font-size: $modal-close-button-size;
+        background: none;
+        color: (map_get($base-colors, 'secondary'));
+        padding: ($modal-padding - $modal-close-button-size) / 2;
 
+        &:hover {
+          color: map_get($base-colors, 'primary');
+        }
       }
     }
   }

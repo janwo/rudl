@@ -40,7 +40,8 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					query: Joi.string().min(3)
+					query: Joi.string().min(3),
+					offset: Joi.number().min(0).default(0)
 				}
 			}
 		}
@@ -63,7 +64,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/lists/=/{key}/activities',
+		path: '/api/lists/=/{key}/activities/{offset?}',
 		method: 'GET',
 		handler: ListController.RouteHandlers.getActivities,
 		config: {
@@ -74,7 +75,8 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					key: Joi.string()
+					key: Joi.string(),
+					offset: Joi.number().min(0).default(0)
 				}
 			}
 		}
@@ -129,6 +131,40 @@ export const RoutesConfig: RoutesConfiguration = [
 				payload: {
 					translations: TranslationsValidation,
 					activities: Joi.array().items(Joi.string()).optional()
+				}
+			}
+		}
+	},
+	{
+		path: '/api/lists/follow/{list}',
+		method: 'POST',
+		handler: ListController.RouteHandlers.addFollowee,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					list: Joi.string()
+				}
+			}
+		}
+	},
+	{
+		path: '/api/lists/unfollow/{list}',
+		method: 'POST',
+		handler: ListController.RouteHandlers.deleteFollowee,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					list: Joi.string()
 				}
 			}
 		}

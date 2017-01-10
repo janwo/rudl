@@ -9,6 +9,7 @@ import {User} from "../../models/user";
 export class PeopleItemComponent implements OnInit {
 	
 	@Input() user: User = null;
+	@Input() highlight: string = null;
 	relation: string;
 	
 	constructor() {}
@@ -22,8 +23,8 @@ export class PeopleItemComponent implements OnInit {
 		
 		// Choose default message.
 		let choices = [
-			`You have ${this.user.relations.mutual_followers} mutual followers`,
-			`You have ${this.user.relations.mutual_followees} mutual followees`
+			`You have ${this.user.relations.mutualFollowers} mutual followers`,
+			`You have ${this.user.relations.mutualFollowees} mutual followees`
 		];
 		this.relation = choices[Math.trunc(choices.length * Math.random())];
 	}

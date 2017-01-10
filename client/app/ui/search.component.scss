@@ -1,0 +1,52 @@
+@import './variables.scss';
+
+:host {
+  display: flex;
+  flex-direction: column;
+
+  input {
+    display: block;
+    padding: map_get($base-padding, 'small') 0 map_get($base-padding, 'small');
+    font-family: $base-heading-font-family;
+    font-size: map_get($base-heading-font-size, 'h1');
+    margin: 0;
+    flex: 1 1;
+    color: map_get($base-colors, 'primary');
+    border: 0;
+    outline: none;
+    position: relative;
+    z-index: 2;
+    background: transparent;
+
+    &::placeholder {
+      color: inactive(map_get($base-colors, 'primary-text'));
+    }
+  }
+
+  .results {
+    list-style: none;
+
+    &.collapsed li:not(li.create),
+    &.collapsed li:not(li:nth-child(1)),
+    &.collapsed li:not(li:nth-child(2)),
+    &.collapsed li:not(li:nth-child(3)),
+    &.collapsed li:not(li:nth-child(4)) {
+      display: none;
+    }
+
+    li {
+      .title {
+        color: map_get($base-colors, 'secondary');
+        font-size: map_get($base-font-size, 'large');
+
+        /deep/ .highlight {
+          color: map_get($base-colors, 'primary');
+        }
+      }
+
+      &.create .title {
+        color: map_get($base-colors, 'secondary-text');
+      }
+    }
+  }
+}

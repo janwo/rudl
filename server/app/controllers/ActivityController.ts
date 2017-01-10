@@ -4,41 +4,117 @@ import Uuid = require("node-uuid");
 import dot = require("dot-object");
 import fs = require('fs');
 import path = require('path');
-import {DatabaseManager, arangoCollections} from "../Database";
+import {DatabaseManager} from "../Database";
 import randomstring = require("randomstring");
 import jwt = require("jsonwebtoken");
 import {Cursor} from "arangojs";
 import _ = require("lodash");
 import {Activity} from "../models/activities/Activity";
 import {User} from "../models/users/User";
-import {UserRatedActivity} from "../models/users/UserRatedActivity";
+import {UserController} from "./UserController";
+import {UserRatedActivity} from "../models/activities/UserRatedActivity";
+import {UserFollowsActivity} from "../models/activities/UserFollowsActivity";
 
 export module ActivityController {
 	
-	export function getPublicActivity(activity: Activity | Activity[]) : Promise<any> {
-		let transform = activity => {
-			// Add default links.
-			let links = {
-			};
+	export function getPublicActivity(activity: Activity | Activity[], relatedUser: User) : Promise<any> {
+		let createPublicActivity = (activity: Activity) : Promise<any> => {
+			let activityOwnerPromise = getActivityOwner(activity);
+			let publicActivityOwnerPromise = activityOwnerPromise.then((owner: User) => UserController.getPublicUser(owner, relatedUser));
+			let activityStatisticsPromise = getActivityStatistics(activity, relatedUser);
 			
-			// Build profile.
-			return Promise.resolve(dot.transform({
-				'activity._key': 'id',
-				'activity.translations': 'translations',
-				'activity.owner': 'owner',
-				'activity.followedByYou': 'followedByYou',
-				'activity': 'links'
-			}, {
-				activity: activity,
-				links: links
-			}));
+			return Promise.all([
+				activityOwnerPromise,
+				publicActivityOwnerPromise,
+				activityStatisticsPromise
+			]).then((values: [User, any, ActivityStatistics]) => {
+				// Add default links.
+				let links = {};
+				
+				// Build profile.
+				return Promise.resolve(dot.transform({
+					'activity._key': 'id',
+					'activity.translations': 'translations',
+					'owner': 'owner',
+					'links': 'links',
+					'isOwner': 'relations.isOwned',
+					'statistics.isFollowed': 'relations.isFollowed',
+					'statistics.activities': 'statistics.activities',
+					'statistics.followers': 'statistics.followers'
+				}, {
+					activity: activity,
+					links: links,
+					statistics: values[2],
+					owner: values[1],
+					isOwner: values[0]._key == relatedUser._key
+				}));
+			});
 		};
-
-		return activity instanceof Array ? Promise.all(activity.map(transform)) : transform(activity);
+			
+		let now = Date.now();
+		let transformed = activity instanceof Array ? Promise.all(activity.map(createPublicActivity)) : createPublicActivity(activity);
+		return transformed.then((result: any | Array<any>) => {
+			console.log(`Building profile of ${result instanceof Array ? result.length + ' activities' : '1 activity'} took ${Date.now() - now} millis`);
+			return result;
+		});
+	}
+	
+	export function findByUser(user: User) : Promise<Activity[]>{
+		let aqlQuery = `FOR activity IN OUTBOUND @user @@edges RETURN activity`;
+		let aqlParams = {
+			'@edges': DatabaseManager.arangoCollections.userFollowsActivity.name,
+			user: user._id
+		};
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Activity[]>;
+	}
+	
+	export function findByKey(key: string) : Promise<Activity>{
+		let aqlQuery = `FOR activity IN @@collection FILTER activity._key == @key RETURN activity`;
+		let aqlParams = {
+			'@collection': DatabaseManager.arangoCollections.activities.name,
+			key: key
+		};
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<Activity>;
+	}
+	
+	export function findByFulltext(query: string) : Promise<Activity[]>{
+		//TODO use languages of user
+		let aqlQuery = `FOR activity IN FULLTEXT(@@collection, "translations.de", @query) RETURN activity`;
+		let aqlParams = {
+			'@collection': DatabaseManager.arangoCollections.activities.name,
+			query: query.split(' ').map(word => '+prefix:' + word).join()
+		};
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Activity[]>;
+	}
+	
+	export function getActivityOwner(activity: Activity) : Promise<User> {
+		let aqlQuery = `FOR owner IN INBOUND @activityId @@userOwnsActivity RETURN owner`;
+		let aqlParams = {
+			'@userOwnsActivity': DatabaseManager.arangoCollections.userOwnsActivity.name,
+			activityId: activity._id
+		};
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<User>;
+	}
+	
+	export interface ActivityStatistics {
+		lists: number;
+		followers: number;
+		isFollowed: boolean;
+	}
+	
+	export function getActivityStatistics(activity: Activity, relatedUser: User) : Promise<ActivityStatistics> {
+		let aqlQuery = `LET activityFollowers = (FOR follower IN INBOUND @activityId @@edgesUserFollowsActivity RETURN follower._id) LET lists = (FOR list IN INBOUND @activityId @@edgesListIsItem RETURN list._id) RETURN {isFollowed: LENGTH(INTERSECTION(activityFollowers, [@userId])) > 0, followers: LENGTH(activityFollowers), lists: LENGTH(lists)}`;
+		let aqlParams = {
+			'@edgesUserFollowsActivity': DatabaseManager.arangoCollections.userFollowsActivity.name,
+			'@edgesListIsItem': DatabaseManager.arangoCollections.listIsItem.name,
+			activityId: activity._id,
+			userId: relatedUser._id
+		};
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<ActivityStatistics>;
 	}
 	
 	export function setRating(user: User, activity: Activity, rating: number) : Promise<Activity>{
-		let collection = DatabaseManager.arangoClient.collection(arangoCollections.userRatedActivity);
+		let collection = DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.userRatedActivity.name);
 		
 		switch(rating) {
 			case 0:
@@ -70,39 +146,44 @@ export module ActivityController {
 	}
 	
 	export function getRating(user: User, activity: Activity) : Promise<number>{
-		let collection = DatabaseManager.arangoClient.collection(arangoCollections.userRatedActivity);
+		let collection = DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.userRatedActivity.name);
 		return collection.byExample({
 			_from: user._id,
 			_to: activity._id
 		}).then(cursor => cursor.next() as any as UserRatedActivity).then((userRatedActivity : UserRatedActivity) => userRatedActivity ? userRatedActivity.rating : 0);
 	}
 	
-	export function getActivitiesBy(user: User, countOnly: boolean = false) : Promise<Activity[] | number>{
-		let aqlQuery = `FOR activity IN OUTBOUND @user @@edges ${countOnly ? 'COLLECT WITH COUNT INTO length RETURN length' : 'RETURN activity'}`;
-		let aqlParams = {
-			'@edges': arangoCollections.userFollowsActivity,
-			user: user._id
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => countOnly ? cursor.next() : cursor.all()) as any as Promise<Activity[] | number>;
+	export function addUserConnection(activity: Activity, user: User) : Promise<UserFollowsActivity> {
+		let collection = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsActivity.name);
+		return collection.firstExample({
+			_from: user._id,
+			_to: activity._id
+		}).then((cursor: Cursor) => cursor.next()).then((userFollowsActivity: UserFollowsActivity) => {
+			// Try to return any existing connection.
+			if(userFollowsActivity) return userFollowsActivity;
+			
+			// Add connection.
+			let now = Math.trunc(Date.now() / 1000);
+			let edge : UserFollowsActivity = {
+				_from: user._id,
+				_to: activity._id,
+				createdAt: now,
+				updatedAt: now
+			};
+			
+			return collection.save(edge);
+		});
 	}
 	
-	export function getActivity(key: string) : Promise<Activity>{
-		let aqlQuery = `FOR activity IN @@collection FILTER activity._key == @key RETURN activity`;
-		let aqlParams = {
-			'@collection': arangoCollections.activities,
-			key: key
+	export function removeUserConnection(activity: User, user: User): Promise<void> {
+		let edge = {
+			_from: user._id,
+			_to: activity._id
 		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<Activity>;
+		return DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsActivity.name).removeByExample(edge).then(() => {});
 	}
 	
-	export function getActivitiesLike(query: string, countOnly: boolean = false) : Promise<Activity[] | number>{
-		let aqlQuery = `FOR activity IN FULLTEXT(@@collection, "name", @query) ${countOnly ? 'COLLECT WITH COUNT INTO length RETURN length' : 'RETURN activity'}`;
-		let aqlParams = {
-			'@collection': arangoCollections.activities,
-			query: query.split(' ').map(word => '|' + word).join()
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => countOnly ? cursor.next() : cursor.all()) as any as Promise<Activity[] | number>;
-	}
+	//TODO Ownership
 	
 	export namespace RouteHandlers {
 		
@@ -117,8 +198,8 @@ export module ActivityController {
 		 */
 		export function setRating(request: any, reply: any): void {
 			// Create promise.
-			let promise : Promise<Activity> = ActivityController.getActivity(request.payload.activity).then((activity: Activity) => ActivityController.setRating(request.auth.credentials, activity, request.payload.rating)).then((activity: Activity) => {
-				return ActivityController.getPublicActivity(activity);
+			let promise : Promise<Activity> = ActivityController.findByKey(request.payload.activity).then((activity: Activity) => ActivityController.setRating(request.auth.credentials, activity, request.payload.rating)).then((activity: Activity) => {
+				return ActivityController.getPublicActivity(activity, request.auth.credentials);
 			});
 			
 			reply.api(promise);
@@ -135,15 +216,16 @@ export module ActivityController {
 			let paramKey = encodeURIComponent(request.params.key);
 			
 			// Create promise.
-			let promise : Promise<Activity> = ActivityController.getActivity(paramKey).then((activity: Activity) => ActivityController.getPublicActivity(activity));
+			let promise : Promise<Activity> = ActivityController.findByKey(paramKey).then((activity: Activity) => ActivityController.getPublicActivity(activity, request.auth.credentials));
 			
 			reply.api(promise);
 		}
 		
 		/**
-		 * Handles [GET] /api/activities/like/{query}
+		 * Handles [GET] /api/activities/like/{query}/{offset?}
 		 * @param request Request-Object
 		 * @param request.params.query query
+		 * @param request.params.offset offset (optional, default=0)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -151,7 +233,8 @@ export module ActivityController {
 			let paramQuery = encodeURIComponent(request.params.query);
 			
 			// Create promise.
-			let promise : Promise<Activity[]> = ActivityController.getActivitiesLike(paramQuery).then((activities: Activity[]) => ActivityController.getPublicActivity(activities));
+			//TODO slice
+			let promise : Promise<Activity[]> = ActivityController.findByFulltext(paramQuery).then((activities: Activity[]) => ActivityController.getPublicActivity(activities.slice(request.params.offset, request.params.offset + 30), request.auth.credentials));
 			
 			reply.api(promise);
 		}

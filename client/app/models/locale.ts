@@ -3,15 +3,15 @@ export module Locale {
 	
 	export type Language = 'de' | 'en' | 'es' | 'fr';
 	
-	export function getBestTranslation(translations: Translations, languages: Array<Language>): string {
-		let bestLanguage = getBestLanguage(translations, languages);
+	export function getBestTranslation(translations: Translations, knownLanguages: Array<Language>): string {
+		let translationLanguages = Object.keys(translations) as Array<Language>;
+		let bestLanguage = getBestLanguage(translationLanguages, knownLanguages);
 		return bestLanguage ? translations[bestLanguage] : null;
 	}
 	
-	export function getBestLanguage(translations: Translations, languages: Array<Language>): Language {
-		let translationLanguages = Object.keys(translations) as Array<Language>;
-		for (let i = 0; i < translationLanguages.length; i++) {
-			if (languages.indexOf(translationLanguages[i]) >= 0) return languages[i] as Language; //TODO Remove "as Language" in further ts versions
+	export function getBestLanguage(languages: Array<Language>, knownLanguages: Array<Language>): Language {
+		for (let i = 0; i < knownLanguages.length; i++) {
+			if (languages.indexOf(knownLanguages[i]) >= 0) return languages[i] as Language; //TODO Remove "as Language" in further ts versions
 		}
 		
 		return null;

@@ -3,26 +3,230 @@ import {Config} from "../../run/config";
 import {Database} from 'arangojs';
 import * as http from "http";
 import {RedisClient} from "redis";
-
-export const arangoCollections = {
-	users: 'users',
-	userFollowsUser: 'user-follows-user',
-	userFollowsList: 'user-follows-list',
-	userOwnsList: 'user-owns-list',
-	userRatedActivity: 'user-rated-activity',
-	userFollowsActivity: 'user-follows-activity',
-	activities: 'activities',
-	lists: 'lists',
-	listIsItem: 'list-is-item'
-};
-
-const RETRY_ARANGO_MILLIS = 1000;
-const RETRY_REDIS_MILLIS = 1000;
+import {Collection} from "arangojs";
+import {TranslationsKeys} from "./models/Translations";
 
 export class DatabaseManager {
 	
+	static arangoCollections = {
+		users: {
+			name: 'users',
+			type: 'document',
+			indices: [
+				{
+					type: 'hash',
+					fields: [
+						'username'
+					],
+					unique: true,
+					sparse: false
+				},
+				{
+					type: 'fulltext',
+					fields: [
+						'meta.fulltextSearchData'
+					]
+				}
+			]
+		},
+		activities: {
+			name: 'activities',
+			type: 'document',
+			indices: TranslationsKeys.map(key => {
+				return {
+					type: 'fulltext',
+					fields: [
+						`translations.${key}`
+					]
+				};
+			})
+		},
+		lists: {
+			name: 'lists',
+			type: 'document',
+			indices: TranslationsKeys.map(key => {
+				return {
+					type: 'fulltext',
+					fields: [
+						`translations.${key}`
+					]
+				};
+			})
+		},
+		userFollowsUser: {
+			name: 'user-follows-user',
+			type: 'edge'
+		},
+		userFollowsList: {
+			name: 'user-follows-list',
+			type: 'edge'
+		},
+		userOwnsList: {
+			name: 'user-owns-list',
+			type: 'edge'
+		},
+		userOwnsActivity: {
+			name: 'user-owns-activity',
+			type: 'edge'
+		},
+		userRatedActivity: {
+			name: 'user-rated-activity',
+			type: 'edge'
+		},
+		userFollowsActivity: {
+			name: 'user-follows-activity',
+			type: 'edge'
+		},
+		listIsItem: {
+			name: 'list-is-item',
+			type: 'edge'
+		}
+	};
+	
+	static arangoGraphs = {
+		mainGraph: {
+			name: 'mainGraph',
+			vertices: [
+				DatabaseManager.arangoCollections.users.name,
+				DatabaseManager.arangoCollections.lists.name,
+				DatabaseManager.arangoCollections.activities.name
+			],
+			relations: [
+				{
+					name: DatabaseManager.arangoCollections.userFollowsActivity.name,
+					from: [DatabaseManager.arangoCollections.users.name],
+					to: [DatabaseManager.arangoCollections.activities.name]
+				},
+				{
+					name: DatabaseManager.arangoCollections.userOwnsActivity.name,
+					from: [DatabaseManager.arangoCollections.users.name],
+					to: [DatabaseManager.arangoCollections.activities.name]
+				},
+				{
+					name: DatabaseManager.arangoCollections.userFollowsList.name,
+					from: [DatabaseManager.arangoCollections.users.name],
+					to: [DatabaseManager.arangoCollections.lists.name]
+				},
+				{
+					name: DatabaseManager.arangoCollections.userOwnsList.name,
+					from: [DatabaseManager.arangoCollections.users.name],
+					to: [DatabaseManager.arangoCollections.lists.name]
+				},
+				{
+					name: DatabaseManager.arangoCollections.listIsItem.name,
+					from: [DatabaseManager.arangoCollections.lists.name],
+					to: [DatabaseManager.arangoCollections.activities.name]
+				},
+				{
+					name: DatabaseManager.arangoCollections.userFollowsUser.name,
+					from: [DatabaseManager.arangoCollections.users.name],
+					to: [DatabaseManager.arangoCollections.users.name]
+				},
+				{
+					name: DatabaseManager.arangoCollections.userRatedActivity.name,
+					from: [DatabaseManager.arangoCollections.users.name],
+					to: [DatabaseManager.arangoCollections.activities.name]
+				}
+			]
+		}
+	};
+	
+	private static RETRY_ARANGO_MILLIS = 1000;
+	private static RETRY_REDIS_MILLIS = 1000;
+	
 	public static arangoClient: Database;
 	public static redisClient: RedisClient;
+	
+	public static createArangoData(): Promise<any> {
+		// Create collections.
+		let collections = DatabaseManager.arangoClient.listCollections().then((existingCollections: any) => {
+			let collections = Object.keys(DatabaseManager.arangoCollections).map(key => DatabaseManager.arangoCollections[key]).filter(collection => {
+				// Filter collections.
+				let exists = existingCollections.map(obj => obj.name).indexOf(collection.name) >= 0;
+				console.log(`Collection "${collection.name}" ${exists ? 'exists!' : 'does not exist!'}`);
+				return !exists;
+			}).map(missingCollection => {
+				let collectionInstance: Collection = null;
+				switch(missingCollection.type) {
+					case 'edge':
+						collectionInstance = DatabaseManager.arangoClient.edgeCollection(missingCollection.name);
+						break;
+					
+					case 'document':
+						collectionInstance = DatabaseManager.arangoClient.collection(missingCollection.name);
+						break;
+					
+					default:
+						return Promise.reject('Invalid collection type!');
+				}
+				// Create collection.
+				return collectionInstance.create({}).then(() => {
+					// Create indices.
+					missingCollection.indices = missingCollection.indices || [];
+					let indices = missingCollection.indices.map(index => {
+						switch (index.type) {
+							case 'fulltext':
+								return collectionInstance.createFulltextIndex(index.fields);
+							case 'hash':
+								return collectionInstance.createHashIndex(index.fields, {
+									unique: index.unique || false,
+									sparse: index.sparse || false
+								});
+							case 'geo':
+								return collectionInstance.createHashIndex(index.fields, {
+									geoJson: index.geoJson || false
+								});
+						}
+						return Promise.reject('Invalid index type!');
+					});
+					return Promise.all(indices).then((values) => console.log(`Created all ${values.length} indices for "${missingCollection.name}" successfully.`));
+				});
+			});
+			
+			return Promise.all(collections).then((promises) => {
+				console.log(`Created all ${promises.length} collections successfully.`);
+				return promises;
+			});
+		});
+		
+		// Create graphs.
+		let graphs = DatabaseManager.arangoClient.graphs().then((existingGraphs: any) => {
+			// Filter graphs.
+			let graphs = Object.keys(DatabaseManager.arangoGraphs).map(key => DatabaseManager.arangoGraphs[key]).filter(graph => {
+				let exists = existingGraphs.map(obj => obj.name).indexOf(graph.name) >= 0;
+				console.log(`Graph "${graph.name}" ${exists ? 'exists!' : 'does not exist!'}`);
+				return !exists;
+			}).map(missingGraph => {
+				let graphInstance = missingGraph.instance = DatabaseManager.arangoClient.graph(missingGraph.name);
+				return graphInstance.create({}).then(() => {
+					// Create vertices.
+					let i = 0;
+					let addNext = () => graphInstance.addVertexCollection(missingGraph.vertices[i]).then(() => {
+						i++;
+						if(i < missingGraph.vertices.length) return addNext();
+					});
+					return addNext();
+				}).then(() => {
+					let i = 0;
+					let addNext = () => graphInstance.addEdgeDefinition({
+						collection: missingGraph.relations[i].name,
+						from: missingGraph.relations[i].from,
+						to: missingGraph.relations[i].to
+					}).then(() => {
+						i++;
+						if(i < missingGraph.relations.length) return addNext();
+					});
+					return addNext();
+				}).then(() => console.log(`Created graph "${missingGraph.name}" successfully`));
+			});
+			
+			return Promise.all(graphs).then((promises) => {
+				console.log(`Created all ${promises.length} graphs successfully.`);
+				return promises;
+			});
+		});
+		return collections.then(() => graphs);
+	}
 	
 	public static connect(): Promise<void> {
 		return new Promise<void>(resolve => {
@@ -36,18 +240,19 @@ export class DatabaseManager {
 				
 				// Is the arango server running?
 				http.get(`${arangoURL}/_api/version`, () => {
-					// Connect to arango.
+					console.log('Connected to arango successfully...');
+					
+					// Build arango database.
 					DatabaseManager.arangoClient = new Database({
 						url: `http://${Config.backend.db.arango.user}:${Config.backend.db.arango.password}@${Config.backend.db.arango.host}:${Config.backend.db.arango.port}`,
 						databaseName: Config.backend.db.arango.database
 					});
 					
-					console.log('Connected to arango successfully...');
 					arangoConnected = true;
 				}).on('error', () => {
 					// Retry.
-					console.log(`Reconnect to arango in ${RETRY_ARANGO_MILLIS}ms...`);
-					setTimeout(connectArango, RETRY_ARANGO_MILLIS);
+					console.log(`Reconnect to arango in ${DatabaseManager.RETRY_ARANGO_MILLIS}ms...`);
+					setTimeout(connectArango, DatabaseManager.RETRY_ARANGO_MILLIS);
 				});
 			};
 			connectArango();
@@ -55,8 +260,8 @@ export class DatabaseManager {
 			// Connect to redis.
 			DatabaseManager.redisClient = redis.createClient(Config.backend.db.redis.port, Config.backend.db.redis.host, {
 				retry_strategy: () => {
-					console.log(`Reconnect to redis in ${RETRY_REDIS_MILLIS}ms...`);
-					return RETRY_REDIS_MILLIS;
+					console.log(`Reconnect to redis in ${DatabaseManager.RETRY_REDIS_MILLIS}ms...`);
+					return DatabaseManager.RETRY_REDIS_MILLIS;
 				}
 			});
 			

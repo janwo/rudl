@@ -12,6 +12,10 @@
       font-family: $base-heading-font-family;
       font-size: map_get($base-heading-font-size, 'h3');
       display: block;
+
+      /deep/ .highlight {
+        color: map_get($base-colors, 'primary');
+      }
     }
 
     .relation {

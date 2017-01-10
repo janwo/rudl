@@ -1,7 +1,7 @@
-<div class="modal">
-	<header>
-		<h3 class="title">{{title}}</h3>
-		<button class="close"></button>
-	</header>
-	<ng-content></ng-content>
+<div class="background" [@background]="visible" *ngIf="visible" (click)="close()"></div>
+<div class="modal-wrapper" [@modal]="visible" *ngIf="visible">
+	<div class="modal">
+		<button class="close fa fa-close" (click)="close()"></button>
+		<ng-content></ng-content>
+	</div>
 </div>

@@ -27,10 +27,10 @@ export interface UserMeta {
 }
 
 export interface UserRelations {
-	followee: boolean;
-	follower: boolean;
-	mutual_followers: number;
-	mutual_followees: number;
+	isFollowee: boolean;
+	isFollower: boolean;
+	mutualFollowers: number;
+	mutualFollowees: number;
 }
 
 export interface UserStatistics {

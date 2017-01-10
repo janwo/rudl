@@ -8,7 +8,7 @@ import path = require('path');
 import * as Joi from "joi";
 import {Config} from "../../../run/config";
 import {User, UserProvider, UserValidation, UserRoles} from "../models/users/User";
-import {DatabaseManager, arangoCollections} from "../Database";
+import {DatabaseManager} from "../Database";
 import jwt = require("jsonwebtoken");
 import {Cursor} from "arangojs";
 import _ = require("lodash");
@@ -21,8 +21,8 @@ export module AccountController {
 		username: string;
 		mail: string;
 		password?: string;
-		firstName?: string;
-		lastName?: string;
+		firstName: string;
+		lastName: string;
 	}
 	
 	export function createUser(recipe: UserRecipe): Promise<User> {
@@ -44,8 +44,8 @@ export module AccountController {
 			// Create user.
 			promise.then(() => {
 				return {
-					firstName: recipe.firstName ? recipe.firstName : null,
-					lastName: recipe.lastName ? recipe.lastName : null,
+					firstName: recipe.firstName ,
+					lastName: recipe.lastName,
 					username: recipe.username,
 					mails: [
 						{
@@ -57,12 +57,13 @@ export module AccountController {
 					location: null,
 					languages: [
 						//TODO: dynamic language
-						'de-DE',
-						'en-US'
+						'de',
+						'en'
 					],
 					meta: {
 						hasAvatar: false,
-						profileText: null
+						profileText: null,
+						fulltextSearchData: null
 					},
 					auth: {
 						password: recipe.password,
@@ -89,7 +90,7 @@ export module AccountController {
 		
 		let aqlQuery = `FOR u in @@collection FILTER REGEX_TEST(u.username, "^${username}[0-9]*$") RETURN u`;//TODO Bind Parameter?
 		let aqlParams = {
-			'@collection': arangoCollections.users
+			'@collection': DatabaseManager.arangoCollections.users.name
 		};
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.map((user: User) => user.username)).then((takenUsernames: Array<string>) => {
 			let usernameCheckResult: any = {
@@ -170,7 +171,18 @@ export module AccountController {
 		});
 	}
 	
+	export function updateFulltextSearchData(user: User) {
+		user.meta.fulltextSearchData = [
+			user.username,
+			user.firstName,
+			user.lastName
+		].join(' ');
+	}
+	
 	export function saveUser(user: User): Promise<User> {
+		// Redefine search data.
+		updateFulltextSearchData(user);
+		
 		// Set new timestamps.
 		let now = Math.trunc(Date.now() / 1000);
 		user.updatedAt = now;
@@ -180,7 +192,7 @@ export module AccountController {
 			`REPLACE @document IN @@collection RETURN NEW` :
 			`INSERT @document INTO @@collection RETURN NEW`;
 		let aqlParams = {
-			'@collection': arangoCollections.users,
+			'@collection': DatabaseManager.arangoCollections.users.name,
 			document: user
 		};
 		
