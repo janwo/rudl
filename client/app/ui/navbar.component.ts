@@ -1,27 +1,32 @@
-import {Component, OnDestroy} from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import {TabItem} from "./widgets/tab-menu.component";
 import {MenuItem} from "./widgets/dropdown-menu.component";
 import {UserService, UserStatus} from "../services/user.service";
 import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
-import {User} from "../models/user";
+import {SearchService, SearchState} from "../services/search.service";
 
 @Component({
     templateUrl: './navbar.component.html',
     styleUrls: ['./navbar.component.scss'],
     selector: 'navbar'
 })
-export class NavbarComponent implements OnDestroy {
+export class NavbarComponent implements OnInit, OnDestroy {
     
     userStatus: UserStatus;
+    authenticatedUserSubscription : Subscription;
+    onSearchModeChangedSubscription : Subscription;
     tabItems: {[key: string]: TabItem};
     menuItems : Array<MenuItem>;
-    authenticatedUserSubscription : Subscription;
+    inSearchMode: boolean = false;
     
     constructor(
         private router: Router,
-        private userService: UserService
-    ) {
+        private userService: UserService,
+        private searchService: SearchService
+    ) {}
+    
+    ngOnInit(): void {
         // Wait for user information.
         this.authenticatedUserSubscription = this.userService.getAuthenticatedUserObservable().subscribe((userStatus: UserStatus) => {
             // Set user status.
@@ -48,7 +53,7 @@ export class NavbarComponent implements OnDestroy {
                     notification: false
                 }
             ];
-    
+            
             // Set tab items.
             this.tabItems = {
                 activity: {
@@ -71,9 +76,23 @@ export class NavbarComponent implements OnDestroy {
                 }
             };
         });
+        
+        // React to any search mode changes.
+        this.onSearchModeChangedSubscription = this.searchService.onStateChanged.subscribe((state: SearchState) => {
+            this.inSearchMode = state == SearchState.OPENED;
+        });
     }
     
     ngOnDestroy(): void {
+        this.onSearchModeChangedSubscription.unsubscribe();
         this.authenticatedUserSubscription.unsubscribe();
+    }
+    
+    enterSearchMode(): void {
+        this.searchService.start();
+    }
+    
+    leaveSearchMode(): void {
+        this.searchService.cancel();
     }
 }

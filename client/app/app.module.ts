@@ -40,6 +40,8 @@ import {HighlightPipe} from "./pipes/highlight.pipe";
 import {FormatPipe} from "./pipes/format.pipe";
 import {HistoryComponent} from "./ui/history.component";
 import {QuestionComponent} from "./ui/widgets/question.component";
+import {SearchBarComponent} from "./ui/widgets/search-bar.component";
+import {SearchService} from "./services/search.service";
 
 @NgModule({
     declarations: [
@@ -77,11 +79,13 @@ import {QuestionComponent} from "./ui/widgets/question.component";
 	    ListItemComponent,
 	    StackCardComponent,
 	    SearchComponent,
+	    SearchBarComponent,
 	    ProfileComponent,
         FullScreenOverlayComponent
     ],
     providers: [
 	    UserService,
+	    SearchService,
 	    DataService,
 	    AppGuard,
 	    appRoutingProviders

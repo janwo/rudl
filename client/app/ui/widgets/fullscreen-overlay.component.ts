@@ -2,7 +2,6 @@ import {Component, trigger, style, transition, animate, Output, EventEmitter, In
 
 @Injectable()
 export class FullScreenOverlayService {
-	
 	public expandState: boolean = false;
 	
 	public hideOverlay() {

@@ -6,7 +6,6 @@ $header-vertical-padding: map_get($base-padding, 'smaller');
 $header-horizontal-padding: map_get($base-padding, 'default');
 
 :host {
-  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -33,12 +32,10 @@ $header-horizontal-padding: map_get($base-padding, 'default');
     }
   }
 
-  tab-menu {
+  .stretched {
     flex: 1 0 auto;
-
-    & /deep/ span {
-      //font-family: $base-heading-font-family;
-    }
+    margin-right: map_get($base-padding, 'default');
+    margin-left: map_get($base-padding, 'default');
   }
 
   dropdown-menu {
@@ -53,13 +50,11 @@ $header-horizontal-padding: map_get($base-padding, 'default');
     height: $header-content-size;
     cursor: pointer;
     background: transparent;
-    margin-right: map_get($base-padding, 'small');
     font-size: 1rem * 1.125;
-    z-index: 10;
-  }
 
-  fullscreen-overlay {
-    z-index: 9;
+    &:not(:last-child) {
+      margin-right: map_get($base-padding, 'small');
+    }
   }
 
   avatar {

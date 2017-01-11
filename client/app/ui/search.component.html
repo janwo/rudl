@@ -1,4 +1,3 @@
-<input i18n-placeholder="What are you looking for?" placeholder="What are you looking for?" #searchInput (keyup)="onKey($event)">
 <section *ngIf="searchValue">
 	<h2 i18n>Activities</h2>
 	<item-wrapper class="results" [ngClass]="{collapsed: collapsedActivities}">

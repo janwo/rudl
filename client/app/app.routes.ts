@@ -12,6 +12,7 @@ import {ProfileComponent} from "./ui/profile.component";
 import {RedirectComponent} from "./redirect.component";
 import {ListComponent} from "./ui/list.component";
 import {ActivityComponent} from "./ui/activity.component";
+import {SearchComponent} from "./ui/search.component";
 
 const appRoutes: Routes = [
     {
@@ -36,6 +37,8 @@ const appRoutes: Routes = [
             { path: 'people/:username', component: RedirectComponent , data: { redirect: ['./activity'] }, pathMatch: 'full' },
             { path: 'people/:username/:tab', component: ProfileComponent },
             { path: 'lists/:key', component: ListComponent },
+            { path: 'search/:query', component: SearchComponent },
+            { path: 'search', component: SearchComponent },
             { path: 'activities/:key', component: ActivityComponent },
             { path: 'settings', redirectTo: 'settings/account', pathMatch: 'full' },
             { path: 'settings/:page', component: SettingsComponent }

@@ -1,12 +1,13 @@
 import {
-	Component, OnDestroy, OnInit, ViewChild, ElementRef
+	Component, OnDestroy, OnInit, ViewChild, ElementRef, EventEmitter, Input
 } from "@angular/core";
 import {Subject, Observable, Subscription} from "rxjs";
 import {UserService} from "../services/user.service";
 import {Activity} from "../models/activity";
 import {List} from "../models/list";
 import {User} from "../models/user";
-import {FullScreenOverlayService} from "./widgets/fullscreen-overlay.component";
+import {SearchService} from "../services/search.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
 	templateUrl: './search.component.html',
@@ -15,28 +16,24 @@ import {FullScreenOverlayService} from "./widgets/fullscreen-overlay.component";
 })
 export class SearchComponent implements OnDestroy, OnInit {
 	
-	private inputChange: Subject<string> = new Subject();
-	private inputSubscription: Subscription;
 	private activities: Activity[] = null;
 	private collapsedActivities = true;
 	private lists: List[] = null;
 	private collapsedLists = true;
 	private users: User[] = null;
 	private collapsedUsers = true;
+	private querySubscription: Subscription;
 	private searchValue: string = null;
-	@ViewChild('searchInput') searchInput: ElementRef;
 	
 	constructor(
 		private userService: UserService,
-	    private fullScreenOverlayService: FullScreenOverlayService
+	    private searchService: SearchService,
+	    private activatedRoute: ActivatedRoute
 	){}
 	
-	hideOverlay() {
-			this.fullScreenOverlayService.hideOverlay();
-	}
-	
 	ngOnInit(): void {
-		this.inputSubscription = this.inputChange.debounceTime(1000).distinctUntilChanged().do(query => {
+		// Register for query changes.
+		this.querySubscription = this.searchService.onQueryChangedDebounced.do(query => {
 			this.searchValue = null;
 			this.activities = null;
 			this.lists = null;
@@ -54,28 +51,19 @@ export class SearchComponent implements OnDestroy, OnInit {
 			this.lists = values[1];
 			this.users = values[2];
 		});
+		
+		// Get current route on startup and call search service to search for query or just open search.
+		this.activatedRoute.params.map(params => params['query']).first().forEach(query => {
+			if(query) {
+				this.searchService.search(query);
+				return;
+			}
+			
+			this.searchService.start();
+		});
 	}
 	
 	ngOnDestroy(): void {
-			this.inputSubscription.unsubscribe();
-	}
-	
-	onKey(event: any) {
-		// Submit when pressing enter key.
-		if(event.keyCode == 13) {
-			console.log('Loose focus');
-			event.target.blur();
-			return;
-		}
-		
-		this.inputChange.next(event.target.value);
-	}
-	
-	focus(): void {
-		this.searchInput.nativeElement.focus();
-	}
-	
-	getSuggestions() {
-		
+		this.querySubscription.unsubscribe();
 	}
 }
