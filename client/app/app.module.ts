@@ -42,6 +42,9 @@ import {HistoryComponent} from "./ui/history.component";
 import {QuestionComponent} from "./ui/widgets/question.component";
 import {SearchBarComponent} from "./ui/widgets/search-bar.component";
 import {SearchService} from "./services/search.service";
+import {CreateActivityComponent} from "./ui/create-activity.component";
+import {CreateListComponent} from "./ui/create-list.component";
+import {CheckboxComponent} from "./ui/widgets/checkbox.component";
 
 @NgModule({
     declarations: [
@@ -78,6 +81,9 @@ import {SearchService} from "./services/search.service";
 	    SettingsComponent,
 	    ListItemComponent,
 	    StackCardComponent,
+	    CreateActivityComponent,
+	    CreateListComponent,
+	    CheckboxComponent,
 	    SearchComponent,
 	    SearchBarComponent,
 	    ProfileComponent,

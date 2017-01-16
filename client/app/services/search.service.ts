@@ -25,29 +25,30 @@ export class SearchService {
         this.onStateChanged = this.changeState.asObservable().distinctUntilChanged().do(state => {
             switch(state) {
                 case SearchState.OPENED:
-                    let isSearchRouteActive = this.router.isActive(this.router.createUrlTree(['/search']), false);
+                    let isSearchRouteActive = this.router.isActive(this.router.createUrlTree(['/search', '']), false);
                     
                     // Save last url.
-                    this.lastUrl = isSearchRouteActive ? '/' : this.location.path(true);
+                    this.lastUrl = isSearchRouteActive ? null : this.location.path(true);
                 
                     // Navigate to search component, if not done already.
-                    if(!isSearchRouteActive) this.router.navigate(['/search']);
+                    if(!isSearchRouteActive) this.router.navigate(['/search', '']);
                     break;
             
                 case SearchState.CLOSED:
                     // Navigate to last url.
-                    this.router.navigateByUrl(this.lastUrl);
+                    if(this.lastUrl) //TODO ELEGANTER hier machen
+                        this.router.navigateByUrl(this.lastUrl);
+                    else
+                        this.router.navigate(['/']);
                     break;
             }
         }).share();
     
         // Changes that occur as soon as query changes.
-        this.onQueryChanged = this.changeQuery.asObservable().do(console.log).distinctUntilChanged().map(query => !!query ? query : null);
+        this.onQueryChanged = this.changeQuery.asObservable().distinctUntilChanged().map(query => !!query ? query : null);
         this.onQueryChangedDebounced = this.onQueryChanged.debounceTime(1000).do(query => {
             // Update url.
-            let segments = ['/search'];
-            if(query) segments.push(query);
-            this.router.navigate(segments);
+            this.router.navigate(['/search', query ? query : '']);
         }).share();
     }
     

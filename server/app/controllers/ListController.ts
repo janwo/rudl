@@ -120,6 +120,7 @@ export module ListController {
 				updatedAt: now,
 				translations: translations
 			};
+			// TODO Change to vertexCollection, see bug https://github.com/arangodb/arangojs/issues/354
 			return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.lists.name).save(list).then((list: List) => {
 				let userOwnsList : UserOwnsList = {
 					_from: user._id,
@@ -174,7 +175,7 @@ export module ListController {
 		}).then((listIsItem : ListIsItem) => {
 			// Try to return any existing connection.
 			if(listIsItem) return listIsItem;
-			
+		}).catch(() => {
 			// Add connection.
 			let now = Date.now();
 			let edge : ListIsItem = {
@@ -185,6 +186,7 @@ export module ListController {
 			};
 			
 			return collection.save(edge);
+			//TODO nicht in catch
 		});
 	}
 	

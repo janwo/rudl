@@ -88,9 +88,10 @@ export class UserService {
         return this.dataService.post(`/api/users/unfollow/${username}`, null, true).map((json: JsonResponse) => json.data as User).share();
     }
     
-    listsOfUser(username: string = 'me'): Observable<List[]> {
+    listsOfUser(username: string = null, ownsOnly: boolean = false): Observable<List[]> {
+        username = username ? username : this.getAuthenticatedUser().user.username;
         return this.dataService.get(`/api/lists/by/${username}`, true).map((json: JsonResponse) => {
-            return json.data.map((list: List) => {
+            return json.data.filter((list: List) => !ownsOnly || list.owner.username == username).map((list: List) => {
                 list.name = Locale.getBestTranslation(list.translations, this.getAuthenticatedUser().user.languages);
                 return list;
             });
@@ -102,6 +103,13 @@ export class UserService {
             list.name = Locale.getBestTranslation(list.translations, this.getAuthenticatedUser().user.languages);
             return list;
         }).share();
+    }
+    
+    addActivityToList(activity: Activity, list: List): Observable<void> {
+        return this.dataService.post(`/api/lists/add-activity`, `${JSON.stringify({
+            activity: activity.id,
+            list: list.id
+        })}`, true).map((json: JsonResponse) => {});
     }
     
     createList(translations: Translations, activities: Activity[] = []): Observable<List> {
@@ -117,6 +125,12 @@ export class UserService {
     
     unfollowList(list: string): Observable<List> {
         return this.dataService.post(`/api/lists/unfollow/${list}`, null, true).map((json: JsonResponse) => json.data as List).share();
+    }
+    
+    createActivity(translations: Translations): Observable<Activity> {
+        return this.dataService.post(`/api/activities/create`, `${JSON.stringify({
+            translations: translations
+        })}`, true).map((json: JsonResponse) => json.data as Activity);
     }
     
     getActivity(key: string): Observable<Activity> {
@@ -157,6 +171,15 @@ export class UserService {
             return json.data.map((list: List) => {
                 list.name = Locale.getBestTranslation(list.translations, this.getAuthenticatedUser().user.languages);
                 return list;
+            });
+        }).share();
+    }
+    
+    activitiesOfUser(username: string = 'me', ownsOnly: boolean = false): Observable<Activity[]> {
+        return this.dataService.get(`/api/activities/by/${username}`, true).map((json: JsonResponse) => {
+            return json.data.filter((activity: Activity) => !ownsOnly || activity.owner.username == username).map((activity: Activity) => {
+                activity.name = Locale.getBestTranslation(activity.translations, this.getAuthenticatedUser().user.languages);
+                return activity;
             });
         }).share();
     }

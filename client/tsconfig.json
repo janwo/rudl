@@ -22,7 +22,7 @@
     "skipMetadataEmit": true
   },
   "awesomeTypescriptLoaderOptions": {
-    "useWebpackText": true // Allows other loaders to be chained to awesome-typescript-loader.
+    "useWebpackText": true
   },
   "exclude": [
     "../node_modules/"

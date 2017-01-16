@@ -14,6 +14,8 @@ import {User} from "../models/users/User";
 import {UserController} from "./UserController";
 import {UserRatedActivity} from "../models/activities/UserRatedActivity";
 import {UserFollowsActivity} from "../models/activities/UserFollowsActivity";
+import {Translations} from "../models/Translations";
+import {UserOwnsActivity} from "../models/activities/UserOwnsActivity";
 
 export module ActivityController {
 	
@@ -40,7 +42,9 @@ export module ActivityController {
 					'isOwner': 'relations.isOwned',
 					'statistics.isFollowed': 'relations.isFollowed',
 					'statistics.activities': 'statistics.activities',
-					'statistics.followers': 'statistics.followers'
+					'statistics.followers': 'statistics.followers',
+					'statistics.lists': 'statistics.lists',
+					'statistics.events': 'statistics.events'
 				}, {
 					activity: activity,
 					links: links,
@@ -99,6 +103,7 @@ export module ActivityController {
 	export interface ActivityStatistics {
 		lists: number;
 		followers: number;
+		events: number; //TODO
 		isFollowed: boolean;
 	}
 	
@@ -183,9 +188,69 @@ export module ActivityController {
 		return DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsActivity.name).removeByExample(edge).then(() => {});
 	}
 	
+	export function createActivity(user: User, translations: Translations) : Promise<Activity>{
+		// Trim translations.
+		let translationKeys = Object.keys(translations);
+		translationKeys.forEach(translationKey => translations[translationKey] = translations[translationKey].trim());
+		
+		// Check, if list with that translation already exist.
+		return findByUser(user).then((activities: Activity[]) => {
+			for(let i = 0; i < activities.length; i++) {
+				let activity = activities[i];
+				for(let j = 0; j < translationKeys.length; j++) {
+					let translationKey = translationKeys[j];
+					if(translations[translationKey] == activity.translations[translationKey]) return Promise.reject<Activity>(Boom.badData(`There is already a activity with the following translation: ${translationKey}`));
+				}
+			}
+		}).then(() => {
+			let now = Date.now();
+			let activity : Activity = {
+				createdAt: now,
+				updatedAt: now,
+				translations: translations
+			};
+			// TODO Change to vertexCollection, see bug https://github.com/arangodb/arangojs/issues/354
+			return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.activities.name).save(activity).then((activity: Activity) => {
+				console.log(activity);
+				let userOwnsActivity : UserOwnsActivity = {
+					_from: user._id,
+					_to: activity._id,
+					createdAt: now,
+					updatedAt: now
+				};
+				
+				let userFollowsActivity : UserFollowsActivity = {
+					_from: user._id,
+					_to: activity._id,
+					createdAt: now,
+					updatedAt: now
+				};
+				
+				return Promise.all([
+					DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userOwnsActivity.name).save(userOwnsActivity),
+					DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsActivity.name).save(userFollowsActivity)
+				]).then(() => activity);
+			})
+		});
+	}
+	
 	//TODO Ownership
 	
 	export namespace RouteHandlers {
+		
+		/**
+		 * Handles [POST] /api/activities/create
+		 * @param request Request-Object
+		 * @param request.payload.translations translations
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function createActivity(request: any, reply: any): void {
+			// Create promise.
+			let promise: Promise<Activity> = ActivityController.createActivity(request.auth.credentials, request.payload.translations).then(activity => getPublicActivity(activity, request.auth.credentials));
+			
+			reply.api(promise);
+		}
 		
 		/**
 		 * Handles [POST] /api/activities/set-rating
@@ -230,11 +295,9 @@ export module ActivityController {
 		 * @param reply Reply-Object
 		 */
 		export function getActivitiesLike(request: any, reply: any): void {
-			let paramQuery = encodeURIComponent(request.params.query);
-			
 			// Create promise.
 			//TODO slice
-			let promise : Promise<Activity[]> = ActivityController.findByFulltext(paramQuery).then((activities: Activity[]) => ActivityController.getPublicActivity(activities.slice(request.params.offset, request.params.offset + 30), request.auth.credentials));
+			let promise : Promise<Activity[]> = ActivityController.findByFulltext(request.params.query).then((activities: Activity[]) => ActivityController.getPublicActivity(activities.slice(request.params.offset, request.params.offset + 30), request.auth.credentials));
 			
 			reply.api(promise);
 		}

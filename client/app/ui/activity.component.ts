@@ -5,6 +5,7 @@ import {ActivatedRoute, Params} from "@angular/router";
 import {Activity} from "../models/activity";
 import {ButtonStyles} from "./widgets/styled-button.component";
 import {ModalComponent} from "./widgets/modal.component";
+import {List} from "../models/list";
 
 @Component({
     templateUrl: './activity.component.html',
@@ -12,11 +13,42 @@ import {ModalComponent} from "./widgets/modal.component";
 })
 export class ActivityComponent implements OnInit, OnDestroy {
     
+    // Set menu items.
+    menuItems = [
+        {
+            icon: 'cog',
+            title: 'Profil',
+            notification: false
+        },
+        {
+            icon: 'cog',
+            title: 'Einstellungen',
+            notification: false
+        },
+        {
+            icon: 'sign-out',
+            title: 'Abmelden',
+            notification: false
+        },
+        {
+            icon: 'sign-out',
+            title: 'Abmelden',
+            notification: false
+        },
+        {
+            icon: 'sign-out',
+            title: 'Abmelden',
+            notification: false
+        }
+    ];
+    
     activity: Activity;
+    lists: List[];
     activitySubscription: Subscription;
     pendingFollowRequest: boolean = false;
     buttonStyleDefault: ButtonStyles = ButtonStyles.minimal;
-    buttonStyleFollowing: ButtonStyles = ButtonStyles.minimalInverse;
+    buttonStyleActivated: ButtonStyles = ButtonStyles.minimalInverse;
+    showUserLists: boolean = false;
     @ViewChild(ModalComponent) unfollowModal: ModalComponent;
     modalChoices = [{
         buttonStyle: ButtonStyles.default,
@@ -62,5 +94,18 @@ export class ActivityComponent implements OnInit, OnDestroy {
             this.activity = updatedActivity;
             this.pendingFollowRequest = false;
         }).subscribe();
+    }
+    
+    addToList(activity: Activity, list: List) {
+        this.userService.addActivityToList(activity, list).subscribe(() => {
+            
+        });
+    }
+    
+    toggleUserLists(): void {
+        this.showUserLists = !this.showUserLists;
+        this.userService.listsOfUser(null, true).subscribe((lists: List[]) => {
+            this.lists = lists;
+        });
     }
 }

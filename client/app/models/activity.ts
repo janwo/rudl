@@ -12,6 +12,7 @@ export interface Activity extends Document {
 	statistics: {
 		followers: number;
 		lists: number;
+		events: number;
 	};
 	translations: Locale.Translations;
 }

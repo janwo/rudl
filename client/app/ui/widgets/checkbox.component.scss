@@ -1,0 +1,29 @@
+@import './../variables.scss';
+
+$checkbox-size: map_get($base-font-size, 'large');
+$checkbox-color-checked: map_get($base-colors, 'primary');
+$checkbox-color-unchecked: inactive(map_get($base-colors, 'primary'));
+
+:host {
+  display: inline-block;
+  margin-right: $checkbox-size / 2;
+
+  span {
+    height: $checkbox-size;
+    width: $checkbox-size;
+    border: $checkbox-color-unchecked solid $checkbox-size * 0.1;
+    border-radius: $checkbox-size / 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &.checked {
+      border-color: $checkbox-color-checked;
+
+      &:before {
+        color: $checkbox-color-checked;
+        font-size: $checkbox-size * 0.75;
+      }
+    }
+  }
+}

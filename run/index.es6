@@ -67,7 +67,7 @@ class StartupManager {
 		
 		// Create forever's monitor instances.
 		let backendServerMonitor = StartupManager.createBackendServer(Config.backend.debug);
-		let watchTypescriptMonitor = StartupManager.createTypescriptCompiler(true);
+		let watchTypescriptMonitor = StartupManager.createTypescriptCompiler(Config.backend.debug);
 		let typeScriptMonitor = StartupManager.createTypescriptCompiler(false, () => {
 			backendServerMonitor.start();
 			if(Config.backend.debug) watchTypescriptMonitor.start();

@@ -38,7 +38,6 @@ const appRoutes: Routes = [
             { path: 'people/:username/:tab', component: ProfileComponent },
             { path: 'lists/:key', component: ListComponent },
             { path: 'search/:query', component: SearchComponent },
-            { path: 'search', component: SearchComponent },
             { path: 'activities/:key', component: ActivityComponent },
             { path: 'settings', redirectTo: 'settings/account', pathMatch: 'full' },
             { path: 'settings/:page', component: SettingsComponent }

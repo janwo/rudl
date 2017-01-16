@@ -6,6 +6,7 @@ import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
 import {ActivityController} from "../controllers/ActivityController";
+import {TranslationsValidation} from "../models/Translations";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
@@ -57,6 +58,23 @@ export const RoutesConfig: RoutesConfiguration = [
 				payload: {
 					activity: Joi.string(),
 					rating: Joi.number().integer().min(-1).max(1)
+				}
+			}
+		}
+	},
+	{
+		path: '/api/activities/create',
+		method: 'POST',
+		handler: ActivityController.RouteHandlers.createActivity,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				payload: {
+					translations: TranslationsValidation
 				}
 			}
 		}

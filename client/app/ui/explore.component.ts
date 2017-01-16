@@ -19,18 +19,7 @@ export class ExploreComponent implements OnDestroy {
     constructor(
         private userService: UserService
     ) {
-        this.suggestedActivitiesStream = Observable.empty();
-        /*this.userService.activitiesOfList("888243").map((activities: Activity[]) => {
-            let returnedOnes: Activity[] = [];
-            activities.forEach(activity => {
-                for(let i = 0; i < 10; i++){
-                    activity = JSON.parse(JSON.stringify(activity));
-                    activity.name += ' id: ' + i;
-                    returnedOnes.push(activity);
-                }
-            });
-            return returnedOnes;
-        });TODO*/
+        this.suggestedActivitiesStream = this.userService.activitiesOfList("4026794");//TODO
     }
     
     ngOnDestroy(): void {
@@ -39,9 +28,5 @@ export class ExploreComponent implements OnDestroy {
     
     markActivityAs(activity: Activity, markedAs: 'like' | 'dislike') {
        console.log(activity.name + ' was marked as ' + markedAs);
-    }
-    
-    createList(name: string) {
-        this.userService.createList({de: name}).subscribe();
     }
 }

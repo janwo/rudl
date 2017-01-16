@@ -8,12 +8,19 @@
 	</div>
 	<h1>{{activity.name}}</h1>
 	<statistics [statistics]="[
-		{value: activity.statistics.lists, subject: 'Lists Following'},
+		{value: activity.statistics.lists, subject: 'List Member'},
 		{value: activity.statistics.followers, subject: 'Follower', link: 'follower'}
 	]"></statistics>
 	<div class="cta">
-		<styled-button [style]="activity.relations.isFollowed ? buttonStyleFollowing : buttonStyleDefault" (click)="onToggleFollow(true)" [disabled]="pendingFollowRequest" [text]="activity.relations.isFollowed ? 'Following' : 'Follow'"></styled-button>
+		<styled-button [style]="activity.relations.isFollowed ? buttonStyleActivated : buttonStyleDefault" (click)="onToggleFollow(true)" [disabled]="pendingFollowRequest" [text]="activity.relations.isFollowed ? 'Following' : 'Follow'"></styled-button>
+		<styled-button [style]="showUserLists ? buttonStyleActivated : buttonStyleDefault" [fa]="'list'" (click)="toggleUserLists()"></styled-button>
 	</div>
+	<ul class="lists" *ngIf="showUserLists">
+		<li *ngFor="let list of lists" (click)="addToList(activity, list)">
+			<checkbox [checked]="false"></checkbox>
+			<span>{{list.name}}</span>
+		</li>
+	</ul>
 </div>
 <modal #modal>
 	<question [choices]="modalChoices" [title]="'Are you sure to unfollow activity?'" [description]='"Du bist der Ersteller dieser Aktivität. Durch das Entfolgen geht die Aktivität in den Besitz eines anderen Followers über. Aktivitäten ohne andere Follower werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."'></question>
