@@ -35,7 +35,7 @@ export default {
 			},
 			arango: {
 				host: process.env.ARANGO_HOST || 'arango',
-				database: process.env.ARANGO_DB || 'meal2share-test'
+				database: process.env.ARANGO_DB || 'rudl-test'
 			}
 		},
 		log: {

@@ -1,5 +1,5 @@
 {
-  "name": "meal2share",
+  "name": "rudl",
   "version": "0.1.0",
   "scripts": {
     "docker-build": "docker-compose build",
@@ -110,7 +110,7 @@
   "description": "Description coming soon",
   "repository": {
     "type": "git",
-    "url": "https://git.jan-wolf.de/meal2share/meal2share.git"
+    "url": "https://git.jan-wolf.de/janwolf/rudl.git"
   },
   "author": "Jan Wolf <info@jan-wolf.de>",
   "license": "SEE LICENSE IN LICENSE"

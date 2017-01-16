@@ -1,4 +1,4 @@
-# Meal2Share
+# Rudl
 Description coming soon
 
 ## Getting Started

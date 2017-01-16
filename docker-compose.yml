@@ -3,7 +3,7 @@ version: '2'
 services:
   app:
     build: .
-    container_name: meal2share
+    container_name: app
     environment:
       - ENV
     ports:
@@ -28,9 +28,6 @@ services:
       - ./db/arango:/var/lib/arangodb3
     environment:
       - ARANGO_RANDOM_ROOT_PASSWORD=1
-      - ARANGODB_USERNAME=meal2share
-      - ARANGODB_PASSWORD=meal2share
-      - ARANGODB_DBNAME=meal2share
     image: arangodb
     ports:
       - "8529:8529"

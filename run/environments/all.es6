@@ -119,9 +119,9 @@ export default {
 			arango: {
 				host: process.env.ARANGO_HOST || 'localhost',
 				port: process.env.ARANGO_PORT || 8529,
-				database: process.env.ARANGO_DB || 'meal2share',
-				user: process.env.ARANGO_USER || 'meal2share',
-				password: process.env.ARANGO_PASSWORD || 'meal2share'
+				database: process.env.ARANGO_DB || 'rudl',
+				user: process.env.ARANGO_USER || 'rudl',
+				password: process.env.ARANGO_PASSWORD || 'sgZ$LGKJhs_df872_3f$dxvhGR$REDsfd'
 			}
 		},
 		uploads: {
