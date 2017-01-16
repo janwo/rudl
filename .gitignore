@@ -1,6 +1,7 @@
 # General
 **/node_modules/
 _generated/
+.env
 
 # Node.js
 **/npm-debug.log*

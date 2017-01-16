@@ -179,16 +179,16 @@ export module UserController {
 				// Define default links.
 				//TODO UPDATE LINKS
 				let links = {
-					followers: `${Config.backend.exposedHost}/api/users/${user.username}/followers`,
-					followees: `${Config.backend.exposedHost}/api/users/${user.username}/following`
+					followers: `${Config.backend.domain}/api/users/${user.username}/followers`,
+					followees: `${Config.backend.domain}/api/users/${user.username}/following`
 				};
 				
 				// Define avatar links?
 				if(user.meta.hasAvatar) {
 					links['avatars'] = {
-						small: `${Config.backend.exposedHost}/static/avatars/${user._key}-small`,
-						medium: `${Config.backend.exposedHost}/static/avatars/${user._key}-medium`,
-						large: `${Config.backend.exposedHost}/static/avatars/${user._key}-large`
+						small: `${Config.backend.domain}/static/avatars/${user._key}-small`,
+						medium: `${Config.backend.domain}/static/avatars/${user._key}-medium`,
+						large: `${Config.backend.domain}/static/avatars/${user._key}-large`
 					};
 				}
 				

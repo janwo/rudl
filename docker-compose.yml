@@ -3,9 +3,10 @@ version: '2'
 services:
   app:
     build: .
-    container_name: app
+    container_name: rudl
     environment:
       - ENV
+      - DOMAIN
     ports:
       - "80:80"
       - "5858:5858"

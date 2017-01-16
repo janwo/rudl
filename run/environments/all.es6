@@ -83,7 +83,10 @@ export default {
 						},
 						plugins: [
 							new Webpack.DefinePlugin({
-								'ENV': JSON.stringify( Config.env )
+								'process.env': {
+									'ENV': JSON.stringify( Config.env ),
+									'DOMAIN': JSON.stringify( Config.backend.domain )
+								}
 							}),
 							new AssetsPlugin({
 								path: Path.dirname( Config.generatedFiles.frontendAssetsJson ),
@@ -98,7 +101,7 @@ export default {
 	backend: {
 		host: process.env.BACKEND_SERVER_HOST || 'localhost',
 		port: process.env.BACKEND_SERVER_PORT || 80,
-		exposedHost: 'http://localhost',
+		domain: process.env.DOMAIN || 'http://localhost',
 		debug: process.env.DEBUG_BACKEND || false,
 		watchAssets: true,
 		ssl: {
