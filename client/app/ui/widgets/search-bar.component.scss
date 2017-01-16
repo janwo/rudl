@@ -1,0 +1,29 @@
+@import './../variables.scss';
+
+$search-bar-font-size: map_get($base-font-size, 'large');
+$search-bar-height: map_get($base-padding, 'small') * 2 + map_get($base-font-size, 'default');
+$search-bar-font-padding-vertical: ($search-bar-height - map_get($base-font-size, 'large')) / 2;
+
+:host {
+  display: flex;
+  flex-direction: column;
+
+  input {
+    display: block;
+    padding: $search-bar-font-padding-vertical 0 $search-bar-font-padding-vertical;
+    font-family: $base-heading-font-family;
+    font-size: map_get($base-font-size, 'large');
+    margin: 0;
+    flex: 1 1;
+    color: map_get($base-colors, 'primary');
+    border: 0;
+    outline: none;
+    position: relative;
+    z-index: 2;
+    background: transparent;
+
+    &::placeholder {
+      color: inactive(map_get($base-colors, 'primary-text'));
+    }
+  }
+}

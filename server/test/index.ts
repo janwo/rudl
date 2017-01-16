@@ -1,16 +1,23 @@
-process.env.NODE_ENV = 'test';
+/// <reference path="../../node_modules/@types/mocha/index.d.ts" />
+process.env.ENV = 'test';
 
-import {arangoClient, arangoCollections} from "../config/Database";
+import {DatabaseManager} from "../app/Database";
 import {Cursor} from "arangojs";
-import {User, UserRoles} from "../app/models/User";
+import {User, UserRoles} from "../app/models/users/User";
 import casual = require('casual');
-import {Config} from "../config/Config";
+import {Config} from "../../run/config";
+import {AccountController} from "../app/controllers/AccountController";
 
 function generateUser(): User {
-	return {
+	let user: User = {
 		firstName: casual.first_name,
 		lastName: casual.last_name,
 		username: casual.username,
+		languages: [
+			//TODO: Dynamic languages
+			'de',
+		    'en'
+		],
 		mails: [{
 			mail: casual.email,
 			verified: true
@@ -22,8 +29,11 @@ function generateUser(): User {
 			Number.parseFloat(casual.latitude),
 			Number.parseFloat(casual.longitude)
 		],
-		hasAvatar: false,
-		meta: {},
+		meta: {
+			hasAvatar: false,
+			profileText: casual.short_description,
+			fulltextSearchData: null
+		},
 		auth: {
 			password: casual.password,
 			providers: [],
@@ -31,6 +41,12 @@ function generateUser(): User {
 		createdAt: casual.unix_time,
 		updatedAt: casual.unix_time,
 	};
+	
+	// Apply fulltext search data.
+	AccountController.updateFulltextSearchData(user);
+	
+	// Return.
+	return user;
 }
 
 describe(`Testing ${Config.app.title}...`, () => {
@@ -38,21 +54,21 @@ describe(`Testing ${Config.app.title}...`, () => {
 	before(() => {
 		return require("../config/Hapi").hapiServer().then(() => {
 			// Truncate.
-			arangoClient.collection(arangoCollections.users).truncate();
-			arangoClient.collection(arangoCollections.userConnections).truncate();
-			arangoClient.collection(arangoCollections.activities).truncate();
+			DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.users.name).truncate();
+			DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.userFollowsUser.name).truncate();
+			DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.activities.name).truncate();
 			
 			// Add users.
 			let aqlQuery = `FOR u IN @users INSERT u INTO @@collection`;
 			let aqlParam = {
-				'@collection': arangoCollections.users,
+				'@collection': DatabaseManager.arangoCollections.users,
 				users: (() => {
 					let users = [];
 					for(let i = 0; i < 100; i++) users.push(generateUser());
 					return users;
 				})()
 			};
-			arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all());
+			DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all());
 		});
 	});
 	

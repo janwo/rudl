@@ -1,0 +1,4 @@
+<button [disabled]="disabled" class="{{getStyleClass()}}" (click)="onClick($event)">
+	<i class="fa fa-{{fa}}" *ngIf="fa"></i>
+	<span *ngIf="text">{{text}}</span>
+</button>

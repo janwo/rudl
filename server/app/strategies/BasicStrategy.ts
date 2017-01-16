@@ -1,7 +1,8 @@
 import {UserController} from "../controllers/UserController";
-import {User} from "../models/User";
-import {StrategyConfiguration} from "../../config/binders/StrategiesBinder";
+import {User} from "../models/users/User";
+import {StrategyConfiguration} from "../binders/StrategiesBinder";
 import Boom = require("boom");
+import {AccountController} from "../controllers/AccountController";
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -9,7 +10,7 @@ export const StrategyConfig: StrategyConfiguration = {
 	schemeName: 'basic',
 	strategyConfig: {
 		validateFunc: (request: any, username: string, password: string, callback: any) => {
-			UserController.findByUsername(username).then((user: User) => UserController.checkPassword(user, password)).then((user: User) => {
+			UserController.findByUsername(username).then((user: User) => AccountController.checkPassword(user, password)).then((user: User) => {
 				return callback(null, true, user);
 			}).catch(err => {
 				return callback(err, false);

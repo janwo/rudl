@@ -1,0 +1,62 @@
+@import './../variables.scss';
+
+$dropdown-menu-arrow-size: 0.5rem;
+$dropdown-menu-border-size: 0.1rem;
+$dropdown-menu-background-color: #fff;
+$dropdown-menu-arrow-center-right-offset: 1rem;
+
+:host {
+  ul {
+    position: relative;
+    z-index: 20;
+    border: $dropdown-menu-border-size solid map_get($base-colors, 'primary');
+    list-style: none;
+    background: $dropdown-menu-background-color;
+    box-shadow: 0.125rem 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+
+    li {
+      display: flex;
+      padding: map_get($base-padding, 'smaller') map_get($base-padding, 'default') map_get($base-padding, 'smaller') map_get($base-padding, 'smaller');
+      cursor: pointer;
+
+      i {
+        flex: 0 0 auto;
+        margin-right: map_get($base-padding, 'small');
+      }
+
+      span {
+        flex: 1 0 auto;
+      }
+
+      &.active {
+        cursor: default;
+      }
+
+      &:not(.active):hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    }
+
+    &:after, &:before {
+      $arrow-size: $dropdown-menu-arrow-size;
+
+      content: '';
+      width: 0;
+      height: 0;
+      position: absolute;
+      bottom: 100%;
+      right: $dropdown-menu-arrow-center-right-offset - $arrow-size;
+      border-style: solid;
+      border-width: 0 $arrow-size $arrow-size $arrow-size;
+      border-color: transparent transparent map_get($base-colors, 'primary') transparent;
+    }
+
+    &:after {
+      $arrow-size: $dropdown-menu-arrow-size - $dropdown-menu-border-size;
+
+      border-width: 0 $arrow-size $arrow-size $arrow-size;
+      right: $dropdown-menu-arrow-center-right-offset - $arrow-size;
+      border-color: transparent transparent $dropdown-menu-background-color transparent;
+    }
+  }
+}

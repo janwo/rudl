@@ -1,0 +1,19 @@
+<div class="stack" (pan)="pan($event)" [ngClass]="{dragging: inDragMode}">
+	<stack-card *ngFor="let stackItem of stack.reverse(); let i = index" [ngClass]="{done: i > stack.length - 1 - stackIndex}">
+		<div class="content">
+			<span class="name">{{stackItem.name}}</span>
+		</div>
+		<div class="overlay">
+			<div class="icon">
+				<i class="fa fa-check like"></i>
+				<i class="fa fa-close dislike"></i>
+			</div>
+			<div class="progress"></div>
+		</div>
+	</stack-card>
+</div>
+
+<div class="cta">
+	<styled-button class="dislike" [fa]="'thumbs-o-down'" [style]="buttonStyle" (click)="markAs('dislike')"></styled-button>
+	<styled-button class="like" [fa]="'thumbs-o-up'" [style]="buttonStyle" (click)="markAs('like')"></styled-button>
+</div>

@@ -1,9 +1,12 @@
-import {Config} from "../../config/Config";
-import {UserProvider, User} from "../models/User";
-import {StrategyConfiguration} from "../../config/binders/StrategiesBinder";
-import {staticAssets} from "../routes/StaticRoutes";
+import {Config} from "../../../run/config";
+import {UserProvider, User} from "../models/users/User";
+import {StrategyConfiguration} from "../binders/StrategiesBinder";
 import {UserController} from "../controllers/UserController";
 import Boom = require("boom");
+import randomstring = require("randomstring");
+import {AssetsPool} from "../AssetsPool";
+import {AuthController} from "../controllers/AuthController";
+import {AccountController} from "../controllers/AccountController";
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -11,10 +14,10 @@ export const StrategyConfig: StrategyConfiguration = {
 	schemeName: 'bell',
 	strategyConfig: {
 		provider: 'google',
-		password: Config.providers.google.password,
-		clientId: Config.providers.google.clientID,
-		clientSecret: Config.providers.google.clientSecret,
-		isSecure: process.env.NODE_ENV === 'secure'
+		password: Config.backend.providers.google.password,
+		clientId: Config.backend.providers.google.clientID,
+		clientSecret: Config.backend.providers.google.clientSecret,
+		isSecure: Config.env === 'secure'
 	}
 };
 
@@ -34,27 +37,28 @@ export function handleGoogle(request, reply): void {
 		provider: StrategyConfig.strategyConfig.provider,
 		userIdentifier: profile.id,
 		accessToken: request.auth.credentials.token,
-		refreshBefore: request.auth.credentials.expiresIn ? request.auth.credentials.expiresIn + Date.now() / 1000 : null,
+		refreshBefore: request.auth.credentials.expiresIn ? Math.trunc(request.auth.credentials.expiresIn + Date.now() / 1000) : null,
 		refreshToken: request.auth.credentials.refreshToken || undefined
 	};
 	
 	UserController.findByProvider(provider).catch((err: Error) => {
 		// Create User.
-		return UserController.checkUsername(profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then(checkResults => {
+		return AccountController.checkUsername(profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then(checkResults => {
 			if (checkResults.available) return checkResults.username;
 			return checkResults.recommendations[Math.trunc(Math.random() * checkResults.recommendations.length)];
 		}).then(username => {
-			return UserController.createUser({
+			return AccountController.createUser({
 				firstName: profile.name.given_name,
 				lastName: profile.name.family_name,
 				username: username,
+				password: randomstring.generate(10),
 				mail: profile.email
 			});
 		});
-	}).then((user: User) => UserController.addProvider(user, provider)).then(UserController.saveUser).then(UserController.signToken).then(token => {
+	}).then((user: User) => AccountController.addProvider(user, provider)).then(AccountController.saveUser).then(AuthController.signToken).then(token => {
 		reply.view('index', {
 			title: 'Authentication',
-			assets: staticAssets,
+			assets: AssetsPool.getAssets(),
 			metas: {
 				token: token
 			}

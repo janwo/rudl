@@ -1,3 +1,0 @@
-<ul>
-	<li *ngFor="let tabItem of tabItems" (click)="onClick(tabItem)" [ngClass]="{notification: tabItem.notification, active: activeTabItem && tabItem.link == activeTabItem.link}"><i class="fa fa-{{tabItem.icon}}" *ngIf="tabItem.icon"></i><span>{{tabItem.title}}</span></li>
-</ul>

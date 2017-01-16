@@ -1,0 +1,75 @@
+$base-padding: (
+  'large': 4rem,
+  'larger': 3rem,
+  'default': 2rem,
+  'smaller': 1rem,
+  'small' : 0.75rem,
+  'smallest' : 0.25rem
+);
+$base-font-family: 'Lato';
+$base-border-radius: 0.25rem;
+$base-font-weight-normal: 400;
+$base-font-weight-bold: 700;
+$base-font-size: (
+  'large': 1.15rem,
+  'default': 1rem,
+  'small': 0.85rem
+);
+$base-line-height: (
+  'default': 1.15,
+  'multiline': 1.5
+);
+$base-heading-font-family: 'Fredoka One';
+$base-heading-font-weight-normal: 400;
+$base-heading-font-bold-normal: $base-heading-font-weight-normal;
+$base-heading-font-size: (
+  'h1': 1.7rem,
+  'h2': 1.4rem,
+  'h3': 1.15rem,
+  'h4': 1rem,
+  'h5': 0.85rem
+);
+
+@function inactive($color) {
+  @return transparentize(desaturate($color, 100%), 0.77);
+}
+
+$base-line-widths: (
+  'large': 0.5rem,
+  'larger': 0.25rem,
+  'default': 0.1rem
+);
+
+$base-colors: (
+  'primary': #50E3C2,
+  'secondary': #00CBB9,
+  'primary-text': #4f4e52,
+  'secondary-text': #a09da3,
+  'background': #FAFAFA,
+  'background-highlighted': #fff,
+  'swipe-like': #50E3C2,
+  'swipe-dislike': #ea8484
+);
+
+$base-shadow: (
+  'default': 0 0.1rem 0.15rem rgba(0, 0, 0, 0.0375),
+  'elevated': 0 0.25rem 0.25rem rgba(0, 0, 0, 0.01875),
+  'modal': 0 0.5rem 1rem rgba(0, 0, 0, 0.1)
+);
+
+$base-breakpoints: (
+  'small': 40rem
+);
+
+@mixin breakpoint($breakpoint) {
+  $value: map-get($base-breakpoints, $breakpoint);
+  @if $value != null {
+    @media (min-width: $value) {
+      @content;
+    }
+  }
+  @else {
+    @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
+      + "Please make sure it is defined in `$breakpoints` map.";
+  }
+}

@@ -1,6 +1,6 @@
 # General
-**/typings/
 **/node_modules/
+_generated/
 
 # Node.js
 **/npm-debug.log*
@@ -14,17 +14,19 @@
 **/.idea/
 
 # Server
-server/uploads/avatars/**
 server/**/*.js
 server/**/*.js.map
-!server/karma.conf.js
 
 # Client
-client/dist
+client/aot
 client/**/.sass-cache/
 client/**/*.css.map
 client/**/*.js
 client/**/*.js.map
 !client/config/**/*.js
-!client/webpack.config.js
-!client/karma.conf.js
+
+# Database
+db/
+
+# Run
+run/**/*.js

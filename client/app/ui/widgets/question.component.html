@@ -1,0 +1,8 @@
+<header>
+	<h1 class="title">{{title}}</h1>
+	<button class="close"></button>
+</header>
+<span class="description">{{description}}</span>
+<footer>
+	<styled-button *ngFor="let choice of choices" [text]="choice.text" [style]="choice.buttonStyle" (click)="choice.callback($event)"></styled-button>
+</footer>

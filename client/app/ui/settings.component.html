@@ -1,0 +1,12 @@
+<h1>Einstellungen</h1>
+<tab-elevated-menu [tabItems]="tabItems"></tab-elevated-menu>
+<section class="tab-content">
+	<div *ngIf="currentPage.slug === 'account'">
+		<expander [title]="'E-Mail Adresse ändern'"></expander>
+		<expander [title]="'E-Mail Adresse ändern'"></expander>
+		<expander [title]="'E-Mail Adresse ändern'"></expander>
+	</div>
+	<div *ngIf="currentPage.slug === 'safety'">
+		<expander [title]="'Passwort ändern'"></expander>
+	</div>
+</section>

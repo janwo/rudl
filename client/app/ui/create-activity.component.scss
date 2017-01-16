@@ -1,0 +1,7 @@
+@import './variables.scss';
+
+:host {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}

@@ -1,0 +1,4 @@
+<div class="card" [routerLink]="['/lists', list.id]">
+	<span class="name" [innerHTML]="highlight ? (list.name | highlight: highlight) : list.name"></span>
+	<span class="relation">{{list.createdAt}}</span>
+</div>

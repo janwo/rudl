@@ -1,0 +1,36 @@
+<section *ngIf="searchValue">
+	<h1 i18n>Activities</h1>
+	<item-wrapper class="results" [ngClass]="{collapsed: collapsedActivities}">
+		<li class="card create" i18n (click)="activityModal.open()">
+			<span class="title">Create new activity "<span class="highlight">{{searchValue}}</span>"</span>
+		</li>
+		<li *ngFor="let activity of activities">
+			<activity-item [highlight]="searchValue" [activity]="activity"></activity-item>
+		</li>
+	</item-wrapper>
+</section>
+<section *ngIf="searchValue">
+	<h1 i18n>Lists</h1>
+	<item-wrapper class="results" [ngClass]="{collapsed: collapsedLists}">
+		<li class="card create" i18n (click)="listModal.open()">
+			<span class="title">Create new list "<span class="highlight">{{searchValue}}</span>"</span>
+		</li>
+		<li *ngFor="let list of lists">
+			<list-item [highlight]="searchValue" [list]="list"></list-item>
+		</li>
+	</item-wrapper>
+</section>
+<section *ngIf="users && users.length > 0">
+	<h1 i18n>People</h1>
+	<item-wrapper class="results" [ngClass]="{collapsed: collapsedUsers}">
+		<li *ngFor="let user of users">
+			<people-item [highlight]="searchValue" [user]="user"></people-item>
+		</li>
+	</item-wrapper>
+</section>
+<modal #activityModal>
+	<create-activity [name]="searchValue"></create-activity>
+</modal>
+<modal #listModal>
+	<create-list [name]="searchValue"></create-list>
+</modal>

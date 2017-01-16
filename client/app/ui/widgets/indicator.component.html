@@ -1,0 +1,3 @@
+<ul>
+	<li (click)="onClick(i)" *ngFor="let indicator of indicators; let i = index" [ngClass]="{active: i == selectedIndex}"></li>
+</ul>

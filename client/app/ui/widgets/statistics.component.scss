@@ -1,0 +1,36 @@
+@import './../variables.scss';
+
+:host {
+  display: block;
+
+  ul {
+    padding-left: map_get($base-padding, 'smaller');
+    padding-right: map_get($base-padding, 'smaller');
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+
+    li {
+      display: inline-block;
+      cursor: pointer;
+
+      &:not(:last-child) {
+        margin-right: map_get($base-padding, 'small');
+      }
+
+      span {
+        text-align: center;
+        display: block;
+        color: map_get($base-colors, 'secondary-text');
+
+        &.value {
+          font-family: $base-heading-font-family;
+        }
+
+        &.subject {
+          margin-top: map_get($base-padding, 'smallest');
+        }
+      }
+    }
+  }
+}

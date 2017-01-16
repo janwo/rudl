@@ -1,0 +1,81 @@
+@import './variables.scss';
+
+:host {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+
+  & > .card {
+    width: 15rem;
+    flex: 0 0 auto;
+
+    .user {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+
+      avatar {
+        flex: 0 0 auto;
+        width: 3rem;
+        height: 3rem;
+        margin-right: map_get($base-padding, 'smaller');
+      }
+
+      div {
+        flex: 1 1 auto;
+
+        .name {
+          display: block;
+        }
+
+        .username {
+          display: block;
+          font-size: map_get($base-font-size, 'small');
+          color: map_get($base-colors, 'secondary-text');
+          margin-top: map_get($base-padding, 'smallest');
+
+          &:before {
+            content: '@';
+          }
+        }
+      }
+    }
+
+    .cta {
+      margin-top: map_get($base-padding, 'smaller');
+      display: flex;
+      justify-content: space-between;
+
+      styled-button {
+        /deep/ button {
+          margin-bottom: 0;
+        }
+
+        &:first-child {
+          flex: 1 1 auto;
+          margin-right: map_get($base-padding, 'small');
+        }
+      }
+    }
+  }
+
+  & > .content {
+    flex: 1 1 auto;
+    margin-left: map_get($base-padding, 'default');
+
+    ul {
+      list-style: none;
+      margin: - map_get($base-padding, 'smaller');
+      margin-top: map_get($base-padding, 'default') - map_get($base-padding, 'smaller');
+      display: flex;
+      flex-wrap: wrap;
+
+      li {
+        flex: 1 1 auto;
+        max-width: 15rem;
+        margin: map_get($base-padding, 'smaller');
+      }
+    }
+  }
+}
