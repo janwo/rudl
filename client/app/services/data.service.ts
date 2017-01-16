@@ -6,7 +6,7 @@ import {BehaviorSubject} from "rxjs";
 @Injectable()
 export class DataService {
 
-    static domain: string = 'http://localhost';//TODO dynamic host
+    static domain: string = process.env.DOMAIN;
     static callbackMessageType: string = 'AUTH_CALLBACK_MESSAGE';
     static localStorageKey: string = 'jwt-token';
     private token: BehaviorSubject<string>;

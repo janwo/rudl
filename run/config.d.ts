@@ -36,7 +36,7 @@ export const Config : {
 	backend: {
 		host: string,
 		port: number,
-		exposedHost: string,
+		domain: string,
 		debug: boolean,
 		watchAssets: boolean,
 		ssl: {

@@ -2,6 +2,13 @@ import {Component, Input, OnDestroy, OnInit} from "@angular/core";
 import {Router, NavigationEnd, UrlTree} from "@angular/router";
 import { Subscription } from 'rxjs/Subscription';
 
+export interface TabItem {
+    icon?: string,
+    notification: boolean,
+    title: string,
+    link: UrlTree
+}
+
 @Component({
     templateUrl: './tab-menu.component.html',
     styleUrls: ['./tab-menu.component.scss'],
@@ -48,11 +55,4 @@ export class TabMenuComponent implements OnInit, OnDestroy {
     private onClick(tabItem: TabItem) {
         if(!this.activeTabItem || this.activeTabItem.link.toString() !== tabItem.link.toString() ) this.router.navigateByUrl(tabItem.link);
     }
-}
-
-export interface TabItem {
-    icon?: string,
-    notification: boolean,
-    title: string,
-    link: UrlTree
 }
