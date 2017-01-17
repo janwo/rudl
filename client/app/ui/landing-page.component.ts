@@ -7,4 +7,8 @@ import {Component} from "@angular/core";
 export class LandingPageComponent {
     
     constructor() {}
+    
+    openExternalLink(link: string): void {
+        window.open(link);
+    }
 }
