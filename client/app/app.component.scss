@@ -7,14 +7,17 @@
 :host {
   display: block;
   min-height: 100vh;
-  font-family: $base-font-family;
-  font-weight: $base-font-weight-normal;
-  font-size: map_get($base-font-size, 'default');
-  color: map_get($base-colors, 'text');
   background-color: map_get($base-colors, 'background');
-  line-height: map_get($base-line-height, 'default');
   width: 100vw;
   overflow: hidden;
+
+  & /deep/ {
+    font-family: $base-font-family;
+    font-weight: $base-font-weight-normal;
+    font-size: map_get($base-font-size, 'default');
+    color: map_get($base-colors, 'primary-text');
+    line-height: map_get($base-line-height, 'default');
+  }
 
   // Reset text decorations.
   /deep/ a {

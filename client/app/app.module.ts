@@ -45,6 +45,7 @@ import {SearchService} from "./services/search.service";
 import {CreateActivityComponent} from "./ui/create-activity.component";
 import {CreateListComponent} from "./ui/create-list.component";
 import {CheckboxComponent} from "./ui/widgets/checkbox.component";
+import {LegalComponent} from "./ui/legal.component";
 
 @NgModule({
     declarations: [
@@ -86,6 +87,7 @@ import {CheckboxComponent} from "./ui/widgets/checkbox.component";
 	    CheckboxComponent,
 	    SearchComponent,
 	    SearchBarComponent,
+	    LegalComponent,
 	    ProfileComponent,
         FullScreenOverlayComponent
     ],

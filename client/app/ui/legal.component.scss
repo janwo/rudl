@@ -71,11 +71,5 @@ $landing-page-horizontal-padding: map_get($base-padding, 'default');
         line-height: 1.5;
       }
     }
-
-    small {
-      position: absolute;
-      bottom: map_get($base-padding, 'default');
-      color: inactive(map_get($base-colors, 'primary-text'));
-    }
   }
 }

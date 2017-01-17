@@ -13,12 +13,17 @@ import {RedirectComponent} from "./redirect.component";
 import {ListComponent} from "./ui/list.component";
 import {ActivityComponent} from "./ui/activity.component";
 import {SearchComponent} from "./ui/search.component";
+import {LegalComponent} from "./ui/legal.component";
 
 const appRoutes: Routes = [
     {
         path: 'sign_up',
         component: LandingPageComponent,
         pathMatch: 'full'
+    },
+    {
+        path: 'legal',
+        component: LegalComponent
     },
     {
         path: 'oauth/:strategy',

@@ -1,12 +1,24 @@
 <section class="sidebar">
-	<div class="logo"></div>
-	<h2 i18n>Sei Teil der Community, verbinde dich jetzt!</h2>
-	<p i18n>Zusammen mit der Community baust du dir dein persönliches Kochnetzwerk auf.</p>
-	<login></login>
+	<div class="header">
+		<img src="../../assets/logo.svg">
+		<span i18n>rudl</span>
+	</div>
+	<!--<h2 i18n>Leute kennenlernen</h2>-->
+	<!--<p i18n>Rudl weiß, was zu tun ist. Bla bla bla bla bla.</p>-->
+	<!--<login></login>-->
 </section>
 <section class="background">
-	<h1 i18n><!--TODO: Text-->
-		<span>Eine neue Stadt besucht und abends gab es einheimisches Essen. Check!</span>
-		Bei Rudl kommen Menschen, die nicht ständig Lust auf Restaurants haben, zusammen.
-	</h1>
+	<div>
+		<h1 i18n>
+			Eine neue Stadt besucht und gleich nette Leute getroffen. Check!
+		</h1>
+		<p>
+			Mit rudl einfach und entspannt die eigene Stadt kennenlernen, gleichgesinnte Menschen finden und die Freizeitgestaltung transparenter und einfach planbar gestalten. Komm mit ins Team, joine uns bald hier auf rudl.me :)
+		</p>
+		<styled-button (click)="openExternalLink('https://docs.google.com/forms/d/e/1FAIpQLSeMl5H65jBg67wuSBc38oKDHeqBZqhMRAyTrsIChV28K_3EqQ/viewform')" [text]="'Benachrichtigen lassen'"></styled-button>
+	</div>
+	<small class="legal">
+		<a [routerLink]="['/legal']" i18n>Impressum</a>
+	</small>
 </section>
+
