@@ -1,10 +1,10 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
-import {TabItem} from "./widgets/tab-menu.component";
-import {MenuItem} from "./widgets/dropdown-menu.component";
-import {UserService, UserStatus} from "../services/user.service";
+import {TabItem} from "./tab-menu.component";
+import {MenuItem} from "./dropdown-menu.component";
+import {UserService, UserStatus} from "../../services/user.service";
 import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
-import {SearchService, SearchState} from "../services/search.service";
+import {SearchService, SearchState} from "../../services/search.service";
 
 @Component({
     templateUrl: './navbar.component.html',
@@ -35,9 +35,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
             // Set menu items.
             this.menuItems = [
                 {
-                    icon: 'user-md',
-                    title: 'Profil',//TODO TRANSLATE
-                    link: this.router.createUrlTree(['/people', userStatus.user.username]),
+                    icon: 'list',
+                    title: 'Deine Listen',//TODO TRANSLATE
+                    link: this.router.createUrlTree(['/people', userStatus.user.username, 'lists']),
+                    notification: false
+                },
+                {
+                    icon: 'heartbeat',
+                    title: 'Deine Aktivitäten',//TODO TRANSLATE
+                    link: this.router.createUrlTree(['/people', userStatus.user.username, 'activities']),
                     notification: false
                 },
                 {

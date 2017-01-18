@@ -22,6 +22,14 @@ const appRoutes: Routes = [
         pathMatch: 'full'
     },
     {
+        path: 'sign_upp',
+        component: LandingPageComponent,
+        pathMatch: 'full',
+        data: {
+            login: true
+        }
+    },
+    {
         path: 'legal',
         component: LegalComponent
     },

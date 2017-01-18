@@ -1,6 +1,6 @@
 import {Component, ViewChild} from "@angular/core";
-import {UserService} from "../services/user.service";
-import {IndicatorComponent} from "./widgets/indicator.component";
+import {UserService} from "../../services/user.service";
+import {IndicatorComponent} from "./indicator.component";
 
 @Component({
     templateUrl: './login.component.html',

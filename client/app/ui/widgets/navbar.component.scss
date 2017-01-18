@@ -1,16 +1,22 @@
-@import './variables.scss';
+@import './../variables.scss';
 
 $header-background-color: #fff;
 $header-content-size: 2rem;
 $header-vertical-padding: map_get($base-padding, 'smaller');
+$header-vertical-padding-mobile: map_get($base-padding, 'smaller');
 $header-horizontal-padding: map_get($base-padding, 'default');
+$header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
 
 :host {
   display: flex;
   flex-direction: row;
   align-items: center;
   background-color: $header-background-color;
-  padding: $header-vertical-padding $header-horizontal-padding;
+  padding: $header-vertical-padding-mobile $header-horizontal-padding-mobile;
+
+  @include breakpoint('small') {
+    padding: $header-vertical-padding $header-horizontal-padding;
+  }
 
   .logo {
     display: flex;
@@ -21,21 +27,34 @@ $header-horizontal-padding: map_get($base-padding, 'default');
     img {
       width: $header-content-size;
       height: $header-content-size;
-      margin-right: map_get($base-padding, 'smaller');
+      margin-right: map_get($base-padding, 'small');
+
+      @include breakpoint('small') {
+        margin-right: map_get($base-padding, 'smaller');
+      }
     }
 
     span {
       font-family: $base-heading-font-family;
       font-weight: $base-heading-font-weight-normal;
-      font-size: $header-content-size;
+      font-size: $header-content-size * 0.75;
       color: map_get($base-colors, 'primary');
+
+      @include breakpoint('small') {
+        font-size: $header-content-size;
+      }
     }
   }
 
   .stretched {
     flex: 1 0 auto;
-    margin-right: map_get($base-padding, 'default');
-    margin-left: map_get($base-padding, 'default');
+    margin-right: map_get($base-padding, 'small');
+    margin-left: map_get($base-padding, 'small');
+
+    @include breakpoint('small') {
+      margin-right: map_get($base-padding, 'default');
+      margin-left: map_get($base-padding, 'default');
+    }
   }
 
   dropdown-menu {

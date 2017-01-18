@@ -13,9 +13,13 @@ $tab-menu-font-size: map_get($base-font-size, 'default');
 
     & > * {
       padding: map_get($base-padding, 'small');
-      margin-right: map_get($base-padding, 'default');
       color: inactive(map_get($base-colors, 'primary-text'));
       cursor: pointer;
+      margin-right: map_get($base-padding, 'small');
+
+      @include breakpoint('small') {
+        margin-right: map_get($base-padding, 'smaller');
+      }
 
       &:last-child {
         margin-right: 0;
@@ -27,13 +31,21 @@ $tab-menu-font-size: map_get($base-font-size, 'default');
       }
 
       span {
+        display: none;
         font-size: $tab-menu-font-size;
+
+        @include breakpoint('small') {
+          display: inline-block;
+        }
       }
 
       i {
-        margin-right: map_get($base-padding, 'small');
         font-size: $tab-menu-font-size * 1.125;
         position: relative;
+
+        @include breakpoint('small') {
+          margin-right: map_get($base-padding, 'small');
+        }
       }
 
       &.notification i:after {

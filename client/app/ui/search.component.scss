@@ -16,6 +16,8 @@
     }
 
     li {
+      cursor: pointer;
+
       .title {
         color: map_get($base-colors, 'secondary');
         font-size: map_get($base-font-size, 'large');

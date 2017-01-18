@@ -20,6 +20,8 @@
 			<checkbox [checked]="false"></checkbox>
 			<span>{{list.name}}</span>
 		</li>
+		<span *ngIf="!lists" i18n>Lädt</span>
+		<span *ngIf="lists && lists.length == 0" i18n>Du hast noch keine Liste</span>
 	</ul>
 </div>
 <modal #modal>

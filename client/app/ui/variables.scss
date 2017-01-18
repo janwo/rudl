@@ -61,15 +61,20 @@ $base-breakpoints: (
   'small': 40rem
 );
 
-@mixin breakpoint($breakpoint) {
-  $value: map-get($base-breakpoints, $breakpoint);
-  @if $value != null {
-    @media (min-width: $value) {
-      @content;
-    }
+@mixin breakpoint($min-breakpoint: null, $max-breakpoint: null) {
+  $min-breakpoint: map-get($base-breakpoints, $min-breakpoint);
+  $max-breakpoint: map_get($base-breakpoints, $max-breakpoint);
+  $query: "all";
+
+  @if $min-breakpoint != null and $max-breakpoint != null {
+    $query: "(min-width: #{$min-breakpoint}) and (max-width: #{$max-breakpoint})";
+  } @else if $min-breakpoint != null {
+    $query: "(min-width: #{$min-breakpoint})";
+  } @else if $max-breakpoint != null {
+    $query: "(max-width: #{$max-breakpoint})";
   }
-  @else {
-    @warn "Unfortunately, no value could be retrieved from `#{$breakpoint}`. "
-      + "Please make sure it is defined in `$breakpoints` map.";
+
+  @media #{$query} {
+    @content;
   }
 }
