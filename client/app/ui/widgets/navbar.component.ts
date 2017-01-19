@@ -1,10 +1,11 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import {TabItem} from "./widgets/tab-menu.component";
-import {MenuItem} from "./widgets/dropdown-menu.component";
-import {UserService, UserStatus} from "../services/user.service";
-import {Router} from "@angular/router";
+import {Component, OnDestroy, OnInit, ViewChild} from "@angular/core";
+import {TabItem} from "./tab-menu.component";
+import {MenuItem} from "./dropdown-menu.component";
+import {UserService, UserStatus} from "../../services/user.service";
+import {Router, ActivatedRoute, NavigationEnd} from "@angular/router";
 import {Subscription} from "rxjs";
-import {SearchService, SearchState} from "../services/search.service";
+import {SearchService, SearchState} from "../../services/search.service";
+import {SearchBarComponent} from "./search-bar.component";
 
 @Component({
     templateUrl: './navbar.component.html',
@@ -16,9 +17,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
     userStatus: UserStatus;
     authenticatedUserSubscription : Subscription;
     onSearchModeChangedSubscription : Subscription;
+    onSaveLastLocationSubscription : Subscription;
     tabItems: {[key: string]: TabItem};
-    menuItems : Array<MenuItem>;
+    menuItems: MenuItem[];
+    lastUrl: string[] = ['/'];
     inSearchMode: boolean = false;
+    @ViewChild('searchBar') searchBar: SearchBarComponent;
     
     constructor(
         private router: Router,
@@ -35,9 +39,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
             // Set menu items.
             this.menuItems = [
                 {
-                    icon: 'user-md',
-                    title: 'Profil',//TODO TRANSLATE
-                    link: this.router.createUrlTree(['/people', userStatus.user.username]),
+                    icon: 'list',
+                    title: 'Deine Listen',//TODO TRANSLATE
+                    link: this.router.createUrlTree(['/people', userStatus.user.username, 'lists']),
+                    notification: false
+                },
+                {
+                    icon: 'heartbeat',
+                    title: 'Deine Aktivitäten',//TODO TRANSLATE
+                    link: this.router.createUrlTree(['/people', userStatus.user.username, 'activities']),
                     notification: false
                 },
                 {
@@ -73,26 +83,30 @@ export class NavbarComponent implements OnInit, OnDestroy {
                     title: 'Leute',
                     link: this.router.createUrlTree(['/people']),
                     notification: false
+                },
+                search: {
+                    icon: 'search',
+                    title: 'Suche',
+                    link: this.router.createUrlTree(['/search']),
+                    notification: false
                 }
             };
         });
         
         // React to any search mode changes.
-        this.onSearchModeChangedSubscription = this.searchService.onStateChanged.subscribe((state: SearchState) => {
+        this.onSearchModeChangedSubscription = this.searchService.onSearchEvent.map(event => event.state).distinctUntilChanged().subscribe((state: SearchState) => {
             this.inSearchMode = state == SearchState.OPENED;
         });
+        
+        // Save last non search location.
+        this.onSaveLastLocationSubscription = this.router.events.filter(event => {
+            return event instanceof NavigationEnd && !this.router.isActive(this.router.createUrlTree(['/search']), false);
+        }).map(event => event.url).subscribe(url => this.lastUrl = [ url ]);
     }
     
     ngOnDestroy(): void {
         this.onSearchModeChangedSubscription.unsubscribe();
         this.authenticatedUserSubscription.unsubscribe();
-    }
-    
-    enterSearchMode(): void {
-        this.searchService.start();
-    }
-    
-    leaveSearchMode(): void {
-        this.searchService.cancel();
+        this.onSaveLastLocationSubscription.unsubscribe();
     }
 }

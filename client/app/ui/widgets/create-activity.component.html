@@ -1,0 +1,20 @@
+<h1 i18n>{{name}} erstellen</h1>
+<ul>
+	<li *ngFor="let language of languages">
+		<button>
+			<ng-container *ngIf="language == 'de'" i18n>Deutsch</ng-container>
+			<ng-container *ngIf="language == 'en'" i18n>Englisch</ng-container>
+			<ng-container *ngIf="language == 'es'" i18n>Spanisch</ng-container>
+			<ng-container *ngIf="language == 'fr'" i18n>Französisch</ng-container>
+		</button>
+		<input (change)="translations[language] = $event.target.value">
+	</li>
+	<li (click)="addLanguage()">
+		Add Language
+	</li>
+</ul>
+<select #select (change)="changedLanguage(select.value)">
+	<option value="de">Deutsch</option>
+	<option value="en">Englisch</option>
+</select>
+<button (click)="submit(select.value)">Create</button>

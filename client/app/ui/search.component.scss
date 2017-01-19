@@ -16,6 +16,8 @@
     }
 
     li {
+      cursor: pointer;
+
       .title {
         color: map_get($base-colors, 'secondary');
         font-size: map_get($base-font-size, 'large');
@@ -25,8 +27,10 @@
         }
       }
 
-      &.create .title {
-        color: map_get($base-colors, 'secondary-text');
+      &.create {
+        .title {
+          color: map_get($base-colors, 'secondary-text');
+        }
       }
     }
   }

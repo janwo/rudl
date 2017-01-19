@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy, ViewChild, Input, ElementRef, AfterViewInit} from "@angular/core";
-import {UserService} from "../services/user.service";
+import {UserService} from "../../services/user.service";
 import {Router} from "@angular/router";
-import {Locale} from "../models/locale";
+import {Locale} from "../../models/locale";
 
 @Component({
     templateUrl: './create-list.component.html',

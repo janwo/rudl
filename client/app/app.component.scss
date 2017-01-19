@@ -59,6 +59,20 @@
     display: none !important;
   }
 
+  @each $name, $value in $base-breakpoints {
+    @include breakpoint(null, $name) {
+      /deep/ .hide-max-#{$name} {
+        display: none;
+      }
+    }
+
+    @include breakpoint(null, $value) {
+      /deep/ .hide-min-#{$name} {
+        display: none;
+      }
+    }
+  }
+
   // Define default card.
   /deep/ .card {
     padding: map_get($base-padding, 'small');

@@ -22,6 +22,14 @@ const appRoutes: Routes = [
         pathMatch: 'full'
     },
     {
+        path: 'sign_upp',
+        component: LandingPageComponent,
+        pathMatch: 'full',
+        data: {
+            login: true
+        }
+    },
+    {
         path: 'legal',
         component: LegalComponent
     },
@@ -42,6 +50,7 @@ const appRoutes: Routes = [
             { path: 'people/:username', component: RedirectComponent , data: { redirect: ['./activity'] }, pathMatch: 'full' },
             { path: 'people/:username/:tab', component: ProfileComponent },
             { path: 'lists/:key', component: ListComponent },
+            { path: 'search', redirectTo: 'search/', pathMatch: 'full' },
             { path: 'search/:query', component: SearchComponent },
             { path: 'activities/:key', component: ActivityComponent },
             { path: 'settings', redirectTo: 'settings/account', pathMatch: 'full' },

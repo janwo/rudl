@@ -44,8 +44,8 @@ export class DropdownMenuComponent implements OnDestroy, OnInit {
             if(this.activeMenuItem && this.activeMenuItem.link == menuItem.link) return;
             this.router.navigateByUrl(menuItem.link);
         }
+        
         if(menuItem.click) menuItem.click.call();
-        this.animationState = false;
     }
     
     ngOnInit() {

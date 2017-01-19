@@ -1,7 +1,7 @@
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 import {AppComponent} from "./app.component";
-import {LoginComponent} from "./ui/login.component";
+import {LoginComponent} from "./ui/widgets/login.component";
 import {ExploreComponent} from "./ui/explore.component";
 import {LandingPageComponent} from "./ui/landing-page.component";
 import {DashboardComponent} from "./ui/dashboard.component";
@@ -15,7 +15,7 @@ import {routing, appRoutingProviders} from "./app.routes";
 import {FormsModule} from "@angular/forms";
 import {UserService} from "./services/user.service";
 import {IndicatorComponent} from "./ui/widgets/indicator.component";
-import {NavbarComponent} from "./ui/navbar.component";
+import {NavbarComponent} from "./ui/widgets/navbar.component";
 import {DropdownMenuComponent} from "./ui/widgets/dropdown-menu.component";
 import {TabMenuComponent} from "./ui/widgets/tab-menu.component";
 import {PeopleComponent} from "./ui/people.component";
@@ -42,8 +42,8 @@ import {HistoryComponent} from "./ui/history.component";
 import {QuestionComponent} from "./ui/widgets/question.component";
 import {SearchBarComponent} from "./ui/widgets/search-bar.component";
 import {SearchService} from "./services/search.service";
-import {CreateActivityComponent} from "./ui/create-activity.component";
-import {CreateListComponent} from "./ui/create-list.component";
+import {CreateActivityComponent} from "./ui/widgets/create-activity.component";
+import {CreateListComponent} from "./ui/widgets/create-list.component";
 import {CheckboxComponent} from "./ui/widgets/checkbox.component";
 import {LegalComponent} from "./ui/legal.component";
 

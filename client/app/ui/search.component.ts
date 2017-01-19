@@ -24,6 +24,7 @@ export class SearchComponent implements OnDestroy, OnInit {
 	private collapsedUsers = true;
 	private querySubscription: Subscription;
 	private searchValue: string = null;
+	expanded: boolean = false;
 	
 	constructor(
 		private userService: UserService,
@@ -33,7 +34,7 @@ export class SearchComponent implements OnDestroy, OnInit {
 	
 	ngOnInit(): void {
 		// Register for query changes.
-		this.querySubscription = this.searchService.onQueryChangedDebounced.do(query => {
+		this.querySubscription = this.searchService.onQueryChangedDebounced.do(() => {
 			this.searchValue = null;
 			this.activities = null;
 			this.lists = null;
@@ -53,17 +54,11 @@ export class SearchComponent implements OnDestroy, OnInit {
 		});
 		
 		// Get current route on startup and call search service to search for query or just open search.
-		this.activatedRoute.params.map(params => params['query']).first().forEach(query => {
-			if(query) {
-				this.searchService.search(query);
-				return;
-			}
-			
-			this.searchService.start();
-		});
+		this.activatedRoute.params.map(params => params['query']).forEach(query => this.searchService.search(query));
 	}
 	
 	ngOnDestroy(): void {
+		this.searchService.cancel();
 		this.querySubscription.unsubscribe();
 	}
 }
