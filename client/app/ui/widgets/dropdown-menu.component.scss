@@ -6,9 +6,18 @@ $dropdown-menu-background-color: #fff;
 $dropdown-menu-arrow-center-right-offset: 1rem;
 
 :host {
+  .background {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+  }
+
   ul {
     position: relative;
-    z-index: 20;
+    z-index: 101;
     border: $dropdown-menu-border-size solid map_get($base-colors, 'primary');
     list-style: none;
     background: $dropdown-menu-background-color;
@@ -28,11 +37,7 @@ $dropdown-menu-arrow-center-right-offset: 1rem;
         flex: 1 0 auto;
       }
 
-      &.active {
-        cursor: default;
-      }
-
-      &:not(.active):hover {
+      &:hover {
         background-color: rgba(0, 0, 0, 0.05);
       }
     }

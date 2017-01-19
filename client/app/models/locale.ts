@@ -1,7 +1,14 @@
 export module Locale {
-	export type Translations = {[key: string]: string};//TODO Change to language in further ts versions
+	export type Translations = {[key: string]: string}; //TODO Change to language in further ts versions
 	
 	export type Language = 'de' | 'en' | 'es' | 'fr';
+	
+	export const languages = [
+		'de',
+	    'en',
+	    'es',
+	    'fr'
+	];
 	
 	export function getBestTranslation(translations: Translations, knownLanguages: Array<Language>): string {
 		let translationLanguages = Object.keys(translations) as Array<Language>;

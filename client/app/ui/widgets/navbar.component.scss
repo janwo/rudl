@@ -12,48 +12,89 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
   flex-direction: row;
   align-items: center;
   background-color: $header-background-color;
-  padding: $header-vertical-padding-mobile $header-horizontal-padding-mobile;
+  padding-left: $header-horizontal-padding-mobile;
+  padding-right: $header-horizontal-padding-mobile;
+  height: $header-vertical-padding-mobile * 2 + $header-content-size;
 
   @include breakpoint('small') {
-    padding: $header-vertical-padding $header-horizontal-padding;
+    padding-left: $header-horizontal-padding;
+    padding-right: $header-horizontal-padding;
+    height: $header-vertical-padding-mobile * 2 + $header-content-size;
   }
 
   .logo {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    flex: 0 0 auto;
+    width: $header-content-size;
+    height: $header-content-size;
+  }
 
-    img {
-      width: $header-content-size;
-      height: $header-content-size;
-      margin-right: map_get($base-padding, 'small');
+  .name {
+    font-family: $base-heading-font-family;
+    font-weight: $base-heading-font-weight-normal;
+    font-size: $header-content-size * 0.75;
+    color: map_get($base-colors, 'primary');
+    margin-left: map_get($base-padding, 'small');
 
-      @include breakpoint('small') {
-        margin-right: map_get($base-padding, 'smaller');
-      }
-    }
-
-    span {
-      font-family: $base-heading-font-family;
-      font-weight: $base-heading-font-weight-normal;
-      font-size: $header-content-size * 0.75;
-      color: map_get($base-colors, 'primary');
-
-      @include breakpoint('small') {
-        font-size: $header-content-size;
-      }
+    @include breakpoint('small') {
+      margin-left: map_get($base-padding, 'smaller');
+      font-size: $header-content-size;
     }
   }
 
   .stretched {
-    flex: 1 0 auto;
+    display: flex;
+    align-items: stretch;
+    flex: 1 1 auto;
+    align-self: stretch;
     margin-right: map_get($base-padding, 'small');
     margin-left: map_get($base-padding, 'small');
+    position: relative;
+    overflow: hidden;
 
     @include breakpoint('small') {
       margin-right: map_get($base-padding, 'default');
       margin-left: map_get($base-padding, 'default');
+    }
+
+    & > * {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 0;
+
+      &.active {
+        z-index: 1;
+      }
+    }
+
+    .search {
+      transform: translateY( - $header-content-size);
+      transition: transform 0.3s, opacity 0.3s;
+      opacity: 0;
+
+      &.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      search-bar {
+        flex: 1 1 auto;
+      }
+    }
+
+    .menu {
+      transition: transform 0.3s, opacity 0.3s;
+      transform: translateY( $header-content-size);
+      opacity: 0;
+
+      &.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   }
 

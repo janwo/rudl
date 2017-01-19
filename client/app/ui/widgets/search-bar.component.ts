@@ -1,5 +1,5 @@
 import {
-	Component, ViewChild, ElementRef, OnInit, OnDestroy, Input
+	Component, ViewChild, ElementRef, OnInit, OnDestroy
 } from "@angular/core";
 import {Subscription} from "rxjs";
 import {SearchService, SearchState} from "../../services/search.service";
@@ -11,9 +11,9 @@ import {SearchService, SearchState} from "../../services/search.service";
 })
 export class SearchBarComponent implements OnInit, OnDestroy{
 	
+	private onSearchStateChangedSubscription: Subscription;
 	private onQueryChangedSubscription: Subscription;
 	@ViewChild('searchInput') searchInput: ElementRef;
-	@Input() autoFocus: boolean = false;
 	
 	constructor(
 		private searchService: SearchService
@@ -21,30 +21,24 @@ export class SearchBarComponent implements OnInit, OnDestroy{
 	
 	ngOnInit(): void {
 		// Receive any values from search service.
-		this.onQueryChangedSubscription = this.searchService.onQueryChanged.subscribe(value => {
-			this.searchInput.nativeElement.value = value;
+		this.onSearchStateChangedSubscription = this.searchService.onSearchEvent.distinctUntilChanged((x, y) => x.state === y.state).subscribe(event => {
+			if(event.state == SearchState.OPENED) this.searchInput.nativeElement.focus();
 		});
 		
-		// Autofocus?
-		if(this.autoFocus) this.focus();
+		this.onQueryChangedSubscription = this.searchService.onSearchEvent.distinctUntilChanged((x, y) => x.query === y.query).subscribe(event => {
+			if(this.searchInput.nativeElement.value != event.query) this.searchInput.nativeElement.value = event.query;
+		});
 	}
 	
 	ngOnDestroy(): void {
 		this.onQueryChangedSubscription.unsubscribe();
+		this.onSearchStateChangedSubscription.unsubscribe();
 	}
 	
 	onKey(event: any) {
 		// Blur element, as soon as user is pressing enter key.
-		this.submit(event.keyCode == 13);
-	}
-	
-	submit(blur: boolean = false){
 		let element = this.searchInput.nativeElement;
-		if(blur) element.blur();
+		if(event.keyCode == 13) element.blur();
 		this.searchService.search(element.value);
-	}
-	
-	focus(): void {
-		this.searchInput.nativeElement.focus();
 	}
 }

@@ -3,19 +3,24 @@
 $tab-menu-font-size: map_get($base-font-size, 'default');
 
 :host {
-  display: block;
+  display: flex;
+  align-items: stretch;
 
   ul {
     width: 100%;
     list-style: none;
     display: flex;
+    align-items: stretch;
     justify-content: center;
 
     & > * {
-      padding: map_get($base-padding, 'small');
+      padding-right: map_get($base-padding, 'small');
+      padding-left: map_get($base-padding, 'small');
       color: inactive(map_get($base-colors, 'primary-text'));
       cursor: pointer;
       margin-right: map_get($base-padding, 'small');
+      display: flex;
+      align-items: center;
 
       @include breakpoint('small') {
         margin-right: map_get($base-padding, 'smaller');
@@ -40,7 +45,7 @@ $tab-menu-font-size: map_get($base-font-size, 'default');
       }
 
       i {
-        font-size: $tab-menu-font-size * 1.125;
+        font-size: $tab-menu-font-size;
         position: relative;
 
         @include breakpoint('small') {

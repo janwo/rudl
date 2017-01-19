@@ -2,11 +2,10 @@
 
 $search-bar-font-size: map_get($base-font-size, 'large');
 $search-bar-height: map_get($base-padding, 'small') * 2 + map_get($base-font-size, 'default');
-$search-bar-font-padding-vertical: ($search-bar-height - map_get($base-font-size, 'large')) / 2;
+$search-bar-font-padding-vertical: ($search-bar-height - $search-bar-font-size) / 2;
 
 :host {
-  display: flex;
-  flex-direction: column;
+  display: block;
 
   input {
     display: block;
@@ -14,7 +13,7 @@ $search-bar-font-padding-vertical: ($search-bar-height - map_get($base-font-size
     font-family: $base-heading-font-family;
     font-size: map_get($base-font-size, 'large');
     margin: 0;
-    flex: 1 1;
+    width: 100%;
     color: map_get($base-colors, 'primary');
     border: 0;
     outline: none;

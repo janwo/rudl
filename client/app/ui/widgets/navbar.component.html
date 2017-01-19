@@ -1,15 +1,11 @@
-<div class="logo">
-	<img src="../../../assets/logo.svg">
-	<span i18n [ngClass]="{'hide-max-small': inSearchMode}">rudl</span>
+<img class="logo" src="../../../assets/logo.svg">
+<span class="name hide-max-small" i18n>rudl</span>
+<div class="stretched">
+	<div class="search" [ngClass]="{active: inSearchMode}">
+		<search-bar #searchBar></search-bar>
+		<button class="fa fa-close" [routerLink]="lastUrl"></button>
+	</div>
+	<tab-menu class="menu" [ngClass]="{active: !inSearchMode}" [(tabItems)]="tabItems"></tab-menu>
 </div>
-<ng-container *ngIf="inSearchMode">
-	<search-bar class="stretched" [autoFocus]="true" #searchBar></search-bar>
-	<button class="fa fa-search" (click)="searchBar.submit(true)"></button>
-	<button class="fa fa-close" (click)="leaveSearchMode()"></button>
-</ng-container>
-<ng-container *ngIf="!inSearchMode">
-	<tab-menu class="stretched" [(tabItems)]="tabItems"></tab-menu>
-	<button class="fa fa-search" (click)="enterSearchMode()"></button>
-	<dropdown-menu [(menuItems)]="menuItems" #dropdownMenu></dropdown-menu>
-	<avatar [user]="userStatus.user" (click)="dropdownMenu.toggle()"></avatar>
-</ng-container>
+<dropdown-menu [(menuItems)]="menuItems" #dropdownMenu></dropdown-menu>
+<avatar [user]="userStatus.user" (click)="dropdownMenu.toggle()"></avatar>

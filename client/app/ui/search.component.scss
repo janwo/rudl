@@ -27,8 +27,10 @@
         }
       }
 
-      &.create .title {
-        color: map_get($base-colors, 'secondary-text');
+      &.create {
+        .title {
+          color: map_get($base-colors, 'secondary-text');
+        }
       }
     }
   }
