@@ -38,7 +38,12 @@ export const RoutesConfig: RoutesConfiguration = [
 		handler: function (request, reply) {
 			reply.view('index', {
 				title: 'Welcome',
-				assets: AssetsPool.getAssets()
+				assets: AssetsPool.getAssets(),
+				metas: {
+					'theme-color':  Config.frontend.themeColor,
+					'msapplication-navbutton-color': Config.frontend.themeColor,
+					'apple-mobile-web-app-status-bar-style': Config.frontend.themeColor
+				}
 			});
 		},
 		config: {

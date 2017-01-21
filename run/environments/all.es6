@@ -96,7 +96,8 @@ export default {
 					}
 				}
 			]
-		}
+		},
+		themeColor: '#50E3C2'
 	},
 	backend: {
 		host: process.env.BACKEND_SERVER_HOST || 'localhost',
