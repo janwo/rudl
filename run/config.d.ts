@@ -31,7 +31,8 @@ export const Config : {
 				
 				plugins: Array<any>,
 			}
-		}
+		},
+		themeColor: string
 	},
 	backend: {
 		host: string,
