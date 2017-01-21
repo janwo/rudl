@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import {Component, Input, Output, EventEmitter} from "@angular/core";
 
 @Component({
     templateUrl: './styled-button.component.html',
@@ -10,12 +10,23 @@ export class StyledButtonComponent {
     @Input() text: string = null;
     @Input() fa: string = null;
     @Input() link: string = null;
+    @Input() flag: string = null;
     @Input() disabled: boolean = false;
     @Input() style: ButtonStyles = ButtonStyles.default;
+    @Output() click: EventEmitter<Event> = new EventEmitter();
 
     public onClick(event: Event) {
-        if (!this.link) return;
         event.stopPropagation();
+        event.preventDefault();
+        
+        // Respect event?
+        if(this.disabled) return;
+        
+        // Fire event.
+        this.click.emit(event);
+        
+        // Route to new location.
+        if (!this.link) return;
         window.open(this.link);
     }
 

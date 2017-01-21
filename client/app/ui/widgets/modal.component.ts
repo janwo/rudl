@@ -6,7 +6,7 @@ import {Component, trigger, transition, style, animate} from "@angular/core";
 	selector: 'modal',
 	animations: [
 		trigger('background', [
-			transition('void => *', [
+			transition(':enter', [
 				style({
 					opacity: 0
 				}),
@@ -14,7 +14,7 @@ import {Component, trigger, transition, style, animate} from "@angular/core";
 					opacity: 1
 				}))
 			]),
-			transition('* => void', [
+			transition(':leave', [
 				style({
 					opacity: 1
 				}),
@@ -24,7 +24,7 @@ import {Component, trigger, transition, style, animate} from "@angular/core";
 			])
 		]),
 		trigger('modal', [
-			transition('void => *', [
+			transition(':enter', [
 				style({
 					opacity: 0,
 					transform: 'translateY(4rem)'
@@ -34,7 +34,7 @@ import {Component, trigger, transition, style, animate} from "@angular/core";
 					transform: 'translateY(0rem)'
 				}))
 			]),
-			transition('* => void', [
+			transition(':leave', [
 				style({
 					opacity: 1,
 					transform: 'translateY(0rem)'
@@ -49,13 +49,13 @@ import {Component, trigger, transition, style, animate} from "@angular/core";
 })
 export class ModalComponent {
 	
-	private visible: boolean = false;
+	private isVisible: boolean = false;
 
 	open(){
-		this.visible = true;
+		this.isVisible = true;
 	}
 	
 	close() {
-		this.visible = false;
+		this.isVisible = false;
 	}
 }

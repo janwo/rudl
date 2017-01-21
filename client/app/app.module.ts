@@ -46,6 +46,7 @@ import {CreateActivityComponent} from "./ui/widgets/create-activity.component";
 import {CreateListComponent} from "./ui/widgets/create-list.component";
 import {CheckboxComponent} from "./ui/widgets/checkbox.component";
 import {LegalComponent} from "./ui/legal.component";
+import {TranslationListComponent} from "./ui/widgets/translation-list.component";
 
 @NgModule({
     declarations: [
@@ -89,7 +90,8 @@ import {LegalComponent} from "./ui/legal.component";
 	    SearchBarComponent,
 	    LegalComponent,
 	    ProfileComponent,
-        FullScreenOverlayComponent
+        FullScreenOverlayComponent,
+        TranslationListComponent
     ],
     providers: [
 	    UserService,

@@ -43,12 +43,9 @@
 
   // Set headings.
   @each $heading, $size in $base-heading-font-size {
-    $letter-spacing: -1em / 40;
-
     /deep/ #{$heading} {
       font-family: 'Fredoka One', sans-serif;
       font-weight: $base-font-weight-normal;
-      letter-spacing: $letter-spacing;
       margin-bottom: $size;
       font-size: $size;
     }
@@ -66,7 +63,7 @@
       }
     }
 
-    @include breakpoint(null, $value) {
+    @include breakpoint($name, null) {
       /deep/ .hide-min-#{$name} {
         display: none;
       }

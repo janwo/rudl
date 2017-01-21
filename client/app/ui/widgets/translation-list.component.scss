@@ -1,0 +1,28 @@
+@import './../variables.scss';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 15rem;
+
+  ul {
+    li {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      input-field {
+        flex: 1 1 auto;
+      }
+
+      styled-button {
+        flex: 0 1 auto;
+      }
+
+      *:not(:last-child){
+        margin-right: map_get($base-padding, 'small');
+      }
+    }
+  }
+}

@@ -1,52 +1,41 @@
-import {Component, OnInit, OnDestroy, ViewChild, Input, ElementRef, AfterViewInit} from "@angular/core";
+import {
+    Component, OnInit, OnDestroy, ViewChild, Input, ElementRef, AfterViewInit, Output,
+    EventEmitter, trigger, transition, style, animate
+} from "@angular/core";
 import {UserService} from "../../services/user.service";
 import {Router} from "@angular/router";
 import {Locale} from "../../models/locale";
 import Language = Locale.Language;
+import {ButtonStyles} from "./styled-button.component";
+import Translations = Locale.Translations;
 
 @Component({
     templateUrl: './create-activity.component.html',
     styleUrls: ['./create-activity.component.scss'],
     selector: 'create-activity'
 })
-export class CreateActivityComponent implements AfterViewInit, OnInit, OnDestroy {
+export class CreateActivityComponent {
     
-    @Input() name: string;
+    @Input() defaultName: string;
+    @Output() onCanceled: EventEmitter<any> = new EventEmitter();
     translations: Locale.Translations = {};
-    languages: Language[] = [];
-    @ViewChild('select') select: ElementRef;
+    buttonStyle: ButtonStyles = ButtonStyles.uncolored;
     
     constructor(
         private userService: UserService,
         private router: Router
     ) {}
     
-    ngOnInit(){
-        // Add default language.
-        this.addLanguage();
+    setTranslations(translations: Translations) {
+        this.translations = translations;
     }
     
-    addLanguage(): void {
-        let newLanguage: Language = this.languages.length == 0 ? this.userService.getAuthenticatedUser().user.languages[0] : 'en';//TODO
-        this.translations[newLanguage] = this.name;
-        this.languages.push(newLanguage);
+    cancel() {
+        this.onCanceled.emit();
     }
     
-    ngOnDestroy(){
-       
-    }
-    
-    ngAfterViewInit(): void {
-    }
-    
-    changedLanguage(language: string) {
-        console.log(language);
-    }
-    
-    submit(language: string) {
-        let translations : Locale.Translations = {};
-        translations[language] = this.name;
-        this.userService.createActivity(translations).subscribe(activity => {
+    submit() {
+        this.userService.createActivity(this.translations).subscribe(activity => {
             this.router.navigate(['/activities', activity.id]);
         })
     }

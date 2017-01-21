@@ -15,21 +15,39 @@
       display: none;
     }
 
-    li {
-      cursor: pointer;
+    .create {
+      overflow: hidden;
+      transition: padding 0.3s;
 
       .title {
-        color: map_get($base-colors, 'secondary');
+        display: block;
+        cursor: pointer;
+        color: map_get($base-colors, 'secondary-text');
         font-size: map_get($base-font-size, 'large');
+        transition: color 0.3s, font-size 0.3s, margin 0.3s;
+        margin-bottom: 0;
 
-        /deep/ .highlight {
+        .highlight {
           color: map_get($base-colors, 'primary');
+
+          &:after,
+          &:before {
+            color: map_get($base-colors, 'secondary-text');
+            content: '"';
+          }
         }
       }
 
-      &.create {
+      &.expanded {
+        padding: map_get($base-padding, 'default');
+
         .title {
-          color: map_get($base-colors, 'secondary-text');
+          cursor: default;
+          font-weight: $base-heading-font-weight-normal;
+          font-family: $base-heading-font-family;
+          color: map_get($base-colors, 'primary-text');
+          margin-bottom: map_get($base-heading-font-size, 'h1');
+          font-size: map_get($base-heading-font-size, 'h1');
         }
       }
     }

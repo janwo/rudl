@@ -23,7 +23,7 @@ export class FullScreenOverlayService {
 	selector: 'fullscreen-overlay',
 	animations: [
 		trigger('backgroundVisibility', [
-			transition('void => *', [
+			transition(':enter', [
 				style({
 					opacity: 0
 				}),
@@ -31,7 +31,7 @@ export class FullScreenOverlayService {
 					opacity: 1
 				}))
 			]),
-			transition('* => void', [
+			transition(':leave', [
 				style({
 					opacity: 1
 				}),
@@ -41,7 +41,7 @@ export class FullScreenOverlayService {
 			])
 		]),
 		trigger('contentVisibility', [
-			transition('void => *', [
+			transition(':enter', [
 				style({
 					opacity: 0,
 					transform: 'translateY(4rem)'
@@ -51,7 +51,7 @@ export class FullScreenOverlayService {
 					transform: 'translateY(0rem)'
 				}))
 			]),
-			transition('* => void', [
+			transition(':leave', [
 				style({
 					opacity: 1,
 					transform: 'translateY(0rem)'

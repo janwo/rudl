@@ -1,7 +1,7 @@
 @import './../variables.scss';
 
-$input-field-label-font-size: map_get($base-font-size, 'default') * 0.95;
-$input-field-input-font-size: map_get($base-font-size, 'default') * 1.05;
+$input-field-label-font-size: map_get($base-font-size, 'small');
+$input-field-input-font-size: map_get($base-font-size, 'default');
 $input-field-border-size: 0.1rem;
 $input-field-border-radius: 0.25rem;
 $input-field-input-padding: $input-field-input-font-size / 1.5; // --> 1 / 1.5 = 0.666
@@ -17,6 +17,7 @@ $input-field-colors: (
   label {
     font-size: $input-field-label-font-size;
     display: inline-block;
+    margin-bottom: map_get($base-padding, 'small');
 
     /deep/ .bold {
       font-weight: $base-font-weight-bold;
@@ -26,7 +27,6 @@ $input-field-colors: (
   input {
     width: 100%;
     display: inline-block;
-    margin-top: map_get($base-padding, 'small');
     line-height: 1;
     padding: $input-field-input-padding;
     font-size: $input-field-input-font-size;

@@ -1,5 +1,5 @@
-<div class="background" [@background]="visible" *ngIf="visible" (click)="close()"></div>
-<div class="modal-wrapper" [@modal]="visible" *ngIf="visible">
+<div class="background" [@background] *ngIf="isVisible" (click)="close()"></div>
+<div class="modal-wrapper" [@modal] *ngIf="isVisible">
 	<div class="modal">
 		<button class="close fa fa-close" (click)="close()"></button>
 		<ng-content></ng-content>
