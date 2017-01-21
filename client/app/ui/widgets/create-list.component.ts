@@ -1,42 +1,42 @@
-import {Component, OnInit, OnDestroy, ViewChild, Input, ElementRef, AfterViewInit} from "@angular/core";
+import {
+    Component, OnInit, OnDestroy, ViewChild, Input, ElementRef, AfterViewInit, Output,
+    EventEmitter, trigger, transition, style, animate
+} from "@angular/core";
 import {UserService} from "../../services/user.service";
 import {Router} from "@angular/router";
 import {Locale} from "../../models/locale";
+import Language = Locale.Language;
+import {ButtonStyles} from "./styled-button.component";
+import Translations = Locale.Translations;
 
 @Component({
     templateUrl: './create-list.component.html',
     styleUrls: ['./create-list.component.scss'],
     selector: 'create-list'
 })
-export class CreateListComponent implements AfterViewInit, OnInit, OnDestroy {
+export class CreateListComponent {
     
-    @Input() name: string;
-    @ViewChild('select') select: ElementRef;
+    @Input() defaultName: string;
+    @Output() onCanceled: EventEmitter<any> = new EventEmitter();
+    translations: Locale.Translations = {};
+    buttonStyle: ButtonStyles = ButtonStyles.uncolored;
     
     constructor(
         private userService: UserService,
         private router: Router
     ) {}
     
-    ngOnInit(){
+    setTranslations(translations: Translations) {
+        this.translations = translations;
     }
     
-    ngOnDestroy(){
-       
+    cancel() {
+        this.onCanceled.emit();
     }
     
-    ngAfterViewInit(): void {
-    }
-    
-    changedLanguage(language: string) {
-        console.log(language);
-    }
-    
-    submit(language: string) {
-        let translations : Locale.Translations = {};
-        translations[language] = this.name;
-        this.userService.createList(translations).subscribe(activity => {
-            this.router.navigate(['/lists', activity.id]);
+    submit() {
+        this.userService.createList(this.translations).subscribe(list => {
+            this.router.navigate(['/lists', list.id]);
         })
     }
 }

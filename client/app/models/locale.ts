@@ -3,7 +3,7 @@ export module Locale {
 	
 	export type Language = 'de' | 'en' | 'es' | 'fr';
 	
-	export const languages = [
+	export const languages: Language[] = [
 		'de',
 	    'en',
 	    'es',

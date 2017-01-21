@@ -8,14 +8,14 @@ import { Subscription } from 'rxjs/Subscription';
     selector: 'dropdown-menu',
     animations: [
         trigger('openClose', [
-            transition('void => opened', [
+            transition(':enter', [
                 style({
                     transform: 'translateY(-1rem)',
                     opacity: 0
                 }),
                 animate(100)
             ]),
-            transition('opened => void', [
+            transition(':leave', [
                 animate(100, style({
                     transform: 'translateY(-1rem)',
                     opacity: 0
@@ -24,41 +24,18 @@ import { Subscription } from 'rxjs/Subscription';
         ])
     ]
 })
-export class DropdownMenuComponent implements OnDestroy, OnInit {
+export class DropdownMenuComponent {
     
     @Input() menuItems : Array<MenuItem> = [];
-    animationState : string | boolean = false;
-    routerChanges : Subscription;
-    activeMenuItem: MenuItem = null;
-    
-    ngOnDestroy(){
-        this.routerChanges.unsubscribe();
-    }
+    isVisible : boolean = false;
     
     toggle() : void {
-        this.animationState = this.animationState ? false : 'opened';
+        this.isVisible = !this.isVisible;
     }
     
     onClick(menuItem: MenuItem) {
-        if(menuItem.link) {
-            if(this.activeMenuItem && this.activeMenuItem.link == menuItem.link) return;
-            this.router.navigateByUrl(menuItem.link);
-        }
-        
         if(menuItem.click) menuItem.click.call();
-    }
-    
-    ngOnInit() {
-        this.routerChanges = this.router.events.filter(value => value instanceof NavigationEnd).subscribe((route: NavigationEnd) => {
-            this.activeMenuItem = null;
-            this.menuItems.every((menuItem: MenuItem) => {
-               if (!menuItem.link || !this.router.isActive(menuItem.link, true)) return true;
-                
-                this.activeMenuItem = menuItem;
-                menuItem.notification = false;
-                return false;
-            });
-        });
+        if(menuItem.link) this.router.navigateByUrl(menuItem.link);
     }
     
     constructor(
@@ -67,9 +44,8 @@ export class DropdownMenuComponent implements OnDestroy, OnInit {
 }
 
 export interface MenuItem {
-    icon: string,
-    notification: boolean,
+    icon?: string,
     title: string,
-    link?: UrlTree,
     click?: any
+    link?: UrlTree
 }

@@ -1,5 +1,5 @@
 import {
-	Component, OnDestroy, OnInit, ViewChild, ElementRef, EventEmitter, Input
+	Component, OnDestroy, OnInit, ViewChild, ElementRef, EventEmitter, Input, trigger, transition, style, animate, state
 } from "@angular/core";
 import {Subject, Observable, Subscription} from "rxjs";
 import {UserService} from "../services/user.service";
@@ -12,19 +12,34 @@ import {ActivatedRoute} from "@angular/router";
 @Component({
 	templateUrl: './search.component.html',
 	styleUrls: ['./search.component.scss'],
-	selector: 'search'
+	selector: 'search',
+	animations: [
+		trigger('container', [
+			state('true', style({
+				height: '*',
+				opacity: 1
+			})),
+			state('false', style({
+				height: 0,
+				opacity: 0
+			})),
+			transition('1 => 0', animate('300ms')),
+			transition('0 => 1', animate('300ms'))
+		])
+	]
 })
 export class SearchComponent implements OnDestroy, OnInit {
 	
 	private activities: Activity[] = null;
-	private collapsedActivities = true;
+	private collapsedActivities: boolean = true;
+	private expandedActivityCreation: boolean = false;
 	private lists: List[] = null;
-	private collapsedLists = true;
+	private collapsedLists: boolean = true;
+	private expandedListCreation: boolean = false;
 	private users: User[] = null;
-	private collapsedUsers = true;
+	private collapsedUsers: boolean = true;
 	private querySubscription: Subscription;
 	private searchValue: string = null;
-	expanded: boolean = false;
 	
 	constructor(
 		private userService: UserService,

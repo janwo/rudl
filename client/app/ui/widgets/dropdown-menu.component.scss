@@ -6,6 +6,8 @@ $dropdown-menu-background-color: #fff;
 $dropdown-menu-arrow-center-right-offset: 1rem;
 
 :host {
+  position: absolute;
+
   .background {
     position: fixed;
     top: 0;

@@ -41,26 +41,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
                 {
                     icon: 'list',
                     title: 'Deine Listen',//TODO TRANSLATE
-                    link: this.router.createUrlTree(['/people', userStatus.user.username, 'lists']),
-                    notification: false
+                    link: this.router.createUrlTree(['/people', userStatus.user.username, 'lists'])
                 },
                 {
                     icon: 'heartbeat',
                     title: 'Deine Aktivitäten',//TODO TRANSLATE
-                    link: this.router.createUrlTree(['/people', userStatus.user.username, 'activities']),
-                    notification: false
+                    link: this.router.createUrlTree(['/people', userStatus.user.username, 'activities'])
                 },
                 {
                     icon: 'cog',
                     title: 'Einstellungen',
-                    link: this.router.createUrlTree(['/settings']),
-                    notification: false
+                    link: this.router.createUrlTree(['/settings'])
                 },
                 {
                     icon: 'sign-out',
                     title: 'Abmelden',
-                    click: () => this.userService.signOut(),
-                    notification: false
+                    click: () => this.userService.signOut()
                 }
             ];
             

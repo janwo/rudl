@@ -1,0 +1,9 @@
+<ul>
+	<li class="translation" *ngFor="let takenLanguage of takenLanguages" [@row]>
+		<dropdown-menu #menu [menuItems]="buildMenuItems(takenLanguage)"></dropdown-menu>
+		<styled-button [disabled]="availableLanguages.length == 0" [style]="buttonStyle" (click)="menu.toggle()" [flag]="takenLanguage"></styled-button>
+		<input-field [value]="translations[takenLanguage]" (change)="setTranslationText(takenLanguage, $event.target.value)"></input-field>
+		<styled-button *ngIf="takenLanguages.length > 1" [fa]="'trash-o'" [style]="buttonStyle" (click)="deleteLanguage(takenLanguage)"></styled-button>
+	</li>
+</ul>
+<styled-button class="add-button" [disabled]="availableLanguages.length == 0" (click)="addLanguage()" [style]="buttonStyle" [text]="'Add Language'"></styled-button><!--TODO i18n-->

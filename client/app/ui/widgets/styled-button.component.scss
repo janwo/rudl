@@ -1,6 +1,7 @@
 @import './../variables.scss';
 
 $button-font-size: 0.95rem;
+$button-border-size: 0.1rem;
 $button-border-radius: 0.25rem;
 $button-padding: $button-font-size / 1.5; // --> 1 / 1.5 = 0.666
 $button-colors: (
@@ -23,13 +24,15 @@ $button-colors: (
 
 :host {
   display: inline-block;
+  margin-top: map_get($base-padding, 'small');
+  margin-bottom: map_get($base-padding, 'small');
+  pointer-events: none;
 
   button {
+    pointer-events: auto;
     line-height: 1;
     transition: box-shadow 0.25s;
     cursor: pointer;
-    margin-top: map_get($base-padding, 'small');
-    margin-bottom: map_get($base-padding, 'small');
     border-radius: $button-border-radius;
     font-size: $button-font-size;
     padding: $button-padding $button-padding * 1.5;
@@ -48,8 +51,10 @@ $button-colors: (
         color: map_get($button-colors, 'minimal-inactive-color');
       }
 
-      &:active span {
-        transform: scale(0.95);
+      &:not([disabled]) {
+        &:active span {
+          transform: scale(0.95);
+        }
       }
     }
 
@@ -63,8 +68,10 @@ $button-colors: (
         background-color: map_get($button-colors, 'minimal-inverse-inactive-background-color');
       }
 
-      &:active span {
-        transform: scale(0.95);
+      &:not([disabled]) {
+        &:active span {
+          transform: scale(0.95);
+        }
       }
     }
 
@@ -74,12 +81,14 @@ $button-colors: (
       background-color: map_get($button-colors, 'default-background');
       box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.15);
 
-      &:hover {
-        box-shadow: 0.05rem 0.05rem 0.2rem rgba(0, 0, 0, 0.25);
-      }
+      &:not([disabled]) {
+        &:hover {
+          box-shadow: 0.05rem 0.05rem 0.2rem rgba(0, 0, 0, 0.25);
+        }
 
-      &:active {
-        box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.125);
+        &:active {
+          box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.125);
+        }
       }
 
       &[disabled] {
@@ -94,12 +103,14 @@ $button-colors: (
       background-color: map_get($button-colors, 'uncolored-background');
       box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.15);
 
-      &:hover {
-        box-shadow: 0.05rem 0.05rem 0.2rem rgba(0, 0, 0, 0.25);
-      }
+      &:not([disabled]) {
+        &:hover {
+          box-shadow: 0.05rem 0.05rem 0.2rem rgba(0, 0, 0, 0.25);
+        }
 
-      &:active {
-        box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.125);
+        &:active {
+          box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.125);
+        }
       }
 
       &[disabled] {
@@ -109,10 +120,7 @@ $button-colors: (
 
     &:focus {
       outline: none;
-    }
-
-    &[disabled] {
-      cursor: default;
+      border: transparentize(map_get($base-colors, 'secondary'), 0.5) $button-border-size solid;
     }
 
     .fa {
@@ -120,6 +128,20 @@ $button-colors: (
 
       &:not(:only-child) {
         margin-right: map_get($base-padding, 'small');
+      }
+    }
+
+    .flag {
+      width: $button-font-size;
+      height: $button-font-size;
+      border-radius: 50%;
+    }
+
+    &[disabled] {
+      cursor: default;
+
+      .flag {
+        opacity: 0.5;
       }
     }
   }

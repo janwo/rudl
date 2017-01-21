@@ -1,20 +1,12 @@
-<h1 i18n>{{name}} erstellen</h1>
-<ul>
-	<li *ngFor="let language of languages">
-		<button>
-			<ng-container *ngIf="language == 'de'" i18n>Deutsch</ng-container>
-			<ng-container *ngIf="language == 'en'" i18n>Englisch</ng-container>
-			<ng-container *ngIf="language == 'es'" i18n>Spanisch</ng-container>
-			<ng-container *ngIf="language == 'fr'" i18n>Französisch</ng-container>
-		</button>
-		<input (change)="translations[language] = $event.target.value">
-	</li>
-	<li (click)="addLanguage()">
-		Add Language
-	</li>
-</ul>
-<select #select (change)="changedLanguage(select.value)">
-	<option value="de">Deutsch</option>
-	<option value="en">Englisch</option>
-</select>
-<button (click)="submit(select.value)">Create</button>
+<div class="translations">
+	<translation-list [defaultText]="defaultName" (onTranslationChanged)="setTranslations($event)"></translation-list>
+	<div class="info">
+		<h2 class="hide-max-small">Erhöhe deine Reichweite!</h2>
+		<p class="hide-max-small">Durch das hinzufügen weiterer Sprachen kannst du die Reichweite deiner Aktivität ganz einfach erhöhen! Probiere es doch jetzt einfach mal aus.</p>
+		<p class="hide-min-small"><b>Tipp:</b> Erhöhe deine Reichweite durch Hinzufügen weiterer Sprachen!</p>
+	</div>
+</div>
+<div class="buttons">
+	<styled-button (click)="submit()" [text]="'Create'"></styled-button>
+	<styled-button (click)="cancel()" [style]="buttonStyle" [text]="'Abbrechen'"></styled-button>
+</div>

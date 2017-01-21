@@ -99,7 +99,6 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
   }
 
   dropdown-menu {
-    position: absolute;
     top: $header-content-size + $header-vertical-padding * 2;
     right: $header-horizontal-padding;
   }
