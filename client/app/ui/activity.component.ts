@@ -6,6 +6,7 @@ import {Activity} from "../models/activity";
 import {ButtonStyles} from "./widgets/styled-button.component";
 import {ModalComponent} from "./widgets/modal.component";
 import {List} from "../models/list";
+import {MenuItem} from "./widgets/dropdown-menu.component";
 
 @Component({
     templateUrl: './activity.component.html',
@@ -13,43 +14,15 @@ import {List} from "../models/list";
 })
 export class ActivityComponent implements OnInit, OnDestroy {
     
-    // Set menu items.
-    menuItems = [
-        {
-            icon: 'cog',
-            title: 'Profil',
-            notification: false
-        },
-        {
-            icon: 'cog',
-            title: 'Einstellungen',
-            notification: false
-        },
-        {
-            icon: 'sign-out',
-            title: 'Abmelden',
-            notification: false
-        },
-        {
-            icon: 'sign-out',
-            title: 'Abmelden',
-            notification: false
-        },
-        {
-            icon: 'sign-out',
-            title: 'Abmelden',
-            notification: false
-        }
-    ];
-    
     activity: Activity;
-    lists: List[];
+    listsMenuItems: MenuItem[];
     activitySubscription: Subscription;
     pendingFollowRequest: boolean = false;
     buttonStyleDefault: ButtonStyles = ButtonStyles.minimal;
     buttonStyleActivated: ButtonStyles = ButtonStyles.minimalInverse;
     showUserLists: boolean = false;
     @ViewChild(ModalComponent) unfollowModal: ModalComponent;
+    
     modalChoices = [{
         buttonStyle: ButtonStyles.default,
         text: 'Abbrechen',
@@ -105,7 +78,12 @@ export class ActivityComponent implements OnInit, OnDestroy {
     toggleUserLists(): void {
         this.showUserLists = !this.showUserLists;
         this.userService.listsOfUser(null, true).subscribe((lists: List[]) => {
-            this.lists = lists;
+            this.listsMenuItems = lists.map(list => {
+                return {
+                    title: list.name,
+                    icon: list.relations.isFollowed ? 'check' : 'close'
+                };
+            });
         });
     }
 }
