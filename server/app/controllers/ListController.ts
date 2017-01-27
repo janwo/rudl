@@ -242,7 +242,7 @@ export module ListController {
 		 */
 		export function createList(request: any, reply: any): void {
 			// Create promise.
-			let activities = request.payload.activitiesOfList || [];
+			let activities = request.payload.activities || [];
 			let promise: Promise<List> = ListController.createList(request.auth.credentials, request.payload.translations).then(list => {
 				activities = activities.map(activity => {
 					return ActivityController.findByKey(activity).then(activity => {
@@ -274,7 +274,7 @@ export module ListController {
 		}
 		
 		/**
-		 * Handles [GET] /api/lists/=/{key}/activities/{offset?}
+		 * Handles [GET] /api/lists/=/{key}/activities/{filter?}/{offset?}/{limit?}'
 		 * @param request Request-Object
 		 * @param request.params.key list
 		 * @param request.params.offset offset (optional, default=0)
@@ -287,8 +287,9 @@ export module ListController {
 				if(list) return ListController.getActivities(list);
 				return [];
 			}).then((activities: Activity[]) => {
-				//TODO offset
-				return ActivityController.getPublicActivity(activities.slice(request.params.offset, request.params.offset + 30), request.auth.credentials);
+				return activities.slice(request.params.offset, request.params.limit > 0 ? request.params.offset + request.params.limit : activities.length);
+			}).then((activities: Activity[]) => {
+				return ActivityController.getPublicActivity(activities, request.auth.credentials);
 			});
 			
 			reply.api(promise);

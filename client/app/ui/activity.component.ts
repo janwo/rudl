@@ -7,6 +7,8 @@ import {ButtonStyles} from "./widgets/styled-button.component";
 import {ModalComponent} from "./widgets/modal.component";
 import {List} from "../models/list";
 import {MenuItem} from "./widgets/dropdown-menu.component";
+import {ActivityService} from "../services/activity.service";
+import {ListService} from "../services/list.service";
 
 @Component({
     templateUrl: './activity.component.html',
@@ -37,7 +39,8 @@ export class ActivityComponent implements OnInit, OnDestroy {
     }];
     
     constructor(
-        private userService: UserService,
+        private activityService: ActivityService,
+        private listService: ListService,
         private route: ActivatedRoute
     ) {}
     
@@ -47,7 +50,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
             // Get selected tab.
             let key = params['key'];
             
-            this.activitySubscription = this.userService.getActivity(key).subscribe(activity => this.activity = activity);
+            this.activitySubscription = this.activityService.get(key).subscribe(activity => this.activity = activity);
         });
     }
     
@@ -62,7 +65,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
         }
         
         this.pendingFollowRequest = true;
-        let obs = this.activity.relations.isFollowed ? this.userService.unfollowActivity(this.activity.id) : this.userService.followActivity(this.activity.id);
+        let obs = this.activity.relations.isFollowed ? this.activityService.unfollow(this.activity) : this.activityService.follow(this.activity);
         obs.do((updatedActivity: Activity) => {
             this.activity = updatedActivity;
             this.pendingFollowRequest = false;
@@ -70,14 +73,14 @@ export class ActivityComponent implements OnInit, OnDestroy {
     }
     
     addToList(activity: Activity, list: List) {
-        this.userService.addActivityToList(activity, list).subscribe(() => {
+        this.listService.addActivity(activity, list).subscribe(() => {
             
         });
     }
     
     toggleUserLists(): void {
         this.showUserLists = !this.showUserLists;
-        this.userService.listsOfUser(null, true).subscribe((lists: List[]) => {
+        this.listService.by(null, true).subscribe((lists: List[]) => {
             this.listsMenuItems = lists.map(list => {
                 return {
                     title: list.name,

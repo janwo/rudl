@@ -64,7 +64,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/lists/=/{key}/activities/{offset?}',
+		path: '/api/lists/=/{key}/activities/{filter?}/{offset?}/{limit?}',
 		method: 'GET',
 		handler: ListController.RouteHandlers.getActivities,
 		config: {
@@ -76,7 +76,9 @@ export const RoutesConfig: RoutesConfiguration = [
 			validate: {
 				params: {
 					key: Joi.string(),
-					offset: Joi.number().min(0).default(0)
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().min(0).default(0),
+					filter: Joi.string().allow('all', 'owned', 'followed').default('all')
 				}
 			}
 		}

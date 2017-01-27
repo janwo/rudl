@@ -16,6 +16,8 @@ import {UserRatedActivity} from "../models/activities/UserRatedActivity";
 import {UserFollowsActivity} from "../models/activities/UserFollowsActivity";
 import {Translations} from "../models/Translations";
 import {UserOwnsActivity} from "../models/activities/UserOwnsActivity";
+import {List} from "../models/lists/List";
+import {ListController} from "./ListController";
 
 export module ActivityController {
 	
@@ -234,6 +236,15 @@ export module ActivityController {
 		});
 	}
 	
+	export function getLists(activity: Activity) : Promise<List[]>{
+		let aqlQuery = `FOR list IN INBOUND @activityId @@edges RETURN list`;
+		let aqlParams = {
+			'@edges': DatabaseManager.arangoCollections.listIsItem.name,
+			activityId: activity._id
+		};
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Activity[]>;
+	}
+	
 	//TODO Ownership
 	
 	export namespace RouteHandlers {
@@ -271,6 +282,22 @@ export module ActivityController {
 		}
 		
 		/**
+		 * Handles [GET] /api/activities/=/{key}/lists/{filter?}/{offset?}/{limit?}
+		 * @param request Request-Object
+		 * @param request.params.key key
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function getLists(request: any, reply: any): void {
+			// Create promise.
+			let promise : Promise<Activity> = ActivityController.findByKey(request.params.key).then((activity: Activity) => ActivityController.getLists(activity)).then((lists: List[]) => {
+				return lists.slice(request.params.offset, request.params.limit > 0 ? request.params.offset + request.params.limit : lists.length);
+			}).then((lists: List[]) => ListController.getPublicList(lists, request.auth.credentials));
+			
+			reply.api(promise);
+		}
+		
+		/**
 		 * Handles [GET] /api/activities/=/{key}
 		 * @param request Request-Object
 		 * @param request.params.key key
@@ -278,10 +305,8 @@ export module ActivityController {
 		 * @param reply Reply-Object
 		 */
 		export function getActivity(request: any, reply: any): void {
-			let paramKey = encodeURIComponent(request.params.key);
-			
 			// Create promise.
-			let promise : Promise<Activity> = ActivityController.findByKey(paramKey).then((activity: Activity) => ActivityController.getPublicActivity(activity, request.auth.credentials));
+			let promise : Promise<Activity> = ActivityController.findByKey(request.params.key).then((activity: Activity) => ActivityController.getPublicActivity(activity, request.auth.credentials));
 			
 			reply.api(promise);
 		}

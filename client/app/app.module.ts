@@ -47,6 +47,8 @@ import {CreateListComponent} from "./ui/widgets/create-list.component";
 import {CheckboxComponent} from "./ui/widgets/checkbox.component";
 import {LegalComponent} from "./ui/legal.component";
 import {TranslationListComponent} from "./ui/widgets/translation-list.component";
+import {ActivityService} from "./services/activity.service";
+import {ListService} from "./services/list.service";
 
 @NgModule({
     declarations: [
@@ -96,6 +98,8 @@ import {TranslationListComponent} from "./ui/widgets/translation-list.component"
     providers: [
 	    UserService,
 	    SearchService,
+	    ActivityService,
+	    ListService,
 	    DataService,
 	    AppGuard,
 	    appRoutingProviders

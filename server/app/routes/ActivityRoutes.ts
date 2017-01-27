@@ -45,6 +45,26 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
+		path: '/api/activities/=/{key}/lists/{filter?}/{offset?}/{limit?}',
+		method: 'GET',
+		handler: ActivityController.RouteHandlers.getLists,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					key: Joi.string(),
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().min(0).default(0),
+					filter: Joi.string().allow('all', 'owned', 'followed').default('all')
+				}
+			}
+		}
+	},
+	{
 		path: '/api/activities/set-rating',
 		method: 'POST',
 		handler: ActivityController.RouteHandlers.setRating,
