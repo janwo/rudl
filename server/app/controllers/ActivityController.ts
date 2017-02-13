@@ -236,13 +236,20 @@ export module ActivityController {
 		});
 	}
 	
-	export function getLists(activity: Activity) : Promise<List[]>{
-		let aqlQuery = `FOR list IN INBOUND @activityId @@edges RETURN list`;
+	export function getLists(activity: Activity, follower: User = null, ownsOnly: boolean = false) : Promise<List[]>{
+		let aqlQuery = `FOR list IN INBOUND @activityId @@listIsItem RETURN list`;
 		let aqlParams = {
-			'@edges': DatabaseManager.arangoCollections.listIsItem.name,
+			'@listIsItem': DatabaseManager.arangoCollections.listIsItem.name,
 			activityId: activity._id
 		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Activity[]>;
+		
+		if(follower) {
+			aqlQuery = `FOR list IN INTERSECTION((FOR list IN OUTBOUND @userId @@followerEdge RETURN list), (FOR list IN INBOUND @activityId @@listIsItem RETURN list)) SORT list._id DESC RETURN list`;
+			aqlParams['userId'] = follower._id;
+			aqlParams['@followerEdge'] = ownsOnly ? DatabaseManager.arangoCollections.userOwnsList.name : DatabaseManager.arangoCollections.userFollowsList.name;
+		}
+		
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<List[]>;
 	}
 	
 	//TODO Ownership
@@ -285,13 +292,29 @@ export module ActivityController {
 		 * Handles [GET] /api/activities/=/{key}/lists/{filter?}/{offset?}/{limit?}
 		 * @param request Request-Object
 		 * @param request.params.key key
+		 * @param request.params.filter all, followed, owned
+		 * @param request.params.interval? array of [offset, limit?] (optional, default=[0])
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
 		export function getLists(request: any, reply: any): void {
 			// Create promise.
-			let promise : Promise<Activity> = ActivityController.findByKey(request.params.key).then((activity: Activity) => ActivityController.getLists(activity)).then((lists: List[]) => {
-				return lists.slice(request.params.offset, request.params.limit > 0 ? request.params.offset + request.params.limit : lists.length);
+			let promise : Promise<any> = ActivityController.findByKey(request.params.key).then((activity: Activity) => {
+				if(!activity) return Promise.reject(Boom.badRequest('Activity does not exist!'));
+				
+				switch (request.params.filter) {
+					default:
+					case 'all':
+						return ActivityController.getLists(activity);
+					
+					case 'followed':
+						return ActivityController.getLists(activity, request.auth.credentials);
+					
+					case 'owned':
+						return ActivityController.getLists(activity, request.auth.credentials, true);
+				}
+			}).then((lists: List[]) => {
+				return lists.slice(request.params.interval[0], request.params.interval[1] > 0 ? request.params.interval[0] + request.params.interval[1] : lists.length);
 			}).then((lists: List[]) => ListController.getPublicList(lists, request.auth.credentials));
 			
 			reply.api(promise);

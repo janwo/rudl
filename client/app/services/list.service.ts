@@ -24,30 +24,37 @@ export class ListService {
         }).share();
     }
     
-    addActivity(activity: Activity, list: List): Observable<void> {
+    addActivity(activity: string, list: string): Observable<void> {
         return this.dataService.post(`/api/lists/add-activity`, `${JSON.stringify({
-            activity: activity.id,
-            list: list.id
+            activity: activity,
+            list: list
         })}`, true).map((json: JsonResponse) => {});
     }
     
-    create(translations: Translations, activities: Activity[] = []): Observable<List> {
+    deleteActivity(activity: string, list: string): Observable<void> {
+        return this.dataService.post(`/api/lists/delete-activity`, `${JSON.stringify({
+            activity: activity,
+            list: list
+        })}`, true).map((json: JsonResponse) => {});
+    }
+    
+    create(translations: Translations, activities: string[] = []): Observable<List> {
         return this.dataService.post(`/api/lists/create`, `${JSON.stringify({
             translations: translations,
             activities: activities
         })}`, true).map((json: JsonResponse) => json.data as List);
     }
     
-    follow(list: List): Observable<List> {
-        return this.dataService.post(`/api/lists/follow/${list.id}`, null, true).map((json: JsonResponse) => json.data as List).share();
+    follow(list: string): Observable<List> {
+        return this.dataService.post(`/api/lists/follow/${list}`, null, true).map((json: JsonResponse) => json.data as List).share();
     }
     
-    unfollow(list: List): Observable<List> {
-        return this.dataService.post(`/api/lists/unfollow/${list.id}`, null, true).map((json: JsonResponse) => json.data as List).share();
+    unfollow(list: string): Observable<List> {
+        return this.dataService.post(`/api/lists/unfollow/${list}`, null, true).map((json: JsonResponse) => json.data as List).share();
     }
     
-    activities(list: List): Observable<Activity[]> {
-        return this.dataService.get(`/api/lists/=/${list.id}/activities`, true).map((json: JsonResponse) => {
+    activities(list: string, filter: 'all' | 'owned' | 'followed' = 'all', offset: number = 0, limit: number = 0): Observable<Activity[]> {
+        return this.dataService.get(`/api/lists/=/${list}/activities/${filter}/[${offset},${limit}]`, true).map((json: JsonResponse) => {
             return json.data.map((activity: Activity) => {
                 activity.name = Locale.getBestTranslation(activity.translations, this.userService.getAuthenticatedUser().user.languages);
                 return activity;

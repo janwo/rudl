@@ -67,7 +67,7 @@ export class ListComponent implements OnInit, OnDestroy {
         }
         
         this.pendingFollowRequest = true;
-        let obs = this.list.relations.isFollowed ? this.listService.unfollow(this.list) : this.listService.follow(this.list);
+        let obs = this.list.relations.isFollowed ? this.listService.unfollow(this.list.id) : this.listService.follow(this.list.id);
         obs.do((updatedList: List) => {
             this.list = updatedList;
             this.pendingFollowRequest = false;

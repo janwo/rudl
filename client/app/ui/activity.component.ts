@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy, ViewChild} from "@angular/core";
 import {UserService} from "../services/user.service";
-import {Subscription} from "rxjs";
+import {Subscription, Observable} from "rxjs";
 import {ActivatedRoute, Params} from "@angular/router";
 import {Activity} from "../models/activity";
 import {ButtonStyles} from "./widgets/styled-button.component";
@@ -19,6 +19,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
     activity: Activity;
     listsMenuItems: MenuItem[];
     activitySubscription: Subscription;
+    listMenuItemsObservable: Observable<MenuItem[]>;
     pendingFollowRequest: boolean = false;
     buttonStyleDefault: ButtonStyles = ButtonStyles.minimal;
     buttonStyleActivated: ButtonStyles = ButtonStyles.minimalInverse;
@@ -50,8 +51,29 @@ export class ActivityComponent implements OnInit, OnDestroy {
             // Get selected tab.
             let key = params['key'];
             
+            // Create activity subscription.
             this.activitySubscription = this.activityService.get(key).subscribe(activity => this.activity = activity);
+    
+            // Create "add to list"-button observable.
+            this.listMenuItemsObservable = Observable.zip(
+                this.listService.by(null, true),
+                this.activityService.lists(key, 'owned').map((lists: List[]) => lists.map((list: List) => list.id))
+            ).map((lists: [List[], string[]]) => {
+                let allLists = lists[0];
+                let ownedLists = lists[1];
+                
+                return allLists.map(list => {
+                    let owned = ownedLists.indexOf(list.id) >= 0;
+                    
+                    return {
+                        title: list.name,
+                        icon: owned ? 'check' : 'close',//TODO aktualsiieren
+                        click: () => owned ? this.listService.deleteActivity(this.activity.id, list.id).subscribe(()=>{}) : this.listService.addActivity(this.activity.id, list.id).subscribe(()=>{})
+                    };
+                }) as MenuItem[];
+            }).share();
         });
+        
     }
     
     ngOnDestroy(){
@@ -65,28 +87,15 @@ export class ActivityComponent implements OnInit, OnDestroy {
         }
         
         this.pendingFollowRequest = true;
-        let obs = this.activity.relations.isFollowed ? this.activityService.unfollow(this.activity) : this.activityService.follow(this.activity);
+        let obs = this.activity.relations.isFollowed ? this.activityService.unfollow(this.activity.id) : this.activityService.follow(this.activity.id);
         obs.do((updatedActivity: Activity) => {
             this.activity = updatedActivity;
             this.pendingFollowRequest = false;
         }).subscribe();
     }
     
-    addToList(activity: Activity, list: List) {
-        this.listService.addActivity(activity, list).subscribe(() => {
-            
-        });
-    }
-    
     toggleUserLists(): void {
         this.showUserLists = !this.showUserLists;
-        this.listService.by(null, true).subscribe((lists: List[]) => {
-            this.listsMenuItems = lists.map(list => {
-                return {
-                    title: list.name,
-                    icon: list.relations.isFollowed ? 'check' : 'close'
-                };
-            });
-        });
+        this.listMenuItemsObservable.subscribe((items: MenuItem[]) => this.listsMenuItems = items);
     }
 }

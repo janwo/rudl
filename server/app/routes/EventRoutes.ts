@@ -10,7 +10,7 @@ import {TranslationsValidation} from "../models/Translations";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
-		path: '/api/activities/like/{query}/{offset?}',
+		path: '/api/events/like/{query}/{offset?}',
 		method: 'GET',
 		handler: ActivityController.RouteHandlers.getActivitiesLike,
 		config: {
@@ -28,7 +28,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/activities/=/{key}',
+		path: '/api/events/=/{key}',
 		method: 'GET',
 		handler: ActivityController.RouteHandlers.getActivity,
 		config: {
@@ -45,7 +45,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/activities/=/{key}/lists/{filter}/{interval?}',
+		path: '/api/events/=/{key}/lists/{filter}/{interval?}',
 		method: 'GET',
 		handler: ActivityController.RouteHandlers.getLists,
 		config: {
@@ -64,7 +64,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/activities/set-rating',
+		path: '/api/events/set-rating',
 		method: 'POST',
 		handler: ActivityController.RouteHandlers.setRating,
 		config: {
@@ -82,7 +82,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/activities/create',
+		path: '/api/events/create',
 		method: 'POST',
 		handler: ActivityController.RouteHandlers.createActivity,
 		config: {
