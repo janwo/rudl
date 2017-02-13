@@ -51,7 +51,10 @@ export const Config : {
 			salt: string,
 		},
 		uploads: {
-			dir: string;
+			paths: {
+				root: string;
+				avatars: string;
+			},
 			maxUploadBytes: number,
 		},
 		log: {

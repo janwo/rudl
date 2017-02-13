@@ -90,6 +90,23 @@ export function hapiServer(): Promise<Hapi.Server>{
 		// Connect to database + create collections.
 		return DatabaseManager.connect().then(() => DatabaseManager.createArangoData());
 	}).then(() => {
+		let dirs = [];
+		
+		// Get all dirs of uploads.
+		Object.keys(Config.backend.uploads.paths).forEach(key => dirs.push(Config.backend.uploads.paths[key]));
+		
+		// Create dirs.
+		return new Promise((resolve, reject) => {
+			dirs.forEach(path => {
+				Fs.mkdir(path, err => {
+					if(err) reject(err);
+				});
+			});
+			
+			// Successfully created all directories.
+			resolve();
+		});
+	}).then(() => {
 		// Start server.
 		server.start(() => {
 			console.log(`Server is running...`);

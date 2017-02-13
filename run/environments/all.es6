@@ -129,7 +129,10 @@ export default {
 			}
 		},
 		uploads: {
-			dir: root('db/files/'),
+			paths: {
+				root: root( 'db/files' ),
+				avatars: root( 'db/files/avatars' )
+			},
 			maxUploadBytes: 2097152
 		},
 		log: {
