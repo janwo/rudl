@@ -217,7 +217,7 @@ export module AccountController {
 					let medium = fs.createWriteStream(path.resolve(uploadDir, user._key + '-medium'));
 					let large = fs.createWriteStream(path.resolve(uploadDir, user._key + '-large'));
 					
-					let transformations = new sharp(undefined, undefined);//TODO use update sharp.d.ts as soon as available
+					let transformations = sharp();
 					transformations.clone().resize(100, 100).max().crop(sharp.strategy.entropy).toFormat('png').pipe(small).on('error', reject);
 					transformations.clone().resize(450, 450).max().crop(sharp.strategy.entropy).toFormat('png').pipe(medium).on('error', reject);
 					transformations.clone().resize(800, 800).max().crop(sharp.strategy.entropy).toFormat('png').pipe(large).on('error', reject);
