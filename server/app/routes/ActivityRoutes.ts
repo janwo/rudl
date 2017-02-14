@@ -1,4 +1,4 @@
-import {UserRoles} from "../models/users/User";
+import {UserRoles, UserValidation} from "../models/users/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import Joi = require('joi');
 import BasicStrategy = require("../strategies/BasicStrategy");
@@ -8,7 +8,26 @@ import GoogleStrategy = require("../strategies/GoogleStrategy");
 import {ActivityController} from "../controllers/ActivityController";
 import {TranslationsValidation} from "../models/Translations";
 
+const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.string().regex(/^me$/));
+
 export const RoutesConfig: RoutesConfiguration = [
+	{
+		path: '/api/activities/by/{username}',
+		method: 'GET',
+		handler: ActivityController.RouteHandlers.getActivitiesBy,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					username: UsernameValidation
+				}
+			}
+		}
+	},
 	{
 		path: '/api/activities/like/{query}/{offset?}',
 		method: 'GET',

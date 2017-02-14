@@ -1,16 +1,6 @@
 @import './../variables.scss';
 
 :host {
-  header {
-    .title {
-      margin-top: 0;
-    }
-
-    .close {
-
-    }
-  }
-
   .description {
     color: map_get($base-colors, 'secondary-text');
     line-height: map_get($base-line-height, 'multiline');

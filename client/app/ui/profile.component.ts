@@ -7,6 +7,8 @@ import {TabItem} from "./widgets/tab-menu.component";
 import {User} from "../models/user";
 import {List} from "../models/list";
 import {ListService} from "../services/list.service";
+import {ActivityService} from "../services/activity.service";
+import {Activity} from "../models/activity";
 
 @Component({
     templateUrl: './profile.component.html',
@@ -17,6 +19,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     @Input() currentTab: TabItem;
     
     user: User;
+    activities: Activity[] = [];
     lists: List[] = [];
     followers: User[] = [];
     followees: User[] = [];
@@ -31,10 +34,10 @@ export class ProfileComponent implements OnInit, OnDestroy {
     buttonStyleFollowing: ButtonStyles = ButtonStyles.minimalInverse;
     
     tabItems: {[key: string]: TabItem} = {
-        activity: {
-            icon: 'bell-o',
-            title: 'Verlauf',
-            link: this.router.createUrlTree(['../', 'activity'], {
+        activities: {
+            icon: 'heart-o',
+            title: 'Interessen',
+            link: this.router.createUrlTree(['../', 'activities'], {
                 relativeTo: this.route
             }),
             notification: false
@@ -69,7 +72,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private router: Router,
         private userService: UserService,
-        private listService: ListService
+        private listService: ListService,
+        private activityService: ActivityService
     ) {}
     
     ngOnInit(): void {
@@ -86,7 +90,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             // Tab specific resources.
             if(!this.userSubscription) this.userSubscription = this.userService.get(username).subscribe((user: User) => this.user = user);
             if(!this.userListsSubscription && this.currentTab == this.tabItems['lists']) this.userListsSubscription = this.listService.by(username).subscribe((lists: List[]) => this.lists = lists);
-            //if(!this.userActivitySubscription && this.currentTab == ProfileComponent.tabs['activity']) this.userActivitySubscription = this.userService.getUser(username).subscribe((user: User) => this.user = user);
+            if(!this.userActivitySubscription && this.currentTab == this.tabItems['activities']) this.userActivitySubscription = this.activityService.by(username).subscribe((activities: Activity[]) => this.activities = activities);
             if(!this.userFollowersSubscription && this.currentTab == this.tabItems['followers']) this.userFollowersSubscription = this.userService.followers(username).subscribe((followers: User[]) => this.followers = followers);
             if(!this.userFolloweesSubscription && this.currentTab == this.tabItems['followees']) this.userFolloweesSubscription = this.userService.followees(username).subscribe((followees: User[]) => this.followees = followees);
         });

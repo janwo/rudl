@@ -1,25 +1,39 @@
 @import './../variables.scss';
 
+$list-margin: map_get($base-padding, 'smaller');
+$list-breakpoint-two-columns: 40rem;
+
 :host {
-  $list-margin: map_get($base-padding, 'smaller');
-  $list-breakpoint-two-columns: 40rem;
-  $flex-offset: $list-margin * 2;
+  display: block;
 
   ul {
     list-style: none;
-    margin: - $list-margin;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
 
     & > /deep/ * {
-      flex: 0 0 calc(100% - #{$flex-offset});
-      margin: $list-margin;
+      flex: 0 0 100%;
     }
 
     &.two-columns > /deep/ * {
       @media screen and (min-width: $list-breakpoint-two-columns) {
-        flex: 0 0 calc(50% - #{$flex-offset});
+        flex: 0 0 50%;
+      }
+    }
+
+    &:not(.no-margins) {
+      margin: -$list-margin;
+
+      & > /deep/ * {
+        margin: $list-margin;
+        flex: 0 0 calc(100% - #{$list-margin * 2});
+      }
+
+      &.two-columns > /deep/ * {
+        @media screen and (min-width: $list-breakpoint-two-columns) {
+          flex: 0 0 calc(50% - #{$list-margin * 2});
+        }
       }
     }
   }

@@ -8,7 +8,7 @@ class StartupManager {
 	
 	static createTypescriptCompiler(watch = false, onExit = () => {}) {
 		let command = [
-			'tsc -p server -sourcemap'
+			'tsc -p ./server'
 		].concat(watch ? [
 			'-w'
 		] : []);

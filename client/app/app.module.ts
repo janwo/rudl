@@ -49,6 +49,7 @@ import {LegalComponent} from "./ui/legal.component";
 import {TranslationListComponent} from "./ui/widgets/translation-list.component";
 import {ActivityService} from "./services/activity.service";
 import {ListService} from "./services/list.service";
+import {AddToListComponent} from "./ui/widgets/add-to-list.component";
 
 @NgModule({
     declarations: [
@@ -73,6 +74,7 @@ import {ListService} from "./services/list.service";
 	    DashboardComponent,
 	    HistoryComponent,
 	    AvatarComponent,
+	    AddToListComponent,
 	    ExploreComponent,
 	    PeopleComponent,
 	    StackComponent,

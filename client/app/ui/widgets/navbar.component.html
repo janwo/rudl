@@ -8,4 +8,4 @@
 	<tab-menu class="menu" [ngClass]="{active: !inSearchMode}" [(tabItems)]="tabItems"></tab-menu>
 </div>
 <dropdown-menu [(menuItems)]="menuItems" #dropdownMenu></dropdown-menu>
-<avatar [user]="userStatus.user" (click)="dropdownMenu.toggle()"></avatar>
+<avatar *ngIf="userStatus.loggedIn" [user]="userStatus.user" (click)="dropdownMenu.toggle()"></avatar>

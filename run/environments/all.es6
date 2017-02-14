@@ -35,7 +35,7 @@ export default {
 							rules: [
 								{
 									test: /\.html$/,
-									loader: 'html-loader'
+									use: 'html-loader'
 								},
 								{
 									test: /\.scss$/,
@@ -54,24 +54,24 @@ export default {
 								},
 								{
 									test: /\.((woff2?|svg|ttf|eot|svg)(\?v=\d*\.\d*\.\d*))$/,
-									loader: 'file-loader?name=files/[name].[hash].[ext]'
+									use: 'file-loader?name=files/[name].[hash].[ext]'
 								},
 								{
 									test: /\.(png|jpe?g|gif|svg|woff2?|ttf|eot|ico)$/,
-									loader: 'file-loader?name=files/[name].[hash].[ext]'
+									use: 'file-loader?name=files/[name].[hash].[ext]'
 								},
 								{
 									test: /\.css$/,
 									exclude: root( 'client', 'app' ),
-									loader: ExtractTextPlugin.extract( {
-										fallbackLoader: "style-loader",
-										loader: "css-loader"
+									use: ExtractTextPlugin.extract( {
+										fallback: 'style-loader',
+										use: 'css-loader'
 									} )
 								},
 								{
 									test: /\.css$/,
 									include: root( 'client', 'app' ),
-									loader: 'raw-loader'
+									use: 'raw-loader'
 								}
 							]
 						},

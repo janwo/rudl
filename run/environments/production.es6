@@ -16,7 +16,7 @@ export default {
 							rules: [
 								{
 									test: /\.ts$/,
-									loader: '@ngtools/webpack'
+									use: '@ngtools/webpack'
 								}
 							]
 						},

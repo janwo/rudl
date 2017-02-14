@@ -15,13 +15,11 @@
 		<styled-button [style]="list.relations.isFollowed ? buttonStyleFollowing : buttonStyleDefault" (click)="onToggleFollow(true)" [disabled]="pendingFollowRequest" [text]="list.relations.isFollowed ? 'Following' : 'Follow'"></styled-button>
 	</div>
 </div>
-<div class="content" *ngIf="list">
-	<ul>
-		<li *ngFor="let activity of activities">
-			<activity-item [activity]="activity"></activity-item>
-		</li>
-	</ul>
-</div>
+<item-wrapper class="content" *ngIf="list" [twoColumnLayout]="true">
+	<li *ngFor="let activity of activities">
+		<activity-item [activity]="activity"></activity-item>
+	</li>
+</item-wrapper>
 <modal #modal>
 	<question [choices]="modalChoices" [title]="'Are you sure to unfollow list?'" [description]='"Du bist der Ersteller dieser Liste. Durch das Entfolgen geht die Liste in den Besitz eines anderen Followers über. Listen ohne andere Follower werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."'></question>
 </modal>

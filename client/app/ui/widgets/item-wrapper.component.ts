@@ -8,6 +8,7 @@ import {Component, Input} from "@angular/core";
 export class ItemWrapperComponent {
 	
 	@Input() twoColumnLayout: boolean;
+	@Input() noMargins: boolean = false;
 	
 	constructor() {}
 }

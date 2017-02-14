@@ -1,8 +1,8 @@
 @import './../variables.scss';
 
 $modal-background: rgba(0, 0, 0, 0.1);
-$modal-padding: map_get($base-padding, 'default');
-$modal-close-button-size: $modal-padding * 0.675;
+$modal-padding: map_get($base-padding, 'larger');
+$modal-close-button-size: $modal-padding * 0.5;
 
 :host {
 
@@ -13,6 +13,7 @@ $modal-close-button-size: $modal-padding * 0.675;
     right: 0;
     width: 100vw;
     height: 100vh;
+    z-index: 120;
   }
 
   .background {
@@ -32,8 +33,11 @@ $modal-close-button-size: $modal-padding * 0.675;
       border-radius: $base-border-radius;
       background-color: map_get($base-colors, 'background-highlighted');
       box-shadow: map_get($base-shadow, 'modal');
-      max-width: 20rem;
-      width: 100%;
+      max-width: 30rem;
+      max-height: 70vh;
+      display: flex;
+      flex-direction: column;
+      width: 90%;
       flex: 0 0 auto;
 
       .close {
@@ -50,6 +54,16 @@ $modal-close-button-size: $modal-padding * 0.675;
         &:hover {
           color: map_get($base-colors, 'primary');
         }
+      }
+
+      h1 {
+        margin-top: 0;
+        flex: 0 0 auto;
+      }
+
+      div {
+        flex: 1 1 auto;
+        overflow: scroll;
       }
     }
   }

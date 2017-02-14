@@ -24,7 +24,9 @@ export module ActivityController {
 	export function getPublicActivity(activity: Activity | Activity[], relatedUser: User) : Promise<any> {
 		let createPublicActivity = (activity: Activity) : Promise<any> => {
 			let activityOwnerPromise = getActivityOwner(activity);
-			let publicActivityOwnerPromise = activityOwnerPromise.then((owner: User) => UserController.getPublicUser(owner, relatedUser));
+			let publicActivityOwnerPromise = activityOwnerPromise.then((owner: User) => {
+				return UserController.getPublicUser(owner, relatedUser);
+			});
 			let activityStatisticsPromise = getActivityStatistics(activity, relatedUser);
 			
 			return Promise.all([
@@ -213,7 +215,6 @@ export module ActivityController {
 			};
 			// TODO Change to vertexCollection, see bug https://github.com/arangodb/arangojs/issues/354
 			return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.activities.name).save(activity).then((activity: Activity) => {
-				console.log(activity);
 				let userOwnsActivity : UserOwnsActivity = {
 					_from: user._id,
 					_to: activity._id,
@@ -300,7 +301,7 @@ export module ActivityController {
 		export function getLists(request: any, reply: any): void {
 			// Create promise.
 			let promise : Promise<any> = ActivityController.findByKey(request.params.key).then((activity: Activity) => {
-				if(!activity) return Promise.reject(Boom.badRequest('Activity does not exist!'));
+				if(!activity) return Promise.reject<List[]>(Boom.badRequest('Activity does not exist!'));
 				
 				switch (request.params.filter) {
 					default:
@@ -346,6 +347,23 @@ export module ActivityController {
 			// Create promise.
 			//TODO slice
 			let promise : Promise<Activity[]> = ActivityController.findByFulltext(request.params.query).then((activities: Activity[]) => ActivityController.getPublicActivity(activities.slice(request.params.offset, request.params.offset + 30), request.auth.credentials));
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [GET] /api/activities/by/{username}
+		 * @param request Request-Object
+		 * @param request.params.key key
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function getActivitiesBy(request: any, reply: any): void {
+			// Create promise.
+			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
+				if(user) return ActivityController.findByUser(user);
+				return Promise.reject(Boom.notFound('User not found!'));
+			}).then((activities: Activity[]) => getPublicActivity(activities, request.auth.credentials));
 			
 			reply.api(promise);
 		}

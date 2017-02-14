@@ -19,8 +19,10 @@
 </div>
 <div class="content" *ngIf="user">
 	<tab-menu [tabItems]="tabItems"></tab-menu>
-	<item-wrapper *ngIf="currentTab === tabItems['activity']" i18n>
-		Activity
+	<item-wrapper *ngIf="currentTab === tabItems['activities']" i18n>
+		<li *ngFor="let activity of activities">
+			<activity-item [activity]="activity"></activity-item>
+		</li>
 	</item-wrapper>
 	<item-wrapper [twoColumnLayout]="true" *ngIf="currentTab === tabItems['lists']">
 		<li *ngFor="let list of lists">

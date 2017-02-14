@@ -27,7 +27,7 @@ $dropdown-menu-arrow-center-right-offset: 1rem;
 
     li {
       display: flex;
-      padding: map_get($base-padding, 'smaller') map_get($base-padding, 'default') map_get($base-padding, 'smaller') map_get($base-padding, 'smaller');
+      padding: map_get($base-padding, 'smaller');
       cursor: pointer;
 
       i {
@@ -37,10 +37,6 @@ $dropdown-menu-arrow-center-right-offset: 1rem;
 
       span {
         flex: 1 0 auto;
-      }
-
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.05);
       }
     }
 

@@ -41,12 +41,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
                 {
                     icon: 'list',
                     title: 'Deine Listen',//TODO TRANSLATE
-                    link: this.router.createUrlTree(['/people', userStatus.user.username, 'lists'])
+                    link: userStatus.loggedIn ? this.router.createUrlTree(['/people', userStatus.user.username, 'lists']) : null
                 },
                 {
-                    icon: 'heartbeat',
-                    title: 'Deine Aktivitäten',//TODO TRANSLATE
-                    link: this.router.createUrlTree(['/people', userStatus.user.username, 'activities'])
+                    icon: 'heart-o',
+                    title: 'Deine Interessen',//TODO TRANSLATE
+                    link: userStatus.loggedIn ? this.router.createUrlTree(['/people', userStatus.user.username, 'activities']) : null
                 },
                 {
                     icon: 'cog',
@@ -62,12 +62,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
             
             // Set tab items.
             this.tabItems = {
+                /*TODO: Verlauf wieder einfügen
                 activity: {
                     icon: 'bell-o',
                     title: 'Verlauf',
                     link: this.router.createUrlTree(['/history']),
                     notification: false
-                },
+                },*/
                 explore: {
                     icon: 'compass',
                     title: 'Entdecken',
@@ -76,7 +77,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
                 },
                 people: {
                     icon: 'users',
-                    title: 'Leute',
+                    title: 'Rudler',
                     link: this.router.createUrlTree(['/people']),
                     notification: false
                 },
