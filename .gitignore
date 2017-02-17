@@ -1,5 +1,5 @@
 # General
-**/node_modules/
+node_modules/
 _generated/
 .env
 
@@ -31,3 +31,6 @@ db/
 
 # Run
 run/**/*.js
+
+# Let's Encrypt
+letsencrypt/

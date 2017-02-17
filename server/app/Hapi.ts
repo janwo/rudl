@@ -10,6 +10,7 @@ import {DecoratorsBinder} from "./binders/DecoratorsBinder";
 import {PluginsBinder} from "./binders/PluginsBinder";
 import {DatabaseManager} from "./Database";
 import {AssetsPool} from "./AssetsPool";
+import * as LetsEncrypt from 'greenlock-express';
 
 export function hapiServer(): Promise<Hapi.Server>{
 	// Initialize Hapi server.
@@ -41,24 +42,54 @@ export function hapiServer(): Promise<Hapi.Server>{
 			});
 			break;
 		
-		case 'secure': // Setup https server if NODE_ENV is secure.
-			// Load SSL key and certificate.
-			let privateKey = Fs.readFileSync('./sslcerts/key.pem', 'utf8'); //TODO
-			let certificate = Fs.readFileSync('./sslcerts/cert.pem', 'utf8'); //TODO
+		case 'secure':
+			// Create let's encrypt directory.
+			let letsEncryptConfigDir = Path.join(__dirname, '../letsencrypt');
+			Fs.mkdirSync(letsEncryptConfigDir);
+			
+			// Create let's encrypt server.
+			let letsEncrypt = LetsEncrypt.create({
+				server: 'staging' /*https://acme-v01.api.letsencrypt.org/directory*/,
+				configDir: letsEncryptConfigDir,
+				approveDomains: (opts, certs, cb) => {
+					// Check domains and abort on error.
+					for(let i = 0; i < opts.domains; i++) {
+						if(opts.domains[i] != Config.backend.host) {
+							cb(`Error generating certificates. The domain "${opts.domains[i]}" is not valid.`);
+							return;
+						}
+					}
+					
+					opts.domains = certs && certs.altnames || opts.domains;
+					opts.email = 'we@rudl.me';
+					opts.agreeTos = true;
+					
+					cb(null, {
+						options: opts,
+						certs: certs
+					});
+				}
+			}).listen(Config.backend.port);
 			
 			// Create HTTPS server.
-			let httpsServer = Https.createServer({
-				key: privateKey,
-				cert: certificate,
-				passphrase: Config.backend.ssl.passphrase
-			});
+			let httpsServer = Https.createServer(letsEncrypt.httpsOptions);
 			
 			// Create server connection.
 			server.connection({
 				listener: httpsServer,
 				tls: true,
-				autoListen: true,
-				port: Config.backend.port
+				autoListen: false
+			});
+			
+			// Create endpoint for let's encrypt process.
+			let acmeResponder = letsEncrypt.middleware();
+			server.route({
+				method: 'GET',
+				path: '/.well-known/acme-challenge',
+				handler: (request, reply) => {
+					reply.close(false);
+					acmeResponder(request.raw.req, request.raw.res);
+				}
 			});
 			break;
 	}
