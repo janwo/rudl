@@ -1,9 +1,9 @@
-import {Component, OnInit, OnDestroy, Input} from "@angular/core";
+import {Component, OnInit, OnDestroy, Input, ViewChild, AfterViewInit} from "@angular/core";
 import {UserService} from "../services/user.service";
-import {Subscription} from "rxjs";
+import {Subscription, Subject, Observable} from "rxjs";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {ButtonStyles} from "./widgets/styled-button.component";
-import {TabItem} from "./widgets/tab-menu.component";
+import {TabItem, TabMenuComponent} from "./widgets/tab-menu.component";
 import {User} from "../models/user";
 import {List} from "../models/list";
 import {ListService} from "../services/list.service";
@@ -16,57 +16,20 @@ import {Activity} from "../models/activity";
 })
 export class ProfileComponent implements OnInit, OnDestroy {
     
-    @Input() currentTab: TabItem;
-    
     user: User;
-    activities: Activity[] = [];
+    tab: TabItem;
+    @Input() activities: Activity[] = [];
     lists: List[] = [];
     followers: User[] = [];
     followees: User[] = [];
-    userSubscription: Subscription;
-    userListsSubscription: Subscription;
-    userActivitySubscription: Subscription;
-    userFollowersSubscription: Subscription;
-    userFolloweesSubscription: Subscription;
+    tabItems: {[key: string]: TabItem} = {};
+    paramsChangedSubscription: Subscription;
+    changeFollowStateSubject: Subject<boolean> = new Subject();
+    changeFollowStateSubscription: Subscription;
     
     pendingFollowRequest: boolean = false;
     buttonStyleDefault: ButtonStyles = ButtonStyles.minimal;
     buttonStyleFollowing: ButtonStyles = ButtonStyles.minimalInverse;
-    
-    tabItems: {[key: string]: TabItem} = {
-        activities: {
-            icon: 'heart-o',
-            title: 'Interessen',
-            link: this.router.createUrlTree(['../', 'activities'], {
-                relativeTo: this.route
-            }),
-            notification: false
-        },
-        lists: {
-            icon: 'list',
-            title: 'Listen',
-            link: this.router.createUrlTree(['../', 'lists'], {
-                relativeTo: this.route
-            }),
-            notification: false
-        },
-        followees: {
-            icon: 'users',
-            title: 'Folgt',
-            link: this.router.createUrlTree(['../', 'followees'], {
-                relativeTo: this.route
-            }),
-            notification: false
-        },
-        followers: {
-            icon: 'users',
-            title: 'Follower',
-            link: this.router.createUrlTree(['../', 'followers'], {
-                relativeTo: this.route
-            }),
-            notification: false
-        }
-    };
     
     constructor(
         private route: ActivatedRoute,
@@ -77,39 +40,90 @@ export class ProfileComponent implements OnInit, OnDestroy {
     ) {}
     
     ngOnInit(): void {
-        // Get params.
-        this.route.params.forEach((params: Params) => {
-            // Get selected tab.
-            let slug = params['tab'];
-            if(this.tabItems[slug]) this.currentTab = this.tabItems[slug];
-            
-            // Get user.
+        let updateUser = (username: string) => this.userService.get(username).do((user: User) => {
+            // Set user.
+            this.user = user;
+    
+            // Update tab item links.
+            this.tabItems = {
+                activities: {
+                    icon: 'heart-o',
+                    title: 'Interessen',
+                    link: this.router.createUrlTree(['../../', user.username, 'activities'], {
+                        relativeTo: this.route
+                    }),
+                    notification: false
+                },
+                lists: {
+                    icon: 'list',
+                    title: 'Listen',
+                    link: this.router.createUrlTree(['../../', user.username, 'lists'], {
+                        relativeTo: this.route
+                    }),
+                    notification: false
+                },
+                followees: {
+                    icon: 'users',
+                    title: 'Folgt',
+                    link: this.router.createUrlTree(['../../', user.username, 'followees'], {
+                        relativeTo: this.route
+                    }),
+                    notification: false
+                },
+                followers: {
+                    icon: 'users',
+                    title: 'Follower',
+                    link: this.router.createUrlTree(['../../', user.username, 'followers'], {
+                        relativeTo: this.route
+                    }),
+                    notification: false
+                }
+            };
+        });
+        
+        // Define changed params subscription.
+        this.paramsChangedSubscription = this.route.params.distinctUntilChanged((x, y) => {
+            // Only continue if any params changed.
+            return x['username'] == y['username'] && x['tab'] == y['tab'];
+        }).flatMap(params => {
+            // Update user, if username changed.
             let username = params['username'];
-            if(!this.userSubscription) this.userSubscription = this.userService.get(username).subscribe((user: User) => this.user = user);
-            
-            // Tab specific resources.
-            if(!this.userSubscription) this.userSubscription = this.userService.get(username).subscribe((user: User) => this.user = user);
-            if(!this.userListsSubscription && this.currentTab == this.tabItems['lists']) this.userListsSubscription = this.listService.by(username).subscribe((lists: List[]) => this.lists = lists);
-            if(!this.userActivitySubscription && this.currentTab == this.tabItems['activities']) this.userActivitySubscription = this.activityService.by(username).subscribe((activities: Activity[]) => this.activities = activities);
-            if(!this.userFollowersSubscription && this.currentTab == this.tabItems['followers']) this.userFollowersSubscription = this.userService.followers(username).subscribe((followers: User[]) => this.followers = followers);
-            if(!this.userFolloweesSubscription && this.currentTab == this.tabItems['followees']) this.userFolloweesSubscription = this.userService.followees(username).subscribe((followees: User[]) => this.followees = followees);
+            if(this.user && this.user.username == username) return Observable.of(params['tab']);
+            return updateUser(username).map(user => params['tab']);
+        }).flatMap((tab: string) => {
+            // Set tab item.
+            this.tab = this.tabItems[tab];
+    
+            // Map to tab specific resources.
+            switch (tab) {
+                case 'lists':
+                    return this.listService.by(this.user.username).do((lists: List[]) => this.lists = lists);
+                case 'activities':
+                    return this.activityService.by(this.user.username).do((activities: Activity[]) => this.activities = activities);
+                case 'followers':
+                    return this.userService.followers(this.user.username).do((followers: User[]) => this.followers = followers);
+                case 'followees':
+                    return this.userService.followees(this.user.username).do((followees: User[]) => this.followees = followees);
+                default:
+                    return Observable.empty();
+            }
+        }).subscribe();
+        
+        // Define changed follow state subscription.
+        this.changeFollowStateSubscription = this.changeFollowStateSubject.asObservable().distinctUntilChanged().flatMap(follow => {
+            this.pendingFollowRequest = true;
+            return follow ? this.userService.follow(this.user.username) : this.userService.unfollow(this.user.username);
+        }).subscribe((updatedUser: User) => {
+            this.user = updatedUser;
+            this.pendingFollowRequest = false;
         });
     }
     
     ngOnDestroy(): void {
-        if(this.userSubscription) this.userSubscription.unsubscribe();
-        if(this.userListsSubscription) this.userListsSubscription.unsubscribe();
-        if(this.userActivitySubscription) this.userActivitySubscription.unsubscribe();
-        if(this.userFollowersSubscription) this.userFollowersSubscription.unsubscribe();
-        if(this.userFolloweesSubscription) this.userFolloweesSubscription.unsubscribe();
+        this.paramsChangedSubscription.unsubscribe();
     }
     
     onToggleFollow(): void {
-        this.pendingFollowRequest = true;
-        let obs = this.user.relations.isFollowee ? this.userService.unfollow(this.user.username) : this.userService.follow(this.user.username);
-        obs.do((updatedUser: User) => {
-            this.user = updatedUser;
-            this.pendingFollowRequest = false;
-        }).subscribe();
+        this.changeFollowStateSubject.next(!this.user.relations.isFollowee);
     }
 }

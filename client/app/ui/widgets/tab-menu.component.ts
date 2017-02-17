@@ -17,31 +17,31 @@ export interface TabItem {
 export class TabMenuComponent implements OnInit, OnDestroy {
     
     @Input() tabItems : { [key: string]: TabItem } = {};
+    @Input() activeTabItem: TabItem = null;
     routerChanges : Subscription;
-    activeTabItem: TabItem = null;
     
     constructor(
         private router: Router
     ) {}
     
-    ngOnInit() {
+    parseTabURL(): void {
         // Determine active tab item...
-        let determineActiveTabItem = () => {
-            this.activeTabItem = null;
-            Object.keys(this.tabItems).map(key => this.tabItems[key]).forEach(( tabItem: TabItem ) => {
-                if(!this.router.isActive(tabItem.link, false)) return true;
+        this.activeTabItem = null;
+        Object.keys(this.tabItems).map(key => this.tabItems[key]).forEach(( tabItem: TabItem ) => {
+            if(!this.router.isActive(tabItem.link, false)) return true;
             
-                this.activeTabItem = tabItem;
-                tabItem.notification = false;
-                return false;
-            });
-        };
-        
+            this.activeTabItem = tabItem;
+            tabItem.notification = false;
+            return false;
+        });
+    }
+    
+    ngOnInit() {
         // ...on change.
-        this.routerChanges = this.router.events.filter(value => value instanceof NavigationEnd).subscribe(determineActiveTabItem);
+        this.routerChanges = this.router.events.filter(value => value instanceof NavigationEnd).subscribe(() => this.parseTabURL());
         
         // ...on initialization.
-        determineActiveTabItem();
+        this.parseTabURL();
     }
     
     ngOnDestroy(){
