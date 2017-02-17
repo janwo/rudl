@@ -11,7 +11,6 @@ import {ButtonStyles} from "./styled-button.component";
 })
 export class QuestionComponent {
 	
-	@Input() title: string;
 	@Input() description: string;
 	@Input() choices: QuestionChoices[];
 }

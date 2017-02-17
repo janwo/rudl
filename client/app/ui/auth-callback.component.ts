@@ -8,7 +8,7 @@ import {DataService} from "../services/data.service";
 export class AuthCallbackComponent {
 
     constructor() {
-        let metaElement = document.querySelector('meta[name="token"]');
+        let metaElement: any = document.querySelector('meta[name="token"]');
         let token = metaElement.getAttribute('content');
 
         window.opener.postMessage({

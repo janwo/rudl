@@ -13,7 +13,6 @@ export class AppGuard implements CanActivate {
 
     canActivate() : Observable<boolean> {
         return this.userService.getAuthenticatedUserObservable().map((user: UserStatus) => {
-            
             if (!user.loggedIn) this.router.navigate(['/sign_up']);
             return user.loggedIn;
         });

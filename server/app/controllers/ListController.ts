@@ -158,12 +158,19 @@ export module ListController {
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<List[]>;
 	}
 	
-	export function getActivities(list: List) : Promise<Activity[]>{
-		let aqlQuery = `FOR activity IN OUTBOUND @listId @@edges RETURN activity`;
+	export function getActivities(list: List, follower: User = null, ownsOnly: boolean = false) : Promise<Activity[]>{
+		let aqlQuery = `FOR activity IN OUTBOUND @listId @@listIsItem RETURN activity`;
 		let aqlParams = {
-			'@edges': DatabaseManager.arangoCollections.listIsItem.name,
+			'@listIsItem': DatabaseManager.arangoCollections.listIsItem.name,
 			listId: list._id
 		};
+		
+		if(follower) {
+			aqlQuery = `FOR activity IN INTERSECTION((FOR activity IN OUTBOUND @userId @@followerEdge RETURN activity), (FOR activity IN OUTBOUND @listId @@listIsItem RETURN activity)) SORT activity._id DESC RETURN activity`;
+			aqlParams['userId'] = follower._id;
+			aqlParams['@followerEdge'] = ownsOnly ? DatabaseManager.arangoCollections.userOwnsActivity.name : DatabaseManager.arangoCollections.userFollowsActivity.name;
+		}
+		
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Activity[]>;
 	}
 	
@@ -242,7 +249,7 @@ export module ListController {
 		 */
 		export function createList(request: any, reply: any): void {
 			// Create promise.
-			let activities = request.payload.activitiesOfList || [];
+			let activities = request.payload.activities || [];
 			let promise: Promise<List> = ListController.createList(request.auth.credentials, request.payload.translations).then(list => {
 				activities = activities.map(activity => {
 					return ActivityController.findByKey(activity).then(activity => {
@@ -274,21 +281,34 @@ export module ListController {
 		}
 		
 		/**
-		 * Handles [GET] /api/lists/=/{key}/activities/{offset?}
+		 * Handles [GET] /api/lists/=/{key}/activities/{filter?}/{offset?}/{limit?}'
 		 * @param request Request-Object
 		 * @param request.params.key list
-		 * @param request.params.offset offset (optional, default=0)
+		 * @param request.params.filter all, followed, owned
+		 * @param request.params.interval? array of [offset, limit?] (optional, default=[0])
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
 		export function getActivities(request: any, reply: any): void {
 			// Create promise.
 			let promise : Promise<any> = ListController.findByKey(request.params.key).then((list: List) => {
-				if(list) return ListController.getActivities(list);
-				return [];
+				if(!list) return Promise.reject(Boom.badRequest('List does not exist!'));
+				
+				switch (request.params.filter) {
+					default:
+					case 'all':
+						return ListController.getActivities(list);
+						
+					case 'followed':
+						return ListController.getActivities(list, request.auth.credentials);
+						
+					case 'owned':
+						return ListController.getActivities(list, request.auth.credentials, true);
+				}
 			}).then((activities: Activity[]) => {
-				//TODO offset
-				return ActivityController.getPublicActivity(activities.slice(request.params.offset, request.params.offset + 30), request.auth.credentials);
+				return activities.slice(request.params.interval[0], request.params.interval[1] > 0 ? request.params.interval[0] + request.params.interval[1] : activities.length);
+			}).then((activities: Activity[]) => {
+				return ActivityController.getPublicActivity(activities, request.auth.credentials);
 			});
 			
 			reply.api(promise);

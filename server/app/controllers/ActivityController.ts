@@ -16,13 +16,17 @@ import {UserRatedActivity} from "../models/activities/UserRatedActivity";
 import {UserFollowsActivity} from "../models/activities/UserFollowsActivity";
 import {Translations} from "../models/Translations";
 import {UserOwnsActivity} from "../models/activities/UserOwnsActivity";
+import {List} from "../models/lists/List";
+import {ListController} from "./ListController";
 
 export module ActivityController {
 	
 	export function getPublicActivity(activity: Activity | Activity[], relatedUser: User) : Promise<any> {
 		let createPublicActivity = (activity: Activity) : Promise<any> => {
 			let activityOwnerPromise = getActivityOwner(activity);
-			let publicActivityOwnerPromise = activityOwnerPromise.then((owner: User) => UserController.getPublicUser(owner, relatedUser));
+			let publicActivityOwnerPromise = activityOwnerPromise.then((owner: User) => {
+				return UserController.getPublicUser(owner, relatedUser);
+			});
 			let activityStatisticsPromise = getActivityStatistics(activity, relatedUser);
 			
 			return Promise.all([
@@ -211,7 +215,6 @@ export module ActivityController {
 			};
 			// TODO Change to vertexCollection, see bug https://github.com/arangodb/arangojs/issues/354
 			return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.activities.name).save(activity).then((activity: Activity) => {
-				console.log(activity);
 				let userOwnsActivity : UserOwnsActivity = {
 					_from: user._id,
 					_to: activity._id,
@@ -232,6 +235,22 @@ export module ActivityController {
 				]).then(() => activity);
 			})
 		});
+	}
+	
+	export function getLists(activity: Activity, follower: User = null, ownsOnly: boolean = false) : Promise<List[]>{
+		let aqlQuery = `FOR list IN INBOUND @activityId @@listIsItem RETURN list`;
+		let aqlParams = {
+			'@listIsItem': DatabaseManager.arangoCollections.listIsItem.name,
+			activityId: activity._id
+		};
+		
+		if(follower) {
+			aqlQuery = `FOR list IN INTERSECTION((FOR list IN OUTBOUND @userId @@followerEdge RETURN list), (FOR list IN INBOUND @activityId @@listIsItem RETURN list)) SORT list._id DESC RETURN list`;
+			aqlParams['userId'] = follower._id;
+			aqlParams['@followerEdge'] = ownsOnly ? DatabaseManager.arangoCollections.userOwnsList.name : DatabaseManager.arangoCollections.userFollowsList.name;
+		}
+		
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<List[]>;
 	}
 	
 	//TODO Ownership
@@ -271,6 +290,38 @@ export module ActivityController {
 		}
 		
 		/**
+		 * Handles [GET] /api/activities/=/{key}/lists/{filter?}/{offset?}/{limit?}
+		 * @param request Request-Object
+		 * @param request.params.key key
+		 * @param request.params.filter all, followed, owned
+		 * @param request.params.interval? array of [offset, limit?] (optional, default=[0])
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function getLists(request: any, reply: any): void {
+			// Create promise.
+			let promise : Promise<any> = ActivityController.findByKey(request.params.key).then((activity: Activity) => {
+				if(!activity) return Promise.reject<List[]>(Boom.badRequest('Activity does not exist!'));
+				
+				switch (request.params.filter) {
+					default:
+					case 'all':
+						return ActivityController.getLists(activity);
+					
+					case 'followed':
+						return ActivityController.getLists(activity, request.auth.credentials);
+					
+					case 'owned':
+						return ActivityController.getLists(activity, request.auth.credentials, true);
+				}
+			}).then((lists: List[]) => {
+				return lists.slice(request.params.interval[0], request.params.interval[1] > 0 ? request.params.interval[0] + request.params.interval[1] : lists.length);
+			}).then((lists: List[]) => ListController.getPublicList(lists, request.auth.credentials));
+			
+			reply.api(promise);
+		}
+		
+		/**
 		 * Handles [GET] /api/activities/=/{key}
 		 * @param request Request-Object
 		 * @param request.params.key key
@@ -278,10 +329,8 @@ export module ActivityController {
 		 * @param reply Reply-Object
 		 */
 		export function getActivity(request: any, reply: any): void {
-			let paramKey = encodeURIComponent(request.params.key);
-			
 			// Create promise.
-			let promise : Promise<Activity> = ActivityController.findByKey(paramKey).then((activity: Activity) => ActivityController.getPublicActivity(activity, request.auth.credentials));
+			let promise : Promise<Activity> = ActivityController.findByKey(request.params.key).then((activity: Activity) => ActivityController.getPublicActivity(activity, request.auth.credentials));
 			
 			reply.api(promise);
 		}
@@ -298,6 +347,23 @@ export module ActivityController {
 			// Create promise.
 			//TODO slice
 			let promise : Promise<Activity[]> = ActivityController.findByFulltext(request.params.query).then((activities: Activity[]) => ActivityController.getPublicActivity(activities.slice(request.params.offset, request.params.offset + 30), request.auth.credentials));
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [GET] /api/activities/by/{username}
+		 * @param request Request-Object
+		 * @param request.params.key key
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function getActivitiesBy(request: any, reply: any): void {
+			// Create promise.
+			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
+				if(user) return ActivityController.findByUser(user);
+				return Promise.reject(Boom.notFound('User not found!'));
+			}).then((activities: Activity[]) => getPublicActivity(activities, request.auth.credentials));
 			
 			reply.api(promise);
 		}

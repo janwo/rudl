@@ -8,6 +8,8 @@ import {List} from "../models/list";
 import {User} from "../models/user";
 import {SearchService} from "../services/search.service";
 import {ActivatedRoute} from "@angular/router";
+import {ListService} from "../services/list.service";
+import {ActivityService} from "../services/activity.service";
 
 @Component({
 	templateUrl: './search.component.html',
@@ -42,7 +44,9 @@ export class SearchComponent implements OnDestroy, OnInit {
 	private searchValue: string = null;
 	
 	constructor(
+		private listService: ListService,
 		private userService: UserService,
+		private activityService: ActivityService,
 	    private searchService: SearchService,
 	    private activatedRoute: ActivatedRoute
 	){}
@@ -56,9 +60,9 @@ export class SearchComponent implements OnDestroy, OnInit {
 			this.users = null;
 		}).filter(query => query && query.length >= 3).flatMap((query: string) => {
 			return Observable.zip(
-				this.userService.activitiesLike(query),
-				this.userService.listsLike(query),
-				this.userService.usersLike(query),
+				this.activityService.like(query),
+				this.listService.like(query),
+				this.userService.like(query),
 				Observable.from([query])
 			);
 		}).subscribe((values: [Activity[], List[], User[], string]) => {

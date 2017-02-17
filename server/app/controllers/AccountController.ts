@@ -201,6 +201,7 @@ export module AccountController {
 	
 	export namespace RouteHandlers {
 		
+		import getPublicUser = UserController.getPublicUser;
 		/**
 		 * Handles [POST] /api/account/avatar
 		 * @param request Request-Object
@@ -211,28 +212,34 @@ export module AccountController {
 		export function uploadAvatar(request: any, reply: any): void {
 			let user = request.auth.credentials;
 			let promise = new Promise((resolve, reject) => {
-				if (request.payload.file) {
-					let uploadDir = path.resolve(Config.backend.uploads.dir, 'avatars/');
-					let small = fs.createWriteStream(path.resolve(uploadDir, user._key + '-small'));
-					let medium = fs.createWriteStream(path.resolve(uploadDir, user._key + '-medium'));
-					let large = fs.createWriteStream(path.resolve(uploadDir, user._key + '-large'));
-					
-					let transformations = new sharp(undefined, undefined);//TODO use update sharp.d.ts as soon as available
-					transformations.clone().resize(100, 100).max().crop(sharp.strategy.entropy).toFormat('png').pipe(small).on('error', reject);
-					transformations.clone().resize(450, 450).max().crop(sharp.strategy.entropy).toFormat('png').pipe(medium).on('error', reject);
-					transformations.clone().resize(800, 800).max().crop(sharp.strategy.entropy).toFormat('png').pipe(large).on('error', reject);
-					
-					request.payload.file.pipe(transformations);
-					request.payload.file.on('error', reject);
-					request.payload.file.on('end', () => {
-						user.meta.hasAvatar = true;
-						resolve(saveUser(user));
-					});
+				if (!request.payload.file) {
+					reject(Boom.badData('Missing file payload.'));
 					return;
 				}
+					
+				// Create sharp instance.
+				let transformer = sharp().png();
+				request.payload.file.pipe(transformer);
 				
-				reject(Boom.badData('Missing file payload.'));
+				// Make paths retrievable.
+				let getAvatarPath = (size: string) => path.resolve(Config.backend.uploads.paths.avatars, `${user._key}-${size}`);
+				
+				// Set transformation streams.
+				let transformations = [
+					transformer.clone().resize(100, 100).max().crop(sharp.strategy.entropy).toFile(getAvatarPath('small')),
+					transformer.clone().resize(450, 450).max().crop(sharp.strategy.entropy).toFile(getAvatarPath('medium')),
+					transformer.clone().resize(800, 800).max().crop(sharp.strategy.entropy).toFile(getAvatarPath('large'))
+				];
+				
+				// Execute transformations, update and return user profile.
+				let promise = Promise.all(transformations).then(() => {
+					user.meta.hasAvatar = true;
+					return saveUser(user);
+				}).then((user: User) => UserController.getPublicUser(user, request.auth.credentials));
+				
+				resolve(promise);
 			}).catch(err => {
+				// Log + forward error.
 				request.log(err);
 				return Promise.reject(Boom.badImplementation('An server error occurred! Please try again.'))
 			});

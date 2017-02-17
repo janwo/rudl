@@ -8,6 +8,7 @@ import {Locale} from "../../models/locale";
 import Language = Locale.Language;
 import {ButtonStyles} from "./styled-button.component";
 import Translations = Locale.Translations;
+import {ListService} from "../../services/list.service";
 
 @Component({
     templateUrl: './create-list.component.html',
@@ -22,7 +23,7 @@ export class CreateListComponent {
     buttonStyle: ButtonStyles = ButtonStyles.uncolored;
     
     constructor(
-        private userService: UserService,
+        private listService: ListService,
         private router: Router
     ) {}
     
@@ -35,7 +36,7 @@ export class CreateListComponent {
     }
     
     submit() {
-        this.userService.createList(this.translations).subscribe(list => {
+        this.listService.create(this.translations).subscribe(list => {
             this.router.navigate(['/lists', list.id]);
         })
     }

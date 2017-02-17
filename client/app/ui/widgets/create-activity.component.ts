@@ -8,6 +8,7 @@ import {Locale} from "../../models/locale";
 import Language = Locale.Language;
 import {ButtonStyles} from "./styled-button.component";
 import Translations = Locale.Translations;
+import {ActivityService} from "../../services/activity.service";
 
 @Component({
     templateUrl: './create-activity.component.html',
@@ -22,7 +23,7 @@ export class CreateActivityComponent {
     buttonStyle: ButtonStyles = ButtonStyles.uncolored;
     
     constructor(
-        private userService: UserService,
+        private activityService: ActivityService,
         private router: Router
     ) {}
     
@@ -35,7 +36,7 @@ export class CreateActivityComponent {
     }
     
     submit() {
-        this.userService.createActivity(this.translations).subscribe(activity => {
+        this.activityService.create(this.translations).subscribe(activity => {
             this.router.navigate(['/activities', activity.id]);
         })
     }

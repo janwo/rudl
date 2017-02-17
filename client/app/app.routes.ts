@@ -47,7 +47,7 @@ const appRoutes: Routes = [
             { path: 'history', component: HistoryComponent },
             { path: 'explore', component: ExploreComponent },
             { path: 'people', component: PeopleComponent, pathMatch: 'full' },
-            { path: 'people/:username', component: RedirectComponent , data: { redirect: ['./activity'] }, pathMatch: 'full' },
+            { path: 'people/:username', component: RedirectComponent , data: { redirect: ['./activities'] }, pathMatch: 'full' },
             { path: 'people/:username/:tab', component: ProfileComponent },
             { path: 'lists/:key', component: ListComponent },
             { path: 'search', redirectTo: 'search/', pathMatch: 'full' },

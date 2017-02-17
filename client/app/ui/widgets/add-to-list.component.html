@@ -1,0 +1,5 @@
+<item-wrapper [noMargins]="true" [ngClass]="{disabled: pendingToggleRequest}">
+	<li *ngFor="let ownedList of ownedLists" [ngClass]="{checked: selectedListKeysOfActivity.indexOf(ownedList.id) >= 0}" (click)="toggleListMembership($event, ownedList)">
+		<span>{{ownedList.name}}</span><i class="fa fa-check"></i><i class="fa fa-plus"></i>
+	</li>
+</item-wrapper>

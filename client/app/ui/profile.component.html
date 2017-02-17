@@ -17,24 +17,26 @@
 		</div>
 	</div>
 </div>
-<div class="content" *ngIf="user">
-	<tab-menu [tabItems]="tabItems"></tab-menu>
-	<item-wrapper *ngIf="currentTab === tabItems['activity']" i18n>
-		Activity
+<div class="content">
+	<tab-menu [tabItems]="tabItems" [activeTabItem]="tab"></tab-menu>
+	<item-wrapper *ngIf="tab === tabItems['activities']">
+		<li *ngFor="let activity of activities">
+			<activity-item [activity]="activity"></activity-item>
+		</li>
 	</item-wrapper>
-	<item-wrapper [twoColumnLayout]="true" *ngIf="currentTab === tabItems['lists']">
+	<item-wrapper [twoColumnLayout]="true" *ngIf="tab === tabItems['lists']">
 		<li *ngFor="let list of lists">
 			<list-item [list]="list"></list-item>
 		</li>
 		<span *ngIf="lists.length == 0">No Lists yet</span>
 	</item-wrapper>
-	<item-wrapper *ngIf="currentTab === tabItems['followees']">
+	<item-wrapper *ngIf="tab === tabItems['followees']">
 		<li *ngFor="let followee of followees">
 			<people-item [user]="followee"></people-item>
 		</li>
 		<span *ngIf="followees.length == 0">No Followees yet</span>
 	</item-wrapper>
-	<item-wrapper *ngIf="currentTab === tabItems['followers']">
+	<item-wrapper *ngIf="tab === tabItems['followers']">
 		<li *ngFor="let follower of followers">
 			<people-item [user]="follower"></people-item>
 		</li>

@@ -16,6 +16,9 @@ export const DecoratorsConfig: DecoratorsConfiguration = [
 			let respondWithError = (err) => {
 				if (err instanceof Error === false) err = Boom.badImplementation(err);
 				
+				// Log.
+				console.log(err.stack);
+				
 				// Convert to Boom for proper api handling.
 				if (!err.isBoom) err = Boom.badImplementation(err);
 				return this.response(err);

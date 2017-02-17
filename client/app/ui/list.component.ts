@@ -6,6 +6,7 @@ import {ActivatedRoute, Params} from "@angular/router";
 import {Activity} from "../models/activity";
 import {ButtonStyles} from "./widgets/styled-button.component";
 import {ModalComponent} from "./widgets/modal.component";
+import {ListService} from "../services/list.service";
 
 @Component({
     templateUrl: './list.component.html',
@@ -34,7 +35,7 @@ export class ListComponent implements OnInit, OnDestroy {
     }];
     
     constructor(
-        private userService: UserService,
+        private listService: ListService,
         private route: ActivatedRoute
     ) {}
     
@@ -45,8 +46,8 @@ export class ListComponent implements OnInit, OnDestroy {
             let key = params['key'];
     
             this.listSubscription = Observable.zip(
-                this.userService.getList(key),
-                this.userService.activitiesOfList(key),
+                this.listService.get(key),
+                this.listService.activities(key),
                 (list: List, activities: Activity[]) => {
                     this.list = list;
                     this.activities = activities;
@@ -66,7 +67,7 @@ export class ListComponent implements OnInit, OnDestroy {
         }
         
         this.pendingFollowRequest = true;
-        let obs = this.list.relations.isFollowed ? this.userService.unfollowList(this.list.id) : this.userService.followList(this.list.id);
+        let obs = this.list.relations.isFollowed ? this.listService.unfollow(this.list.id) : this.listService.follow(this.list.id);
         obs.do((updatedList: List) => {
             this.list = updatedList;
             this.pendingFollowRequest = false;

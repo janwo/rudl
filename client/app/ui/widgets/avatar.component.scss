@@ -25,6 +25,7 @@
         height: 100%;
         font-family: $base-heading-font-family;
         fill: map_get($base-colors, 'background');
+        text-transform: uppercase;
       }
     }
   }
