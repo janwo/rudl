@@ -6,7 +6,7 @@ export class DecoratorsBinder {
 	
 	public static bind(server: Server): void {
 		let decorators = [];
-		Glob.sync(Path.join(__dirname, `../decorators/**/*.js`)).forEach(file => {
+		Glob.sync(Path.resolve(__dirname, `../decorators/**/*.js`)).forEach(file => {
 			decorators = decorators.concat(require(file).DecoratorsConfig);
 		});
 		

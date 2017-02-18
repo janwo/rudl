@@ -40,7 +40,10 @@ export const Config : {
 		domain: string,
 		debug: boolean,
 		watchAssets: boolean,
-		ssl: boolean,
+		ssl: {
+			enabled: boolean,
+			certificatesDir: string
+		},
 		secretPassphrase: string,
 		jwt: {
 			expiresIn: number,

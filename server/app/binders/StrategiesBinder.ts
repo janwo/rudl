@@ -6,7 +6,7 @@ export class StrategiesBinder {
 	
 	public static bind(server: Server) {
 		let defaultStrategiesFound: number = 0;
-		Glob.sync(Path.join(__dirname, `../strategies/**/*.js`)).forEach(file => {
+		Glob.sync(Path.resolve(__dirname, `../strategies/**/*.js`)).forEach(file => {
 			// Configure strategy.
 			let config: any = require(file).StrategyConfig;
 			server.auth.strategy(config.strategyName, config.schemeName, config.strategyConfig);

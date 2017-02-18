@@ -10,7 +10,7 @@ import * as Fs from "fs";
  */
 const _root = Path.resolve( __dirname, '..' );
 export function root( ...args ) {
-	return Path.join.apply( Path, [ _root ].concat( args ) );
+	return Path.resolve.apply( Path, [ _root ].concat( args ) );
 }
 
 /**
@@ -25,7 +25,7 @@ export const Config = (() => {
 	}
 	
 	// Does necessary environment files exist?
-	if (Glob.sync(Path.join(__dirname, `./environments/${process.env.ENV}.js`)).length == 0) return console.warn(`No configuration file found for "${process.env.ENV}" environment!`);
+	if (Glob.sync(Path.resolve(__dirname, `./environments/${process.env.ENV}.js`)).length == 0) return console.warn(`No configuration file found for "${process.env.ENV}" environment!`);
 	
 	// Merge all configs.
 	console.log(`Generate config for "${process.env.ENV}" environment...`);

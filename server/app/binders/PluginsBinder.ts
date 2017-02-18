@@ -7,7 +7,7 @@ export class PluginsBinder {
 	public static bind(server: Server): Promise<any> {
 		return new Promise((resolve, reject) => {
 			let plugins = [];
-			Glob.sync(Path.join(__dirname, `../plugins/**/*.js`)).forEach(file => {
+			Glob.sync(Path.resolve(__dirname, `../plugins/**/*.js`)).forEach(file => {
 				plugins = plugins.concat(require(file).PluginsConfig);
 			});
 			
