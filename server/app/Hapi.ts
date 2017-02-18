@@ -13,6 +13,18 @@ import {AssetsPool} from "./AssetsPool";
 import * as LetsEncrypt from 'greenlock-express';
 
 export function hapiServer(): Promise<Hapi.Server>{
+	// Create dirs.
+	let dirs = [];
+	
+	// Get all dirs of uploads.
+	Object.keys(Config.backend.uploads.paths).forEach(key => dirs.push(Config.backend.uploads.paths[key]));
+	
+	// Get dir of certificates
+	dirs.push(Config.backend.ssl.certificatesDir);
+	
+	// Create dirs.
+	dirs.forEach(path => Fs.existsSync(path) || Fs.mkdirSync(path));
+	
 	// Initialize Hapi server.
 	let server = new Hapi.Server({
 		cache: [
@@ -43,14 +55,10 @@ export function hapiServer(): Promise<Hapi.Server>{
 			break;
 		
 		case 'secure':
-			// Create let's encrypt directory.
-			let letsEncryptConfigDir = Path.resolve(__dirname, '../letsencrypt');
-			Fs.mkdirSync(letsEncryptConfigDir);
-			
 			// Create let's encrypt server.
 			let letsEncrypt = LetsEncrypt.create({
 				server: 'staging' /*https://acme-v01.api.letsencrypt.org/directory*/,
-				configDir: letsEncryptConfigDir,
+				configDir: Config.backend.ssl.certificatesDir,
 				approveDomains: (opts, certs, cb) => {
 					// Check domains and abort on error.
 					for(let i = 0; i < opts.domains; i++) {
@@ -111,8 +119,8 @@ export function hapiServer(): Promise<Hapi.Server>{
 			engines: {
 				handlebars: Handlebars
 			},
-			path: Path.join(__dirname, './templates/views'),
-			helpersPath: Path.join(__dirname, './templates/helpers')
+			path: Path.resolve(__dirname, './templates/views'),
+			helpersPath: Path.resolve(__dirname, './templates/helpers')
 		});
 		
 		// Update assets.
@@ -120,23 +128,6 @@ export function hapiServer(): Promise<Hapi.Server>{
 		
 		// Connect to database + create collections.
 		return DatabaseManager.connect().then(() => DatabaseManager.createArangoData());
-	}).then(() => {
-		let dirs = [];
-		
-		// Get all dirs of uploads.
-		Object.keys(Config.backend.uploads.paths).forEach(key => dirs.push(Config.backend.uploads.paths[key]));
-		
-		// Create dirs.
-		return new Promise((resolve, reject) => {
-			dirs.forEach(path => {
-				Fs.mkdir(path, err => {
-					if(err) reject(err);
-				});
-			});
-			
-			// Successfully created all directories.
-			resolve();
-		});
 	}).then(() => {
 		// Start server.
 		server.start(() => {

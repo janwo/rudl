@@ -103,7 +103,10 @@ export default {
 		host: process.env.BACKEND_SERVER_HOST || 'localhost',
 		port: process.env.BACKEND_SERVER_PORT || 80,
 		domain: process.env.DOMAIN || 'http://localhost',
-		ssl: false,
+		ssl: {
+			enabled: false,
+			certificatesDir: root('letsencrypt')
+		},
 		debug: process.env.DEBUG_BACKEND || false,
 		watchAssets: true,
 		secretPassphrase: process.env.SALT_PASSWORD,

@@ -6,7 +6,7 @@ export class RoutesBinder {
 	
 	public static bind(server: Server): void {
 		let routes = [];
-		Glob.sync(Path.join(__dirname, `../routes/**/*.js`)).forEach(file => {
+		Glob.sync(Path.resolve(__dirname, `../routes/**/*.js`)).forEach(file => {
 			routes = routes.concat(require(file).RoutesConfig);
 		});
 		

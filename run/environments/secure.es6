@@ -54,7 +54,9 @@ export default {
 				host: process.env.ARANGO_HOST || 'arango'
 			}
 		},
-		ssl: true,
+		ssl: {
+			enabled: true
+		},
 		log: {
 			serverLogs: {
 				file: {
