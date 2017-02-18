@@ -103,12 +103,9 @@ export default {
 		host: process.env.BACKEND_SERVER_HOST || 'localhost',
 		port: process.env.BACKEND_SERVER_PORT || 80,
 		domain: process.env.DOMAIN || 'http://localhost',
+		ssl: false,
 		debug: process.env.DEBUG_BACKEND || false,
 		watchAssets: true,
-		ssl: {
-			enabled: false,
-			passphrase: process.env.SSL_PASSWORD || 'K@by0jH$uKy0%#ug((byH$@jH$%#uK@by0%#ug((by$u'
-		},
 		secretPassphrase: process.env.SALT_PASSWORD,
 		jwt: {
 			expiresIn: 60 * 60 * 24 * 50,

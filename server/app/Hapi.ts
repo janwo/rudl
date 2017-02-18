@@ -44,7 +44,7 @@ export function hapiServer(): Promise<Hapi.Server>{
 		
 		case 'secure':
 			// Create let's encrypt directory.
-			let letsEncryptConfigDir = Path.join(__dirname, '../letsencrypt');
+			let letsEncryptConfigDir = Path.resolve(__dirname, '../letsencrypt');
 			Fs.mkdirSync(letsEncryptConfigDir);
 			
 			// Create let's encrypt server.

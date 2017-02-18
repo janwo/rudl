@@ -25,7 +25,7 @@ export default {
 										host: Config.backend.host,
 										port: Config.backend.port
 									},
-									secure: Config.backend.ssl.enabled,
+									secure: Config.backend.ssl,
 									bypass: req => /^\/static\/assets\/.*$/.test(req.url) ? req.url : false
 								}
 							}
@@ -38,7 +38,7 @@ export default {
 					return {
 						devtool: 'inline-source-map',
 						entry: {
-							'webpack-dev-server': `webpack-dev-server/client?${Config.backend.ssl.enabled ? 'https': 'http'}://localhost:${Config.frontend.webpack.devServer.port}/`,
+							'webpack-dev-server': `webpack-dev-server/client?${Config.backend.ssl ? 'https': 'http'}://localhost:${Config.frontend.webpack.devServer.port}/`,
 						},
 						module: {
 							rules: [
