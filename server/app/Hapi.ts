@@ -10,7 +10,7 @@ import {DecoratorsBinder} from "./binders/DecoratorsBinder";
 import {PluginsBinder} from "./binders/PluginsBinder";
 import {DatabaseManager} from "./Database";
 import {AssetsPool} from "./AssetsPool";
-import * as LetsEncrypt from 'greenlock-express';
+import * as AutoSNI from 'auto-sni';
 
 export function hapiServer(): Promise<Hapi.Server>{
 	// Create dirs.
@@ -55,52 +55,27 @@ export function hapiServer(): Promise<Hapi.Server>{
 			break;
 		
 		case 'secure':
-			// Create let's encrypt server.
-			let letsEncrypt = LetsEncrypt.create({
-				server: 'staging' /*https://acme-v01.api.letsencrypt.org/directory*/,
-				configDir: Config.backend.ssl.certificatesDir,
-				approveDomains: (opts, certs, cb) => {
-					// Check domains and abort on error.
-					for(let i = 0; i < opts.domains; i++) {
-						if(opts.domains[i] != Config.backend.host) {
-							cb(`Error generating certificates. The domain "${opts.domains[i]}" is not valid.`);
-							return;
-						}
-					}
-					
-					opts.domains = certs && certs.altnames || opts.domains;
-					opts.email = 'we@rudl.me';
-					opts.agreeTos = true;
-					
-					cb(null, {
-						options: opts,
-						certs: certs
-					});
+			// Load SSL key and certificate.
+			let autoSni = AutoSNI({
+				email: 'we@rudl.me',
+				agreeTos: true,
+				debug: true,
+				domains: [
+					"rudl.me"
+				],
+				forceSSL: true,
+				redirectCode: 301,
+				ports: {
+					http: 80,
+					https: 443
 				}
-			}).listen(Config.backend.port);
-			
-			// Add http options.
-			letsEncrypt.httpsOptions.NPNProtocols = ['http/2.0', 'spdy', 'http/1.1', 'http/1.0'];
-			
-			// Create HTTPS server.
-			let httpsServer = Https.createServer(letsEncrypt.httpsOptions);
-			
+			});
+
 			// Create server connection.
 			server.connection({
-				listener: httpsServer,
+				listener: autoSni,
 				tls: true,
 				autoListen: false
-			});
-			
-			// Create endpoint for let's encrypt process.
-			let acmeResponder = letsEncrypt.middleware();
-			server.route({
-				method: 'GET',
-				path: '/.well-known/acme-challenge',
-				handler: (request, reply) => {
-					reply.close(false);
-					acmeResponder(request.raw.req, request.raw.res);
-				}
 			});
 			break;
 	}
