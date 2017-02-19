@@ -19,9 +19,6 @@ export function hapiServer(): Promise<Hapi.Server>{
 	// Get all dirs of uploads.
 	Object.keys(Config.backend.uploads.paths).forEach(key => dirs.push(Config.backend.uploads.paths[key]));
 	
-	// Get dir of certificates.
-	dirs.push(Config.backend.ssl.certificatesDir);
-	
 	// Create dirs.
 	dirs.forEach(path => Fs.existsSync(path) || Fs.mkdirSync(path));
 	
