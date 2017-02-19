@@ -19,7 +19,7 @@ export function hapiServer(): Promise<Hapi.Server>{
 	// Get all dirs of uploads.
 	Object.keys(Config.backend.uploads.paths).forEach(key => dirs.push(Config.backend.uploads.paths[key]));
 	
-	// Get dir of certificates
+	// Get dir of certificates.
 	dirs.push(Config.backend.ssl.certificatesDir);
 	
 	// Create dirs.
@@ -78,6 +78,9 @@ export function hapiServer(): Promise<Hapi.Server>{
 					});
 				}
 			}).listen(Config.backend.port);
+			
+			// Add http options.
+			letsEncrypt.httpsOptions.NPNProtocols = ['http/2.0', 'spdy', 'http/1.1', 'http/1.0'];
 			
 			// Create HTTPS server.
 			let httpsServer = Https.createServer(letsEncrypt.httpsOptions);
