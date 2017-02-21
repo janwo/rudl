@@ -22,24 +22,6 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
     height: $header-vertical-padding-mobile * 2 + $header-content-size;
   }
 
-  .logo {
-    width: $header-content-size;
-    height: $header-content-size;
-  }
-
-  .name {
-    font-family: $base-heading-font-family;
-    font-weight: $base-heading-font-weight-normal;
-    font-size: $header-content-size * 0.75;
-    color: map_get($base-colors, 'primary');
-    margin-left: map_get($base-padding, 'small');
-
-    @include breakpoint('small') {
-      margin-left: map_get($base-padding, 'smaller');
-      font-size: $header-content-size;
-    }
-  }
-
   .stretched {
     display: flex;
     align-items: stretch;

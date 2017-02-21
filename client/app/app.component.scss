@@ -48,6 +48,7 @@
       font-weight: $base-font-weight-normal;
       margin-bottom: $size;
       font-size: $size;
+      color: map_get($base-colors, 'heading-text');
     }
   }
 

@@ -5,14 +5,14 @@ import BasicStrategy = require("../strategies/BasicStrategy");
 import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
-import {ActivityController} from "../controllers/ActivityController";
 import {TranslationsValidation} from "../models/Translations";
+import {EventController} from "../controllers/EventController";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/events/like/{query}/{offset?}',
 		method: 'GET',
-		handler: ActivityController.RouteHandlers.getActivitiesLike,
+		handler: EventController.RouteHandlers.getEventsLike,
 		config: {
 			auth: {
 				scope: [
@@ -30,7 +30,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/events/=/{key}',
 		method: 'GET',
-		handler: ActivityController.RouteHandlers.getActivity,
+		handler: EventController.RouteHandlers.getEvent,
 		config: {
 			auth: {
 				scope: [
@@ -45,46 +45,9 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/events/=/{key}/lists/{filter}/{interval?}',
-		method: 'GET',
-		handler: ActivityController.RouteHandlers.getLists,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			},
-			validate: {
-				params: {
-					key: Joi.string(),
-					interval: Joi.array().min(1).max(2).items(Joi.number().min(0)).default([0]),
-					filter: Joi.string().allow('all', 'owned', 'followed').default('all')
-				}
-			}
-		}
-	},
-	{
-		path: '/api/events/set-rating',
-		method: 'POST',
-		handler: ActivityController.RouteHandlers.setRating,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			},
-			validate: {
-				payload: {
-					activity: Joi.string(),
-					rating: Joi.number().integer().min(-1).max(1)
-				}
-			}
-		}
-	},
-	{
 		path: '/api/events/create',
 		method: 'POST',
-		handler: ActivityController.RouteHandlers.createActivity,
+		handler: EventController.RouteHandlers.createEvent,
 		config: {
 			auth: {
 				scope: [
@@ -93,7 +56,7 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				payload: {
-					translations: TranslationsValidation
+					title: TranslationsValidation
 				}
 			}
 		}

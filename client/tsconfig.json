@@ -18,7 +18,7 @@
     ]
   },
   "angularCompilerOptions": {
-    "debug": true,
+    "debug": false,
     "skipMetadataEmit": true
   },
   "awesomeTypescriptLoaderOptions": {

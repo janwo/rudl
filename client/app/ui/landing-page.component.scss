@@ -1,11 +1,12 @@
 @import './variables.scss';
 
-$landing-page-sidebar-width: 15rem;
-$landing-page-background-color: #f7f7f7;
-$landing-page-background-color: #fff;
+$landing-page-sidebar-width: 20rem;
+$landing-page-sidebar-background-color: #fff;
 $landing-page-content-size: 2rem;
 $landing-page-vertical-padding: map_get($base-padding, 'smaller');
 $landing-page-horizontal-padding: map_get($base-padding, 'default');
+$landing-page-vertical-padding-mobile: map_get($base-padding, 'smaller');
+$landing-page-horizontal-padding-mobile: map_get($base-padding, 'smaller');
 
 :host {
   min-height: 100vh;
@@ -21,61 +22,71 @@ $landing-page-horizontal-padding: map_get($base-padding, 'default');
 
   .sidebar {
     flex: 0 0 auto;
-    padding: map_get($base-padding, 'default');
+    display: flex;
+    flex-direction: column;
+    padding: $landing-page-vertical-padding-mobile $landing-page-horizontal-padding-mobile;
+    background: $landing-page-sidebar-background-color;
 
     @include breakpoint('small'){
       flex-basis: $landing-page-sidebar-width;
-    }
-
-    .header {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      flex: 0 0 auto;
       padding: $landing-page-vertical-padding $landing-page-horizontal-padding;
-
-      img {
-        width: $landing-page-content-size;
-        height: $landing-page-content-size;
-        margin-right: map_get($base-padding, 'smaller');
-      }
-
-      span {
-        font-family: $base-heading-font-family;
-        font-weight: $base-heading-font-weight-normal;
-        font-size: $landing-page-content-size;
-        color: map_get($base-colors, 'primary');
-      }
     }
-  }
 
-  .background {
-    background-color: $landing-page-background-color;
-    padding: $landing-page-vertical-padding $landing-page-horizontal-padding;
-    display: flex;
-    flex-direction: row;
-    flex: 1 1 auto;
-    align-items: center;
-    justify-content: center;
+    h2 {
+      margin-top: map_get($base-padding, 'large');
+    }
 
-    div {
-      flex: 0 1 auto;
-      max-width: map_get($base-breakpoints, 'small') * 0.75;
-      margin-bottom: map_get($base-padding, 'large');
-
-      h1 {
-        color: map_get($base-colors, 'secondary');
-      }
-
-      p {
-        line-height: 1.5;
-      }
+    p {
+      color: map_get($base-colors, 'secondary-text');
+      line-height: 1.5;
     }
 
     small {
-      position: absolute;
-      bottom: map_get($base-padding, 'default');
+      margin-top: auto;
       color: inactive(map_get($base-colors, 'primary-text'));
+    }
+  }
+
+  @keyframes zoomIn {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.5);
+    }
+  }
+
+  .content {
+    position: relative;
+    overflow: hidden;
+    flex: 1 1 auto;
+
+    .background {
+      height: auto;
+      width: 100%;
+      animation: zoomIn 30s ease-in-out infinite alternate;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+
+    h1 {
+      padding: $landing-page-vertical-padding-mobile $landing-page-horizontal-padding-mobile;
+      max-width: map_get($base-breakpoints, 'small') * 0.75;
+      margin-bottom: map_get($base-padding, 'large');
+      position: relative;
+
+      @include breakpoint('small'){
+        padding: $landing-page-vertical-padding $landing-page-horizontal-padding;
+      }
+
+      span {
+        color: inactive(map_get($base-colors, 'primary'));
+
+        &:first-child {
+          color: map_get($base-colors, 'primary');
+        }
+      }
     }
   }
 }

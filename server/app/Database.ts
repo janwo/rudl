@@ -41,6 +41,18 @@ export class DatabaseManager {
 				};
 			})
 		},
+		events: {
+			name: 'events',
+			type: 'document',
+			indices: TranslationsKeys.map(key => {
+				return {
+					type: 'fulltext',
+					fields: [
+						`translations.${key}`
+					]
+				};
+			})
+		},
 		lists: {
 			name: 'lists',
 			type: 'document',
@@ -75,6 +87,18 @@ export class DatabaseManager {
 		},
 		userFollowsActivity: {
 			name: 'user-follows-activity',
+			type: 'edge'
+		},
+		userOwnsEvent: {
+			name: 'user-owns-event',
+			type: 'edge'
+		},
+		userJoinsEvent: {
+			name: 'user-joins-event',
+			type: 'edge'
+		},
+		eventIsItem: {
+			name: 'event-is-item',
 			type: 'edge'
 		},
 		listIsItem: {

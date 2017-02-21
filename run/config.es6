@@ -48,7 +48,6 @@ export const Config = (() => {
 	
 	// Post initialization of sub-config file: frontend.webpack.devServer.config.
 	if(merged.frontend.webpack.devServer) {
-		
 		merged.frontend.webpack.devServer.config = merged.frontend.webpack.devServer.config.map(configFunction => configFunction(merged));
 		merged.frontend.webpack.devServer.config = _.merge.apply(_.merge, [{}].concat(merged.frontend.webpack.devServer.config));
 	}

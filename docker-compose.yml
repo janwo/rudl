@@ -12,12 +12,12 @@ services:
       - "443:443"
       - "5858:5858"
     volumes:
-      - ./server:/home/app/server
-      - ./client:/home/app/client
-      - ./run:/home/app/run
-      - ./letsencrypt:/home/letsencrypt
-      - ./db/files:/home/app/db/files
-      - ./logs:/home/app/logs
+      - ./server:/root/app/server
+      - ./client:/root/app/client
+      - ./run:/root/app/run
+      - ./letsencrypt:/root/letsencrypt
+      - ./db/files:/root/app/db/files
+      - ./logs:/root/app/logs
     depends_on:
       - redis
       - arango
