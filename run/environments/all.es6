@@ -53,11 +53,7 @@ export default {
 									]
 								},
 								{
-									test: /\.((woff2?|svg|ttf|eot|svg)(\?v=\d*\.\d*\.\d*))$/,
-									use: 'file-loader?name=files/[name].[hash].[ext]'
-								},
-								{
-									test: /\.(png|jpe?g|gif|svg|woff2?|ttf|eot|ico)$/,
+									test: /\.((png|jpe?g|gif|svg|woff2?|ttf|eot|ico)(\?v=\d*\.\d*\.\d*)?)$/,
 									use: 'file-loader?name=files/[name].[hash].[ext]'
 								},
 								{

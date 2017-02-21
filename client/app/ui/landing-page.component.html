@@ -1,24 +1,18 @@
 <section class="sidebar">
-	<div class="header">
-		<img src="../../assets/logo.svg">
-		<span i18n>rudl</span>
-	</div>
-	<!--<h2 i18n>Leute kennenlernen</h2>-->
-	<!--<p i18n>Rudl weiß, was zu tun ist. Bla bla bla bla bla.</p>-->
+	<logo></logo>
+	<h2 i18n><!--Sei Teil der Community, verbinde dich jetzt!-->Im Sommer geht's los!</h2>
+	<p i18n>Zusammen mit der Community empfiehlt dir rudl neue Aktivitäten, ganz nach deinem Geschmack. Du hinterlegst all jene Aktivitäten, von denen du träumst, schwärmst oder die du noch heute beginnst. Komm mit ins Team, joine uns im Sommer hier auf rudl.me :)</p>
+	<styled-button (click)="openExternalLink('https://docs.google.com/forms/d/e/1FAIpQLSeMl5H65jBg67wuSBc38oKDHeqBZqhMRAyTrsIChV28K_3EqQ/viewform')" [text]="'Benachrichtigen lassen'"></styled-button>
 	<login *ngIf="showLogin"></login>
-</section>
-<section class="background">
-	<div>
-		<h1 i18n>
-			Eine neue Stadt besucht und gleich nette Leute getroffen. Check!
-		</h1>
-		<p>
-			Mit rudl einfach und entspannt die eigene Stadt kennenlernen, gleichgesinnte Menschen finden und die Freizeitgestaltung transparenter und einfach planbar gestalten. Komm mit ins Team, joine uns bald hier auf rudl.me :)
-		</p>
-		<styled-button (click)="openExternalLink('https://docs.google.com/forms/d/e/1FAIpQLSeMl5H65jBg67wuSBc38oKDHeqBZqhMRAyTrsIChV28K_3EqQ/viewform')" [text]="'Benachrichtigen lassen'"></styled-button>
-	</div>
 	<small class="legal">
 		<a [routerLink]="['/legal']" i18n>Impressum</a>
 	</small>
+</section>
+<section class="content">
+	<img class="background" src="../../assets/landing-page/background.png">
+	<h1>
+		<span>Eine neue Stadt besucht und gleich nette Leute getroffen. Check!</span>
+		<span>Bei rudl einfach und entspannt die eigene Stadt kennenlernen, gleichgesinnte Menschen finden und die Freizeitgestaltung transparenter und einfach planbar gestalten.</span>
+	</h1>
 </section>
 

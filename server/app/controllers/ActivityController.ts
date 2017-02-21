@@ -67,10 +67,10 @@ export module ActivityController {
 		});
 	}
 	
-	export function findByUser(user: User) : Promise<Activity[]>{
+	export function findByUser(user: User, ownsOnly = false) : Promise<Activity[]>{
 		let aqlQuery = `FOR activity IN OUTBOUND @user @@edges RETURN activity`;
 		let aqlParams = {
-			'@edges': DatabaseManager.arangoCollections.userFollowsActivity.name,
+			'@edges': ownsOnly ? DatabaseManager.arangoCollections.userOwnsActivity.name : DatabaseManager.arangoCollections.userFollowsActivity.name,
 			user: user._id
 		};
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Activity[]>;
@@ -209,6 +209,7 @@ export module ActivityController {
 		}).then(() => {
 			let now = Date.now();
 			let activity : Activity = {
+				location: [],//TODO Add location
 				createdAt: now,
 				updatedAt: now,
 				translations: translations

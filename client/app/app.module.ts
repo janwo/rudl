@@ -50,6 +50,7 @@ import {TranslationListComponent} from "./ui/widgets/translation-list.component"
 import {ActivityService} from "./services/activity.service";
 import {ListService} from "./services/list.service";
 import {AddToListComponent} from "./ui/widgets/add-to-list.component";
+import {LogoComponent} from "./ui/widgets/logo.component";
 
 @NgModule({
     declarations: [
@@ -68,6 +69,7 @@ import {AddToListComponent} from "./ui/widgets/add-to-list.component";
 	    StatisticsComponent,
 	    ModalComponent,
 	    QuestionComponent,
+	    LogoComponent,
 	    TabElevatedMenuComponent,
 	    LandingPageComponent,
 	    IndicatorComponent,

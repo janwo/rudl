@@ -1,0 +1,27 @@
+@import './../variables.scss';
+
+$logo-size: 2rem;
+
+:host {
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+
+  img {
+    width: $logo-size;
+    height: $logo-size;
+  }
+
+  span {
+    font-family: $base-heading-font-family;
+    font-weight: $base-heading-font-weight-normal;
+    font-size: $logo-size * 0.75;
+    color: map_get($base-colors, 'primary');
+    margin-left: map_get($base-padding, 'small');
+
+    @include breakpoint('small') {
+      margin-left: map_get($base-padding, 'smaller');
+      font-size: $logo-size;
+    }
+  }
+}
