@@ -184,7 +184,7 @@ export module AccountController {
 		updateFulltextSearchData(user);
 		
 		// Set new timestamps.
-		let now = Math.trunc(Date.now() / 1000);
+		let now = new Date().toISOString();
 		user.updatedAt = now;
 		if (!user._key) user.createdAt = now;
 		

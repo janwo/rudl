@@ -1,75 +1,28 @@
 @import './variables.scss';
 
-$landing-page-sidebar-width: 15rem;
-$landing-page-background-color: #f7f7f7;
-$landing-page-background-color: #fff;
-$landing-page-content-size: 2rem;
-$landing-page-vertical-padding: map_get($base-padding, 'smaller');
-$landing-page-horizontal-padding: map_get($base-padding, 'default');
+$legal-vertical-padding: map_get($base-padding, 'smaller');
+$legal-vertical-padding-mobile: map_get($base-padding, 'smaller');
+$legal-horizontal-padding: map_get($base-padding, 'default');
+$legal-horizontal-padding-mobile: map_get($base-padding, 'smaller');
 
 :host {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-items: stretch;
-  align-content: stretch;
+  background-color: map_get($base-colors, 'background');
 
-  @include breakpoint('small'){
-    flex-direction: row;
-  }
+  header {
+    background-color: map_get($base-colors, 'background-highlighted');
+    padding: $legal-vertical-padding-mobile $legal-horizontal-padding-mobile;
 
-  .sidebar {
-    flex: 0 0 auto;
-    padding: map_get($base-padding, 'default');
-
-    @include breakpoint('small'){
-      flex-basis: $landing-page-sidebar-width;
-    }
-
-    .header {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      flex: 0 0 auto;
-      padding: $landing-page-vertical-padding $landing-page-horizontal-padding;
-
-      img {
-        width: $landing-page-content-size;
-        height: $landing-page-content-size;
-        margin-right: map_get($base-padding, 'smaller');
-      }
-
-      span {
-        font-family: $base-heading-font-family;
-        font-weight: $base-heading-font-weight-normal;
-        font-size: $landing-page-content-size;
-        color: map_get($base-colors, 'primary');
-      }
+    @include breakpoint('small') {
+      padding: $legal-vertical-padding $legal-horizontal-padding;
     }
   }
 
-  .background {
-    background-color: $landing-page-background-color;
-    padding: $landing-page-vertical-padding $landing-page-horizontal-padding;
-    display: flex;
-    flex-direction: row;
-    flex: 1 1 auto;
-    align-items: center;
-    justify-content: center;
+  section {
+    margin-top: map_get($base-padding, 'default');
+    padding: $legal-vertical-padding-mobile $legal-horizontal-padding-mobile;
 
-    div {
-      flex: 0 1 auto;
-      max-width: map_get($base-breakpoints, 'small') * 0.75;
-      margin-bottom: map_get($base-padding, 'large');
-
-      h1 {
-        color: map_get($base-colors, 'secondary');
-      }
-
-      p {
-        line-height: 1.5;
-      }
+    @include breakpoint('small') {
+      padding: $legal-vertical-padding $legal-horizontal-padding;
     }
   }
 }

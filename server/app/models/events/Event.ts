@@ -6,5 +6,6 @@ export interface Event extends Document {
 	needsApproval: boolean;
 	slots: number;
 	date: string;
+	fuzzyDate: boolean;
 	location: Array<number>;
 }

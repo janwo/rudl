@@ -4,15 +4,21 @@
   display: flex;
   flex-direction: column;
 
+  section {
+    margin-top: map_get($base-padding, 'default');
+  }
+
   .results {
     list-style: none;
 
-    &.collapsed li:not(li.create),
-    &.collapsed li:not(li:nth-child(1)),
-    &.collapsed li:not(li:nth-child(2)),
-    &.collapsed li:not(li:nth-child(3)),
-    &.collapsed li:not(li:nth-child(4)) {
-      display: none;
+    &.collapsed li {
+      &:not(li.create),
+      &:not(li:nth-child(1)),
+      &:not(li:nth-child(2)),
+      &:not(li:nth-child(3)),
+      &:not(li:nth-child(4)) {
+        display: none;
+      }
     }
 
     .create {

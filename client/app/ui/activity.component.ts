@@ -1,11 +1,10 @@
 import {Component, OnInit, OnDestroy, ViewChild} from "@angular/core";
-import {Subscription, Subject} from "rxjs";
+import {Subscription} from "rxjs";
 import {ActivatedRoute, Params} from "@angular/router";
 import {Activity} from "../models/activity";
 import {ButtonStyles} from "./widgets/styled-button.component";
 import {ModalComponent} from "./widgets/modal.component";
 import {ActivityService} from "../services/activity.service";
-import {ListService} from "../services/list.service";
 
 @Component({
     templateUrl: './activity.component.html',
@@ -19,7 +18,6 @@ export class ActivityComponent implements OnInit, OnDestroy {
     buttonStyleDefault: ButtonStyles = ButtonStyles.minimal;
     buttonStyleActivated: ButtonStyles = ButtonStyles.minimalInverse;
     @ViewChild('unfollowModal') unfollowModal: ModalComponent;
-    loadActivityLists: Subject<any> = new Subject();
     
     modalChoices = [{
         buttonStyle: ButtonStyles.default,

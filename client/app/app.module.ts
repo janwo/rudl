@@ -51,6 +51,7 @@ import {ActivityService} from "./services/activity.service";
 import {ListService} from "./services/list.service";
 import {AddToListComponent} from "./ui/widgets/add-to-list.component";
 import {LogoComponent} from "./ui/widgets/logo.component";
+import {MapComponent} from "./ui/widgets/map.component";
 
 @NgModule({
     declarations: [
@@ -76,6 +77,7 @@ import {LogoComponent} from "./ui/widgets/logo.component";
 	    DashboardComponent,
 	    HistoryComponent,
 	    AvatarComponent,
+	    MapComponent,
 	    AddToListComponent,
 	    ExploreComponent,
 	    PeopleComponent,
