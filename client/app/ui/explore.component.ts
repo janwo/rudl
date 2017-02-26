@@ -1,6 +1,5 @@
 import {Component, Input, OnDestroy} from "@angular/core";
 import {Activity} from "../models/activity";
-import {UserService} from "../services/user.service";
 import {Subscription, Observable} from "rxjs";
 import {ListService} from "../services/list.service";
 
@@ -20,7 +19,7 @@ export class ExploreComponent implements OnDestroy {
     constructor(
         private listService: ListService
     ) {
-        this.suggestedActivitiesStream = Observable.empty();//this.listService.activities("4026794");//TODO
+        this.suggestedActivitiesStream = /*Observable.empty();//*/this.listService.activities("176887");//TODO
     }
     
     ngOnDestroy(): void {

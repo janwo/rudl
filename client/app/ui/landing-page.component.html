@@ -1,9 +1,11 @@
 <section class="sidebar">
-	<logo></logo>
-	<h2 i18n><!--Sei Teil der Community, verbinde dich jetzt!-->Im Sommer geht's los!</h2>
-	<p i18n>Zusammen mit der Community empfiehlt dir rudl neue Aktivitäten, ganz nach deinem Geschmack. Du hinterlegst all jene Aktivitäten, von denen du träumst, schwärmst oder die du noch heute beginnst. Komm mit ins Team, joine uns im Sommer hier auf rudl.me :)</p>
-	<styled-button (click)="openExternalLink('https://docs.google.com/forms/d/e/1FAIpQLSeMl5H65jBg67wuSBc38oKDHeqBZqhMRAyTrsIChV28K_3EqQ/viewform')" [text]="'Benachrichtigen lassen'"></styled-button>
-	<login *ngIf="showLogin"></login>
+	<div>
+		<logo></logo>
+		<h2 i18n><!--Sei Teil der Community, verbinde dich jetzt!-->Im Sommer geht's los!</h2>
+		<p i18n>Zusammen mit der Community empfiehlt dir rudl neue Aktivitäten, ganz nach deinem Geschmack. Du hinterlegst all jene Aktivitäten, von denen du träumst, schwärmst oder die du noch heute beginnst. Komm mit ins Team, joine uns im Sommer hier auf rudl.me :)</p>
+		<styled-button (click)="openExternalLink('https://docs.google.com/forms/d/e/1FAIpQLSeMl5H65jBg67wuSBc38oKDHeqBZqhMRAyTrsIChV28K_3EqQ/viewform')" [text]="'Benachrichtigen lassen'"></styled-button>
+		<login *ngIf="showLogin"></login>
+	</div>
 	<small class="legal">
 		<a [routerLink]="['/legal']" i18n>Impressum</a>
 	</small>

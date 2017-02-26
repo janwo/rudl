@@ -114,7 +114,7 @@ export module ListController {
 				}
 			}
 		}).then(() => {
-			let now = Date.now();
+			let now = new Date().toISOString();
 			let list : List = {
 				createdAt: now,
 				updatedAt: now,
@@ -184,7 +184,7 @@ export module ListController {
 			if(listIsItem) return listIsItem;
 		}).catch(() => {
 			// Add connection.
-			let now = Date.now();
+			let now = new Date().toISOString();
 			let edge : ListIsItem = {
 				_from: list._id,
 				_to: activity._id,
@@ -215,7 +215,7 @@ export module ListController {
 			if(userFollowsList) return userFollowsList;
 			
 			// Add connection.
-			let now = Math.trunc(Date.now() / 1000);
+			let now = new Date().toISOString();
 			let edge : UserFollowsList = {
 				_from: user._id,
 				_to: list._id,

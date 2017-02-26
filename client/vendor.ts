@@ -30,3 +30,6 @@ require("../node_modules/normalize.css");
 
 // Font Awesome
 require("../node_modules/font-awesome/css/font-awesome.css");
+
+// Leaflet
+require("../node_modules/leaflet/dist/leaflet.css");

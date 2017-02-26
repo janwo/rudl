@@ -1,0 +1,12 @@
+@import './../variables.scss';
+
+:host {
+  display: block;
+
+  div {
+    height: 100%;
+    width: 100%;
+    font-family: $base-font-family;
+    font-weight: $base-font-weight-normal;
+  }
+}

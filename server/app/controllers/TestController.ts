@@ -80,6 +80,10 @@ export module TestController {
 			casual.unix_time
 		].sort();
 		let activity : Activity = {
+			location: [
+				Number.parseFloat(casual.latitude),
+				Number.parseFloat(casual.longitude)
+			],
 			translations: {},
 			createdAt: date[0],
 			updatedAt: date[1]

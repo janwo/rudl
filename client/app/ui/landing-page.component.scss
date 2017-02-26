@@ -1,17 +1,17 @@
 @import './variables.scss';
 
 $landing-page-sidebar-width: 20rem;
-$landing-page-sidebar-background-color: #fff;
+$landing-page-sidebar-dark-background-color: map_get($base-colors, 'background-inverse');
+$landing-page-sidebar-bright-background-color: map_get($base-colors, 'background-highlighted');
 $landing-page-content-size: 2rem;
 $landing-page-vertical-padding: map_get($base-padding, 'smaller');
+$landing-page-vertical-padding-mobile: map_get($base-padding, 'default');
 $landing-page-horizontal-padding: map_get($base-padding, 'default');
-$landing-page-vertical-padding-mobile: map_get($base-padding, 'smaller');
-$landing-page-horizontal-padding-mobile: map_get($base-padding, 'smaller');
 
 :host {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   flex-wrap: nowrap;
   align-items: stretch;
   align-content: stretch;
@@ -21,29 +21,53 @@ $landing-page-horizontal-padding-mobile: map_get($base-padding, 'smaller');
   }
 
   .sidebar {
+    position: relative;
     flex: 0 0 auto;
     display: flex;
     flex-direction: column;
-    padding: $landing-page-vertical-padding-mobile $landing-page-horizontal-padding-mobile;
-    background: $landing-page-sidebar-background-color;
+    background-color: $landing-page-sidebar-dark-background-color;
+    z-index: 1;
 
-    @include breakpoint('small'){
-      flex-basis: $landing-page-sidebar-width;
+    @include breakpoint('small') {
+      flex-basis: map_get($base-breakpoints, 'small') / 2;
+      background-color: $landing-page-sidebar-bright-background-color;
+    }
+
+    & > div {
       padding: $landing-page-vertical-padding $landing-page-horizontal-padding;
+
+      @include breakpoint(null, 'small') {
+        background-color: $landing-page-sidebar-bright-background-color;
+        margin-top: - map_get($base-padding, 'large');
+        margin-left: $landing-page-horizontal-padding;
+        margin-right: $landing-page-horizontal-padding;
+        padding-top: $landing-page-vertical-padding-mobile;
+        padding-bottom: $landing-page-vertical-padding-mobile;
+      }
+
+      h2 {
+        @include breakpoint('small') {
+        margin-top: map_get($base-padding, 'large');
+        }
+      }
+
+      p {
+        color: map_get($base-colors, 'secondary-text');
+        line-height: 1.5;
+      }
     }
 
-    h2 {
-      margin-top: map_get($base-padding, 'large');
-    }
-
-    p {
-      color: map_get($base-colors, 'secondary-text');
-      line-height: 1.5;
-    }
-
-    small {
+    .legal {
+      display: block;
       margin-top: auto;
-      color: inactive(map_get($base-colors, 'primary-text'));
+      padding: 0 $landing-page-horizontal-padding $landing-page-vertical-padding;
+      color: map_get($base-colors, 'secondary-text');
+
+      @include breakpoint(null, 'small') {
+        text-align: center;
+        margin-top: $landing-page-vertical-padding-mobile;
+        padding-bottom: $landing-page-vertical-padding-mobile;
+      }
     }
   }
 
@@ -52,14 +76,16 @@ $landing-page-horizontal-padding-mobile: map_get($base-padding, 'smaller');
       transform: scale(1);
     }
     to {
-      transform: scale(1.5);
+      transform: scale(1.25);
     }
   }
 
   .content {
     position: relative;
+    z-index: 0;
     overflow: hidden;
     flex: 1 1 auto;
+    padding: $landing-page-vertical-padding $landing-page-horizontal-padding;
 
     .background {
       height: auto;
@@ -71,13 +97,13 @@ $landing-page-horizontal-padding-mobile: map_get($base-padding, 'smaller');
     }
 
     h1 {
-      padding: $landing-page-vertical-padding-mobile $landing-page-horizontal-padding-mobile;
-      max-width: map_get($base-breakpoints, 'small') * 0.75;
-      margin-bottom: map_get($base-padding, 'large');
       position: relative;
+      max-width: map_get($base-breakpoints, 'small');
+      margin-top: map_get($base-padding, 'large');
+      margin-left: map_get($base-padding, 'large');
 
-      @include breakpoint('small'){
-        padding: $landing-page-vertical-padding $landing-page-horizontal-padding;
+      @include breakpoint(null, 'small'){
+        margin-bottom: 60%;
       }
 
       span {

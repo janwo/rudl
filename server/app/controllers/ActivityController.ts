@@ -90,7 +90,7 @@ export module ActivityController {
 		let aqlQuery = `FOR activity IN FULLTEXT(@@collection, "translations.de", @query) RETURN activity`;
 		let aqlParams = {
 			'@collection': DatabaseManager.arangoCollections.activities.name,
-			query: query.split(' ').map(word => '+prefix:' + word).join()
+			query: query.split(' ').map(word => '|prefix:' + word).join()
 		};
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Activity[]>;
 	}
@@ -135,7 +135,7 @@ export module ActivityController {
 			
 			default:
 				// Create edge.
-				let now = Date.now();
+				let now = new Date().toISOString();
 				return collection.byExample({
 					_from: user._id,
 					_to: activity._id
@@ -144,8 +144,8 @@ export module ActivityController {
 							_from: user._id,
 							_to: activity._id,
 							createdAt: now,
-							rating: rating,
-							updatedAt: now
+							updatedAt: now,
+							rating: rating
 						};
 					userRatedActivity.updatedAt = now;
 					userRatedActivity.rating = rating;
@@ -172,7 +172,7 @@ export module ActivityController {
 			if(userFollowsActivity) return userFollowsActivity;
 			
 			// Add connection.
-			let now = Math.trunc(Date.now() / 1000);
+			let now = new Date().toISOString();
 			let edge : UserFollowsActivity = {
 				_from: user._id,
 				_to: activity._id,
@@ -207,7 +207,7 @@ export module ActivityController {
 				}
 			}
 		}).then(() => {
-			let now = Date.now();
+			let now = new Date().toISOString();
 			let activity : Activity = {
 				location: [],//TODO Add location
 				createdAt: now,

@@ -1,7 +1,6 @@
 @import './../variables.scss';
 
 $list-margin: map_get($base-padding, 'smaller');
-$list-breakpoint-two-columns: 40rem;
 
 :host {
   display: block;
@@ -10,6 +9,7 @@ $list-breakpoint-two-columns: 40rem;
     list-style: none;
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
     flex-direction: row;
 
     & > /deep/ * {
@@ -17,22 +17,27 @@ $list-breakpoint-two-columns: 40rem;
     }
 
     &.two-columns > /deep/ * {
-      @media screen and (min-width: $list-breakpoint-two-columns) {
+      @include breakpoint('small') {
         flex: 0 0 50%;
       }
     }
 
     &:not(.no-margins) {
-      margin: -$list-margin;
-
       & > /deep/ * {
-        margin: $list-margin;
-        flex: 0 0 calc(100% - #{$list-margin * 2});
+        margin-top: $list-margin;
+
+        &:nth-child(1) {
+          margin-top: 0;
+        }
       }
 
-      &.two-columns > /deep/ * {
-        @media screen and (min-width: $list-breakpoint-two-columns) {
-          flex: 0 0 calc(50% - #{$list-margin * 2});
+      @include breakpoint('small') {
+        &.two-columns > /deep/ * {
+          flex: 0 0 calc(50% - #{$list-margin / 2});
+
+         &:nth-child(2) {
+            margin-top: 0;
+          }
         }
       }
     }

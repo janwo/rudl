@@ -56,7 +56,13 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				payload: {
-					title: TranslationsValidation
+					title: Joi.string().min(3),
+					description: Joi.string().optional(),
+					needsApproval: Joi.boolean().default(false),
+					slots: Joi.number().min(0).default(0),
+					date: Joi.date(),
+					fuzzyDate: Joi.boolean().default(false),
+					location: Joi.array().items(Joi.number())
 				}
 			}
 		}

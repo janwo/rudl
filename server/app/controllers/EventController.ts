@@ -17,6 +17,7 @@ import {UserFollowsActivity} from "../models/activities/UserFollowsActivity";
 import {UserOwnsEvent} from "../models/events/UserOwnsEvent";
 import {UserJoinsEvent} from "../models/events/UserJoinsEvent";
 import {EventIsItem} from "../models/events/EventIsItem";
+import {ActivityController} from "./ActivityController";
 
 export module EventController {
 	
@@ -79,10 +80,10 @@ export module EventController {
 	
 	export function findByFulltext(query: string) : Promise<Event[]>{
 		//TODO use languages of user
-		let aqlQuery = `FOR event IN FULLTEXT(@@collection, "event.de", @query) RETURN activity`;
+		let aqlQuery = `FOR event IN FULLTEXT(@@collection, "title", @query) RETURN activity`;
 		let aqlParams = {
 			'@collection': DatabaseManager.arangoCollections.activities.name,
-			query: query.split(' ').map(word => '+prefix:' + word).join()
+			query: query.split(' ').map(word => '|prefix:' + word).join()
 		};
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Event[]>;
 	}
@@ -117,17 +118,24 @@ export module EventController {
 		return DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsActivity.name).removeByExample(edge).then(() => {});
 	}
 	
-	export function createEvent(user: User, options: {
-		
+	export function createEvent(user: User, activity: Activity, options: {
+		title: string,
+		description: string,
+		needsApproval: boolean,
+		slots: number,
+		date: string,
+		fuzzyDate: boolean,
+		location: number[]
 	}) : Promise<Event> {
-		let now = Date.now();
-		let event : Event = {//TODO Events propagieren
-			title: '',
-			description: '',
-			needsApproval: false,
-			slots: 3,
-			date: '',
-			location: [],
+		let now = new Date().toISOString();
+		let event : Event = {
+			title: options.title,
+			description: options.description,
+			needsApproval: options.needsApproval,
+			slots: options.slots,
+			date: options.date,
+			location: options.location,
+			fuzzyDate: options.fuzzyDate,
 			createdAt: now,
 			updatedAt: now
 		};
@@ -150,7 +158,7 @@ export module EventController {
 			
 			let eventIsItem : EventIsItem = {
 				_from: event._id,
-				_to: '1',//TODO activity._id,
+				_to: activity._id,
 				createdAt: now,
 				updatedAt: now
 			};
@@ -169,13 +177,32 @@ export module EventController {
 		/**
 		 * Handles [POST] /api/events/create
 		 * @param request Request-Object
-		 * @param request.payload.translations translations
+		 * @param request.payload.title title
+		 * @param request.payload.description description
+		 * @param request.payload.needsApproval needsApproval
+		 * @param request.payload.slots slots
+		 * @param request.payload.date date
+		 * @param request.payload.location location
+		 * @param request.payload.fuzzyDate fuzzyDate
+		 * @param request.payload.activity activity
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
 		export function createEvent(request: any, reply: any): void {
 			// Create promise.
-			let promise: Promise<Event> = EventController.createEvent(request.auth.credentials, request.payload.translations).then(event => EventController.getPublicEvent(event, request.auth.credentials));
+			let promise: Promise<Event> = ActivityController.findByKey(request.payload.activity).then((activity: Activity) => {
+				if(activity) return EventController.createEvent(request.auth.credentials, activity, {
+					title: request.payload.title,
+					description: request.payload.description,
+					needsApproval: request.payload.needsApproval,
+					slots: request.payload.slots,
+					date: request.payload.date,
+					location: request.payload.location,
+					fuzzyDate: request.payload.fuzzyDate
+				}).then(event => EventController.getPublicEvent(event, request.auth.credentials));
+				
+				return Promise.reject(Boom.badRequest('Activity does not exist!'));
+			});
 			
 			reply.api(promise);
 		}
