@@ -250,7 +250,7 @@ export module ListController {
 		export function createList(request: any, reply: any): void {
 			// Create promise.
 			let activities = request.payload.activities || [];
-			let promise: Promise<List> = ListController.createList(request.auth.credentials, request.payload.translations).then(list => {
+			let promise: Promise<any> = ListController.createList(request.auth.credentials, request.payload.translations).then(list => {
 				activities = activities.map(activity => {
 					return ActivityController.findByKey(activity).then(activity => {
 						if(activity) return ListController.addActivityConnection(list, activity);

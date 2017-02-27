@@ -38,8 +38,8 @@ function generateUser(): User {
 			password: casual.password,
 			providers: [],
 		},
-		createdAt: casual.unix_time,
-		updatedAt: casual.unix_time,
+		createdAt: casual.date('YYYY-MM-DD HH:MM:SS.MMM'),
+		updatedAt: casual.date('YYYY-MM-DD HH:MM:SS.MMM'),
 	};
 	
 	// Apply fulltext search data.

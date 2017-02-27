@@ -5,7 +5,7 @@ import {root} from "../config";
 
 export default {
 	app: {
-		title: 'eat-together - Secure Production Environment'
+		title: 'rudl - Secure Production Environment'
 	},
 	frontend: {
 		webpack: {
@@ -25,7 +25,7 @@ export default {
 								tsConfigPath: root('client/tsconfig.json'),
 								entryModule: root('client/app/app.module#AppModule')
 							}),
-							new Webpack.NoErrorsPlugin(),
+							new Webpack.NoEmitOnErrorsPlugin(),
 							new Webpack.optimize.UglifyJsPlugin({
 								compress: {
 									warnings: false

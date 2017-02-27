@@ -10,6 +10,7 @@
     "pretty": true,
     "removeComments": true,
     "noEmit": true,
+    "skipLibCheck": true,
     "types": [
       "node"
     ],
@@ -18,7 +19,6 @@
     ]
   },
   "angularCompilerOptions": {
-    "debug": false,
     "skipMetadataEmit": true
   },
   "awesomeTypescriptLoaderOptions": {

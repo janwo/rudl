@@ -1,6 +1,6 @@
 export default {
 	app: {
-		title: 'eat-together - Local Environment'
+		title: 'rudl - Local Environment'
 	},
 	frontend: {
 		webpack: {

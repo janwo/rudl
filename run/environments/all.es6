@@ -7,7 +7,7 @@ import {root} from "../config";
 export default {
 	env: process.env.ENV,
 	app: {
-		title: 'eat-together - General Environment (WARNING: Have you checked your environment variables?)'
+		title: 'rudl - General Environment'
 	},
 	generatedFiles: (() => {
 		let rootDir = '_generated/';

@@ -1,11 +1,10 @@
 import ExtractTextPlugin from "extract-text-webpack-plugin";
-import {AotPlugin} from '@ngtools/webpack';
 import {root} from "../config";
 import Webpack from "webpack";
 
 export default {
 	app: {
-		title: 'eat-together - Development Environment'
+		title: 'rudl - Development Environment'
 	},
 	frontend: {
 		webpack: {
