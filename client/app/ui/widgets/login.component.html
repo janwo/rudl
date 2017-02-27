@@ -1,8 +1,6 @@
 <div class="social-login">
-	<styled-button [ngClass]="'auth-button-facebook'" [fa]="'facebook'" [link]="'/oauth/facebook'"
-			[text]="'Authenticate with Facebook'"></styled-button>
-	<styled-button [ngClass]="'auth-button-google'" [link]="'/oauth/google'" [fa]="'google'"
-			[text]="'Authenticate with Google'"></styled-button>
+	<styled-button [style]="facebookButtonStyle" [fa]="'facebook'" [link]="'/oauth/facebook'" [text]="'Authenticate with Facebook'"></styled-button>
+	<styled-button [style]="googleButtonStyle" [link]="'/oauth/google'" [fa]="'google'" [text]="'Authenticate with Google'"></styled-button>
 </div>
 
 <p class="text-divider">

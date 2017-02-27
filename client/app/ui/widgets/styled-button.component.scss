@@ -97,6 +97,24 @@ $button-colors: (
       }
     }
 
+    &.facebook {
+      $facebook-color: #3b5998;
+      background-color: $facebook-color;
+
+      &[disabled] {
+        background-color: inactive($facebook-color);
+      }
+    }
+
+    &.google {
+      $google-color: #df5138;
+      background-color: $google-color;
+
+      &[disabled] {
+        background-color: inactive($google-color);
+      }
+    }
+
     &.uncolored {
       border: map_get($base-line-widths, 'default') transparent solid;
       color: map_get($button-colors, 'uncolored-color');
