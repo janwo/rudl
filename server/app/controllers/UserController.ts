@@ -246,7 +246,7 @@ export module UserController {
 			if(connections.length > 0) return connections[0];
 			
 			// Add connection.
-			let now = Math.trunc(Date.now() / 1000);
+			let now = new Date().toISOString();
 			let edge : UserFollowsUser = {
 				_from: user._id,
 				_to: aimedUser._id,

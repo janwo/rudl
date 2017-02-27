@@ -90,7 +90,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             let username = params['username'];
             if(this.user && this.user.username == username) return Observable.of(params['tab']);
             return updateUser(username).map(user => params['tab']);
-        }).flatMap((tab: string) => {
+        }).map((tab: string) => {
             // Set tab item.
             this.tab = this.tabItems[tab];
     

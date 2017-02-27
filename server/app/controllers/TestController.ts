@@ -29,8 +29,8 @@ export module TestController {
 	
 	function generateUser(): User {
 		let date = [
-			casual.unix_time,
-			casual.unix_time
+			casual.date('YYYY-MM-DD HH:MM:SS.MMM'),
+			casual.date('YYYY-MM-DD HH:MM:SS.MMM')
 		].sort();
 		
 		 let user: User = {
@@ -76,8 +76,8 @@ export module TestController {
 	function generateActivity(): Activity {
 		let translations = ['de', 'en', 'fr', 'es'];
 		let date = [
-			casual.unix_time,
-			casual.unix_time
+			casual.date('YYYY-MM-DD HH:MM:SS.MMM'),
+			casual.date('YYYY-MM-DD HH:MM:SS.MMM')
 		].sort();
 		let activity : Activity = {
 			location: [

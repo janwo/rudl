@@ -1,6 +1,6 @@
 export default {
 	app: {
-		title: 'eat-together - Test Environment'
+		title: 'rudl - Test Environment'
 	},
 	frontend: {
 		webpack: {

@@ -5,7 +5,7 @@ import {root} from "../config";
 
 export default {
 	app: {
-		title: 'eat-together - Production Environment'
+		title: 'rudl - Production Environment'
 	},
 	frontend: {
 		webpack: {
@@ -34,7 +34,7 @@ export default {
 								},
 								sourceMap: false
 							}),
-							new Webpack.NoErrorsPlugin(),
+							new Webpack.NoEmitOnErrorsPlugin(),
 							new ExtractTextPlugin( '[name].[hash].css' )
 						]
 					}

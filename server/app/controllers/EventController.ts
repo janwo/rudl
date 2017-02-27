@@ -98,7 +98,7 @@ export module EventController {
 			if(userFollowsActivity) return userFollowsActivity;
 			
 			// Add connection.
-			let now = Math.trunc(Date.now() / 1000);
+			let now = new Date().toISOString();
 			let edge : UserFollowsActivity = {
 				_from: user._id,
 				_to: activity._id,
@@ -190,7 +190,7 @@ export module EventController {
 		 */
 		export function createEvent(request: any, reply: any): void {
 			// Create promise.
-			let promise: Promise<Event> = ActivityController.findByKey(request.payload.activity).then((activity: Activity) => {
+			let promise: Promise<any> = ActivityController.findByKey(request.payload.activity).then((activity: Activity) => {
 				if(activity) return EventController.createEvent(request.auth.credentials, activity, {
 					title: request.payload.title,
 					description: request.payload.description,
