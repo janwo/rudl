@@ -1,12 +1,11 @@
 import {UserRoles} from "../models/users/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
+import {EventController} from "../controllers/EventController";
 import Joi = require('joi');
 import BasicStrategy = require("../strategies/BasicStrategy");
 import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
-import {TranslationsValidation} from "../models/Translations";
-import {EventController} from "../controllers/EventController";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{

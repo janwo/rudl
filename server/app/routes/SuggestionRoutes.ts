@@ -1,10 +1,10 @@
 import {UserRoles, UserValidation} from "../models/users/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
+import {SuggestionController} from "../controllers/SuggestionController";
 import BasicStrategy = require("../strategies/BasicStrategy");
 import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
-import {SuggestionController} from "../controllers/SuggestionController";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{

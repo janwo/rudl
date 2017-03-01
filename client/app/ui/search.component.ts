@@ -1,7 +1,5 @@
-import {
-	Component, OnDestroy, OnInit, ViewChild, ElementRef, EventEmitter, Input, trigger, transition, style, animate, state
-} from "@angular/core";
-import {Subject, Observable, Subscription} from "rxjs";
+import {Component, OnDestroy, OnInit, trigger, transition, style, animate, state} from "@angular/core";
+import {Observable, Subscription} from "rxjs";
 import {UserService} from "../services/user.service";
 import {Activity} from "../models/activity";
 import {List} from "../models/list";

@@ -5,10 +5,7 @@ import dot = require("dot-object");
 import fs = require('fs');
 import path = require('path');
 import {DatabaseManager} from "../Database";
-import randomstring = require("randomstring");
-import jwt = require("jsonwebtoken");
 import {Cursor} from "arangojs";
-import _ = require("lodash");
 import {Activity} from "../models/activities/Activity";
 import {User} from "../models/users/User";
 import {Event} from "../models/events/Event";
@@ -18,6 +15,9 @@ import {UserOwnsEvent} from "../models/events/UserOwnsEvent";
 import {UserJoinsEvent} from "../models/events/UserJoinsEvent";
 import {EventIsItem} from "../models/events/EventIsItem";
 import {ActivityController} from "./ActivityController";
+import randomstring = require("randomstring");
+import jwt = require("jsonwebtoken");
+import _ = require("lodash");
 
 export module EventController {
 	

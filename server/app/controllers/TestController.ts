@@ -6,15 +6,15 @@ import fs = require('fs');
 import path = require('path');
 import _ = require('lodash');
 import {User, UserRoles} from "../models/users/User";
-import randomstring = require("randomstring");
-import jwt = require("jsonwebtoken");
 import {Cursor} from "arangojs";
-import casual = require('casual');
 import {DatabaseManager} from "../Database";
 import {Activity} from "../models/activities/Activity";
 import {UserController} from "./UserController";
 import {UserFollowsUser} from "../models/users/UserFollowsUser";
 import {AccountController} from "./AccountController";
+import randomstring = require("randomstring");
+import jwt = require("jsonwebtoken");
+import casual = require('casual');
 
 export module TestController {
 	

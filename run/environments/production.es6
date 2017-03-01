@@ -1,6 +1,6 @@
 import Webpack from "webpack";
 import ExtractTextPlugin from "extract-text-webpack-plugin";
-import {AotPlugin} from '@ngtools/webpack';
+import {AotPlugin} from "@ngtools/webpack";
 import {root} from "../config";
 
 export default {

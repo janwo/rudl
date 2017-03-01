@@ -1,9 +1,9 @@
-import {Component, OnInit, OnDestroy, Input, ViewChild, AfterViewInit} from "@angular/core";
+import {Component, OnInit, OnDestroy, Input} from "@angular/core";
 import {UserService} from "../services/user.service";
 import {Subscription, Subject, Observable} from "rxjs";
-import {ActivatedRoute, Params, Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {ButtonStyles} from "./widgets/styled-button.component";
-import {TabItem, TabMenuComponent} from "./widgets/tab-menu.component";
+import {TabItem} from "./widgets/tab-menu.component";
 import {User} from "../models/user";
 import {List} from "../models/list";
 import {ListService} from "../services/list.service";
@@ -90,7 +90,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             let username = params['username'];
             if(this.user && this.user.username == username) return Observable.of(params['tab']);
             return updateUser(username).map(user => params['tab']);
-        }).map((tab: string) => {
+        }).flatMap((tab: string) => {
             // Set tab item.
             this.tab = this.tabItems[tab];
     

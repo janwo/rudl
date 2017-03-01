@@ -2,17 +2,17 @@ import Nodemailer = require("nodemailer");
 import Boom = require("boom");
 import Uuid = require("node-uuid");
 import dot = require("dot-object");
-import * as CryptoJS from 'crypto-js';
-import fs = require('fs');
-import path = require('path');
+import * as CryptoJS from "crypto-js";
 import * as Joi from "joi";
 import {Config} from "../../../run/config";
 import {User, UserProvider, UserValidation, UserRoles} from "../models/users/User";
 import {DatabaseManager} from "../Database";
-import jwt = require("jsonwebtoken");
 import {Cursor} from "arangojs";
-import _ = require("lodash");
 import {UserController} from "./UserController";
+import fs = require('fs');
+import path = require('path');
+import jwt = require("jsonwebtoken");
+import _ = require("lodash");
 import sharp = require("sharp");
 
 export module AccountController {

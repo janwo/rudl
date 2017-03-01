@@ -1,9 +1,9 @@
-import Webpack from 'webpack';
+import Webpack from "webpack";
 import WebpackDevServer from "webpack-dev-server";
 import {Config, print, root} from "./config";
 import * as forever from "forever";
 import rimraf from "rimraf";
- 
+
 class StartupManager {
 	
 	static createTypescriptCompiler(watch = false, onExit = () => {}) {

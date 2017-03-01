@@ -5,13 +5,13 @@ import dot = require("dot-object");
 import fs = require('fs');
 import path = require('path');
 import {DatabaseManager} from "../Database";
-import randomstring = require("randomstring");
-import jwt = require("jsonwebtoken");
 import {Cursor} from "arangojs";
-import _ = require("lodash");
 import {UserController} from "./UserController";
 import {AccountController} from "./AccountController";
 import {User} from "../models/users/User";
+import randomstring = require("randomstring");
+import jwt = require("jsonwebtoken");
+import _ = require("lodash");
 
 export module SuggestionController {
 	

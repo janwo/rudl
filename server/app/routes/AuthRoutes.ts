@@ -1,10 +1,10 @@
 import {Config} from "../../../run/config";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
+import {UserRoles, UserValidation} from "../models/users/User";
+import {AuthController} from "../controllers/AuthController";
 import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
-import {UserRoles, UserValidation} from "../models/users/User";
-import {AuthController} from "../controllers/AuthController";
 
 export const RoutesConfig: RoutesConfiguration = [
 	

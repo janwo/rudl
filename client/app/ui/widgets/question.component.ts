@@ -1,7 +1,4 @@
-import {
-	Input,
-	Component,
-} from "@angular/core";
+import {Input, Component} from "@angular/core";
 import {ButtonStyles} from "./styled-button.component";
 
 @Component({

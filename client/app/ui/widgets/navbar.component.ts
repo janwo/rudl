@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {TabItem} from "./tab-menu.component";
 import {MenuItem} from "./dropdown-menu.component";
 import {UserService, UserStatus} from "../../services/user.service";
-import {Router, ActivatedRoute, NavigationEnd} from "@angular/router";
+import {Router, NavigationEnd} from "@angular/router";
 import {Subscription} from "rxjs";
 import {SearchService, SearchState} from "../../services/search.service";
 import {SearchBarComponent} from "./search-bar.component";

@@ -8,11 +8,11 @@ import {Config} from "../../../run/config";
 import {User, UserProvider} from "../models/users/User";
 import {DatabaseManager} from "../Database";
 import {DecodedToken} from "../models/Token";
-import jwt = require("jsonwebtoken");
 import {Cursor} from "arangojs";
-import _ = require("lodash");
 import {UserFollowsUser} from "../models/users/UserFollowsUser";
 import {AuthController} from "./AuthController";
+import jwt = require("jsonwebtoken");
+import _ = require("lodash");
 
 export module UserController {
 	

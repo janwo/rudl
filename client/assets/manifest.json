@@ -1,5 +1,5 @@
 {
-  "name": "Rudl - App",
+  "name": "Rudl",
   "short_name": "Rudl",
   "icons": [
     {
@@ -41,5 +41,5 @@
   ],
   "start_url": "/",
   "display": "standalone",
-  "orientation": "landscape"
+  "orientation": "portrait"
 }
