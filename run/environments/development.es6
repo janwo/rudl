@@ -13,7 +13,6 @@ export default {
 					( Config ) => {
 						return {
 							inline: true,
-							stats: false,
 							historyApiFallback: true,
 							proxy: [{
 								context: [

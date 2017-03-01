@@ -56,6 +56,10 @@ export default {
 									use: 'html-loader'
 								},
 								{
+									test: /\.((png|jpe?g|gif|svg|woff2?|ttf|eot|ico)(\?v=\d*\.\d*\.\d*)?)$/,
+									use: `file-loader?name=static/[name].[hash].[ext]`
+								},
+								{
 									test: /manifest.json$/,
 									loader: 'file-loader?name=[name].[hash].[ext]!web-app-manifest-loader'
 								},
@@ -75,10 +79,6 @@ export default {
 									]
 								},
 								{
-									test: /\.((png|jpe?g|gif|svg|woff2?|ttf|eot|ico)(\?v=\d*\.\d*\.\d*)?)$/,
-									use: `file-loader?name=static/[name].[hash].[ext]`
-								},
-								{
 									test: /\.css$/,
 									exclude: root( 'client', 'app' ),
 									use: ExtractTextPlugin.extract( {
@@ -89,27 +89,28 @@ export default {
 								{
 									test: /\.css$/,
 									include: root( 'client', 'app' ),
-									use: 'raw-loader'
+									use: 'css-loader'
 								}
 							]
 						},
 						output: {
 							path: Config.paths.public.dir,
 							filename: '[name].[hash].js',
-							chunkFilename: '[id].[hash].chunk.js'
+							chunkFilename: '[id].[hash].chunk.js',
+							publicPath: '/'
 						},
 						plugins: [
 							new Webpack.DefinePlugin({
 								'process.env': {
-									'ENV': JSON.stringify( Config.env ),
-									'DOMAIN': JSON.stringify( Config.backend.domain ),
-									'MESSAGE_TYPES': JSON.stringify( Config.frontend.messageTypes )
+									ENV: JSON.stringify( Config.env ),
+									DOMAIN: JSON.stringify( Config.backend.domain ),
+									MESSAGE_TYPES: JSON.stringify( Config.frontend.messageTypes )
 								}
 							}),
 							new HtmlWebpackPlugin({
 								filename: Config.paths.public.filename,
 								template: root('client/index.ejs'),
-								title: 'Test',
+								title: Config.name,
 								baseUrl: '/',
 								metadata: Config.frontend.metadata
 							}),
