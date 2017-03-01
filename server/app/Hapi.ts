@@ -9,7 +9,6 @@ import {StrategiesBinder} from "./binders/StrategiesBinder";
 import {DecoratorsBinder} from "./binders/DecoratorsBinder";
 import {PluginsBinder} from "./binders/PluginsBinder";
 import {DatabaseManager} from "./Database";
-import {AssetsPool} from "./AssetsPool";
 import * as AutoSNI from 'auto-sni';
 
 export function hapiServer(): Promise<Hapi.Server>{
@@ -17,7 +16,10 @@ export function hapiServer(): Promise<Hapi.Server>{
 	let dirs = [];
 	
 	// Get all dirs of uploads.
-	Object.keys(Config.backend.uploads.paths).forEach(key => dirs.push(Config.backend.uploads.paths[key]));
+	Object.keys(Config.paths).forEach(key => {
+		let dir = Config.paths[key].dir;
+		if(dir) dirs.push(dir);
+	});
 	
 	// Create dirs.
 	dirs.forEach(path => Fs.existsSync(path) || Fs.mkdirSync(path));
@@ -56,7 +58,7 @@ export function hapiServer(): Promise<Hapi.Server>{
 			let autoSni = AutoSNI({
 				email: 'we@rudl.me',
 				agreeTos: true,
-				debug: Config.backend.debug,
+				debug: Config.debug,
 				domains: [
 					"rudl.me"
 				],
@@ -89,17 +91,30 @@ export function hapiServer(): Promise<Hapi.Server>{
 		// Setup the decorators.
 		DecoratorsBinder.bind(server);
 		
+		// Move all 404 errors within public routes to index file.
+		server.ext('onPostHandler', (request: any, reply: any) => {
+			
+			// Catch 404 responses.
+			if (request.response.isBoom && request.response.output.statusCode === 404) {
+				let activatedPath = Object.keys(Config.paths).map(key => Config.paths[key]).find(obj => {
+					return request.path.startsWith(obj.publicPath);
+				});
+				
+				// Do we have an activated path and is the corresponding flag set, return file.
+				if(activatedPath.ignore404) return reply.file(Path.resolve(activatedPath.dir, activatedPath.filename));
+			}
+			
+			// Propagate 404 response.
+			return reply.continue();
+		});
+		
 		// Register views.
 		server.views({
 			engines: {
 				handlebars: Handlebars
 			},
-			path: Path.resolve(__dirname, './templates/views'),
-			helpersPath: Path.resolve(__dirname, './templates/helpers')
+			path: Path.resolve(__dirname, './templates/views')
 		});
-		
-		// Update assets.
-		if(Config.backend.watchAssets) AssetsPool.watchAssets();
 		
 		// Connect to database + create collections.
 		return DatabaseManager.connect().then(() => DatabaseManager.createArangoData());

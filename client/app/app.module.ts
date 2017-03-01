@@ -7,7 +7,6 @@ import {LandingPageComponent} from "./ui/landing-page.component";
 import {DashboardComponent} from "./ui/dashboard.component";
 import {StyledButtonComponent} from "./ui/widgets/styled-button.component";
 import {InputFieldComponent} from "./ui/widgets/input-field.component";
-import {AuthCallbackComponent} from "./ui/auth-callback.component";
 import {HttpModule, JsonpModule} from "@angular/http";
 import {AppGuard} from "./app.guard";
 import {DataService} from "./services/data.service";
@@ -57,7 +56,6 @@ import {MapComponent} from "./ui/widgets/map.component";
     declarations: [
 	    AppComponent,
 	    LoginComponent,
-	    AuthCallbackComponent,
 	    StyledButtonComponent,
 	    InputFieldComponent,
 	    NavbarComponent,

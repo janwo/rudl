@@ -4,9 +4,7 @@ import {AotPlugin} from '@ngtools/webpack';
 import {root} from "../config";
 
 export default {
-	app: {
-		title: 'rudl - Production Environment'
-	},
+	name: 'rudl - Production Environment',
 	frontend: {
 		webpack: {
 			config: [

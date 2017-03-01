@@ -3,7 +3,6 @@ import {Routes, RouterModule} from "@angular/router";
 import {LandingPageComponent} from "./ui/landing-page.component";
 import {DashboardComponent} from "./ui/dashboard.component";
 import {AppGuard} from "./app.guard";
-import {AuthCallbackComponent} from "./ui/auth-callback.component";
 import {ExploreComponent} from "./ui/explore.component";
 import {HistoryComponent} from "./ui/history.component";
 import {PeopleComponent} from "./ui/people.component";
@@ -32,11 +31,6 @@ const appRoutes: Routes = [
     {
         path: 'legal',
         component: LegalComponent
-    },
-    {
-        path: 'oauth/:strategy',
-        component: AuthCallbackComponent,
-        pathMatch: 'full'
     },
     {
         path: '',

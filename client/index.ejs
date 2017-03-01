@@ -1,0 +1,27 @@
+<%/** @external htmlWebpackPlugin **/ %>
+<!doctype>
+<html>
+<head>
+	<base href="<%= htmlWebpackPlugin.options.baseUrl %>">
+	<title><%= htmlWebpackPlugin.options.title %></title>
+	
+	<!-- Metadata -->
+	<meta charset="UTF-8">
+	<% for (let metaName in htmlWebpackPlugin.options.metadata) { %>
+		<%= `<meta name="${metaName}" content="${htmlWebpackPlugin.options.metadata[metaName]}">` %>
+	<% } %>
+	
+	<!-- Manifest -->
+	<link rel="manifest" href="<%= require('./assets/manifest.json') %>">
+	
+	<!-- Apple Icons -->
+	<link rel="apple-touch-icon" sizes="72x72" href="<%= require('./assets/app-icon/72.png') %>">
+	<link rel="apple-touch-icon" sizes="144x144" href="<%= require('./assets/app-icon/144.png') %>">
+	<link rel="apple-touch-icon" sizes="152x152" href="<%= require('./assets/app-icon/152.png') %>">
+	<link rel="apple-touch-icon" sizes="167x167" href="<%= require('./assets/app-icon/167.png') %>">
+	<link rel="apple-touch-icon" sizes="180x180" href="<%= require('./assets/app-icon/180.png') %>">
+</head>
+<body>
+	<app></app>
+</body>
+</html>

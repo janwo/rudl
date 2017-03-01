@@ -49,7 +49,7 @@ function generateUser(): User {
 	return user;
 }
 
-describe(`Testing ${Config.app.title}...`, () => {
+describe(`Testing ${Config.name}...`, () => {
 	// Initialize server.
 	before(() => {
 		return require("../config/Hapi").hapiServer().then(() => {

@@ -16,7 +16,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		config: {
 			payload: {
 				output: 'stream',
-				maxBytes: Config.backend.uploads.maxUploadBytes,
+				maxBytes: Config.backend.maxUploadBytes.avatars,
 				parse: true,
 				allow: 'multipart/form-data'
 			},

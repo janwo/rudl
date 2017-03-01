@@ -3,9 +3,7 @@ import {root} from "../config";
 import Webpack from "webpack";
 
 export default {
-	app: {
-		title: 'rudl - Development Environment'
-	},
+	name: 'rudl - Development Environment',
 	frontend: {
 		webpack: {
 			devServer: {
@@ -17,17 +15,19 @@ export default {
 							inline: true,
 							stats: false,
 							historyApiFallback: true,
-							publicPath: '/static/assets/',
-							proxy: {
-								'**': {
-									target: {
-										host: Config.backend.host,
-										port: Config.backend.port
-									},
-									secure: Config.backend.ssl,
-									bypass: req => /^\/static\/assets\/.*$/.test(req.url) ? req.url : false
+							proxy: [{
+								context: [
+									Config.paths.api.publicPath,
+									Config.paths.avatars.publicPath,
+									Config.backend.providers.facebook.callbackURL,
+									Config.backend.providers.twitter.callbackURL,
+									Config.backend.providers.google.callbackURL
+								],
+								target: {
+									host: Config.backend.host,
+									port: Config.backend.port
 								}
-							}
+							}]
 						}
 					}
 				]
@@ -37,7 +37,7 @@ export default {
 					return {
 						devtool: 'inline-source-map',
 						entry: {
-							'webpack-dev-server': `webpack-dev-server/client?${Config.backend.ssl ? 'https': 'http'}://localhost:${Config.frontend.webpack.devServer.port}/`,
+							'webpack-dev-server': `webpack-dev-server/client?http://localhost:${Config.frontend.webpack.devServer.port}/`,
 						},
 						module: {
 							rules: [
@@ -51,7 +51,7 @@ export default {
 							]
 						},
 						plugins: [
-							new ExtractTextPlugin( '[name].css' ),
+							new ExtractTextPlugin( '[name].[hash].css' ),
 							new Webpack.ContextReplacementPlugin( /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/, root('client/') )
 						]
 					}
