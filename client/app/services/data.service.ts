@@ -5,9 +5,9 @@ import {BehaviorSubject} from "rxjs";
 
 @Injectable()
 export class DataService {
-
+    
     static domain: string = process.env.DOMAIN;
-    static callbackMessageType: string = 'AUTH_CALLBACK_MESSAGE';
+    static callbackMessageType: string = process.env.MESSAGE_TYPES.oauth;
     static localStorageKey: string = 'jwt-token';
     private token: BehaviorSubject<string>;
 
@@ -34,7 +34,7 @@ export class DataService {
     private registerAuthenticationMessageListener() {
         window.addEventListener('message', event => {
             if (event.origin != DataService.domain || event.data.type !== DataService.callbackMessageType) return;
-            this.token.next(event.data.message.token);
+            this.token.next(event.data.message);
         }, false);
     }
     

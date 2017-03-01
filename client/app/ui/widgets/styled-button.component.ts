@@ -35,6 +35,8 @@ export class StyledButtonComponent {
     getStyleClass(){
         switch(this.style) {
             case ButtonStyles.default: return 'default';
+            case ButtonStyles.facebook: return 'default facebook';
+            case ButtonStyles.google: return 'default google';
             case ButtonStyles.minimal: return 'minimal';
             case ButtonStyles.uncolored: return 'uncolored';
             case ButtonStyles.minimalInverse: return 'minimal-inverse';
@@ -43,5 +45,5 @@ export class StyledButtonComponent {
 }
 
 export enum ButtonStyles {
-    default, minimal, minimalInverse, uncolored
+    default, minimal, minimalInverse, uncolored, facebook, google
 }

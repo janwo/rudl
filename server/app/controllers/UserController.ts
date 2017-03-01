@@ -186,9 +186,9 @@ export module UserController {
 				// Define avatar links?
 				if(user.meta.hasAvatar) {
 					links['avatars'] = {
-						small: `${Config.backend.domain}/static/avatars/${user._key}-small`,
-						medium: `${Config.backend.domain}/static/avatars/${user._key}-medium`,
-						large: `${Config.backend.domain}/static/avatars/${user._key}-large`
+						small: `${Config.backend.domain + Config.paths.avatars.publicPath + user._key}-small`,
+						medium: `${Config.backend.domain + Config.paths.avatars.publicPath + user._key}-medium`,
+						large: `${Config.backend.domain + Config.paths.avatars.publicPath + user._key}-large`
 					};
 				}
 				

@@ -4,9 +4,7 @@ import {AotPlugin} from '@ngtools/webpack';
 import {root} from "../config";
 
 export default {
-	app: {
-		title: 'rudl - Secure Production Environment'
-	},
+	name: 'rudl - Secure Production Environment',
 	frontend: {
 		webpack: {
 			config: [
@@ -25,7 +23,6 @@ export default {
 								tsConfigPath: root('client/tsconfig.json'),
 								entryModule: root('client/app/app.module#AppModule')
 							}),
-							new Webpack.NoEmitOnErrorsPlugin(),
 							new Webpack.optimize.UglifyJsPlugin({
 								compress: {
 									warnings: false
@@ -35,6 +32,7 @@ export default {
 								},
 								sourceMap: false
 							}),
+							new Webpack.NoEmitOnErrorsPlugin(),
 							new ExtractTextPlugin( '[name].[hash].css' )
 						]
 					}
@@ -63,4 +61,4 @@ export default {
 			}
 		}
 	}
-};
+}

@@ -1,7 +1,5 @@
 export default {
-	app: {
-		title: 'rudl - Local Environment'
-	},
+	name: 'rudl - Local Environment',
 	frontend: {
 		webpack: {
 			config: [

@@ -1,13 +1,16 @@
 export const Config : {
 	env: string,
-	app: {
-		title: string
-	},
-	generatedFiles: {
-		frontendAssetsJson: string,
-		frontendAssetsFolder: string
-	},
+	name: string,
+	paths: { [key: string]: {
+		dir?: string,
+		filename?: string,
+		publicPath?: string,
+		ignore404?: boolean
+	} },
+	debug: boolean,
 	frontend: {
+		metadata: { [key: string]: string },
+		messageTypes: { [key: string]: string },
 		webpack: {
 			config: {
 				devtool: string,
@@ -31,15 +34,12 @@ export const Config : {
 				
 				plugins: Array<any>,
 			}
-		},
-		themeColor: string
+		}
 	},
 	backend: {
 		host: string,
 		port: number,
 		domain: string,
-		debug: boolean,
-		watchAssets: boolean,
 		ssl: boolean,
 		secretPassphrase: string,
 		jwt: {
@@ -47,13 +47,7 @@ export const Config : {
 			deleteIn: number,
 			salt: string,
 		},
-		uploads: {
-			paths: {
-				root: string;
-				avatars: string;
-			},
-			maxUploadBytes: number,
-		},
+		maxUploadBytes: { [key: string]: number },
 		log: {
 			serverLogs: {
 				console: {

@@ -39,38 +39,38 @@ class StartupManager {
 		// Trigger backend server.
 		let backendServer = new (forever.Monitor)(command, options);
 		backendServer.on('start', info => console.log('Starting backend server...') || onStart());
-		backendServer.on('watch:restart', info => console.log('Restarting script because ' + info.file + ' changed...') );
+		backendServer.on('watch:restart', info => console.log('Restarting script because ' + info.filename + ' changed...') );
 		backendServer.on('exit', () => console.log(`Backend server has exited after ${options.max} restarts...`, true) );
 		backendServer.on('error', err => console.error);
 		return backendServer;
 	}
 	
 	static clean() {
-		// Delete generated files.
-		console.log('Delete generated files...');
-		for (let file in Config.generatedFiles) {
-			if(Config.generatedFiles.hasOwnProperty(file)) {
-				rimraf(Config.generatedFiles[file], {}, (err) => {
-					if(err) return console.error(err);
-					console.log(`${Config.generatedFiles[file]} successfully deleted...`);
-				});
-			}
-		}
+		return new Promise((resolve, reject) => {
+			// Delete generated files.
+			console.log('Delete public files...');
+			rimraf(Config.paths.public.dir, {}, (err) => {
+				if(err) {
+					reject(err);
+					return;
+				}
+				
+				console.log(`Successfully deleted public files...`);
+				resolve();
+			});
+		});
 	}
 	
 	static start(){
 		// Show generated config.
 		print();
 		
-		// Clean generated files.
-		StartupManager.clean();
-		
 		// Create forever's monitor instances.
-		let backendServerMonitor = StartupManager.createBackendServer(Config.backend.debug);
-		let watchTypescriptMonitor = StartupManager.createTypescriptCompiler(Config.backend.debug);
+		let backendServerMonitor = StartupManager.createBackendServer(Config.debug);
+		let watchTypescriptMonitor = StartupManager.createTypescriptCompiler(Config.debug);
 		let typeScriptMonitor = StartupManager.createTypescriptCompiler(false, () => {
 			backendServerMonitor.start();
-			if(Config.backend.debug) watchTypescriptMonitor.start();
+			if(Config.debug) watchTypescriptMonitor.start();
 		} );
 		
 		// Create forever server.
@@ -118,4 +118,5 @@ class StartupManager {
 	}
 }
 
-StartupManager.start();
+// Bring it up.
+StartupManager.clean().then(() => StartupManager.start());

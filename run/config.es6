@@ -58,6 +58,6 @@ export const Config = (() => {
 export function print() {
 	// Create summary of the configuration file.
 	console.log('\n- - - - - - - - - - - - - - - -' );
-	console.log(`Summary of "${Config.app.title}":\n\n${util.inspect(Config, {showHidden: false, depth: null, colors: true})}\n`);
+	console.log(`Summary of "${Config.name}":\n\n${util.inspect(Config, {showHidden: false, depth: null, colors: true})}\n`);
 	console.log('- - - - - - - - - - - - - - - -\n' );
 }

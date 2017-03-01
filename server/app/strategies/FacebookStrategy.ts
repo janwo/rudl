@@ -4,7 +4,6 @@ import {StrategyConfiguration} from "../binders/StrategiesBinder";
 import {UserController} from "../controllers/UserController";
 import Boom = require("boom");
 import randomstring = require("randomstring");
-import {AssetsPool} from "../AssetsPool";
 import {AuthController} from "../controllers/AuthController";
 import {AccountController} from "../controllers/AccountController";
 
@@ -56,12 +55,12 @@ export function handleFacebook(request, reply): void {
 			});
 		});
 	}).then((user: User) => AccountController.addProvider(user, provider)).then(AccountController.saveUser).then(AuthController.signToken).then(token => {
-		reply.view('index', {
+		reply.view('message', {
 			title: 'Authentication',
-			assets: AssetsPool.getAssets(),
-			metas: {
-				token: token
-			}
+			domain: Config.backend.domain,
+			token: token,
+			type: Config.frontend.messageTypes.oauth,
+			message: token
 		}).header("Authorization", token);
 	}).catch(err => {
 		reply(Boom.badRequest(err));

@@ -1,16 +1,19 @@
 import {Component, ViewChild} from "@angular/core";
 import {UserService} from "../../services/user.service";
 import {IndicatorComponent} from "./indicator.component";
+import {ButtonStyles} from "./styled-button.component";
 
 @Component({
     templateUrl: './login.component.html',
-    styleUrls: ['/login.component.scss'],
+    styleUrls: ['./login.component.scss'],
     selector: 'login'
 })
 export class LoginComponent {
     
     isCollapsed: boolean = true;
     signInOnly: boolean = false;
+    googleButtonStyle: ButtonStyles = ButtonStyles.google;
+    facebookButtonStyle: ButtonStyles = ButtonStyles.facebook;
 
     @ViewChild(IndicatorComponent)
     indicatorComponent: IndicatorComponent;

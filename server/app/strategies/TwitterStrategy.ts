@@ -3,7 +3,6 @@ import {UserProvider, User} from "../models/users/User";
 import {StrategyConfiguration} from "../binders/StrategiesBinder";
 import {UserController} from "../controllers/UserController";
 import Boom = require("boom");
-import {AssetsPool} from "../AssetsPool";
 import randomstring = require("randomstring");
 import {AuthController} from "../controllers/AuthController";
 import {AccountController} from "../controllers/AccountController";
@@ -62,12 +61,12 @@ export function handleTwitter(request: any, reply: any): void {
 			});
 		});
 	}).then((user: User) => AccountController.addProvider(user, provider)).then(AccountController.saveUser).then(AuthController.signToken).then(token => {
-		reply.view('index', {
+		reply.view('message', {
 			title: 'Authentication',
-			assets: AssetsPool.getAssets(),
-			metas: {
-				token: token
-			}
+			domain: Config.backend.domain,
+			type: Config.frontend.messageTypes.oauth,
+			token: token,
+			message: token
 		}).header("Authorization", token);
 	}).catch(err => {
 		reply(Boom.badRequest(err));

@@ -1,17 +1,15 @@
 import Path = require("path");
 import {RoutesConfiguration} from "../binders/RoutesBinder";
-import {Config, root} from "../../../run/config";
-import {AssetsPool} from "../AssetsPool";
+import {Config} from "../../../run/config";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
 		method: 'GET',
-		path: '/static/assets/{path*}',
+		path: `${Config.paths.avatars.publicPath}{path*}`,
 		handler: {
 			directory: {
-				path: Config.generatedFiles.frontendAssetsFolder,
-				listing: Config.backend.debug,
-				index: true
+				path: Config.paths.avatars.dir,
+				listing: Config.debug
 			}
 		},
 		config: {
@@ -20,31 +18,13 @@ export const RoutesConfig: RoutesConfiguration = [
 	},
 	{
 		method: 'GET',
-		path: '/static/{path*}',
+		path: `${Config.paths.public.publicPath}{path*}`,
 		handler: {
 			directory: {
-				path: Config.backend.uploads.paths.root,
-				listing: Config.backend.debug,
-				index: false
+				path: Config.paths.public.dir,
+				index: Config.paths.public.filename,
+				listing: Config.debug
 			}
-		},
-		config: {
-			auth: false
-		}
-	},
-	{
-		method: 'GET',
-		path: '/{path*}',
-		handler: function (request, reply) {
-			reply.view('index', {
-				title: 'Welcome',
-				assets: AssetsPool.getAssets(),
-				metas: {
-					'theme-color':  Config.frontend.themeColor,
-					'msapplication-navbutton-color': Config.frontend.themeColor,
-					'apple-mobile-web-app-status-bar-style': Config.frontend.themeColor
-				}
-			});
 		},
 		config: {
 			auth: false

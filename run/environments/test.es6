@@ -1,7 +1,5 @@
 export default {
-	app: {
-		title: 'rudl - Test Environment'
-	},
+	name: 'rudl - Test Environment',
 	frontend: {
 		webpack: {
 			config: [

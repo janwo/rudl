@@ -212,17 +212,17 @@ export module AccountController {
 		export function uploadAvatar(request: any, reply: any): void {
 			let user = request.auth.credentials;
 			let promise = new Promise((resolve, reject) => {
-				if (!request.payload.file) {
+				if (!request.payload.filename) {
 					reject(Boom.badData('Missing file payload.'));
 					return;
 				}
 					
 				// Create sharp instance.
 				let transformer = sharp().png();
-				request.payload.file.pipe(transformer);
+				request.payload.filename.pipe(transformer);
 				
 				// Make paths retrievable.
-				let getAvatarPath = (size: string) => path.resolve(Config.backend.uploads.paths.avatars, `${user._key}-${size}`);
+				let getAvatarPath = (size: string) => path.resolve(Config.paths.avatars.dir, `${user._key}-${size}`);
 				
 				// Set transformation streams.
 				let transformations = [

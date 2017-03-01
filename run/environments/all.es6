@@ -1,22 +1,40 @@
 import Webpack from "webpack";
-import Path from "path";
 import ExtractTextPlugin from "extract-text-webpack-plugin";
-import AssetsPlugin from "assets-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
 import {root} from "../config";
 
 export default {
 	env: process.env.ENV,
-	app: {
-		title: 'rudl - General Environment'
-	},
-	generatedFiles: (() => {
-		let rootDir = '_generated/';
-		return {
-			frontendAssetsJson: root(rootDir, 'assets-manifest.json'),
-			frontendAssetsFolder: root(rootDir, 'assets/')
+	name: 'rudl - General Environment',
+	debug: process.env.DEBUG_BACKEND || false,
+	paths: {
+		api: {
+			publicPath: '/api'
+		},
+		public: {
+			dir: root( '_generated/' ),
+			filename: 'index.html',
+			publicPath: '/',
+			ignore404: true
+		},
+		avatars: {
+			dir: root( 'db/files/avatars' ),
+			publicPath: '/user-data/avatars/'
 		}
-	})(),
+	},
 	frontend: {
+		metadata: {
+			'viewport': 'width=device-width, initial-scale=1.0',
+			'mobile-web-app-capable': 'yes',
+			'apple-mobile-web-app-title': 'Rudl',
+			'apple-mobile-web-app-capable': 'yes',
+			'apple-mobile-web-app-status-bar-style': '#50E3C2',
+			'msapplication-navbutton-color': '#50E3C2',
+			'theme-color': '#50E3C2'
+		},
+		messageTypes: {
+			oauth: 'OAUTH_TOKEN_MESSAGE'
+		},
 		webpack: {
 			config: [
 				( Config ) => {
@@ -27,15 +45,19 @@ export default {
 							modules: [ 'node_modules' ],
 						},
 						entry: {
-							'polyfill': root( 'client/polyfill.ts' ),
-							'vendor': root( 'client/vendor.ts' ),
-							'app': root( 'client/main.ts' )
+							'static/app': root( 'client/app.ts' ),
+							'static/vendor': root( 'client/vendor.ts' ),
+							'static/polyfill': root( 'client/polyfill.ts' )
 						},
 						module: {
 							rules: [
 								{
 									test: /\.html$/,
 									use: 'html-loader'
+								},
+								{
+									test: /manifest.json$/,
+									loader: 'file-loader?name=[name].[hash].[ext]!web-app-manifest-loader'
 								},
 								{
 									test: /\.scss$/,
@@ -54,7 +76,7 @@ export default {
 								},
 								{
 									test: /\.((png|jpe?g|gif|svg|woff2?|ttf|eot|ico)(\?v=\d*\.\d*\.\d*)?)$/,
-									use: 'file-loader?name=files/[name].[hash].[ext]'
+									use: `file-loader?name=static/[name].[hash].[ext]`
 								},
 								{
 									test: /\.css$/,
@@ -72,8 +94,7 @@ export default {
 							]
 						},
 						output: {
-							path: Config.generatedFiles.frontendAssetsFolder,
-							publicPath: '/static/assets/',
+							path: Config.paths.public.dir,
 							filename: '[name].[hash].js',
 							chunkFilename: '[id].[hash].chunk.js'
 						},
@@ -81,27 +102,35 @@ export default {
 							new Webpack.DefinePlugin({
 								'process.env': {
 									'ENV': JSON.stringify( Config.env ),
-									'DOMAIN': JSON.stringify( Config.backend.domain )
+									'DOMAIN': JSON.stringify( Config.backend.domain ),
+									'MESSAGE_TYPES': JSON.stringify( Config.frontend.messageTypes )
 								}
 							}),
-							new AssetsPlugin({
-								path: Path.dirname( Config.generatedFiles.frontendAssetsJson ),
-								filename: Path.basename( Config.generatedFiles.frontendAssetsJson )
+							new HtmlWebpackPlugin({
+								filename: Config.paths.public.filename,
+								template: root('client/index.ejs'),
+								title: 'Test',
+								baseUrl: '/',
+								metadata: Config.frontend.metadata
+							}),
+							new Webpack.optimize.CommonsChunkPlugin({
+								name: [
+									'static/app',
+									'static/vendor',
+									'static/polyfill'
+								]
 							})
 						],
 					}
 				}
 			]
-		},
-		themeColor: '#50E3C2'
+		}
 	},
 	backend: {
 		host: process.env.BACKEND_SERVER_HOST || 'localhost',
 		port: process.env.BACKEND_SERVER_PORT || 80,
 		domain: process.env.DOMAIN || 'http://localhost',
 		ssl: false,
-		debug: process.env.DEBUG_BACKEND || false,
-		watchAssets: true,
 		secretPassphrase: process.env.SALT_PASSWORD,
 		jwt: {
 			expiresIn: 60 * 60 * 24 * 50,
@@ -121,12 +150,8 @@ export default {
 				password: process.env.ARANGO_PASSWORD || 'sgZ$LGKJhs_df872_3f$dxvhGR$REDsfd'
 			}
 		},
-		uploads: {
-			paths: {
-				root: root( 'db/files' ),
-				avatars: root( 'db/files/avatars' )
-			},
-			maxUploadBytes: 2097152
+		maxUploadBytes: {
+			avatars: 2097152
 		},
 		log: {
 			serverLogs: {
@@ -162,8 +187,8 @@ export default {
 			},
 			google: {
 				password: process.env.GOOGLE_PASSWORD,
-				clientID: process.env.GOOGLE_ID || '368340288629-nf8puh782soi68a3udusucbn1nh81sk2.apps.googleusercontent.com',
-				clientSecret: process.env.GOOGLE_SECRET || '32pv9JsPuA3mNzYXiF4qevyy',
+				clientID: process.env.GOOGLE_ID,
+				clientSecret: process.env.GOOGLE_SECRET,
 				callbackURL: '/oauth/google'
 			}
 		},
