@@ -1,8 +1,8 @@
 import {UserController} from "../controllers/UserController";
 import {User} from "../models/users/User";
 import {StrategyConfiguration} from "../binders/StrategiesBinder";
-import Boom = require("boom");
 import {AccountController} from "../controllers/AccountController";
+import Boom = require("boom");
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,

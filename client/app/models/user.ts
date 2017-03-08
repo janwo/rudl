@@ -24,6 +24,7 @@ export interface UserLinks {
 export interface UserMeta {
 	hasAvatar: boolean;
 	profileText: string;
+	onBoard: boolean;
 }
 
 export interface UserRelations {

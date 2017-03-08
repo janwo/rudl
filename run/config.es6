@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _ from "lodash";
 import Glob from "glob";
 import Path from "path";
 import webpackMerge from "webpack-merge";

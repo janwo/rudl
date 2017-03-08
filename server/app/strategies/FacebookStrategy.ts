@@ -2,10 +2,10 @@ import {Config} from "../../../run/config";
 import {User, UserProvider} from "../models/users/User";
 import {StrategyConfiguration} from "../binders/StrategiesBinder";
 import {UserController} from "../controllers/UserController";
-import Boom = require("boom");
-import randomstring = require("randomstring");
 import {AuthController} from "../controllers/AuthController";
 import {AccountController} from "../controllers/AccountController";
+import Boom = require("boom");
+import randomstring = require("randomstring");
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,

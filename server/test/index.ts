@@ -4,9 +4,9 @@ process.env.ENV = 'test';
 import {DatabaseManager} from "../app/Database";
 import {Cursor} from "arangojs";
 import {User, UserRoles} from "../app/models/users/User";
-import casual = require('casual');
 import {Config} from "../../run/config";
 import {AccountController} from "../app/controllers/AccountController";
+import casual = require('casual');
 
 function generateUser(): User {
 	let user: User = {

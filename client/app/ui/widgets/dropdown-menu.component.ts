@@ -1,6 +1,5 @@
-import {Component, Input, OnDestroy, style, animate, transition, trigger, OnInit} from "@angular/core";
-import {Router, NavigationEnd, UrlTree} from "@angular/router";
-import { Subscription } from 'rxjs/Subscription';
+import {Component, Input, style, animate, transition, trigger} from "@angular/core";
+import {Router, UrlTree} from "@angular/router";
 
 @Component({
     templateUrl: './dropdown-menu.component.html',

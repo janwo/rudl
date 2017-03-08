@@ -6,10 +6,7 @@ import fs = require('fs');
 import path = require('path');
 import {User} from "../models/users/User";
 import {DatabaseManager} from "../Database";
-import randomstring = require("randomstring");
-import jwt = require("jsonwebtoken");
 import {Cursor} from "arangojs";
-import _ = require("lodash");
 import {List} from "../models/lists/List";
 import {UserController} from "./UserController";
 import {Activity} from "../models/activities/Activity";
@@ -18,6 +15,9 @@ import {ListIsItem} from "../models/lists/ListIsItem";
 import {Translations} from "../models/Translations";
 import {UserOwnsList} from "../models/lists/UserOwnsList";
 import {UserFollowsList} from "../models/lists/UserFollowsList";
+import randomstring = require("randomstring");
+import jwt = require("jsonwebtoken");
+import _ = require("lodash");
 
 export module ListController {
 	

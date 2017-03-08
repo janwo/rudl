@@ -15,7 +15,7 @@
 		<styled-button [style]="list.relations.isFollowed ? buttonStyleFollowing : buttonStyleDefault" (click)="onToggleFollow(true)" [disabled]="pendingFollowRequest" [text]="list.relations.isFollowed ? 'Following' : 'Follow'"></styled-button>
 	</div>
 </div>
-<item-wrapper class="content" *ngIf="list" [twoColumnLayout]="true">
+<item-wrapper class="content" *ngIf="list" [columns]="2">
 	<li *ngFor="let activity of activities">
 		<activity-item [activity]="activity"></activity-item>
 	</li>

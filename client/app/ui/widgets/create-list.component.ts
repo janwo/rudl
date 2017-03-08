@@ -1,14 +1,10 @@
-import {
-    Component, OnInit, OnDestroy, ViewChild, Input, ElementRef, AfterViewInit, Output,
-    EventEmitter, trigger, transition, style, animate
-} from "@angular/core";
-import {UserService} from "../../services/user.service";
+import {Component, Input, Output, EventEmitter} from "@angular/core";
 import {Router} from "@angular/router";
 import {Locale} from "../../models/locale";
-import Language = Locale.Language;
 import {ButtonStyles} from "./styled-button.component";
-import Translations = Locale.Translations;
 import {ListService} from "../../services/list.service";
+import Language = Locale.Language;
+import Translations = Locale.Translations;
 
 @Component({
     templateUrl: './create-list.component.html',

@@ -1,9 +1,8 @@
 import redis = require("redis");
 import {Config} from "../../run/config";
-import {Database} from 'arangojs';
+import {Database, Collection} from "arangojs";
 import * as http from "http";
 import {RedisClient} from "redis";
-import {Collection} from "arangojs";
 import {TranslationsKeys} from "./models/Translations";
 
 export class DatabaseManager {

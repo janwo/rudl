@@ -1,6 +1,6 @@
 import {Component, Input, OnDestroy} from "@angular/core";
 import {Activity} from "../models/activity";
-import {Subscription, Observable} from "rxjs";
+import {Observable} from "rxjs";
 import {ListService} from "../services/list.service";
 
 export enum UserSuggestionsType {

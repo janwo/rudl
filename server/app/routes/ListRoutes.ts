@@ -1,12 +1,12 @@
 import {UserRoles, UserValidation} from "../models/users/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
+import {ListController} from "../controllers/ListController";
+import {TranslationsValidation} from "../models/Translations";
 import BasicStrategy = require("../strategies/BasicStrategy");
 import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
 import Joi = require('joi');
-import {ListController} from "../controllers/ListController";
-import {TranslationsValidation} from "../models/Translations";
 
 const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.string().regex(/^me$/));
 

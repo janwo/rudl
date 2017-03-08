@@ -1,14 +1,10 @@
-import {
-    Component, OnInit, OnDestroy, ViewChild, Input, ElementRef, AfterViewInit, Output,
-    EventEmitter, trigger, transition, style, animate, state
-} from "@angular/core";
+import {Component, OnInit, Input, Output, EventEmitter, trigger, transition, style, animate} from "@angular/core";
 import {UserService} from "../../services/user.service";
-import {Router} from "@angular/router";
 import {Locale} from "../../models/locale";
-import Language = Locale.Language;
 import {MenuItem} from "./dropdown-menu.component";
-import languages = Locale.languages;
 import {ButtonStyles} from "./styled-button.component";
+import Language = Locale.Language;
+import languages = Locale.languages;
 import Translations = Locale.Translations;
 
 @Component({

@@ -1,0 +1,10 @@
+<ul>
+	<li *ngFor="let user of users">
+		<avatar [user]="user"></avatar>
+	</li>
+	<li>
+		<div class="statistics">
+			<span>{{free > 0 ? '+' + free : 0}}</span>
+		</div>
+	</li>
+</ul>

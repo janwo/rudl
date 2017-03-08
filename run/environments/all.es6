@@ -29,8 +29,7 @@ export default {
 			'apple-mobile-web-app-title': 'Rudl',
 			'apple-mobile-web-app-capable': 'yes',
 			'apple-mobile-web-app-status-bar-style': '#50E3C2',
-			'msapplication-navbutton-color': '#50E3C2',
-			'theme-color': '#50E3C2'
+			'msapplication-navbutton-color': '#50E3C2'
 		},
 		messageTypes: {
 			oauth: 'OAUTH_TOKEN_MESSAGE'
@@ -41,8 +40,11 @@ export default {
 					return {
 						devtool: 'source-map',
 						resolve: {
-							extensions: [ '.js', '.ts', '.scss', '.css' ],
-							modules: [ 'node_modules' ],
+							extensions: [ '.js', '.ts', '.json' ],
+							modules: [
+								root('client'),
+								root('node_modules')
+							],
 						},
 						entry: {
 							'static/app': root( 'client/app.ts' ),
@@ -64,9 +66,11 @@ export default {
 									loader: 'file-loader?name=[name].[hash].[ext]!web-app-manifest-loader'
 								},
 								{
-									test: /\.scss$/,
+									test: /\.css$/,
+									include: root( 'client', 'app' ),
 									use: [
-										'raw-loader', {
+										'to-string-loader',
+										'css-loader', {
 											loader: 'postcss-loader',
 											options: {
 												plugins: () => {
@@ -75,7 +79,25 @@ export default {
 													];
 												}
 											}
-										}, 'sass-loader'
+										} ]
+								},
+								{
+									test: /\.(scss)$/,
+									include: root( 'client', 'app' ),
+									loaders: [
+										'to-string-loader',
+										'css-loader', {
+											loader: 'postcss-loader',
+											options: {
+												plugins: () => {
+													return [
+														require( 'autoprefixer' )( { browsers: [ 'last 2 versions' ] } )
+													];
+												}
+											}
+										},
+										'resolve-url-loader',
+										'sass-loader'
 									]
 								},
 								{
@@ -86,11 +108,6 @@ export default {
 										use: 'css-loader'
 									} )
 								},
-								{
-									test: /\.css$/,
-									include: root( 'client', 'app' ),
-									use: 'css-loader'
-								}
 							]
 						},
 						output: {
@@ -100,6 +117,10 @@ export default {
 							publicPath: '/'
 						},
 						plugins: [
+							new Webpack.ContextReplacementPlugin(
+								/angular(\\|\/)core(\\|\/)src(\\|\/)linker/,
+								root('src')
+							),
 							new Webpack.DefinePlugin({
 								'process.env': {
 									ENV: JSON.stringify( Config.env ),

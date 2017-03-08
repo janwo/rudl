@@ -24,7 +24,7 @@
 			<activity-item [activity]="activity"></activity-item>
 		</li>
 	</item-wrapper>
-	<item-wrapper [twoColumnLayout]="true" *ngIf="tab === tabItems['lists']">
+	<item-wrapper [columns]="2" *ngIf="tab === tabItems['lists']">
 		<li *ngFor="let list of lists">
 			<list-item [list]="list"></list-item>
 		</li>

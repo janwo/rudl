@@ -1,10 +1,14 @@
-import {Component, OnInit, OnDestroy, ViewChild} from "@angular/core";
+import {
+    Component, OnInit, OnDestroy, ViewChild
+} from "@angular/core";
 import {Subscription} from "rxjs";
-import {ActivatedRoute, Params} from "@angular/router";
+import {ActivatedRoute, Params, Router} from "@angular/router";
 import {Activity} from "../models/activity";
 import {ButtonStyles} from "./widgets/styled-button.component";
 import {ModalComponent} from "./widgets/modal.component";
 import {ActivityService} from "../services/activity.service";
+import {TabItem} from "./widgets/tab-menu.component";
+import {EventService} from "../services/event.service";
 
 @Component({
     templateUrl: './activity.component.html',
@@ -12,8 +16,37 @@ import {ActivityService} from "../services/activity.service";
 })
 export class ActivityComponent implements OnInit, OnDestroy {
     
+    tab: TabItem;
+    tabItems: {[key: string]: TabItem} = {
+        create: {
+            icon: 'calendar-plus-o',
+            title: 'Neues Event',
+            link: this.router.createUrlTree(['../create-event'], {
+                relativeTo: this.route
+            }),
+            notification: false
+        },
+        attending: {
+            icon: 'calendar-check-o',
+            title: 'Deine Events',
+            link: this.router.createUrlTree(['../your-events'], {
+                relativeTo: this.route
+            }),
+            notification: false
+        },
+        around: {
+            icon: 'compass',
+            title: 'Nahe Events',
+            link: this.router.createUrlTree(['../nearby-events'], {
+                relativeTo: this.route
+            }),
+            notification: false
+        }
+    };
+    
     activity: Activity;
     activitySubscription: Subscription;
+    nearbyEventsSubscription: Subscription;
     pendingFollowRequest: boolean = false;
     buttonStyleDefault: ButtonStyles = ButtonStyles.minimal;
     buttonStyleActivated: ButtonStyles = ButtonStyles.minimalInverse;
@@ -33,8 +66,10 @@ export class ActivityComponent implements OnInit, OnDestroy {
     }];
     
     constructor(
+        private eventService: EventService,
         private activityService: ActivityService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ) {}
     
     ngOnInit(){
@@ -42,14 +77,16 @@ export class ActivityComponent implements OnInit, OnDestroy {
         this.route.params.forEach((params: Params) => {
             // Get selected tab.
             let key = params['key'];
-            
+    
             // Create activity subscription.
             this.activitySubscription = this.activityService.get(key).subscribe(activity => this.activity = activity);
+    
         });
         
     }
     
     ngOnDestroy(){
+        this.nearbyEventsSubscription.unsubscribe();
         this.activitySubscription.unsubscribe();
     }
     

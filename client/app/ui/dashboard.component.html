@@ -1,4 +1,15 @@
-<navbar></navbar>
+<header>
+	<logo></logo>
+	<div class="stretched" *ngIf="userStatus.loggedIn && userStatus.user.meta.onBoard">
+		<div class="search" [ngClass]="{active: inSearchMode}">
+			<search-bar #searchBar></search-bar>
+			<button class="fa fa-close" [routerLink]="lastUrl"></button>
+		</div>
+		<tab-menu class="menu" [ngClass]="{active: !inSearchMode}" [(tabItems)]="tabItems"></tab-menu>
+	</div>
+	<avatar *ngIf="userStatus.loggedIn" [user]="userStatus.user" (click)="dropdownMenu.toggle()"></avatar>
+	<dropdown-menu [(menuItems)]="menuItems" #dropdownMenu></dropdown-menu>
+</header>
 <section>
 	<router-outlet></router-outlet>
 </section>

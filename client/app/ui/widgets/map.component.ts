@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild, ElementRef, OnInit} from "@angular/core";
+import {Component, Input, ViewChild, ElementRef, OnInit, AfterViewInit} from "@angular/core";
 import * as L from "leaflet";
 
 @Component({
@@ -6,7 +6,7 @@ import * as L from "leaflet";
     styleUrls: ['./map.component.scss'],
     selector: 'map'
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements AfterViewInit {
     
     private static source = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
     private static attribution = 'Map data &copy; <a target="_blank" href="https://openstreetmap.org/">OpenStreetMap</a>';
@@ -23,7 +23,7 @@ export class MapComponent implements OnInit {
     @Input() accuracy: number = 300;
     @ViewChild('map') map: ElementRef;
     
-    ngOnInit(): void {
+    ngAfterViewInit(): void {
         // Create app.
         let map = L.map(this.map.nativeElement, {
             dragging: false,

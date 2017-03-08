@@ -1,6 +1,9 @@
 {
-  "name": "Rudl - App",
+  "name": "Rudl",
   "short_name": "Rudl",
+  "description": "",
+  "background_color": "#50E3C2",
+  "theme_color": "#50E3C2",
   "icons": [
     {
       "src": "./app-icon/48.png",
@@ -40,6 +43,5 @@
     }
   ],
   "start_url": "/",
-  "display": "standalone",
-  "orientation": "landscape"
+  "display": "standalone"
 }

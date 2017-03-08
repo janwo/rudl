@@ -1,26 +1,13 @@
-import {Component, trigger, style, transition, animate, Output, EventEmitter, Injectable} from "@angular/core";
-
-@Injectable()
-export class FullScreenOverlayService {
-	public expandState: boolean = false;
-	
-	public hideOverlay() {
-		this.expandState = false;
-	}
-	
-	public toggleOverlay(){
-		this.expandState = !this.expandState;
-	}
-	
-	public showOverlay(){
-		this.expandState = true;
-	};
-}
+import {
+	Component, trigger, style, transition, animate, Output, EventEmitter, Injectable, OnInit,
+	Input
+} from "@angular/core";
+import {UrlTree, Router, NavigationEnd} from "@angular/router";
 
 @Component({
-	templateUrl: './fullscreen-overlay.component.html',
-	styleUrls: ['./fullscreen-overlay.component.scss'],
-	selector: 'fullscreen-overlay',
+	templateUrl: './fan.component.html',
+	styleUrls: ['./fan.component.scss'],
+	selector: 'fan',
 	animations: [
 		trigger('backgroundVisibility', [
 			transition(':enter', [
@@ -62,13 +49,19 @@ export class FullScreenOverlayService {
 				}))
 			])
 		])
-	],
-	providers: [
-		FullScreenOverlayService
 	]
 })
-export class FullScreenOverlayComponent {
-	@Output() onExpanded = new EventEmitter<void>();
+export class FanComponent implements OnInit {
 	
-	constructor(public service: FullScreenOverlayService) {}
+	@Input() expandedUrl: UrlTree = null;
+	expanded: boolean = false;
+	
+	constructor(private router: Router) {}
+	
+	ngOnInit(): void {
+		this.router.events.filter(event => event instanceof NavigationEnd).subscribe(event => {
+			console.log(event.url);
+			this.expanded = this.expandedUrl && this.router.isActive(this.expandedUrl, false);
+		});
+	}
 }

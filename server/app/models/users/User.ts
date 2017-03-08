@@ -31,6 +31,7 @@ export interface UserMeta {
 	profileText: string;
 	hasAvatar: boolean;
 	fulltextSearchData: string;
+	onBoard: boolean;
 }
 
 export interface User extends Document {

@@ -1,5 +1,4 @@
 import {Component, OnInit, OnDestroy, ViewChild} from "@angular/core";
-import {UserService} from "../services/user.service";
 import {Subscription, Observable} from "rxjs";
 import {List} from "../models/list";
 import {ActivatedRoute, Params} from "@angular/router";

@@ -2,6 +2,8 @@
 
 :host {
   display: block;
+  @include setup-max-width();
+  padding: map_get($base-padding, 'default');
 
   ul {
     list-style: none;

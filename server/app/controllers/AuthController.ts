@@ -8,10 +8,10 @@ import {Config} from "../../../run/config";
 import {User} from "../models/users/User";
 import {DatabaseManager} from "../Database";
 import {DecodedToken, UserDataCache, TokenData} from "../models/Token";
+import {AccountController} from "./AccountController";
 import randomstring = require("randomstring");
 import jwt = require("jsonwebtoken");
 import _ = require("lodash");
-import {AccountController} from "./AccountController";
 
 export module AuthController {
 	

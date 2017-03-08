@@ -1,8 +1,7 @@
 @import './../variables.scss';
 
 :host {
-  display: flex;
-  align-items: flex-start;
+  display: block;
 
   avatar {
     cursor: pointer;

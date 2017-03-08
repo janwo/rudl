@@ -9,7 +9,7 @@ import {StrategiesBinder} from "./binders/StrategiesBinder";
 import {DecoratorsBinder} from "./binders/DecoratorsBinder";
 import {PluginsBinder} from "./binders/PluginsBinder";
 import {DatabaseManager} from "./Database";
-import * as AutoSNI from 'auto-sni';
+import * as AutoSNI from "auto-sni";
 
 export function hapiServer(): Promise<Hapi.Server>{
 	// Create dirs.

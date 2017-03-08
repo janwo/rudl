@@ -1,6 +1,15 @@
 import {
-	Component, Input, trigger, state, style, transition, animate, OnInit, OnDestroy, Output,
-	EventEmitter, OnChanges, SimpleChanges
+	Component,
+	Input,
+	trigger,
+	state,
+	style,
+	transition,
+	animate,
+	OnInit,
+	OnDestroy,
+	Output,
+	EventEmitter
 } from "@angular/core";
 import {Activity} from "../../models/activity";
 import {Subscription} from "rxjs";
