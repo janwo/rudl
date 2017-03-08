@@ -12,8 +12,12 @@ $list-margin: map_get($base-padding, 'smaller');
     justify-content: space-between;
     flex-direction: row;
 
-    &.single-column-layout > /deep/ * {
-      flex: 0 0 100%;
+    &.single-column-layout,
+    &.two-columns-layout,
+    &.three-columns-layout {
+      & > /deep/ * {
+        flex: 0 0 100%;
+      }
     }
 
     @include breakpoint('small') {

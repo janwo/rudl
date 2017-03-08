@@ -13,7 +13,6 @@
 		]"></statistics>
 		<div class="cta" *ngIf="!!user.relations">
 			<styled-button [style]="user.relations.isFollowee ? buttonStyleFollowing : buttonStyleDefault" (click)="onToggleFollow()" [disabled]="pendingFollowRequest" [text]="user.relations.isFollowee ? 'Following' : 'Follow'"></styled-button>
-			<styled-button [style]="buttonStyleDefault" [routerLink]="'/message'" [fa]="'commenting-o'"></styled-button>
 		</div>
 	</div>
 </div>
