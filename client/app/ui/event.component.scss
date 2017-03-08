@@ -5,8 +5,4 @@
   @include setup-max-width();
   padding: map_get($base-padding, 'default');
 
-  stack {
-    margin: 0 auto map_get($base-padding, 'large');
-    max-width: 50rem;
-  }
 }

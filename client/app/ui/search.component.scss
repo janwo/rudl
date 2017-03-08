@@ -2,9 +2,11 @@
 
 :host {
   display: flex;
+  @include setup-max-width();
+  padding: map_get($base-padding, 'default');
   flex-direction: column;
 
-  section {
+  section:not(:first-child) {
     margin-top: map_get($base-padding, 'default');
   }
 

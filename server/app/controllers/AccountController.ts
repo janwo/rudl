@@ -63,7 +63,8 @@ export module AccountController {
 					meta: {
 						hasAvatar: false,
 						profileText: null,
-						fulltextSearchData: null
+						fulltextSearchData: null,
+						onBoard: false
 					},
 					auth: {
 						password: recipe.password,
@@ -201,7 +202,6 @@ export module AccountController {
 	
 	export namespace RouteHandlers {
 		
-		import getPublicUser = UserController.getPublicUser;
 		/**
 		 * Handles [POST] /api/account/avatar
 		 * @param request Request-Object
@@ -216,7 +216,7 @@ export module AccountController {
 					reject(Boom.badData('Missing file payload.'));
 					return;
 				}
-					
+				
 				// Create sharp instance.
 				let transformer = sharp().png();
 				request.payload.filename.pipe(transformer);
@@ -235,13 +235,55 @@ export module AccountController {
 				let promise = Promise.all(transformations).then(() => {
 					user.meta.hasAvatar = true;
 					return saveUser(user);
-				}).then((user: User) => UserController.getPublicUser(user, request.auth.credentials));
+				}).then((user: User) => UserController.getPublicUser(user, user));
 				
 				resolve(promise);
 			}).catch(err => {
 				// Log + forward error.
 				request.log(err);
 				return Promise.reject(Boom.badImplementation('An server error occurred! Please try again.'))
+			});
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [POST] /api/account/location
+		 * @param request Request-Object
+		 * @param request.payload.longitude longitude
+		 * @param request.payload.latitude latitude
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function updateLocation(request: any, reply: any): void {
+			// Update location.
+			request.auth.credentials.location = [
+				request.payload.latitude,
+				request.payload.longitude
+			];
+			
+			// Save user.
+			let promise = saveUser(request.auth.credentials).then((user: User) => {
+				return UserController.getPublicUser(user, user);
+			});
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [POST] /api/account/boarding
+		 * @param request Request-Object
+		 * @param request.payload.boarded boarded
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function updateBoarding(request: any, reply: any): void {
+			// Update location.
+			request.auth.credentials.meta.onBoard = request.payload.boarded;
+			
+			// Save user.
+			let promise = saveUser(request.auth.credentials).then((user: User) => {
+				return UserController.getPublicUser(user, user);
 			});
 			
 			reply.api(promise);

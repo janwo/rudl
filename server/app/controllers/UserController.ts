@@ -199,6 +199,7 @@ export module UserController {
 					'user.lastName': 'lastName',
 					'user.meta.hasAvatar': 'meta.hasAvatar',
 					'user.meta.profileText': 'meta.profileText',
+					'user.meta.onBoard': 'meta.onBoard',
 					'user.languages': 'languages',
 					'user.createdAt': 'createdAt',
 					'links': 'links',

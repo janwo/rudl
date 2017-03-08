@@ -1,0 +1,100 @@
+@import './variables.scss';
+
+$boarding-size: 15rem;
+
+:host {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  @include setup-max-width();
+  padding: map_get($base-padding, 'default');
+
+  .wrapper {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    overflow: hidden;
+
+    .item {
+      flex: 1 0 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 1s;
+
+      .card {
+        width: $boarding-size + 2 * map_get($base-padding, 'default');
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: map_get($base-padding, 'default');
+
+        .image {
+          width: 100%;
+          flex: 1 1 auto;
+          background: no-repeat top center;
+          background-size: contain;
+        }
+
+        &:nth-child(1) .image,
+        &:nth-child(2) .image,
+        &:nth-child(3) .image,
+        &:nth-child(4) .image,
+        &:nth-child(5) .image {
+          background-image: url(../../assets/boarding/radar.png);
+        }
+
+        h1 {
+          text-align: center;
+        }
+
+        span {
+          text-align: center;
+          display: block;
+          line-height: map_get($base-line-height, 'multiline');
+          max-width: $boarding-size;
+          color: map_get($base-colors, 'primary-text');
+        }
+
+        styled-button {
+          margin-top: map_get($base-padding, 'default');
+        }
+      }
+    }
+  }
+
+  footer {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    margin-top: map_get($base-padding, 'default');
+
+    styled-button {
+      margin: 0;
+      position: relative;
+      flex: 0 0 auto;
+      z-index: 2;
+
+      &.done,
+      &.next {
+        margin-left: auto;
+      }
+
+      &.back {
+        margin-right: auto;
+      }
+    }
+
+    indicator {
+      position: absolute;
+      align-self: center;
+      width: 100%;
+      z-index: 1;
+    }
+  }
+}

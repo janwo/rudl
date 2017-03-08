@@ -1,0 +1,17 @@
+<div class="card" [routerLink]="['/events', 0]">
+	<header>
+		<slots [users]="" [slots]="3" [free]="1"></slots>
+		<ul>
+			<li>
+				<i class="fa fa-map-marker"></i>
+				<span>300m</span>
+			</li>
+			<li>
+				<i class="fa fa-clock-o"></i>
+				<span>Heute Abend</span>
+			</li>
+		</ul>
+	</header>
+	<h3>Kohlfahrt am Werdersee</h3>
+	<map [location]="[53.073635, 8.806422]" [zoom]="14" [accuracy]="150"></map>
+</div>

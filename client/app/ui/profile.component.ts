@@ -40,74 +40,79 @@ export class ProfileComponent implements OnInit, OnDestroy {
     ) {}
     
     ngOnInit(): void {
-        let updateUser = (username: string) => this.userService.get(username).do((user: User) => {
-            // Set user.
-            this.user = user;
-    
-            // Update tab item links.
-            this.tabItems = {
-                activities: {
-                    icon: 'heart-o',
-                    title: 'Interessen',
-                    link: this.router.createUrlTree(['../../', user.username, 'activities'], {
-                        relativeTo: this.route
-                    }),
-                    notification: false
-                },
-                lists: {
-                    icon: 'list',
-                    title: 'Listen',
-                    link: this.router.createUrlTree(['../../', user.username, 'lists'], {
-                        relativeTo: this.route
-                    }),
-                    notification: false
-                },
-                followees: {
-                    icon: 'users',
-                    title: 'Folgt',
-                    link: this.router.createUrlTree(['../../', user.username, 'followees'], {
-                        relativeTo: this.route
-                    }),
-                    notification: false
-                },
-                followers: {
-                    icon: 'users',
-                    title: 'Follower',
-                    link: this.router.createUrlTree(['../../', user.username, 'followers'], {
-                        relativeTo: this.route
-                    }),
-                    notification: false
-                }
-            };
-        });
+        let setUser = (username: string) => {
+            // User has not changed? Return current one.
+            if(this.user && this.user.username == username) return Observable.of(this.user);
+            
+            return this.userService.get(username).do((user: User) => {
+                // Set user.
+                this.user = user;
+        
+                // Update tab item links.
+                this.tabItems = {
+                    activities: {
+                        icon: 'heart-o',
+                        title: 'Interessen',
+                        link: this.router.createUrlTree(['../../', user.username, 'activities'], {
+                            relativeTo: this.route
+                        }),
+                        notification: false
+                    },
+                    lists: {
+                        icon: 'list',
+                        title: 'Listen',
+                        link: this.router.createUrlTree(['../../', user.username, 'lists'], {
+                            relativeTo: this.route
+                        }),
+                        notification: false
+                    },
+                    followees: {
+                        icon: 'users',
+                        title: 'Folgt',
+                        link: this.router.createUrlTree(['../../', user.username, 'followees'], {
+                            relativeTo: this.route
+                        }),
+                        notification: false
+                    },
+                    followers: {
+                        icon: 'users',
+                        title: 'Follower',
+                        link: this.router.createUrlTree(['../../', user.username, 'followers'], {
+                            relativeTo: this.route
+                        }),
+                        notification: false
+                    }
+                };
+            });
+        };
         
         // Define changed params subscription.
         this.paramsChangedSubscription = this.route.params.distinctUntilChanged((x, y) => {
             // Only continue if any params changed.
             return x['username'] == y['username'] && x['tab'] == y['tab'];
         }).flatMap(params => {
-            // Update user, if username changed.
-            let username = params['username'];
-            if(this.user && this.user.username == username) return Observable.of(params['tab']);
-            return updateUser(username).map(user => params['tab']);
-        }).flatMap((tab: string) => {
+            // Set user.
+            return setUser(params['username']).map(() => params['tab']);
+        }).subscribe((tab: string) => {
             // Set tab item.
             this.tab = this.tabItems[tab];
     
             // Map to tab specific resources.
             switch (tab) {
                 case 'lists':
-                    return this.listService.by(this.user.username).do((lists: List[]) => this.lists = lists);
+                    this.listService.by(this.user.username).do((lists: List[]) => this.lists = lists).subscribe();
+                    break;
                 case 'activities':
-                    return this.activityService.by(this.user.username).do((activities: Activity[]) => this.activities = activities);
+                    this.activityService.by(this.user.username).do((activities: Activity[]) => this.activities = activities).subscribe();
+                    break;
                 case 'followers':
-                    return this.userService.followers(this.user.username).do((followers: User[]) => this.followers = followers);
+                    this.userService.followers(this.user.username).do((followers: User[]) => this.followers = followers).subscribe();
+                    break;
                 case 'followees':
-                    return this.userService.followees(this.user.username).do((followees: User[]) => this.followees = followees);
-                default:
-                    return Observable.empty();
+                    this.userService.followees(this.user.username).do((followees: User[]) => this.followees = followees).subscribe();
+                    break;
             }
-        }).subscribe();
+        });
         
         // Define changed follow state subscription.
         this.changeFollowStateSubscription = this.changeFollowStateSubject.asObservable().distinctUntilChanged().flatMap(follow => {

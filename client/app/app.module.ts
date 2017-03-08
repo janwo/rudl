@@ -8,13 +8,12 @@ import {DashboardComponent} from "./ui/dashboard.component";
 import {StyledButtonComponent} from "./ui/widgets/styled-button.component";
 import {InputFieldComponent} from "./ui/widgets/input-field.component";
 import {HttpModule, JsonpModule} from "@angular/http";
-import {AppGuard} from "./app.guard";
+import {LoginGuard} from "./guards/login";
 import {DataService} from "./services/data.service";
 import {routing, appRoutingProviders} from "./app.routes";
 import {FormsModule} from "@angular/forms";
 import {UserService} from "./services/user.service";
 import {IndicatorComponent} from "./ui/widgets/indicator.component";
-import {NavbarComponent} from "./ui/widgets/navbar.component";
 import {DropdownMenuComponent} from "./ui/widgets/dropdown-menu.component";
 import {TabMenuComponent} from "./ui/widgets/tab-menu.component";
 import {PeopleComponent} from "./ui/people.component";
@@ -33,11 +32,10 @@ import {ActivityItemComponent} from "./ui/widgets/activity-item.component";
 import {ItemWrapperComponent} from "./ui/widgets/item-wrapper.component";
 import {StackCardComponent, StackComponent} from "./ui/widgets/stack.component";
 import {ModalComponent} from "./ui/widgets/modal.component";
-import {FullScreenOverlayComponent} from "./ui/widgets/fullscreen-overlay.component";
+import {FanComponent} from "./ui/widgets/fan.component";
 import {SearchComponent} from "./ui/search.component";
 import {HighlightPipe} from "./pipes/highlight.pipe";
 import {FormatPipe} from "./pipes/format.pipe";
-import {HistoryComponent} from "./ui/history.component";
 import {QuestionComponent} from "./ui/widgets/question.component";
 import {SearchBarComponent} from "./ui/widgets/search-bar.component";
 import {SearchService} from "./services/search.service";
@@ -51,6 +49,12 @@ import {ListService} from "./services/list.service";
 import {AddToListComponent} from "./ui/widgets/add-to-list.component";
 import {LogoComponent} from "./ui/widgets/logo.component";
 import {MapComponent} from "./ui/widgets/map.component";
+import {EventComponent} from "./ui/event.component";
+import {SlotsComponent} from "./ui/widgets/slots.component";
+import {EventItemComponent} from "./ui/widgets/event-item.component";
+import {EventService} from "./services/event.service";
+import {BoardingComponent} from "./ui/boarding.component";
+import {BoardingGuard} from "./guards/boarding";
 
 @NgModule({
     declarations: [
@@ -58,7 +62,6 @@ import {MapComponent} from "./ui/widgets/map.component";
 	    LoginComponent,
 	    StyledButtonComponent,
 	    InputFieldComponent,
-	    NavbarComponent,
 	    DropdownMenuComponent,
 	    TabMenuComponent,
 	    ActivityItemComponent,
@@ -66,14 +69,15 @@ import {MapComponent} from "./ui/widgets/map.component";
 	    ListComponent,
 	    ActivityComponent,
 	    StatisticsComponent,
+	    SlotsComponent,
 	    ModalComponent,
 	    QuestionComponent,
 	    LogoComponent,
 	    TabElevatedMenuComponent,
+	    EventComponent,
 	    LandingPageComponent,
 	    IndicatorComponent,
 	    DashboardComponent,
-	    HistoryComponent,
 	    AvatarComponent,
 	    MapComponent,
 	    AddToListComponent,
@@ -81,6 +85,7 @@ import {MapComponent} from "./ui/widgets/map.component";
 	    PeopleComponent,
 	    StackComponent,
 	    PeopleItemComponent,
+	    EventItemComponent,
 	    RedirectComponent,
 	    ExpanderComponent,
 	    HighlightPipe,
@@ -96,7 +101,8 @@ import {MapComponent} from "./ui/widgets/map.component";
 	    SearchBarComponent,
 	    LegalComponent,
 	    ProfileComponent,
-        FullScreenOverlayComponent,
+	    BoardingComponent,
+        FanComponent,
         TranslationListComponent
     ],
     providers: [
@@ -105,7 +111,9 @@ import {MapComponent} from "./ui/widgets/map.component";
 	    ActivityService,
 	    ListService,
 	    DataService,
-	    AppGuard,
+	    BoardingGuard,
+	    LoginGuard,
+	    EventService,
 	    appRoutingProviders
     ],
     imports: [

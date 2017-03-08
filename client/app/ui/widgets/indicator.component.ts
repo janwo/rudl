@@ -8,11 +8,12 @@ import {Component, Input} from "@angular/core";
 export class IndicatorComponent {
 
     @Input() indicators: Array<string>;
-    selectedIndex: number = 0;
+	@Input() interactive: boolean = true;
+    @Input() selectedIndex: number = 0;
     
     constructor() {}
 
-    public onClick(clickedIndex: number) {
-        this.selectedIndex = clickedIndex;
+    onClick(clickedIndex: number) {
+        if(this.interactive) this.selectedIndex = clickedIndex;
     }
 }

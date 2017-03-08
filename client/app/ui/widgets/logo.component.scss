@@ -3,25 +3,30 @@
 $logo-size: 2rem;
 
 :host {
-  flex-direction: row;
-  display: flex;
-  align-items: center;
+  display: block;
 
-  img {
-    width: $logo-size;
-    height: $logo-size;
-  }
+  div {
+    flex-direction: row;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
 
-  span {
-    font-family: $base-heading-font-family;
-    font-weight: $base-heading-font-weight-normal;
-    font-size: $logo-size * 0.75;
-    color: map_get($base-colors, 'primary');
-    margin-left: map_get($base-padding, 'small');
+    img {
+      width: $logo-size;
+      height: $logo-size;
+    }
 
-    @include breakpoint('small') {
-      margin-left: map_get($base-padding, 'smaller');
-      font-size: $logo-size;
+    span {
+      font-family: $base-heading-font-family;
+      font-weight: $base-heading-font-weight-normal;
+      font-size: $logo-size * 0.75;
+      color: map_get($base-colors, 'primary');
+      margin-left: map_get($base-padding, 'small');
+
+      @include breakpoint('small') {
+        margin-left: map_get($base-padding, 'smaller');
+        font-size: $logo-size;
+      }
     }
   }
 }

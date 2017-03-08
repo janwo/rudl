@@ -5,6 +5,18 @@
 	<base href="<%= htmlWebpackPlugin.options.baseUrl %>">
 	<title><%= htmlWebpackPlugin.options.title %></title>
 	
+	<style>
+		html {
+			overflow: hidden;
+			height: 100vh;
+		}
+		
+		body {
+			height: 100vh;
+			overflow: scroll;
+		}
+	</style>
+	
 	<!-- Metadata -->
 	<meta charset="UTF-8">
 	<% for (let metaName in htmlWebpackPlugin.options.metadata) { %>

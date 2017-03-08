@@ -23,7 +23,29 @@ export module EventController {
 	
 	export function getPublicEvent(event: Event | Event[], relatedUser: User) : Promise<any> {
 		let createPublicEvent = (event: Event) : Promise<any> => {
-		/*	return Promise.all([
+			/*
+			title: string;
+			description: string;
+			needsApproval: boolean;
+			slots: number;
+			date: string;
+			fuzzyDate: boolean;
+			location: Array<number>;
+			
+			title: string;
+			description?: string;
+			location: number;
+			accuracy: number;
+			date: string;
+			fuzzyDate: boolean;
+			needsApproval: boolean;
+			awaitingApproval: boolean;
+			approved: boolean;
+			totalSlots: number;
+			freeSlots: number;
+			owner: User;
+			membersSample: User[];*/
+			/*return Promise.all([
 				activityOwnerPromise,
 				publicActivityOwnerPromise,
 				activityStatisticsPromise
@@ -33,24 +55,16 @@ export module EventController {
 				
 				// Build profile.
 				return Promise.resolve(dot.transform({
-					'activity._key': 'id',
-					'activity.translations': 'translations',
+					'event._key': 'id',
+					'event.title': 'title',
 					'owner': 'owner',
-					'links': 'links',
-					'isOwner': 'relations.isOwned',
-					'statistics.isFollowed': 'relations.isFollowed',
-					'statistics.activities': 'statistics.activities',
-					'statistics.followers': 'statistics.followers',
-					'statistics.lists': 'statistics.lists',
-					'statistics.events': 'statistics.events'
+					'event.location': 'location',
 				}, {
-					activity: event,
+					event: event,
 					links: links,
 					owner: values[1],
-					isOwner: values[0]._key == relatedUser._key
 				}));
-			});			*/
-			return Promise.resolve({});
+			});*/return Promise.resolve(()=>{return {}});
 		};
 		let now = Date.now();
 		let transformed = event instanceof Array ? Promise.all(event.map(createPublicEvent)) : createPublicEvent(event);
@@ -88,11 +102,11 @@ export module EventController {
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Event[]>;
 	}
 	
-	export function addUserConnection(activity: Activity, user: User) : Promise<UserFollowsActivity> {
+	export function approveUser(event: Event, user: User) : Promise<UserFollowsActivity> {
 		let collection = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsActivity.name);
 		return collection.firstExample({
 			_from: user._id,
-			_to: activity._id
+			_to: event._id
 		}).then((cursor: Cursor) => cursor.next()).then((userFollowsActivity: UserFollowsActivity) => {
 			// Try to return any existing connection.
 			if(userFollowsActivity) return userFollowsActivity;
@@ -101,7 +115,7 @@ export module EventController {
 			let now = new Date().toISOString();
 			let edge : UserFollowsActivity = {
 				_from: user._id,
-				_to: activity._id,
+				_to: event._id,
 				createdAt: now,
 				updatedAt: now
 			};
@@ -110,7 +124,7 @@ export module EventController {
 		});
 	}
 	
-	export function removeUserConnection(activity: User, user: User): Promise<void> {
+	export function requestApproval(activity: User, user: User): Promise<void> {
 		let edge = {
 			_from: user._id,
 			_to: activity._id
@@ -240,11 +254,65 @@ export module EventController {
 		/**
 		 * Handles [GET] /api/events/by/{username}
 		 * @param request Request-Object
-		 * @param request.params.key key
+		 * @param request.params.username username
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
 		export function getEventsBy(request: any, reply: any): void {
+			// Create promise.
+			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
+				if(user) return EventController.findByUser(user);
+				return Promise.reject(Boom.notFound('User not found!'));
+			}).then((events: Event[]) => getPublicEvent(events, request.auth.credentials));
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [GET] /api/events/by/{username}/in/{activity}
+		 * @param request Request-Object
+		 * @param request.params.username username
+		 * @param request.params.activity activity
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function getActivityEventsBy(request: any, reply: any): void {
+			// Create promise.
+			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
+				if(user) return EventController.findByUser(user);
+				return Promise.reject(Boom.notFound('User not found!'));
+			}).then((events: Event[]) => getPublicEvent(events, request.auth.credentials));
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [GET] /api/events/within/{radius}
+		 * @param request Request-Object
+		 * @param request.params.radius number
+		 * @param request.params.activity activity
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function getEventsWithin(request: any, reply: any): void {
+			// Create promise.
+			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
+				if(user) return EventController.findByUser(user);
+				return Promise.reject(Boom.notFound('User not found!'));
+			}).then((events: Event[]) => getPublicEvent(events, request.auth.credentials));
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [GET] /api/events/within/{radius}/in/{activity}
+		 * @param request Request-Object
+		 * @param request.params.username username
+		 * @param request.params.activity activity
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function getActivityEventsWithin(request: any, reply: any): void {
 			// Create promise.
 			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
 				if(user) return EventController.findByUser(user);

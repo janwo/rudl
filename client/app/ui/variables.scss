@@ -60,7 +60,13 @@ $base-shadow: (
 );
 
 $base-breakpoints: (
-  'small': 40rem
+  'small': 40rem,
+  'medium': 55rem
+);
+
+$base-max-width: (
+  'medium': map_get($base-breakpoints, 'medium'),
+  'small': map_get($base-breakpoints, 'small')
 );
 
 @mixin breakpoint($min-breakpoint: null, $max-breakpoint: null) {
@@ -78,5 +84,20 @@ $base-breakpoints: (
 
   @media #{$query} {
     @content;
+  }
+}
+
+@mixin setup-max-width() {
+  $first-key: nth(map_keys($base-max-width), 1);
+  @if($first-key) {
+    max-width: map_get($base-max-width, $first-key);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @each $name, $value in $base-max-width {
+    @include breakpoint(null, $name) {
+      max-width: map_get($base-max-width, $name);
+    }
   }
 }

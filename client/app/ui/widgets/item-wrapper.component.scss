@@ -12,13 +12,17 @@ $list-margin: map_get($base-padding, 'smaller');
     justify-content: space-between;
     flex-direction: row;
 
-    & > /deep/ * {
+    &.single-column-layout > /deep/ * {
       flex: 0 0 100%;
     }
 
-    &.two-columns > /deep/ * {
-      @include breakpoint('small') {
-        flex: 0 0 50%;
+    @include breakpoint('small') {
+      &.two-columns-layout > /deep/ * {
+        flex: 0 0 100% / 2;
+      }
+
+      &.three-columns-layout > /deep/ * {
+        flex: 0 0 100% / 3;
       }
     }
 
@@ -32,10 +36,19 @@ $list-margin: map_get($base-padding, 'smaller');
       }
 
       @include breakpoint('small') {
-        &.two-columns > /deep/ * {
+        &.two-columns-layout > /deep/ * {
           flex: 0 0 calc(50% - #{$list-margin / 2});
 
-         &:nth-child(2) {
+          &:nth-child(2) {
+            margin-top: 0;
+          }
+        }
+
+        &.three-columns-layout > /deep/ * {
+          flex: 0 0 calc(100% / 3 - #{$list-margin / 2});
+
+          &:nth-child(2),
+          &:nth-child(3) {
             margin-top: 0;
           }
         }

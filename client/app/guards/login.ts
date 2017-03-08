@@ -1,10 +1,10 @@
 import {CanActivate, Router} from "@angular/router";
 import {Injectable} from "@angular/core";
-import {UserService, UserStatus} from "./services/user.service";
+import {UserService, UserStatus} from "../services/user.service";
 import {Observable} from "rxjs";
 
 @Injectable()
-export class AppGuard implements CanActivate {
+export class LoginGuard implements CanActivate {
 
     constructor(
         private userService: UserService,

@@ -1,8 +1,8 @@
 @import './../variables.scss';
 
 $indicator-colors: (
-  'active-background': map_get($base-colors, 'secondary'),
-  'default-background': map_get($base-colors, 'secondary-text')
+  'active-background': map_get($base-colors, 'primary'),
+  'default-background': inactive(map_get($base-colors, 'primary'))
 );
 
 :host {
@@ -17,11 +17,14 @@ $indicator-colors: (
     margin: 0.25rem;
     background-color: map_get($indicator-colors, 'default-background');
     border-radius: 50%;
-    cursor: pointer;
 
     &.active {
       cursor: default;
       background-color: map_get($indicator-colors, 'active-background');
     }
+  }
+
+  .interactive li {
+    cursor: pointer;
   }
 }

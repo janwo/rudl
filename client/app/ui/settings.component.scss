@@ -2,6 +2,8 @@
 
 :host {
   display: block;
+  @include setup-max-width();
+  padding: map_get($base-padding, 'default');
 
   .tab-content {
     border-radius: 0 $base-border-radius $base-border-radius $base-border-radius;

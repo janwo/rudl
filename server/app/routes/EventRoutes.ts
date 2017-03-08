@@ -1,4 +1,4 @@
-import {UserRoles} from "../models/users/User";
+import {UserRoles, UserValidation} from "../models/users/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {EventController} from "../controllers/EventController";
 import Joi = require('joi');
@@ -6,6 +6,8 @@ import BasicStrategy = require("../strategies/BasicStrategy");
 import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
+
+const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.string().regex(/^me$/));
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
@@ -22,6 +24,70 @@ export const RoutesConfig: RoutesConfiguration = [
 				params: {
 					query: Joi.string().min(3),
 					offset: Joi.number().min(0).default(0)
+				}
+			}
+		}
+	},
+	{
+		path: '/api/events/by/{username}',
+		method: 'GET',
+		handler: EventController.RouteHandlers.getEventsBy,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					username: UsernameValidation
+				}
+			}
+		}
+	},
+	{
+		path: '/api/events/by/{username}/in/{activity}',
+		method: 'GET',
+		handler: EventController.RouteHandlers.getActivityEventsBy,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					activity: Joi.string(),
+					username: UsernameValidation
+				}
+			}
+		}
+	},
+	{
+		path: '/api/events/within/{radius}',
+		method: 'GET',
+		handler: EventController.RouteHandlers.getEventsWithin,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			}
+		}
+	},
+	{
+		path: '/api/events/within/{radius}/in/{activity}',
+		method: 'GET',
+		handler: EventController.RouteHandlers.getActivityEventsWithin,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					activity: Joi.string()
 				}
 			}
 		}

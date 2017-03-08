@@ -20,127 +20,27 @@
 <modal #unfollowModal [title]="'Are you sure to unfollow activity?'" >
 	<question [choices]="modalChoices" [description]='"Du bist der Ersteller dieser Aktivität. Durch das Entfolgen geht die Aktivität in den Besitz eines anderen Followers über. Aktivitäten ohne andere Follower werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."'></question>
 </modal>
+		
 <section *ngIf="activity">
 	<h2 i18n>Teilnahme bestätigt</h2>
-	<div class="scroll-container">
+	<item-wrapper class="scroll-container" [columns]="3">
 		<div class="card card-add-event">
 			<i class="fa fa-plus"></i>
 			<span>Event hinzufügen</span>
 		</div>
-		
-		<div class="card card-event">
-			<map [location]="[53.073635, 8.806422]" [zoom]="14" [accuracy]="150"></map>
-			<div class="content">
-				<h2>Kohlfahrt am Werdersee</h2>
-				<p>
-					<i class="fa fa-map-marker"></i>
-					<span>300m entfernt</span>
-				</p>
-				<p>
-					<i class="fa fa-clock-o"></i>
-					<span>Heute Abend</span>
-				</p>
-				<p>
-					tus est Lorem ipsumr sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore ...
-				</p>
-			</div>
-		</div>
-		
-		<div class="card card-event">
-			<map [location]="[53.073635, 8.806422]" [zoom]="14" [accuracy]="150"></map>
-			<div class="content">
-				<h2>Kohlfahrt am Werdersee</h2>
-				<p>
-					<i class="fa fa-map-marker"></i>
-					<span>300m entfernt</span>
-				</p>
-				<p>
-					<i class="fa fa-clock-o"></i>
-					<span>Heute Abend</span>
-				</p>
-				<p>
-					tus est Lorem ipsumr sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore ...
-				</p>
-			</div>
-		</div>
-	</div>
+		<event-item [event]=""></event-item>
+		<event-item [event]=""></event-item>
+		<event-item [event]=""></event-item>
+	</item-wrapper>
 	<small class="attribution">Maps provided by © <a target="_blank" href="https://openstreetmap.org/copyright">OpenStreetMap</a> Contributors via <a target="_blank" href="http://leafletjs.com">Leaflet</a></small>
 </section>
 
 <section>
 	<h2 i18n>In deiner Nähe</h2>
-	<div class="scroll-container">
-		<div class="card card-event">
-			<map [location]="[53.073635, 8.806422]" [zoom]="14" [accuracy]="150"></map>
-			<div class="content">
-				<h2>Kohlfahrt am Werdersee</h2>
-				<p>
-					<i class="fa fa-map-marker"></i>
-					<span>300m entfernt</span>
-				</p>
-				<p>
-					<i class="fa fa-clock-o"></i>
-					<span>Heute Abend</span>
-				</p>
-				<p>
-					tus est Lorem ipsumr sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore ...
-				</p>
-			</div>
-		</div>
-		
-		<div class="card card-event">
-			<map [location]="[53.073635, 8.806422]" [zoom]="14" [accuracy]="150"></map>
-			<div class="content">
-				<h2>Kohlfahrt am Werdersee</h2>
-				<p>
-					<i class="fa fa-map-marker"></i>
-					<span>300m entfernt</span>
-				</p>
-				<p>
-					<i class="fa fa-clock-o"></i>
-					<span>Heute Abend</span>
-				</p>
-				<p>
-					tus est Lorem ipsumr sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore ...
-				</p>
-			</div>
-		</div>
-			
-		<div class="card card-event">
-			<map [location]="[53.073635, 8.806422]" [zoom]="14" [accuracy]="150"></map>
-			<div class="content">
-				<h2>Kohlfahrt am Werdersee</h2>
-				<p>
-					<i class="fa fa-map-marker"></i>
-					<span>300m entfernt</span>
-				</p>
-				<p>
-					<i class="fa fa-clock-o"></i>
-					<span>Heute Abend</span>
-				</p>
-				<p>
-					tus est Lorem ipsumr sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore ...
-				</p>
-			</div>
-		</div>
-			
-		<div class="card card-event">
-			<map [location]="[53.073635, 8.806422]" [zoom]="14" [accuracy]="150"></map>
-			<div class="content">
-				<h2>Kohlfahrt am Werdersee</h2>
-				<p>
-					<i class="fa fa-map-marker"></i>
-					<span>300m entfernt</span>
-				</p>
-				<p>
-					<i class="fa fa-clock-o"></i>
-					<span>Heute Abend</span>
-				</p>
-				<p>
-					tus est Lorem ipsumr sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore ...
-				</p>
-			</div>
-		</div>
-	</div>
+	<item-wrapper class="scroll-container" [columns]="3">
+		<event-item [event]=""></event-item>
+		<event-item [event]=""></event-item>
+		<event-item [event]=""></event-item>
+	</item-wrapper>
 	<small class="attribution">Maps provided by © <a target="_blank" href="https://openstreetmap.org/copyright">OpenStreetMap</a> Contributors via <a target="_blank" href="http://leafletjs.com">Leaflet</a></small>
 </section>

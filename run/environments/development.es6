@@ -4,6 +4,7 @@ import Webpack from "webpack";
 
 export default {
 	name: 'rudl - Development Environment',
+	debug: true,
 	frontend: {
 		webpack: {
 			devServer: {
@@ -50,8 +51,7 @@ export default {
 							]
 						},
 						plugins: [
-							new ExtractTextPlugin( '[name].[hash].css' ),
-							new Webpack.ContextReplacementPlugin( /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/, root('client/') )
+							new ExtractTextPlugin( '[name].[hash].css' )
 						]
 					}
 				}
@@ -61,7 +61,6 @@ export default {
 	backend: {
 		host: process.env.BACKEND_SERVER_HOST || 'app',
 		port: process.env.BACKEND_SERVER_PORT || 8080,
-		debug: true,
 		db: {
 			redis: {
 				host: process.env.REDIS_HOST || 'redis'
