@@ -86,7 +86,7 @@ export class ActivityComponent implements OnInit, OnDestroy {
     }
     
     ngOnDestroy(){
-        this.nearbyEventsSubscription.unsubscribe();
+        //this.nearbyEventsSubscription.unsubscribe();
         this.activitySubscription.unsubscribe();
     }
     

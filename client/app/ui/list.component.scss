@@ -4,12 +4,20 @@
   display: flex;
   @include setup-max-width();
   padding: map_get($base-padding, 'default');
-  flex-direction: row;
-  align-items: flex-start;
+  flex-direction: column;
+
+  @include breakpoint('small') {
+    flex-direction: row;
+    align-items: flex-start;
+  }
 
   & > .card {
-    width: 15rem;
-    flex: 0 0 auto;
+    flex: 1 1 auto;
+
+    @include breakpoint('small') {
+      flex: 0 0 auto;
+      width: 15rem;
+    }
 
     .user {
       cursor: pointer;
@@ -44,19 +52,31 @@
       }
     }
 
-    .cta {
-      margin-top: map_get($base-padding, 'smaller');
+    .statistics {
+      flex: 1 1 auto;
       display: flex;
       justify-content: space-between;
 
-      styled-button {
-        /deep/ button {
-          margin-bottom: 0;
+      @include breakpoint('small') {
+        flex-direction: column;
+      }
+
+      .cta {
+        display: flex;
+        justify-content: space-between;
+
+        @include breakpoint('small') {
+          margin-top: map_get($base-padding, 'smaller');
         }
 
-        &:first-child {
+        styled-button {
+          margin: 0;
           flex: 1 1 auto;
-          margin-right: map_get($base-padding, 'small');
+
+          &:not(:first-child) {
+            flex: 0 0 auto;
+            margin-left: map_get($base-padding, 'small');
+          }
         }
       }
     }
@@ -64,7 +84,12 @@
 
   & > .content {
     flex: 1 1 auto;
-    margin-left: map_get($base-padding, 'default');
+    margin-top: map_get($base-padding, 'default');
+
+    @include breakpoint('small') {
+      margin-top: 0;
+      margin-left: map_get($base-padding, 'default');
+    }
 
     ul {
       list-style: none;

@@ -7,12 +7,14 @@
 		</div>
 	</div>
 	<h1>{{list.name}}</h1>
-	<statistics [statistics]="[
-		{value: list.statistics.activities, subject: 'Activities'},
-		{value: list.statistics.followers, subject: 'Follower', link: 'follower'}
-	]"></statistics>
-	<div class="cta">
-		<styled-button [style]="list.relations.isFollowed ? buttonStyleFollowing : buttonStyleDefault" (click)="onToggleFollow(true)" [disabled]="pendingFollowRequest" [text]="list.relations.isFollowed ? 'Following' : 'Follow'"></styled-button>
+	<div class="statistics">
+		<statistics [statistics]="[
+			{value: list.statistics.activities, subject: 'Activities'},
+			{value: list.statistics.followers, subject: 'Follower', link: 'follower'}
+		]"></statistics>
+		<div class="cta">
+			<styled-button [style]="list.relations.isFollowed ? buttonStyleFollowing : buttonStyleDefault" (click)="onToggleFollow(true)" [disabled]="pendingFollowRequest" [text]="list.relations.isFollowed ? 'Following' : 'Follow'"></styled-button>
+		</div>
 	</div>
 </div>
 <item-wrapper class="content" *ngIf="list" [columns]="2">
