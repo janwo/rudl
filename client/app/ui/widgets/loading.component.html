@@ -1,0 +1,6 @@
+<div class="image" [style.backgroundImage]="backgroundImageStyle" [@fadeIn]="true" *ngIf="!isLoading && emptyState"></div>
+<div [@slideIn]="true" *ngIf="!isLoading && emptyState">
+	<h2>{{emptyState.title}}</h2>
+	<span>{{emptyState.description}}</span>
+</div>
+<div class="loading-pulsar" *ngIf="isLoading"></div>

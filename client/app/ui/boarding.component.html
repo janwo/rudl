@@ -31,14 +31,16 @@
 		<div class="card">
 			<div class="image"></div>
 			<h1>{{steps[4]}}</h1>
-			<span>In order to show you all relevant rudels and events near you, rudl needs to access your location.</span>
-			<styled-button [text]="grantedPermission ? 'Thank you!' : 'Grant Permission'" [disabled]="grantedPermission" (click)="grantPermission()"></styled-button>
+			<span *ngIf="permissionStatus == 'denied'">Seems like you denied the permission, please check your browser settings to enable location sharing!</span>
+			<span *ngIf="permissionStatus != 'denied'">In order to show you all relevant rudels and events near you, rudl needs to access your location.</span>
+			<styled-button *ngIf="permissionStatus != 'denied'" [style]="ButtonStyles.default" [text]="permissionStatus == 'granted' ? 'Thank you!' : (permissionStatus == 'granting' ? 'Please wait...' : 'Grant Permission')" [disabled]="permissionStatus != 'ungranted'" (click)="grantPermission()"></styled-button>
+			<styled-button *ngIf="permissionStatus == 'denied'" [style]="ButtonStyles.uncolored" [text]="'Get help'" (click)="openHelpTopic()"></styled-button>
 		</div>
 	</div>
 </div>
 <footer>
-	<styled-button class="back" *ngIf="step > 0" [style]="buttonStyle" [text]="'Go back'" [routerLink]="[{step: step - 1}]"></styled-button>
-	<styled-button class="next" *ngIf="step < steps.length - 1" [style]="buttonStyle" [text]="'Continue'" [routerLink]="[{step: step + 1}]"></styled-button>
-	<styled-button class="done" *ngIf="step == steps.length - 1" [disabled]="!grantedPermission" [style]="buttonStyle" [text]="'Finish'" (click)="finishBoarding()"></styled-button>
+	<styled-button class="back" *ngIf="step > 0" [style]="ButtonStyles.default" [text]="'Go back'" [routerLink]="[{step: step - 1}]"></styled-button>
+	<styled-button class="next" *ngIf="step < steps.length - 1" [style]="ButtonStyles.default" [text]="'Continue'" [routerLink]="[{step: step + 1}]"></styled-button>
+	<styled-button class="done" *ngIf="step == steps.length - 1" [disabled]="permissionStatus != 'granted'" [style]="ButtonStyles.default" [text]="'Finish'" (click)="finishBoarding()"></styled-button>
 	<indicator [indicators]="steps" [selectedIndex]="step" [interactive]="false"></indicator>
 </footer>

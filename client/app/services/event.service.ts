@@ -34,27 +34,15 @@ export class EventService {
         return this.dataService.post(`/api/activities/leave/${event}`, null, true).map((json: JsonResponse) => json.data as Activity).share();
     }
     
-    within(radius: number, activity: string | boolean = false): Observable<Activity[]> {
-        return this.dataService.get(activity === false ? `/api/events/within/${radius}` : `/api/events/within/${radius}/in/${activity}`, true).map((json: JsonResponse) => {
+    nearby(activity: string | boolean = false): Observable<Event[]> {
+        return this.dataService.get(activity === false ? `/api/events/nearby` : `/api/events/nearby/${activity}`, true).map((json: JsonResponse) => {
             return json.data;
         }).share();
     }
     
-    lists(activity: string, filter: 'all' | 'owned' | 'followed' = 'all', offset: number = 0, limit: number = 0): Observable<List[]> {
-        return this.dataService.get(`/api/activities/=/${activity}/lists/${filter}/[${offset},${limit}]`, true).map((json: JsonResponse) => {
-            return json.data.map((list: List) => {
-                list.name = Locale.getBestTranslation(list.translations, this.userService.getAuthenticatedUser().user.languages);
-                return list;
-            });
-        }).share();
-    }
-    
-    by(username: string = 'me', ownsOnly: boolean = false): Observable<Activity[]> {
-        return this.dataService.get(`/api/activities/by/${username}`, true).map((json: JsonResponse) => {
-            return json.data.filter((activity: Activity) => !ownsOnly || activity.owner.username == username).map((activity: Activity) => {
-                activity.name = Locale.getBestTranslation(activity.translations, this.userService.getAuthenticatedUser().user.languages);
-                return activity;
-            });
+    by(username: string = 'me', activity: string | boolean = false): Observable<Event[]> {
+        return this.dataService.get(activity ? `/api/events/by/${username}/in/${activity}`: `/api/events/by/${username}`, true).map((json: JsonResponse) => {
+            return json.data;
         }).share();
     }
 }

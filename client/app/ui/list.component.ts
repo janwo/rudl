@@ -42,11 +42,11 @@ export class ListComponent implements OnInit, OnDestroy {
         // Get params.
         this.route.params.forEach((params: Params) => {
             // Get selected tab.
-            let key = params['key'];
+            let list = params['list'];
     
             this.listSubscription = Observable.zip(
-                this.listService.get(key),
-                this.listService.activities(key),
+                this.listService.get(list),
+                this.listService.activities(list),
                 (list: List, activities: Activity[]) => {
                     this.list = list;
                     this.activities = activities;

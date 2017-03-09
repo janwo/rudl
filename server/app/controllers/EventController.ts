@@ -294,7 +294,7 @@ export module EventController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getEventsWithin(request: any, reply: any): void {
+		export function getEventsNearby(request: any, reply: any): void {
 			// Create promise.
 			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
 				if(user) return EventController.findByUser(user);
@@ -312,7 +312,7 @@ export module EventController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getActivityEventsWithin(request: any, reply: any): void {
+		export function getActivityEventsNearby(request: any, reply: any): void {
 			// Create promise.
 			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
 				if(user) return EventController.findByUser(user);

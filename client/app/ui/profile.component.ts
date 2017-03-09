@@ -22,6 +22,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     lists: List[] = [];
     followers: User[] = [];
     followees: User[] = [];
+	isLoading: boolean = false;
     tabItems: {[key: string]: TabItem} = {};
     paramsChangedSubscription: Subscription;
     changeFollowStateSubject: Subject<boolean> = new Subject();
@@ -30,6 +31,29 @@ export class ProfileComponent implements OnInit, OnDestroy {
     pendingFollowRequest: boolean = false;
     buttonStyleDefault: ButtonStyles = ButtonStyles.minimal;
     buttonStyleFollowing: ButtonStyles = ButtonStyles.minimalInverse;
+    
+	emptyStates = {
+		followees: {
+			title: 'No Followees',
+			image: require('../../assets/boarding/radar.png'),
+			description: 'You are not following anyone. Why not change that?'
+		},
+		followers: {
+			title: 'No Followers',
+			image: require('../../assets/boarding/radar.png'),
+			description: 'Nobody follows you. Create events to make yourself visible!'
+		},
+		lists: {
+			title: 'You have no lists',
+			image: require('../../assets/boarding/radar.png'),
+			description: 'You have no lists created yet. Use them to group your Rudels! Others can follow them.'
+		},
+		activities: {
+			title: 'There are no Rudels',
+			image: require('../../assets/boarding/radar.png'),
+			description: 'Why not search for new Rudels that you like?'
+		}
+	};
     
     constructor(
         private route: ActivatedRoute,
@@ -43,7 +67,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         let setUser = (username: string) => {
             // User has not changed? Return current one.
             if(this.user && this.user.username == username) return Observable.of(this.user);
-            
+	        
             return this.userService.get(username).do((user: User) => {
                 // Set user.
                 this.user = user;
@@ -51,9 +75,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
                 // Update tab item links.
                 this.tabItems = {
                     activities: {
-                        icon: 'heart-o',
-                        title: 'Interessen',
-                        link: this.router.createUrlTree(['../../', user.username, 'activities'], {
+                        icon: 'paw',
+                        title: 'Rudel',
+                        link: this.router.createUrlTree(['../../', user.username, 'rudel'], {
                             relativeTo: this.route
                         }),
                         notification: false
@@ -90,28 +114,47 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.paramsChangedSubscription = this.route.params.distinctUntilChanged((x, y) => {
             // Only continue if any params changed.
             return x['username'] == y['username'] && x['tab'] == y['tab'];
-        }).flatMap(params => {
+        }).do(() => this.isLoading = true).flatMap(params => {
             // Set user.
             return setUser(params['username']).map(() => params['tab']);
         }).subscribe((tab: string) => {
             // Set tab item.
             this.tab = this.tabItems[tab];
-    
-            // Map to tab specific resources.
-            switch (tab) {
-                case 'lists':
-                    this.listService.by(this.user.username).do((lists: List[]) => this.lists = lists).subscribe();
-                    break;
-                case 'activities':
-                    this.activityService.by(this.user.username).do((activities: Activity[]) => this.activities = activities).subscribe();
-                    break;
-                case 'followers':
-                    this.userService.followers(this.user.username).do((followers: User[]) => this.followers = followers).subscribe();
-                    break;
-                case 'followees':
-                    this.userService.followees(this.user.username).do((followees: User[]) => this.followees = followees).subscribe();
-                    break;
-            }
+	
+	        // Map to tab specific resources.
+	        switch (tab) {
+		        case 'lists':
+			        this.tab = this.tabItems['lists'];
+			        this.listService.by(this.user.username).subscribe((lists: List[]) => {
+				        this.lists = lists;
+				        this.isLoading = false
+			        });
+			        break;
+			        
+		        case 'rudel':
+			        this.tab = this.tabItems['activities'];
+			        this.activityService.by(this.user.username).subscribe((activities: Activity[]) => {
+				        this.activities = activities;
+				        this.isLoading = false;
+			        });
+			        break;
+			        
+		        case 'followers':
+			        this.tab = this.tabItems['followers'];
+			        this.userService.followers(this.user.username).subscribe((followers: User[]) => {
+			        	this.followers = followers;
+				        this.isLoading = false;
+			        });
+			        break;
+			        
+		        case 'followees':
+			        this.tab = this.tabItems['followees'];
+			        this.userService.followees(this.user.username).subscribe((followees: User[]) => {
+			        	this.followees = followees;
+			        	this.isLoading = false
+			        });
+			        break;
+	        }
         });
         
         // Define changed follow state subscription.

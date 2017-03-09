@@ -5,7 +5,7 @@ export interface User extends Document {
 	firstName: string;
 	lastName: string;
 	username: string;
-	location: string;
+	location: number[];
 	meta: UserMeta;
 	relations: UserRelations;
 	statistics: UserStatistics;

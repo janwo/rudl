@@ -32,7 +32,8 @@ function generateUser(): User {
 		meta: {
 			hasAvatar: false,
 			profileText: casual.short_description,
-			fulltextSearchData: null
+			fulltextSearchData: null,
+			onBoard: true
 		},
 		auth: {
 			password: casual.password,

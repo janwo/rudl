@@ -14,22 +14,44 @@ export interface UserStatus {
 @Injectable()
 export class UserService {
     
-    private authenticatedProfile: BehaviorSubject<UserStatus>;
-    private locationUpdate: ReplaySubject<Position> = new ReplaySubject(1);
-    private locationUpdateCallerId: number | false = false;
+    private authenticatedProfile: BehaviorSubject<UserStatus> = new BehaviorSubject<UserStatus>(null);
+    private authenticatedProfileObservable: Observable<UserStatus>= this.authenticatedProfile.asObservable().filter(user => !!user);
+    private currentLocation: ReplaySubject<Position> = new ReplaySubject(1);
+    private locationUpdates: Observable<[number, number]> = this.currentLocation.asObservable().do(position => console.log(position)).flatMap((position: Position) => {
+        let userStatus = this.getAuthenticatedUser();
+        
+        // It's an location update?
+        if(userStatus.user.location) {
+            let usersLat = userStatus.user.location[0];
+            let usersLon = userStatus.user.location[1];
+    
+            // Calculate distance.
+            let pi = Math.PI / 180;
+            let a = 0.5 - Math.cos((usersLat - position.coords.latitude) * pi) / 2 + Math.cos(position.coords.latitude * pi)
+                * Math.cos(usersLat * pi) * (1 - Math.cos((usersLon - position.coords.longitude) * pi)) / 2;
+            let distance = 6371 * Math.asin(Math.sqrt(a)) * 2;
+           
+            // Just return Update location, return position.
+            console.log(distance);
+            if (distance <= 0.1) return Observable.of(userStatus.user.location); // Accuracy of 100 meters.
+        }
+    
+        return this.updateLocation(position.coords.latitude, position.coords.longitude).map(user => user.location);
+    });
+    
+    private watchPositionCallerId: number | false = false;
 
     constructor(
         private dataService: DataService,
         private router: Router
     ) {
         // Setup authenticated profile observable.
-        this.authenticatedProfile = new BehaviorSubject<UserStatus>(null);
         this.getAuthenticatedUserObservable().subscribe(authenticatedUser => {
             if(authenticatedUser.loggedIn) {
                 console.log(`authenticatedProfile was set to: username = ${authenticatedUser.user.username}, language = ${authenticatedUser.user.languages ? authenticatedUser.user.languages[0] : 'none'}.`);
                 
                 // Request position updates immediately if user is boarded.
-                if(authenticatedUser.user.meta.onBoard && this.locationUpdateCallerId === false) this.requestPositionUpdates();
+                if(authenticatedUser.user.meta.onBoard && this.watchPositionCallerId === false) this.resumePositionUpdates();
             } else
                 console.log(`authenticatedProfile got removed.`);
         });
@@ -50,35 +72,32 @@ export class UserService {
     }
     
     getAuthenticatedUserObservable() : Observable<UserStatus> {
-        return this.authenticatedProfile.asObservable().filter(user => !!user);
+        return this.authenticatedProfileObservable;
     }
     
-    requestPositionUpdates(): void {
-        this.cancelPositionUpdates();
-        this.locationUpdateCallerId = navigator.geolocation.watchPosition((position: Position) => {
-                this.updateLocation(position.coords.longitude, position.coords.latitude).subscribe(() => {
-                    this.locationUpdate.next(position);
-                });
+    resumePositionUpdates(): void {
+        this.pausePositionUpdates();
+        this.watchPositionCallerId = this.watchPositionCallerId = navigator.geolocation.watchPosition((position: Position) => {
+            this.currentLocation.next(position);
             }, (error: PositionError) => {
-                console.log('Geolocation service: ' + error.message);
-                this.locationUpdate.error(error);
-            },{
+                this.currentLocation.error(error);
+            }, {
                 enableHighAccuracy: false,
-                timeout: 5000,
-                maximumAge: 1000 * 60
+                maximumAge: 1000 * 60,
+                timeout: 1000 * 60
             }
         );
     }
     
-    cancelPositionUpdates(): void {
-        if(this.locationUpdateCallerId !== false) {
-            navigator.geolocation.clearWatch(this.locationUpdateCallerId);
-            this.locationUpdateCallerId = false;
+    pausePositionUpdates(): void {
+        if(this.watchPositionCallerId !== false) {
+            navigator.geolocation.clearWatch(this.watchPositionCallerId);
+            this.watchPositionCallerId = false;
         }
     }
     
-    getCurrentPosition(): Observable<Position> {
-        return this.locationUpdate.asObservable().share();
+    getCurrentPosition(): Observable<[number, number]> {
+        return this.locationUpdates;
     }
         
     signUp(username: string, password: string) : void {
@@ -123,7 +142,7 @@ export class UserService {
         return this.dataService.get(`/api/users/like/${query}`, true).map((json: JsonResponse) => json.data).share();
     }
     
-    updateLocation(longitude: number, latitude: number): Observable<User[]> {
+    updateLocation(latitude: number, longitude: number): Observable<User> {
         return this.dataService.post(`/api/account/location`, `${JSON.stringify({
             longitude: longitude,
             latitude: latitude
@@ -133,7 +152,7 @@ export class UserService {
         })).share();
     }
     
-    updateBoarding(boarded: boolean): Observable<User[]> {
+    updateBoarding(boarded: boolean): Observable<User> {
         return this.dataService.post(`/api/account/boarding`, `${JSON.stringify({
             boarded: boarded
         })}`, true).map((json: JsonResponse) => json.data).do(user => this.authenticatedProfile.next({

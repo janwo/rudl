@@ -64,21 +64,9 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/events/within/{radius}',
+		path: '/api/events/nearby',
 		method: 'GET',
-		handler: EventController.RouteHandlers.getEventsWithin,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			}
-		}
-	},
-	{
-		path: '/api/events/within/{radius}/in/{activity}',
-		method: 'GET',
-		handler: EventController.RouteHandlers.getActivityEventsWithin,
+		handler: EventController.RouteHandlers.getEventsNearby,
 		config: {
 			auth: {
 				scope: [
@@ -87,7 +75,25 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					activity: Joi.string()
+					radius: Joi.number().min(0)
+				}
+			}
+		}
+	},
+	{
+		path: '/api/events/nearby/{activity}',
+		method: 'GET',
+		handler: EventController.RouteHandlers.getActivityEventsNearby,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					activity: Joi.string(),
+					radius: Joi.number().min(0)
 				}
 			}
 		}

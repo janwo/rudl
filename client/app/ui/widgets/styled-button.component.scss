@@ -46,12 +46,12 @@ $button-colors: (
       color: map_get($button-colors, 'minimal-color');
       background-color: transparent;
 
-      &[disabled] {
+      &.disabled {
         border-color: map_get($button-colors, 'minimal-inactive-border-color');
         color: map_get($button-colors, 'minimal-inactive-color');
       }
 
-      &:not([disabled]) {
+      &:not(.disabled) {
         &:active span {
           transform: scale(0.95);
         }
@@ -63,12 +63,12 @@ $button-colors: (
       color: map_get($button-colors, 'minimal-inverse-color');
       background-color: map_get($button-colors, 'minimal-inverse-background-color');
 
-      &[disabled] {
+      &.disabled {
         color: map_get($button-colors, 'minimal-inactive-color');
         background-color: map_get($button-colors, 'minimal-inverse-inactive-background-color');
       }
 
-      &:not([disabled]) {
+      &:not(.disabled) {
         &:active span {
           transform: scale(0.95);
         }
@@ -81,7 +81,7 @@ $button-colors: (
       background-color: map_get($button-colors, 'default-background');
       box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.15);
 
-      &:not([disabled]) {
+      &:not(.disabled) {
         &:hover {
           box-shadow: 0.05rem 0.05rem 0.2rem rgba(0, 0, 0, 0.25);
         }
@@ -91,7 +91,7 @@ $button-colors: (
         }
       }
 
-      &[disabled] {
+      &.disabled {
         background-color: map_get($button-colors, 'default-inactive-background');
         color: map_get($button-colors, 'default-inactive-color');
       }
@@ -101,7 +101,7 @@ $button-colors: (
       $facebook-color: #3b5998;
       background-color: $facebook-color;
 
-      &[disabled] {
+      &.disabled {
         background-color: inactive($facebook-color);
       }
     }
@@ -110,7 +110,7 @@ $button-colors: (
       $google-color: #df5138;
       background-color: $google-color;
 
-      &[disabled] {
+      &.disabled {
         background-color: inactive($google-color);
       }
     }
@@ -121,7 +121,7 @@ $button-colors: (
       background-color: map_get($button-colors, 'uncolored-background');
       box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.15);
 
-      &:not([disabled]) {
+      &:not(.disabled) {
         &:hover {
           box-shadow: 0.05rem 0.05rem 0.2rem rgba(0, 0, 0, 0.25);
         }
@@ -131,7 +131,7 @@ $button-colors: (
         }
       }
 
-      &[disabled] {
+      &.disabled {
         color: map_get($button-colors, 'uncolored-inactive-color');
       }
     }
@@ -155,7 +155,7 @@ $button-colors: (
       border-radius: 50%;
     }
 
-    &[disabled] {
+    &.disabled {
       cursor: default;
 
       .flag {

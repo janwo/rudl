@@ -45,17 +45,18 @@ const appRoutes: Routes = [
 	        
 	        { path: 'people', component: PeopleComponent, pathMatch: 'full', canActivate: [ BoardingGuard ] },
            
-            { path: 'people/:username', component: RedirectComponent , data: { redirect: ['./activities'] }, pathMatch: 'full' },
+            { path: 'people/:username', component: RedirectComponent , data: { redirect: ['./rudel'] }, pathMatch: 'full' },
             { path: 'people/:username/:tab', component: ProfileComponent, canActivate: [ BoardingGuard ] },
            
-            { path: 'lists/:key', component: ListComponent, canActivate: [ BoardingGuard ] },
+            { path: 'lists/:list', component: ListComponent, canActivate: [ BoardingGuard ] },
            
             { path: 'search', redirectTo: 'search/', pathMatch: 'full', canActivate: [ BoardingGuard ] },
             { path: 'search/:query', component: SearchComponent, canActivate: [ BoardingGuard ] },
           
-            { path: 'activities/:key', component: ActivityComponent, canActivate: [ BoardingGuard ] },
+	        { path: 'rudel/:activity', component: RedirectComponent , data: { redirect: ['./nearby-events'] }, pathMatch: 'full' },
+	        { path: 'rudel/:activity/:tab', component: ActivityComponent, canActivate: [ BoardingGuard ] },
           
-            { path: 'events/:key', component: EventComponent, canActivate: [ BoardingGuard ] },
+            { path: 'events/:event', component: EventComponent, canActivate: [ BoardingGuard ] },
 	        
 	        // No boarding required.
 	        { path: 'boarding', component: BoardingComponent },
