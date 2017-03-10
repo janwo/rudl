@@ -23,22 +23,27 @@
 			<activity-item [activity]="activity"></activity-item>
 		</li>
 	</item-wrapper>
+	
 	<item-wrapper [columns]="2" *ngIf="tab === tabItems['lists']">
 		<li *ngFor="let list of lists">
 			<list-item [list]="list"></list-item>
 		</li>
-		<span *ngIf="lists.length == 0">No Lists yet</span>
 	</item-wrapper>
+	
 	<item-wrapper *ngIf="tab === tabItems['followees']">
 		<li *ngFor="let followee of followees">
 			<people-item [user]="followee"></people-item>
 		</li>
-		<span *ngIf="followees.length == 0">No Followees yet</span>
 	</item-wrapper>
+	
 	<item-wrapper *ngIf="tab === tabItems['followers']">
 		<li *ngFor="let follower of followers">
 			<people-item [user]="follower"></people-item>
 		</li>
-		<span *ngIf="followers.length == 0">No Followers yet</span>
 	</item-wrapper>
+	
+	<loading [emptyState]="emptyStates.activities" [isLoading]="isLoading" *ngIf="tab === tabItems['activities'] && (isLoading || activities.length == 0)"></loading>
+	<loading [emptyState]="emptyStates.lists" [isLoading]="isLoading"  *ngIf="tab === tabItems['lists'] && (isLoading || lists.length == 0)"></loading>
+	<loading [emptyState]="emptyStates.followees" [isLoading]="isLoading"  *ngIf="tab === tabItems['followees'] && (isLoading || followees.length == 0)"></loading>
+	<loading [emptyState]="emptyStates.followers" [isLoading]="isLoading"  *ngIf="tab === tabItems['followers'] && (isLoading || followers.length == 0)"></loading>
 </div>

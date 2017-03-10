@@ -42,15 +42,15 @@ export class DashboardComponent implements OnInit {
             // Add menu items for boarded user.
             if(this.userStatus.loggedIn && this.userStatus.user.meta.onBoard) {
                 this.menuItems.push({
+                    icon: 'paw',
+                    title: 'Deine Rudel',//TODO TRANSLATE
+                    link: this.userStatus.loggedIn ? this.router.createUrlTree(['/people', this.userStatus.user.username, 'rudel']) : null
+                });
+                
+                this.menuItems.push({
                     icon: 'list',
                     title: 'Deine Listen',//TODO TRANSLATE
                     link: this.userStatus.loggedIn ? this.router.createUrlTree(['/people', this.userStatus.user.username, 'lists']) : null
-                });
-    
-                this.menuItems.push({
-                    icon: 'heart-o',
-                    title: 'Deine Interessen',//TODO TRANSLATE
-                    link: this.userStatus.loggedIn ? this.router.createUrlTree(['/people', this.userStatus.user.username, 'activities']) : null
                 });
             }
             

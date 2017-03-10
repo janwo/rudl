@@ -6,25 +6,30 @@ $indicator-colors: (
 );
 
 :host {
-  display: block;
-  list-style: none;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  li {
-    display: inline-block;
-    width: 0.75rem;
-    height: 0.75rem;
-    margin: 0.25rem;
-    background-color: map_get($indicator-colors, 'default-background');
-    border-radius: 50%;
+  ul {
+    flex: 0 0 auto;
+    list-style: none;
 
-    &.active {
-      cursor: default;
-      background-color: map_get($indicator-colors, 'active-background');
+    li {
+      display: inline-block;
+      width: 0.75rem;
+      height: 0.75rem;
+      margin: 0.25rem;
+      background-color: map_get($indicator-colors, 'default-background');
+      border-radius: 50%;
+
+      &.active {
+        cursor: default;
+        background-color: map_get($indicator-colors, 'active-background');
+      }
     }
-  }
 
-  .interactive li {
-    cursor: pointer;
+    &.interactive li {
+      cursor: pointer;
+    }
   }
 }

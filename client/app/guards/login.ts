@@ -12,9 +12,13 @@ export class LoginGuard implements CanActivate {
     ) {}
 
     canActivate() : Observable<boolean> {
-        return this.userService.getAuthenticatedUserObservable().map((user: UserStatus) => {
-            if (!user.loggedIn) this.router.navigate(['/sign_up']);
-            return user.loggedIn;
+        return this.userService.getAuthenticatedUserObservable().map((userStatus: UserStatus) => {
+            if (!userStatus.loggedIn) {
+                let loginUrl = this.router.createUrlTree(['/sign_up']);
+                if(!this.router.isActive(loginUrl, false)) this.router.navigateByUrl(loginUrl);
+            }
+            
+            return userStatus.loggedIn;
         });
     }
 }

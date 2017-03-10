@@ -55,7 +55,7 @@ $boarding-size: 15rem;
           text-align: center;
           display: block;
           line-height: map_get($base-line-height, 'multiline');
-          max-width: $boarding-size;
+          width: $boarding-size;
           color: map_get($base-colors, 'primary-text');
         }
 
@@ -70,7 +70,6 @@ $boarding-size: 15rem;
     flex: 0 0 auto;
     display: flex;
     flex-direction: row;
-    align-items: center;
     position: relative;
     margin-top: map_get($base-padding, 'default');
 
@@ -92,7 +91,9 @@ $boarding-size: 15rem;
 
     indicator {
       position: absolute;
-      align-self: center;
+      top: 0;
+      left: 0;
+      height: 100%;
       width: 100%;
       z-index: 1;
     }

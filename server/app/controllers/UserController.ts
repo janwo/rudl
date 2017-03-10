@@ -192,7 +192,7 @@ export module UserController {
 					};
 				}
 				
-				return dot.transform({
+				let transformationRecipe = {
 					'user._key': 'id',
 					'user.username': 'username',
 					'user.firstName': 'firstName',
@@ -211,7 +211,14 @@ export module UserController {
 					'statistics.mutualFollowees': 'relations.mutualFollowees',
 					'statistics.isFollower': 'relations.isFollower',
 					'statistics.isFollowee': 'relations.isFollowee'
-				}, {
+				};
+				
+				// Emit private information.
+				if(user._key == relatedUser._key) Object.assign(transformationRecipe, {
+					'user.location': 'location'
+				});
+				
+				return dot.transform(transformationRecipe, {
 					user: user,
 					statistics: results[0],
 					links: links

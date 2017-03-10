@@ -23,7 +23,7 @@ import {DomSanitizer, SafeStyle} from "@angular/platform-browser";
 					opacity: 0,
 					transform: 'scale(0.75)'
 				}),
-				animate('0.3s 1s', style({
+				animate('0.3s 1s ease-in', style({
 					opacity: 1,
 					transform: 'scale(1)'
 				}))
@@ -51,10 +51,10 @@ export class BoardingComponent implements OnInit, OnDestroy {
         'Meet People',
         'Grant Permissions'
     ];
-    grantedPermission: boolean;
+	permissionStatus: 'ungranted' | 'granting' | 'granted' | 'denied' = 'ungranted';
 	itemTransformation: SafeStyle;
 	locationSubscription: Subscription;
-    buttonStyle: ButtonStyles = ButtonStyles.default;
+    ButtonStyles = ButtonStyles;
     
     ngOnInit(){
     	// Get params.
@@ -75,23 +75,26 @@ export class BoardingComponent implements OnInit, OnDestroy {
         });
         
 	    // Subscribe to permissions.
-	    this.locationSubscription = this.userService.getCurrentPosition().subscribe(() => this.grantedPermission = true, (error: PositionError) => {
-	    	this.grantedPermission = false;
-	    	switch(error.code) {
-			    case error.PERMISSION_DENIED:
-			    	console.log('https://support.google.com/chrome/answer/142065?hl=en');
-		    }
+	    this.locationSubscription = this.userService.getCurrentPosition().subscribe(() => {
+	    	this.permissionStatus = 'granted'
+	    }, error => {
+		    this.permissionStatus = 'denied';
 	    });
     }
     
     grantPermission(): void {
-    	this.userService.requestPositionUpdates();
+    	this.permissionStatus = 'granting';
+    	this.userService.resumePositionUpdates();
     }
     
     finishBoarding(): void {
     	this.userService.updateBoarding(true).subscribe(() => {
     		this.router.navigate(['/']);
 	    });
+    }
+    
+    openHelpTopic() {
+    	
     }
     
     ngOnDestroy(){

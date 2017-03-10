@@ -55,6 +55,7 @@ import {EventItemComponent} from "./ui/widgets/event-item.component";
 import {EventService} from "./services/event.service";
 import {BoardingComponent} from "./ui/boarding.component";
 import {BoardingGuard} from "./guards/boarding";
+import {LoadingComponent} from "./ui/widgets/loading.component";
 
 @NgModule({
     declarations: [
@@ -77,6 +78,7 @@ import {BoardingGuard} from "./guards/boarding";
 	    EventComponent,
 	    LandingPageComponent,
 	    IndicatorComponent,
+	    LoadingComponent,
 	    DashboardComponent,
 	    AvatarComponent,
 	    MapComponent,

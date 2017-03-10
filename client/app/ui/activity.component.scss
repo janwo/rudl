@@ -51,44 +51,46 @@
     }
   }
 
-  section {
+  tab-menu {
     margin-top: map_get($base-padding, 'default');
-    position: relative;
+    margin-bottom: map_get($base-padding, 'default');
+  }
 
-    .event-item {
-      flex: 1 1 auto;
-    }
-
-    .card-add-event {
+  .add-event {
       display: flex;
+      margin-top: map_get($base-padding, 'smaller');
       color: inactive(map_get($base-colors, 'primary-text'));
-      flex-direction: column;
+      flex-direction: row;
       justify-content: center;
       cursor: pointer;
       align-items: center;
       font-size: map_get($base-font-size, 'large');
 
       i {
-        margin-bottom: map_get($base-padding, 'smaller');
+        margin-right: map_get($base-padding, 'smaller');
       }
 
       * {
         flex: 0 0 auto;
       }
-    }
+  }
 
-    .attribution {
-      opacity: 0.5;
-      color: map_get($base-colors, 'secondary-text');
-      display: block;
-      margin-top: map_get($base-padding, 'smaller');
+  .event-item {
+    flex: 1 1 auto;
+  }
 
-      a {
-        color: map_get($base-colors, 'primary-text');
+  .attribution {
+    opacity: 0.5;
+    color: map_get($base-colors, 'secondary-text');
+    display: block;
+    margin-top: map_get($base-padding, 'default');
+    text-align: center;
 
-        &:hover {
-          text-decoration: underline;
-        }
+    a {
+      color: map_get($base-colors, 'primary-text');
+
+      &:hover {
+        text-decoration: underline;
       }
     }
   }
