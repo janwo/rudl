@@ -1,0 +1,19 @@
+@import '../../variables';
+
+:host {
+  display: block;
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    styled-button {
+      flex: 0 0 auto;
+
+      & /deep/ button {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

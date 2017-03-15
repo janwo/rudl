@@ -16,3 +16,13 @@ export interface Event extends Document {
 	owner: User;
 	membersSample: User[];
 }
+
+export interface EventRecipe {
+	title: string,
+	description: string,
+	needsApproval: boolean,
+	slots: number,
+	date: string,
+	fuzzyDate: boolean,
+	location: number[]
+}

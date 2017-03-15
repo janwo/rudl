@@ -1,6 +1,0 @@
-<avatar [routerLink]="['/people', user.username]" [user]="user"></avatar>
-<div class="card" [routerLink]="['/people', user.username]">
-	<span class="name" [innerHTML]="highlight ? (user.firstName + ' ' + user.lastName | highlight: highlight) : user.firstName + ' ' + user.lastName"></span>
-	<span class="username" [innerHTML]="highlight ? (user.username | highlight: highlight) : user.username"></span>
-	<span class="relation">{{relation}}</span>
-</div>

@@ -1,0 +1,5 @@
+<loading *ngIf="followees == null"></loading>
+<empty [emptyState]="emptyState" *ngIf="followees && followees.length == 0"></empty>
+<item-wrapper [columns]="1">
+	<user-item *ngFor="let followee of followees" [user]="followee"></user-item>
+</item-wrapper>

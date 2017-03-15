@@ -1,6 +1,0 @@
-<div *ngIf="isVisible" class="background" (click)="toggle()"></div>
-<ul *ngIf="isVisible" [@openClose]>
-	<li *ngFor="let menuItem of menuItems" (click)="toggle() || onClick(menuItem)">
-		<i *ngIf="menuItem.icon" class="fa fa-{{menuItem.icon}}"></i><span>{{menuItem.title}}</span>
-	</li>
-</ul>

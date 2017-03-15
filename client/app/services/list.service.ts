@@ -1,7 +1,7 @@
 import {DataService, JsonResponse} from "./data.service";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
-import {List} from "../models/list";
+import {List, ListRecipe} from "../models/list";
 import {Activity} from "../models/activity";
 import {Locale} from "../models/locale";
 import {UserService} from "./user.service";
@@ -36,11 +36,8 @@ export class ListService {
         })}`, true).map((json: JsonResponse) => {});
     }
     
-    create(translations: Translations, activities: string[] = []): Observable<List> {
-        return this.dataService.post(`/api/lists/create`, `${JSON.stringify({
-            translations: translations,
-            activities: activities
-        })}`, true).map((json: JsonResponse) => json.data as List);
+    create(recipe: ListRecipe): Observable<List> {
+        return this.dataService.post(`/api/lists/create`, JSON.stringify(recipe), true).map((json: JsonResponse) => json.data as List);
     }
     
     follow(list: string): Observable<List> {

@@ -47,7 +47,7 @@ export default {
 							],
 						},
 						entry: {
-							'static/app': root( 'client/app.ts' ),
+							'static/app': root( 'client/main.ts' ),
 							'static/vendor': root( 'client/vendor.ts' ),
 							'static/polyfill': root( 'client/polyfill.ts' )
 						},

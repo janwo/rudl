@@ -3,7 +3,7 @@ import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
 import {List} from "../models/list";
 import {Activity} from "../models/activity";
-import {Event} from "../models/event";
+import {Event, EventRecipe} from "../models/event";
 import {Locale} from "../models/locale";
 import {UserService} from "./user.service";
 import Translations = Locale.Translations;
@@ -16,10 +16,8 @@ export class EventService {
         private dataService: DataService
     ) {}
     
-    create(): Observable<Event> {
-        return this.dataService.post(`/api/events/create`, `${JSON.stringify({
-            //TODO
-        })}`, true).map((json: JsonResponse) => json.data as Event);
+    create(recipe: EventRecipe): Observable<Event> {
+        return this.dataService.post(`/api/events/create`, JSON.stringify(recipe), true).map((json: JsonResponse) => json.data as Event);
     }
     
     get(key: string): Observable<Event> {

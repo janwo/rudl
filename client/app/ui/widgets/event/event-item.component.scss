@@ -1,0 +1,47 @@
+@import '../../variables';
+
+:host {
+  display: block;
+
+  header {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: map_get($base-padding, 'smaller');
+
+    slots {
+      flex: 1 1 auto;
+    }
+
+    ul {
+      list-style: none;
+      flex: 0 0 auto;
+
+      li {
+        color: map_get($base-colors, 'secondary-text');
+        font-size: map_get($base-font-size, 'small');
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+
+        &:not(:first-child) {
+          margin-top: map_get($base-padding, 'smallest');
+        }
+
+        i {
+          width: map_get($base-padding, 'smaller');
+        }
+      }
+    }
+  }
+
+  map {
+    flex: 1 1 auto;
+    height: 10rem;
+  }
+
+  span {
+    color: map_get($base-colors, 'secondary-text');
+  }
+}

@@ -1,30 +1,36 @@
 import {ModuleWithProviders} from "@angular/core";
 import {Routes, RouterModule} from "@angular/router";
-import {LandingPageComponent} from "./ui/landing-page.component";
-import {DashboardComponent} from "./ui/dashboard.component";
+import {DashboardComponent} from "./ui/layouts/dashboard/dashboard.component";
 import {LoginGuard} from "./guards/login";
-import {ExploreComponent} from "./ui/explore.component";
-import {PeopleComponent} from "./ui/people.component";
-import {SettingsComponent} from "./ui/settings.component";
-import {ProfileComponent} from "./ui/profile.component";
-import {RedirectComponent} from "./redirect.component";
-import {ListComponent} from "./ui/list.component";
-import {ActivityComponent} from "./ui/activity.component";
-import {SearchComponent} from "./ui/search.component";
-import {LegalComponent} from "./ui/legal.component";
-import {EventComponent} from "./ui/event.component";
-import {BoardingComponent} from "./ui/boarding.component";
+import {ExploreComponent} from "./ui/layouts/explore/explore.component";
+import {PeopleComponent} from "./ui/layouts/people/people.component";
+import {SettingsComponent} from "./ui/layouts/settings/settings.component";
+import {ListComponent} from "./ui/layouts/list/list.component";
+import {SearchComponent} from "./ui/layouts/search/search.component";
+import {LegalComponent} from "./ui/layouts/legal/legal.component";
+import {EventComponent} from "./ui/layouts/event/event.component";
+import {BoardingComponent} from "./ui/layouts/boarding/boarding.component";
 import {BoardingGuard} from "./guards/boarding";
+import {UserComponent} from "./ui/layouts/user/user.component";
+import {UserListsComponent} from "./ui/layouts/user/user-lists.component";
+import {UserActivitiesComponent} from "./ui/layouts/user/user-activities.component";
+import {UserFolloweesComponent} from "./ui/layouts/user/user-followees.component";
+import {UserFollowersComponent} from "./ui/layouts/user/user-followers.component";
+import {ActivityComponent} from "./ui/layouts/activity/activity.component";
+import {ActivityPastEventsComponent} from "./ui/layouts/activity/activity-past-events.component";
+import {ActivityNearbyEventsComponent} from "./ui/layouts/activity/activity-nearby-events.component";
+import {ActivityUserEventsComponent} from "./ui/layouts/activity/activity-user-events.component";
+import {LandingComponent} from "./ui/layouts/landing/landing.component";
 
 const appRoutes: Routes = [
     {
         path: 'sign_up',
-        component: LandingPageComponent,
+        component: LandingComponent,
         pathMatch: 'full'
     },
     {
         path: 'sign_upp',
-        component: LandingPageComponent,
+        component: LandingComponent,
         pathMatch: 'full',
         data: {
             login: true
@@ -45,23 +51,31 @@ const appRoutes: Routes = [
 	        
 	        { path: 'people', component: PeopleComponent, pathMatch: 'full', canActivate: [ BoardingGuard ] },
            
-            { path: 'people/:username', component: RedirectComponent , data: { redirect: ['./rudel'] }, pathMatch: 'full' },
-            { path: 'people/:username/:tab', component: ProfileComponent, canActivate: [ BoardingGuard ] },
+            { path: 'people/:username', component: UserComponent, canActivate: [BoardingGuard ], children: [
+	            { path: '', redirectTo: 'rudel', pathMatch: 'full' },
+	            { path: 'rudel', component: UserActivitiesComponent },
+	            { path: 'lists', component: UserListsComponent },
+	            { path: 'followers', component: UserFollowersComponent },
+	            { path: 'followees', component: UserFolloweesComponent },
+            ] },
            
             { path: 'lists/:list', component: ListComponent, canActivate: [ BoardingGuard ] },
            
             { path: 'search', redirectTo: 'search/', pathMatch: 'full', canActivate: [ BoardingGuard ] },
             { path: 'search/:query', component: SearchComponent, canActivate: [ BoardingGuard ] },
           
-	        { path: 'rudel/:activity', component: RedirectComponent , data: { redirect: ['./nearby-events'] }, pathMatch: 'full' },
-	        { path: 'rudel/:activity/:tab', component: ActivityComponent, canActivate: [ BoardingGuard ] },
+	        { path: 'rudel/:activity', component: ActivityComponent, canActivate: [ BoardingGuard ], children: [
+                { path: '', redirectTo: 'nearby-events', pathMatch: 'full' },
+                { path: 'past-events', component: ActivityPastEventsComponent },
+                { path: 'nearby-events', component: ActivityNearbyEventsComponent },
+                { path: 'your-events', component: ActivityUserEventsComponent }
+            ] },
           
             { path: 'events/:event', component: EventComponent, canActivate: [ BoardingGuard ] },
 	        
 	        // No boarding required.
 	        { path: 'boarding', component: BoardingComponent },
-	        { path: 'settings', redirectTo: 'settings/account', pathMatch: 'full' },
-	        { path: 'settings/:page', component: SettingsComponent }
+	        { path: 'settings', component: SettingsComponent }
         ]
     },
 ];

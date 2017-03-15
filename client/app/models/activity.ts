@@ -16,3 +16,7 @@ export interface Activity extends Document {
 	};
 	translations: Locale.Translations;
 }
+
+export interface ActivityRecipe {
+	translations: Locale.Translations;
+}

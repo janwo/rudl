@@ -1,15 +1,15 @@
 import {Component, Input} from "@angular/core";
-import {Router} from "@angular/router";
+import {Router, ActivatedRoute} from "@angular/router";
 
 export interface StatisticItem {
     subject: string;
     value: string;
-    link?: any;
+    link?: string[];
 }
 
 @Component({
-    templateUrl: './statistics.component.html',
-    styleUrls: ['./statistics.component.scss'],
+    templateUrl: 'statistics.component.html',
+    styleUrls: ['statistics.component.scss'],
     selector: 'statistics'
 })
 export class StatisticsComponent {
@@ -17,7 +17,8 @@ export class StatisticsComponent {
     @Input() statistics: Array<StatisticItem>;
     
     constructor(
-        private router: Router
+        private router: Router,
+        private route: ActivatedRoute
     ){}
     
     ngOnInit(){
@@ -28,6 +29,8 @@ export class StatisticsComponent {
     }
     
     onClick(item: StatisticItem) {
-        if(item.link) this.router.navigateByUrl(item.link);
+        if(item.link) this.router.navigate(item.link, {
+            relativeTo: this.route
+        });
     }
 }

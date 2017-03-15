@@ -15,3 +15,8 @@ export interface List extends Document {
 	};
 	translations: Locale.Translations;
 }
+
+export interface ListRecipe {
+	translations: Locale.Translations;
+	activities: string[];
+}
