@@ -8,7 +8,7 @@ import {Component, Input} from "@angular/core";
 export class InputFieldComponent {
 
     @Input() description: string = null;
-    @Input() type: string = 'text';
+    @Input() type: 'text' | 'textarea' | 'mail' | 'password' = 'text';
     @Input() id: string;
     @Input() value: string;
     @Input() placeholder: string = null;

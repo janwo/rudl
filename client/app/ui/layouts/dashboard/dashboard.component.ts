@@ -9,7 +9,7 @@ import {Router, NavigationEnd} from "@angular/router";
     styleUrls: ['dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-    
+	
     userStatus: UserStatus = {
     	loggedIn: false,
 	    user: null

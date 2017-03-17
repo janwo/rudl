@@ -65,6 +65,7 @@ import {UserFollowersComponent} from "./ui/layouts/user/user-followers.component
 import {UserListsComponent} from "./ui/layouts/user/user-lists.component";
 import {UserAvatarComponent} from "./ui/widgets/user/user-avatar.component";
 import {UserItemComponent} from "./ui/widgets/user/user-item.component";
+import {DateTimeComponent} from "./ui/widgets/controls/datetime.component";
 
 @NgModule({
     declarations: [
@@ -123,7 +124,8 @@ import {UserItemComponent} from "./ui/widgets/user/user-item.component";
 	    UserListsComponent,
 	    BoardingComponent,
 	    FanComponent,
-	    TranslationListComponent
+	    TranslationListComponent,
+        DateTimeComponent
     ],
     providers: [
 	    UserService,

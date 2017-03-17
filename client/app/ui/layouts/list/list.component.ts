@@ -21,11 +21,11 @@ export class ListComponent implements OnInit, OnDestroy {
     buttonStyleFollowing: ButtonStyles = ButtonStyles.minimalInverse;
     @ViewChild(ModalComponent) unfollowModal: ModalComponent;
     modalChoices = [{
-        buttonStyle: ButtonStyles.default,
+        style: ButtonStyles.default,
         text: 'Abbrechen',
         callback: () => this.unfollowModal.close()
     }, {
-        buttonStyle: ButtonStyles.uncolored,
+        style: ButtonStyles.uncolored,
         text: 'Entfolgen',
         callback: () => {
             this.unfollowModal.close();

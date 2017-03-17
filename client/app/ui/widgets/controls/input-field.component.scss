@@ -24,12 +24,16 @@ $input-field-colors: (
     }
   }
 
-  input {
+  input,
+  textarea {
+    resize: none;
     width: 100%;
     display: inline-block;
-    line-height: 1;
+    line-height: map_get($base-line-height, 'default');
     padding: $input-field-input-padding;
     font-size: $input-field-input-font-size;
+    font-family: $base-font-family;
+    font-weight: $base-font-weight-normal;
 
     &::placeholder {
       color: inactive(map_get($input-field-colors, 'border'));
@@ -42,5 +46,9 @@ $input-field-colors: (
     &:focus {
       border-color: map_get($input-field-colors, 'border');
     }
+  }
+
+  textarea {
+    line-height: map_get($base-line-height, 'multiline');
   }
 }

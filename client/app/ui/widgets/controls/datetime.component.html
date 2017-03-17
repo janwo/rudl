@@ -1,0 +1,17 @@
+<div class="year">
+	<i (click)="add(-1, 'years')" class="fa fa-arrow-left"></i>
+	<input-field [type]="'text'" [value]="moment.format('YYYY')"></input-field>
+	<i (click)="add(1, 'years')" class="fa fa-arrow-right"></i>
+</div>
+<div class="month">
+	<i (click)="add(-1, 'months')" class="fa fa-arrow-left"></i><span>{{moment.format('MM')}}</span><i (click)="add(1, 'months')" class="fa fa-arrow-right"></i>
+</div>
+<div class="day">
+	<i (click)="add(-1, 'days')" class="fa fa-arrow-left"></i><span>{{moment.format('DD')}}</span><i (click)="add(1, 'days')" class="fa fa-arrow-right"></i>
+</div>
+<div class="hour">
+	<i (click)="add(-1, 'hours')" class="fa fa-arrow-left"></i><span>{{moment.format('HH')}}</span><i (click)="add(1, 'hours')" class="fa fa-arrow-right"></i>
+</div>
+<div class="minute">
+	<i (click)="add(-15, 'minutes')" class="fa fa-arrow-left"></i><span>{{moment.format('mm')}}</span><i (click)="add(15, 'minutes')" class="fa fa-arrow-right"></i>
+</div>

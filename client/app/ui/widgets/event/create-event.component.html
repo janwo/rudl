@@ -1,5 +1,8 @@
 <div>
-	
+	<input-field [type]="'text'" [placeholder]="'Give your event a title...'"></input-field>
+	<input-field [type]="'textarea'" [placeholder]="'Enter a short summary of all public details here...'"></input-field>
+	<checkbox></checkbox>
+	<datetime></datetime>
 </div>
 <div class="buttons">
 	<styled-button (click)="submit()" [text]="'Create'"></styled-button>

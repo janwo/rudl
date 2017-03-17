@@ -45,5 +45,5 @@ export class StyledButtonComponent {
 }
 
 export enum ButtonStyles {
-    default, minimal, minimalInverse, uncolored, facebook, google
+    default, minimal, minimalInverse, uncolored, facebook, google, dislike, like
 }
