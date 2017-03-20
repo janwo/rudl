@@ -1,0 +1,57 @@
+@import '../../variables';
+
+$input-field-label-font-size: map_get($base-font-size, 'small');
+$input-field-input-font-size: map_get($base-font-size, 'default');
+$input-field-border-size: map_get($base-line-widths, 'default');
+$input-field-border-radius: $base-border-radius;
+$input-field-input-padding: $input-field-input-font-size / 1.5; // --> 1 / 1.5 = 0.666
+$input-field-colors: (
+  'border': map_get($base-colors, 'secondary'),
+  'text': map_get($base-colors, 'primary-text')
+);
+
+:host {
+  display: block;
+  margin-top: map_get($base-padding, 'small');
+  margin-bottom: map_get($base-padding, 'small');
+
+  label {
+    font-size: $input-field-label-font-size;
+    color: map_get($input-field-colors, 'text');
+    display: inline-block;
+    margin-bottom: map_get($base-padding, 'small');
+
+    /deep/ .bold {
+      font-weight: $base-font-weight-bold;
+    }
+  }
+
+  input,
+  textarea {
+    resize: none;
+    width: 100%;
+    display: inline-block;
+    line-height: map_get($base-line-height, 'default');
+    color: map_get($input-field-colors, 'text');
+    padding: $input-field-input-padding;
+    font-size: $input-field-input-font-size;
+    font-family: $base-font-family;
+    font-weight: $base-font-weight-normal;
+
+    &::placeholder {
+      color: inactive(map_get($input-field-colors, 'text'));
+    }
+
+    border: $input-field-border-size inactive(map_get($input-field-colors, 'border')) solid;
+    border-radius: $input-field-border-radius;
+    outline: none;
+
+    &:focus {
+      border-color: map_get($input-field-colors, 'border');
+    }
+  }
+
+  textarea {
+    line-height: map_get($base-line-height, 'multiline');
+  }
+}

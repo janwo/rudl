@@ -1,0 +1,4 @@
+<span class="description">{{description}}</span>
+<footer>
+	<styled-button *ngFor="let choice of choices" [text]="choice.text" [style]="choice.style" (click)="choice.callback($event)"></styled-button>
+</footer>

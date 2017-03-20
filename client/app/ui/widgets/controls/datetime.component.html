@@ -1,0 +1,41 @@
+<div class="input-mask" (click)="collapse($event)">
+	<i (click)="add($event, -1, 'months')" class="fa fa-chevron-left" *ngIf="state == 'date'"></i>
+	<span [ngClass]="{dirty: dirty}">{{selectedMoment.format('llll')}}</span>
+	<i (click)="add($event, 1, 'months')" class="fa fa-chevron-right" *ngIf="state == 'date'"></i>
+</div>
+
+<ul class="date" [@datetime]="state == 'date'" *ngIf="state == 'date'">
+	<li class="header">
+		<span i18n>Datum</span>
+	</li>
+	<li *ngFor="let legend of getDateLegend()" class="legend">
+		<span>{{legend}}</span>
+	</li>
+	<li *ngFor="let item of getDateItems()" [ngClass]="{empty: !item, selected: item.selected, inactive: item.inactive}">
+		<div class="inner" *ngIf="item" (click)="item.inactive || set($event, item.value, 'date')">
+			<span>{{item.formatted}}</span>
+		</div>
+	</li>
+</ul>
+
+<ul class="hour" [@datetime]="state == 'hour'" *ngIf="state == 'hour'">
+	<li class="header">
+		<span i18n>Uhrzeit (Stunde)</span>
+	</li>
+	<li *ngFor="let item of getHourItems()" [ngClass]="{selected: item.selected, inactive: item.inactive}">
+		<div class="inner" (click)="item.inactive || set($event, item.value, 'hours')">
+			<span>{{item.formatted}}</span>
+		</div>
+	</li>
+</ul>
+
+<ul class="minute" [@datetime]="state == 'minute'" *ngIf="state == 'minute'">
+	<li class="header">
+		<span i18n>Uhrzeit (Minute)</span>
+	</li>
+	<li *ngFor="let item of getMinuteItems()" [ngClass]="{selected: item.selected, inactive: item.inactive}">
+		<div class="inner" (click)="item.inactive || set($event, item.value, 'minutes')">
+			<span>{{item.formatted}}</span>
+		</div>
+	</li>
+</ul>

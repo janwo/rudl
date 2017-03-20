@@ -1,0 +1,32 @@
+@import '../../variables';
+
+$empty-size: 20rem;
+
+:host {
+  display: block;
+  padding: map_get($base-padding, 'default');
+  margin-left: auto;
+  margin-right: auto;
+  width: $empty-size;
+  max-width: 100%;
+
+  .image {
+    background: no-repeat center;
+    background-size: contain;
+    padding-bottom: 100%;
+    margin-left: map_get($base-padding, 'default');
+    margin-right: map_get($base-padding, 'default');
+    margin-bottom: map_get($base-padding, 'default');
+  }
+
+  h2 {
+    text-align: center;
+  }
+
+  span {
+    display: block;
+    text-align: center;
+    line-height: map_get($base-line-height, 'multiline');
+    color: map_get($base-colors, 'primary-text');
+  }
+}

@@ -1,0 +1,11 @@
+@import '../../variables';
+
+:host {
+  display: flex;
+
+  div {
+    flex: 1 1 auto;
+    font-family: $base-font-family;
+    font-weight: $base-font-weight-normal;
+  }
+}

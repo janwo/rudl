@@ -2,7 +2,7 @@ import {DataService, JsonResponse} from "./data.service";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
 import {List} from "../models/list";
-import {Activity} from "../models/activity";
+import {Activity, ActivityRecipe} from "../models/activity";
 import {Locale} from "../models/locale";
 import {UserService} from "./user.service";
 import Translations = Locale.Translations;
@@ -15,10 +15,8 @@ export class ActivityService {
         private dataService: DataService
     ) {}
     
-    create(translations: Translations): Observable<Activity> {
-        return this.dataService.post(`/api/activities/create`, `${JSON.stringify({
-            translations: translations
-        })}`, true).map((json: JsonResponse) => json.data as Activity);
+    create(recipe: ActivityRecipe): Observable<Activity> {
+        return this.dataService.post(`/api/activities/create`, JSON.stringify(recipe), true).map((json: JsonResponse) => json.data as Activity);
     }
     
     get(key: string): Observable<Activity> {

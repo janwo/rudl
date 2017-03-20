@@ -11,6 +11,9 @@ export const Config : {
 	frontend: {
 		metadata: { [key: string]: string },
 		messageTypes: { [key: string]: string },
+		apiKeys: {
+			mapzen: string
+		},
 		webpack: {
 			config: {
 				devtool: string,

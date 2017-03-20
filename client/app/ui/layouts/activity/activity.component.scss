@@ -1,0 +1,122 @@
+@import '../../variables';
+
+:host {
+  display: block;
+  @include setup-max-width();
+  padding: map_get($base-padding, 'default');
+
+  .card {
+    display: flex;
+    flex-direction: row;
+
+    .header {
+      flex: 1 1 auto;
+
+      .username {
+        display: block;
+        font-size: map_get($base-font-size, 'small');
+        color: map_get($base-colors, 'secondary-text');
+        margin-top: map_get($base-padding, 'smallest');
+
+        &:before {
+          content: '@';
+        }
+      }
+    }
+
+    .statistics {
+      flex: 0 1 auto;
+      display: flex;
+      flex-direction: column;
+      margin-top: map_get($base-padding, 'smaller');
+
+      statistics {
+        flex: 1 1 auto;
+      }
+
+      .cta {
+        flex: 1 1 auto;
+        display: flex;
+        justify-content: space-between;
+
+        styled-button {
+          margin-bottom: 0;
+
+          //&:first-child {
+            flex: 1 1 auto;
+            margin-right: map_get($base-padding, 'small');
+          //}
+        }
+      }
+    }
+  }
+
+  menu {
+    margin-top: map_get($base-padding, 'default');
+    margin-bottom: map_get($base-padding, 'default');
+  }
+
+  .card.add-event {
+    margin-top: map_get($base-padding, 'smaller');
+    overflow: hidden;
+    display: block;
+    cursor: pointer;
+    transition: padding 0.3s;
+
+    .title {
+      display: flex;
+      color: inactive(map_get($base-colors, 'primary-text'));
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      font-size: map_get($base-font-size, 'large');
+      transition: font-size 0.3s, color 0.3s, font-weight 0.3s;
+
+      * {
+        flex: 0 0 auto;
+      }
+
+      i {
+        flex: 0 0 auto;
+        margin-right: map_get($base-padding, 'smaller');
+      }
+    }
+
+    &.expanded {
+      cursor: default;
+      padding: map_get($base-padding, 'default');
+
+      .title {
+        font-weight: $base-heading-font-weight-normal;
+        font-family: $base-heading-font-family;
+        color: map_get($base-colors, 'primary-text');
+        margin-bottom: map_get($base-heading-font-size, 'h1');
+        margin-left: 0;
+        font-size: map_get($base-heading-font-size, 'h1');
+      }
+    }
+
+    create-event {
+    }
+  }
+
+  .event-item {
+    flex: 1 1 auto;
+  }
+
+  .attribution {
+    opacity: 0.5;
+    color: map_get($base-colors, 'secondary-text');
+    display: block;
+    margin-top: map_get($base-padding, 'default');
+    text-align: center;
+
+    a {
+      color: map_get($base-colors, 'primary-text');
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

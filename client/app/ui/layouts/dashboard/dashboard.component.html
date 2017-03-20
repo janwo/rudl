@@ -1,0 +1,26 @@
+<header>
+	<logo></logo>
+	<div class="stretched" *ngIf="userStatus?.loggedIn && userStatus.user.meta.onBoard">
+		<div class="search" [ngClass]="{active: inSearchMode}">
+			<search-bar #searchBar></search-bar>
+			<button class="fa fa-close" [routerLink]="lastUrl"></button>
+		</div>
+		<div class="menu" [ngClass]="{active: !inSearchMode}">
+			<menu>
+				<menu-item [icon]="'compass'" [title]="'Entdecken'" [link]="['/explore']"></menu-item>
+				<menu-item [icon]="'users'" [title]="'Rudler'" [link]="['/people']"></menu-item>
+				<menu-item [icon]="'search'" [title]="'Suche'" [link]="['/search']"></menu-item>
+			</menu>
+		</div>
+	</div>
+	<user-avatar *ngIf="userStatus?.loggedIn" [user]="userStatus.user" (click)="dropdownMenu.toggle()"></user-avatar>
+	<dropdown-menu #dropdownMenu>
+		<menu-item *ngIf="userStatus.loggedIn && userStatus.user.meta.onBoard" [icon]="'paw'" [title]="'Deine Rudel'" [link]="['/people', userStatus.user.username, 'rudel']"></menu-item>
+		<menu-item *ngIf="userStatus.loggedIn && userStatus.user.meta.onBoard" [icon]="'list'" [title]="'Deine Listen'" [link]="['/people', userStatus.user.username, 'lists']"></menu-item>
+		<menu-item [icon]="'cog'" [title]="'Einstellungen'" [link]="['/settings']"></menu-item>
+		<menu-item [icon]="'sign-out'" [title]="'Abmelden'" (click)="signOut()"></menu-item>
+	</dropdown-menu>
+</header>
+<section>
+	<router-outlet></router-outlet>
+</section>

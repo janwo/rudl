@@ -14,6 +14,7 @@ export default {
 					( Config ) => {
 						return {
 							inline: true,
+							contentBase: root('client'),
 							historyApiFallback: true,
 							proxy: [{
 								context: [

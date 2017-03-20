@@ -1,0 +1,29 @@
+@import '../../variables';
+
+$tab-menu-font-size: map_get($base-font-size, 'default');
+
+:host {
+  padding-right: map_get($base-padding, 'small');
+  padding-left: map_get($base-padding, 'small');
+  color: inactive(map_get($base-colors, 'primary-text'));
+  cursor: pointer;
+  margin-right: map_get($base-padding, 'small');
+  display: flex;
+  align-items: center;
+
+  &.active {
+    color: map_get($base-colors, 'primary-text');
+    cursor: default;
+  }
+
+  span {
+    display: inline-block;
+    font-size: $tab-menu-font-size;
+  }
+
+  i {
+    margin-right: map_get($base-padding, 'small');
+    font-size: $tab-menu-font-size;
+    position: relative;
+  }
+}

@@ -138,7 +138,7 @@ export module EventController {
 		needsApproval: boolean,
 		slots: number,
 		date: string,
-		fuzzyDate: boolean,
+		fuzzyTime: boolean,
 		location: number[]
 	}) : Promise<Event> {
 		let now = new Date().toISOString();
@@ -149,7 +149,7 @@ export module EventController {
 			slots: options.slots,
 			date: options.date,
 			location: options.location,
-			fuzzyDate: options.fuzzyDate,
+			fuzzyTime: options.fuzzyTime,
 			createdAt: now,
 			updatedAt: now
 		};
@@ -197,7 +197,7 @@ export module EventController {
 		 * @param request.payload.slots slots
 		 * @param request.payload.date date
 		 * @param request.payload.location location
-		 * @param request.payload.fuzzyDate fuzzyDate
+		 * @param request.payload.fuzzyTime fuzzyDate
 		 * @param request.payload.activity activity
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
@@ -212,7 +212,7 @@ export module EventController {
 					slots: request.payload.slots,
 					date: request.payload.date,
 					location: request.payload.location,
-					fuzzyDate: request.payload.fuzzyDate
+					fuzzyTime: request.payload.fuzzyTime
 				}).then(event => EventController.getPublicEvent(event, request.auth.credentials));
 				
 				return Promise.reject(Boom.badRequest('Activity does not exist!'));

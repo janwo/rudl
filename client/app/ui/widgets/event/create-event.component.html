@@ -1,0 +1,16 @@
+<div class="content">
+	<div>
+		<input-field [type]="'text'" [placeholder]="'Give your event a title...'"></input-field>
+		<input-field [type]="'textarea'" [placeholder]="'Enter a short summary of all public details here...'"></input-field>
+		<checkbox [value]="'Rudler müssen sich bewerben'"></checkbox>
+		<checkbox [value]="'Öffentliche Uhrzeit'"></checkbox>
+	</div>
+	<div>
+		<datetime [dirty]="false" [locale]="'de'"></datetime>
+		<locationpicker></locationpicker>
+	</div>
+</div>
+<div class="buttons">
+	<styled-button (click)="submit()" [text]="'Create'"></styled-button>
+	<styled-button (click)="cancel()" [style]="buttonStyle" [text]="'Abbrechen'"></styled-button>
+</div>

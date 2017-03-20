@@ -1,0 +1,109 @@
+@import '../../variables';
+
+$profile-avatar-size: 5rem;
+
+:host {
+  display: flex;
+  @include setup-max-width();
+  padding: map_get($base-padding, 'default');
+  flex-direction: column;
+
+  @include breakpoint('small') {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  & > .card {
+    flex: 1 1 auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding-top: $profile-avatar-size * 0.33 + map_get($base-padding, 'default');
+    margin-top: $profile-avatar-size * 0.66;
+
+    @include breakpoint('small') {
+      flex: 0 0 auto;
+      width: 15rem;
+    }
+
+    user-avatar {
+      position: absolute;
+      top: -$profile-avatar-size * 0.66;
+      left: 50%;
+      margin-left: -$profile-avatar-size / 2;
+      height: $profile-avatar-size;
+      width: $profile-avatar-size;
+    }
+
+    .statistics {
+      flex: 1 1 auto;
+      display: flex;
+      justify-content: center;
+      margin: map_get($base-padding, 'default') map_get($base-padding, 'smallest') map_get($base-padding, 'smallest');
+
+      @include breakpoint('small') {
+        flex-direction: column;
+      }
+
+      .cta {
+        display: flex;
+        justify-content: space-between;
+
+        @include breakpoint('small') {
+          margin-top: map_get($base-padding, 'smaller');
+        }
+
+        styled-button {
+          margin: 0;
+          flex: 1 1 auto;
+
+          &:not(:first-child) {
+            flex: 0 0 auto;
+            margin-left: map_get($base-padding, 'small');
+          }
+        }
+      }
+    }
+
+    .about {
+      flex: 1 1 auto;
+      text-align: center;
+
+      h1 {
+        margin-top: 0;
+        margin-bottom: map_get($base-padding, 'smallest');
+      }
+
+      .username {
+        display: block;
+        color: map_get($base-colors, 'primary-text');
+        margin-bottom: map_get($base-padding, 'smaller');
+        font-size: map_get($base-font-size, 'default');
+
+        &:before {
+          content: '@';
+        }
+      }
+
+      .description {
+        display: block;
+        color: map_get($base-colors, 'secondary-text');
+        line-height: map_get($base-line-height, 'multiline');
+      }
+    }
+  }
+
+  & > .content {
+    flex: 1 1 auto;
+    margin-top: map_get($base-padding, 'default');
+
+    @include breakpoint('small') {
+      margin-top: $profile-avatar-size * 0.66;
+      margin-left: map_get($base-padding, 'default');
+    }
+
+    menu {
+      margin-bottom: map_get($base-padding, 'default');
+    }
+  }
+}

@@ -17,7 +17,7 @@ export class UserService {
     private authenticatedProfile: BehaviorSubject<UserStatus> = new BehaviorSubject<UserStatus>(null);
     private authenticatedProfileObservable: Observable<UserStatus>= this.authenticatedProfile.asObservable().filter(user => !!user);
     private currentLocation: ReplaySubject<Position> = new ReplaySubject(1);
-    private locationUpdates: Observable<[number, number]> = this.currentLocation.asObservable().do(position => console.log(position)).flatMap((position: Position) => {
+    private locationUpdates: Observable<[number, number]> = this.currentLocation.asObservable().flatMap((position: Position) => {
         let userStatus = this.getAuthenticatedUser();
         
         // It's an location update?
@@ -51,7 +51,10 @@ export class UserService {
                 console.log(`authenticatedProfile was set to: username = ${authenticatedUser.user.username}, language = ${authenticatedUser.user.languages ? authenticatedUser.user.languages[0] : 'none'}.`);
                 
                 // Request position updates immediately if user is boarded.
-                if(authenticatedUser.user.meta.onBoard && this.watchPositionCallerId === false) this.resumePositionUpdates();
+                if(authenticatedUser.user.meta.onBoard && this.watchPositionCallerId === false) {
+	                console.log('Resume position updates.');
+	            	this.resumePositionUpdates();
+                }
             } else
                 console.log(`authenticatedProfile got removed.`);
         });
@@ -77,16 +80,15 @@ export class UserService {
     
     resumePositionUpdates(): void {
         this.pausePositionUpdates();
-        this.watchPositionCallerId = this.watchPositionCallerId = navigator.geolocation.watchPosition((position: Position) => {
-            this.currentLocation.next(position);
-            }, (error: PositionError) => {
-                this.currentLocation.error(error);
-            }, {
-                enableHighAccuracy: false,
-                maximumAge: 1000 * 60,
-                timeout: 1000 * 60
-            }
-        );
+	    this.watchPositionCallerId = navigator.geolocation.watchPosition((position: Position) => {
+	    	this.currentLocation.next(position);
+	    }, (error: PositionError) => {
+		    this.currentLocation.error(error);
+	    }, {
+		    enableHighAccuracy: false,
+		    maximumAge: 1000 * 60,
+		    timeout: 1000 * 60
+	    });
     }
     
     pausePositionUpdates(): void {

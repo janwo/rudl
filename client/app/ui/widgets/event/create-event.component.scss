@@ -1,0 +1,37 @@
+@import '../../variables';
+
+:host {
+  display: block;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    @include breakpoint('small') {
+      flex-direction: row;
+    }
+
+    & > div {
+      flex: 0 1 50%;
+
+      &:last-child {
+        margin-left: map_get($base-padding, 'default');
+      }
+    }
+  }
+
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    styled-button {
+      flex: 0 0 auto;
+
+      & /deep/ button {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+<div class="card" *ngIf="user">
+	<user-avatar [user]="user"></user-avatar>
+	<div class="about">
+		<h1>{{user.firstName + ' ' + user.lastName}}</h1>
+		<span class="username">{{user.username}}</span>
+		<span class="description">{{user.meta.profileText || 'This is ' + user.firstName + '!'}}</span>
+	</div>
+	<div class="statistics">
+		<statistics [statistics]="[
+		{value: user.statistics.lists, subject: 'Liste(n)', link: ['lists']},
+		{value: user.statistics.followees, subject: 'Folgt', link: ['followees']},
+		{value: user.statistics.followers, subject: 'Follower', link: ['followers']}
+		]"></statistics>
+		<div class="cta" *ngIf="!!user.relations">
+			<styled-button [style]="user.relations.isFollowee ? buttonStyleFollowing : buttonStyleDefault" (click)="onToggleFollow()" [disabled]="pendingFollowRequest" [text]="user.relations.isFollowee ? 'Following' : 'Follow'"></styled-button>
+		</div>
+	</div>
+</div>
+<div class="content">
+	<menu>
+		<menu-item [icon]="'paw'" [title]="'Rudel'" [link]="['rudel']"></menu-item>
+		<menu-item [icon]="'list'" [title]="'Listen'" [link]="['lists']"></menu-item>
+		<menu-item [icon]="'users'" [title]="'Folgt'" [link]="['followees']"></menu-item>
+		<menu-item [icon]="'users'" [title]="'Follower'" [link]="['followers']"></menu-item>
+	</menu>
+	<router-outlet></router-outlet>
+</div>
