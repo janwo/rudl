@@ -6,4 +6,4 @@ RUN mkdir -p /root/app
 WORKDIR /root/app
 ADD package.json .
 RUN npm install
-CMD npm start
+CMD npm install && npm start

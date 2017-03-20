@@ -1,5 +1,6 @@
 import {Component, Input, ViewChild, ElementRef, AfterViewInit} from "@angular/core";
 import * as L from "leaflet";
+import {UserService} from "../../../services/user.service";
 
 @Component({
     templateUrl: 'map.component.html',
@@ -9,7 +10,6 @@ import * as L from "leaflet";
 export class MapComponent implements AfterViewInit {
     
     private static source = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-    private static attribution = 'Map data &copy; <a target="_blank" href="https://openstreetmap.org/">OpenStreetMap</a>';
     private static quotas: any = {
         red: 21,
         green: 71,
@@ -17,6 +17,10 @@ export class MapComponent implements AfterViewInit {
         dividerTune: 0,
         divider: () => MapComponent.quotas.red + MapComponent.quotas.green + MapComponent.quotas.blue + MapComponent.quotas.dividerTune
     };
+    
+    constructor(
+        private userService: UserService
+    ) {}
     
     @Input() location: L.LatLngTuple = [0,0];
     @Input() zoom: number = 16;

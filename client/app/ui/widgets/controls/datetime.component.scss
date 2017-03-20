@@ -1,29 +1,167 @@
 @import '../../variables';
 
-$checkbox-size: map_get($base-font-size, 'large');
-$checkbox-color-checked: map_get($base-colors, 'primary');
-$checkbox-color-unchecked: inactive(map_get($base-colors, 'primary'));
+$datetime-label-font-size: map_get($base-font-size, 'small');
+$datetime-font-size: map_get($base-font-size, 'default');
+$datetime-border-size: map_get($base-line-widths, 'default');
+$datetime-border-radius: $base-border-radius;
+$datetime-padding: $datetime-font-size / 1.5; // --> 1 / 1.5 = 0.666
+$datetime-border-color: map_get($base-colors, 'secondary');
 
 :host {
-  display: inline-block;
-  margin-right: $checkbox-size / 2;
+  display: block;
+  border: $datetime-border-size inactive($datetime-border-color) solid;
+  border-radius: $datetime-border-radius;
+  overflow: hidden;
+  margin-top: map_get($base-padding, 'small');
+  margin-bottom: map_get($base-padding, 'small');
 
-  span {
-    height: $checkbox-size;
-    width: $checkbox-size;
-    border: $checkbox-color-unchecked solid $checkbox-size * 0.1;
-    border-radius: $checkbox-size / 2;
+  .input-mask {
     display: flex;
+    flex-direction: row;
     justify-content: center;
-    align-items: center;
+    cursor: pointer;
 
-    &.checked {
-      border-color: $checkbox-color-checked;
+    i {
+      display: block;
+      flex: 1 1 auto;
+      cursor: pointer;
+      padding: $datetime-padding;
+      font-size: map_get($base-font-size, 'default');
+      width: map_get($base-font-size, 'default') + 2 * $datetime-padding;
+      text-align: center;
+      border-bottom: $datetime-border-size inactive($datetime-border-color) solid;
+      color: map_get($base-colors, 'primary-text');
 
-      &:before {
-        color: $checkbox-color-checked;
-        font-size: $checkbox-size * 0.75;
+      &:first-of-type {
+        border-radius: 0 0 $datetime-border-radius 0;
+        border-right: $datetime-border-size inactive($datetime-border-color) solid;
       }
+
+      &:last-of-type {
+        border-radius: 0 0 0 $datetime-border-radius;
+        border-left: $datetime-border-size inactive($datetime-border-color) solid;
+      }
+    }
+
+    span {
+      text-align: center;
+      display: block;
+      flex: 1 1 auto;
+      margin: $datetime-padding;
+      color: inactive(map_get($base-colors, 'primary-text'));
+
+      &.dirty {
+        color: map_get($base-colors, 'primary-text');
+      }
+    }
+  }
+
+  &.focused {
+    border-color: $datetime-border-color;
+  }
+
+  ul {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: $datetime-padding;
+
+    li {
+      font-weight: $base-font-weight-normal;
+      font-size: map_get($base-font-size, 'default');
+      font-family: $base-font-family;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: map_get($base-colors, 'secondary-text');
+
+      &:not(.header):not(.legend):before{
+        content: '';
+        display: block;
+        padding-bottom: 100%;
+      }
+
+      .inner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position:  absolute;
+        cursor: pointer;
+        top: map_get($base-padding, 'smallest');
+        left: map_get($base-padding, 'smallest');
+        right: map_get($base-padding, 'smallest');
+        bottom: map_get($base-padding, 'smallest');
+
+        &:before {
+          position:  absolute;
+          width: 100%;
+          height: 100%;
+          max-width: 3rem;
+          max-height: 3rem;
+        }
+      }
+
+      span {
+        position: relative;
+        display: block;
+      }
+
+      &.selected {
+        font-weight: $base-font-weight-bold;
+
+        .inner:before {
+          background-color: map_get($base-colors, 'primary');
+          content: '';
+          position: absolute;
+          border-radius: 50%;
+        }
+
+        span {
+          color: map_get($base-colors, 'background-highlighted');
+        }
+      }
+
+      &.inactive,
+      &.empty {
+        .inner {
+          opacity: 0.5;
+          cursor: default;
+        }
+      }
+
+      &.header {
+        flex: 0 1 100%;
+        display: block;
+        opacity: 0.5;
+        margin-bottom: $datetime-padding;
+        text-align: center;
+        font-size: map_get($base-font-size, 'small');
+      }
+    }
+
+    &:not(.empty) {
+      background-color: map_get($base-colors, 'background-highlighted');
+    }
+
+    &.date li:not(.header) {
+      $item-size: 100% / 7;
+      flex: 0 1 $item-size;
+
+      &.legend {
+        font-size: map_get($base-font-size, 'small');
+      }
+    }
+
+    &.hour li:not(.header) {
+      $item-size: 100% / 5;
+      flex: 0 1 $item-size;
+    }
+
+    &.minute li:not(.header) {
+      $item-size: 100% / 4;
+      flex: 0 1 $item-size;
     }
   }
 }

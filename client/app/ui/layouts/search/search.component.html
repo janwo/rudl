@@ -5,7 +5,7 @@
 			<div class="title" (click)="expandedActivityCreation = true">
 				<span i18n>Bilde ein neues Rudel</span> <span #highlightedActivity class="highlight">{{searchValue}}</span>
 			</div>
-			<create-activity [@container]="expandedActivityCreation" (@container.start)="$event.toState && highlightedActivity.style.display = 'none'" (@container.done)="$event.fromState && highlightedActivity.style.display = 'inline'" [defaultName]="searchValue" (onCanceled)="expandedActivityCreation = false"></create-activity>
+			<create-activity *ngIf="expandedActivityCreation" [@container]="expandedActivityCreation" (@container.start)="$event.toState && highlightedActivity.style.display = 'none'" (@container.done)="$event.toState == 'void' && highlightedActivity.style.display = 'inline'" [defaultName]="searchValue" (onCanceled)="expandedActivityCreation = false"></create-activity>
 		</li>
 		<li *ngFor="let activity of activities">
 			<activity-item [highlight]="searchValue" [activity]="activity"></activity-item>
@@ -19,7 +19,7 @@
 			<div class="title" (click)="expandedListCreation = true">
 				<span i18n>Create new list</span> <span #highlightedList class="highlight">{{searchValue}}</span>
 			</div>
-			<create-list [@container]="expandedListCreation" (@container.start)="$event.toState && highlightedList.style.display = 'none'" (@container.done)="$event.fromState && highlightedList.style.display = 'inline'" [defaultName]="searchValue" (onCanceled)="expandedListCreation = false"></create-list>
+			<create-list *ngIf="expandedListCreation" [@container]="expandedListCreation" (@container.start)="$event.toState && highlightedList.style.display = 'none'" (@container.done)="$event.toState == 'void' && highlightedList.style.display = 'inline'" [defaultName]="searchValue" (onCanceled)="expandedListCreation = false"></create-list>
 		</li>
 		<li *ngFor="let list of lists">
 			<list-item [highlight]="searchValue" [list]="list"></list-item>

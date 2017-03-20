@@ -66,6 +66,9 @@ import {UserListsComponent} from "./ui/layouts/user/user-lists.component";
 import {UserAvatarComponent} from "./ui/widgets/user/user-avatar.component";
 import {UserItemComponent} from "./ui/widgets/user/user-item.component";
 import {DateTimeComponent} from "./ui/widgets/controls/datetime.component";
+import {GeocodeService} from "./services/geocode.service";
+import {LocationPickerComponent} from "./ui/widgets/controls/locationpicker.component";
+import {FormatCoordinatesPipe} from "./pipes/coordinates.pipe";
 
 @NgModule({
     declarations: [
@@ -114,6 +117,7 @@ import {DateTimeComponent} from "./ui/widgets/controls/datetime.component";
 	    CreateListComponent,
 	    CheckboxComponent,
 	    SearchComponent,
+	    FormatCoordinatesPipe,
 	    SearchBarComponent,
 	    CreateEventComponent,
 	    LegalComponent,
@@ -124,6 +128,7 @@ import {DateTimeComponent} from "./ui/widgets/controls/datetime.component";
 	    UserListsComponent,
 	    BoardingComponent,
 	    FanComponent,
+	    LocationPickerComponent,
 	    TranslationListComponent,
         DateTimeComponent
     ],
@@ -134,6 +139,7 @@ import {DateTimeComponent} from "./ui/widgets/controls/datetime.component";
 	    ListService,
 	    DataService,
 	    BoardingGuard,
+	    GeocodeService,
 	    LoginGuard,
 	    EventService,
 	    appRoutingProviders

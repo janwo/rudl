@@ -132,7 +132,7 @@ export const RoutesConfig: RoutesConfiguration = [
 					needsApproval: Joi.boolean().default(false),
 					slots: Joi.number().min(0).default(0),
 					date: Joi.date(),
-					fuzzyDate: Joi.boolean().default(false),
+					fuzzyTime: Joi.boolean().default(false),
 					location: Joi.array().items(Joi.number())
 				}
 			}

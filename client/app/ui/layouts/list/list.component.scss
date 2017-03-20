@@ -18,14 +18,14 @@
       flex: 0 0 auto;
       width: 15rem;
     }
-
+    
     .user {
       cursor: pointer;
       display: flex;
       align-items: center;
       flex-direction: row;
 
-      avatar {
+      user-avatar {
         flex: 0 0 auto;
         width: 3rem;
         height: 3rem;

@@ -17,10 +17,10 @@
 
 <div class="card add-event" [ngClass]="{expanded: expandedEventCreation}" (click)="expandedEventCreation = true">
 	<div class="title">
-		<i class="fa fa-plus"></i>
-		<span i18n>Event hinzufügen</span>
+		<i #titleIcon class="fa fa-plus"></i>
+		<span i18n [@expandHorizontally]="expandedEventCreation" (@expandHorizontally.start)="$event.toState && titleIcon.style.display = 'none'" (@expandHorizontally.done)="$event.fromState && titleIcon.style.display = 'block'">Event hinzufügen</span>
 	</div>
-	<create-event [@container]="expandedEventCreation" (onCanceled)="expandedEventCreation = false"></create-event>
+	<create-event *ngIf="expandedEventCreation" [@expandVertically]="expandedEventCreation" (onCanceled)="expandedEventCreation = false"></create-event>
 </div>
 <menu>
 	<menu-item [title]="'Deine Events'" [icon]="'calendar-check-o'" [link]="['your-events']"></menu-item>

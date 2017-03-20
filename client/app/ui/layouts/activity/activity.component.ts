@@ -1,4 +1,7 @@
-import {Component, OnInit, OnDestroy, ViewChild, trigger, state, style, transition, animate} from "@angular/core";
+import {
+	Component, OnInit, OnDestroy, ViewChild, trigger, state, style, transition, animate,
+	keyframes
+} from "@angular/core";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Params} from "@angular/router";
 import {Activity} from "../../../models/activity";
@@ -10,17 +13,27 @@ import {ActivityService} from "../../../services/activity.service";
     templateUrl: 'activity.component.html',
     styleUrls: ['activity.component.scss'],
 	animations: [
-		trigger('container', [
-			state('true', style({
+		trigger('expandVertically', [
+			state('*', style({
 				height: '*',
 				opacity: 1
 			})),
-			state('false', style({
+			state('void', style({
 				height: 0,
 				opacity: 0
 			})),
-			transition('1 => 0', animate('300ms')),
-			transition('0 => 1', animate('300ms'))
+			transition(':leave', animate('0.3s')),
+			transition(':enter', animate('0.3s'))
+		]),
+		trigger('expandHorizontally', [
+			state('true', style({
+				width: '100%'
+			})),
+			state('false', style({
+				width: '*'
+			})),
+			transition('1 => 0', animate('0.3s')),
+			transition('0 => 1', animate('0.3s'))
 		])
 	]
 })

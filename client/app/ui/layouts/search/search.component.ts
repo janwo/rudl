@@ -15,16 +15,16 @@ import {ActivityService} from "../../../services/activity.service";
 	selector: 'search',
 	animations: [
 		trigger('container', [
-			state('true', style({
+			state('*', style({
 				height: '*',
 				opacity: 1
 			})),
-			state('false', style({
+			state('void', style({
 				height: 0,
 				opacity: 0
 			})),
-			transition('1 => 0', animate('300ms')),
-			transition('0 => 1', animate('300ms'))
+			transition(':leave', animate('300ms')),
+			transition(':enter', animate('300ms'))
 		])
 	]
 })
@@ -73,6 +73,10 @@ export class SearchComponent implements OnDestroy, OnInit {
 		// Get current route on startup and call search service to search for query or just open search.
 		this.activatedRoute.params.map(params => params['query']).forEach(query => this.searchService.search(query));
 	}
+	
+	log(j:any){
+			console.log(j);
+}
 	
 	ngOnDestroy(): void {
 		this.searchService.cancel();

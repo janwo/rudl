@@ -38,7 +38,7 @@ $profile-avatar-size: 5rem;
     .statistics {
       flex: 1 1 auto;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       margin: map_get($base-padding, 'default') map_get($base-padding, 'smallest') map_get($base-padding, 'smallest');
 
       @include breakpoint('small') {

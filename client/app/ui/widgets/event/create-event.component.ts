@@ -6,6 +6,7 @@ import {EventRecipe} from "../../../models/event";
 import {EventService} from "../../../services/event.service";
 import Language = Locale.Language;
 import Translations = Locale.Translations;
+import {UserService} from "../../../services/user.service";
 
 @Component({
     templateUrl: 'create-event.component.html',
@@ -22,12 +23,13 @@ export class CreateEventComponent {
 	    needsApproval: false,
 	    slots: 1,
 	    date: '',
-	    fuzzyDate: false,
+	    fuzzyTime: false,
 	    location: []
     };
     
     constructor(
         private eventService: EventService,
+        private userService: UserService,
         private router: Router
     ) {}
     

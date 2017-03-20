@@ -34,6 +34,9 @@ export default {
 		messageTypes: {
 			oauth: 'OAUTH_TOKEN_MESSAGE'
 		},
+		apiKeys: {
+				mapzen: process.ENV.MAPZEN_KEY
+		},
 		webpack: {
 			config: [
 				( Config ) => {
@@ -125,7 +128,8 @@ export default {
 								'process.env': {
 									ENV: JSON.stringify( Config.env ),
 									DOMAIN: JSON.stringify( Config.backend.domain ),
-									MESSAGE_TYPES: JSON.stringify( Config.frontend.messageTypes )
+									MESSAGE_TYPES: JSON.stringify( Config.frontend.messageTypes ),
+									API_KEYS: JSON.stringify( Config.frontend.apiKeys )
 								}
 							}),
 							new HtmlWebpackPlugin({
