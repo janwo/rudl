@@ -36,7 +36,7 @@ import Moment = moment.Moment;
 })
 export class DateTimeComponent {
 
-    static format: string = 'MM-DD-YYYY HH mm';
+    static format: string = 'DD-MM-YYYY HH:mm';
     
 	selectedMoment: Moment = moment().add(1, 'days').add(1, 'hours').add(15, 'minutes');
 	minMoment: Moment = moment().add(1, 'hours');
@@ -62,8 +62,7 @@ export class DateTimeComponent {
 	}
 	
 	@HostListener('click', ['$event'])
-	expand(event: Event){
-		console.log('EXPAND');
+	click(event: Event){
 		if(this.state != 'collapsed') return;
 		this.state = 'date';
 		event.preventDefault();
@@ -71,7 +70,6 @@ export class DateTimeComponent {
 	}
 	
 	add(event: Event, amount: number, type: any) {
-		console.log('ADD');
 		event.preventDefault();
 		event.stopPropagation();
 		
@@ -80,7 +78,6 @@ export class DateTimeComponent {
 	}
 	
 	set(event: Event, value: number, type: any) {
-		console.log('SET');
 		event.preventDefault();
 		event.stopPropagation();
 		
@@ -110,6 +107,7 @@ export class DateTimeComponent {
 	}
     
     getDateItems(): Array<CalendarItem | false> {
+		console.log('Generate date time');
 		let output : Array<CalendarItem | false> = [];
 		// Days of previous month.
 	    let prefixedDays = this.selectedMoment.clone().startOf('month').isoWeekday();
@@ -163,7 +161,6 @@ export class DateTimeComponent {
 	}
 	
 	collapse(event: Event) {
-		console.log('COLLAPSE');
 		if(this.state == 'collapsed') return;
 		this.state = 'collapsed';
 		event.preventDefault();

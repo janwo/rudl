@@ -79,17 +79,27 @@ $locationpicker-body-height: 15rem;
     }
   }
 
-  .mapCanvas {
-    border-radius: $locationpicker-border-radius;
-    height: $locationpicker-body-height;
+  .map-wrapper {
+    small {
+      margin: $locationpicker-padding;
+      display: block;
+      text-align: center;
+      color: map_get($base-colors, 'secondary-text')
+    }
 
-    /deep/ .leaflet-icon {
-      $width: 1.7rem * 2;
-      $height: 2rem * 2;
-      width: $width;
-      height: $height;
-      margin-left: -$width / 2;
-      margin-top: -$height;
+    .map-canvas {
+      border-radius: $locationpicker-border-radius;
+      height: $locationpicker-body-height;
+      margin: 0 $locationpicker-padding $locationpicker-padding;
+
+      /deep/ .leaflet-icon {
+        $width: 1.7rem * 2;
+        $height: 2rem * 2;
+        width: $width;
+        height: $height;
+        margin-left: -$width / 2;
+        margin-top: -$height;
+      }
     }
   }
 

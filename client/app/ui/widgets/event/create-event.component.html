@@ -2,12 +2,13 @@
 	<div>
 		<input-field [type]="'text'" [placeholder]="'Give your event a title...'"></input-field>
 		<input-field [type]="'textarea'" [placeholder]="'Enter a short summary of all public details here...'"></input-field>
-		<checkbox [value]="'Rudler müssen sich bewerben'"></checkbox>
+		<checkbox [value]="'Zugangsbeschränkung'"></checkbox>
 		<checkbox [value]="'Öffentliche Uhrzeit'"></checkbox>
 	</div>
 	<div>
-		<datetime [dirty]="false" [locale]="'de'"></datetime>
-		<locationpicker></locationpicker>
+		<datetime [dateTime]="'30-12-2018 12:34'" [locale]="'de'"></datetime>
+		<locationpicker [location]="userService.getAuthenticatedUser().user.location"></locationpicker>
+		<invite></invite>
 	</div>
 </div>
 <div class="buttons">
