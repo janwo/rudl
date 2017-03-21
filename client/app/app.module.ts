@@ -69,6 +69,7 @@ import {DateTimeComponent} from "./ui/widgets/controls/datetime.component";
 import {GeocodeService} from "./services/geocode.service";
 import {LocationPickerComponent} from "./ui/widgets/controls/locationpicker.component";
 import {FormatCoordinatesPipe} from "./pipes/coordinates.pipe";
+import {InviteComponent} from "./ui/widgets/controls/invite.component";
 
 @NgModule({
     declarations: [
@@ -116,6 +117,7 @@ import {FormatCoordinatesPipe} from "./pipes/coordinates.pipe";
 	    CreateActivityComponent,
 	    CreateListComponent,
 	    CheckboxComponent,
+	    InviteComponent,
 	    SearchComponent,
 	    FormatCoordinatesPipe,
 	    SearchBarComponent,

@@ -1,0 +1,26 @@
+<div class="input-mask" *ngIf="!expanded" (click)="expanded = true">
+	<span>{{invitedUsers.length > 0 ? invitedUsers.length + ' users added' : 'Just you'}}</span>
+</div>
+<input *ngIf="expanded" #inputElement placeholder="Add followers to the event..." type="text" (keyup)="searchUser.next($event.target.value)">
+<div *ngIf="expanded" [@expandVertically]="expanded" (@expandVertically.done)="$event.toState && inputElement.nativeElement.focus()">
+	<small *ngIf="searchedUsers">Found {{searchedUsers && searchedUsers.length > 0 ? searchedUsers.length + (searchedUsers.length > 1 ? ' users' : ' user' ) : 'no users'}}</small>
+	<ul class="results">
+		<li class="clickable" *ngFor="let searchedUser of searchedUsers" (click)="add(searchedUser)">
+			<user-avatar [user]="searchedUser"></user-avatar>
+			<span>{{searchedUser.firstName}} {{searchedUser.lastName}}</span>
+			<i class="fa fa-user-plus"></i>
+		</li>
+	</ul>
+	<small>Added {{invitedUsers.length == 0 ? '1 user' : (invitedUsers.length + 1) + ' users'}}</small>
+	<ul class="invited">
+		<li>
+			<user-avatar [user]="userService.getAuthenticatedUser().user"></user-avatar>
+			<span i18n>You</span>
+		</li>
+		<li class="clickable" *ngFor="let invitedUser of invitedUsers" (click)="remove(invitedUser)">
+			<user-avatar [user]="invitedUser"></user-avatar>
+			<span>{{invitedUser.firstName}} {{invitedUser.lastName}}</span>
+			<i class="fa fa-remove"></i>
+		</li>
+	</ul>
+</div>
