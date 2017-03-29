@@ -51,11 +51,11 @@ import {trigger, transition, style, animate} from "@angular/animations";
 export class ModalComponent {
 	
 	@Input() title: string;
-	private isVisible: boolean = false;
 	@Output() onOpen: EventEmitter<any> = new EventEmitter();
 	@Output() onOpened: EventEmitter<any> = new EventEmitter();
 	@Output() onClose: EventEmitter<any> = new EventEmitter();
 	@Output() onClosed: EventEmitter<any> = new EventEmitter();
+	isVisible: boolean = false;
 	
 	open(){
 		this.isVisible = true;
