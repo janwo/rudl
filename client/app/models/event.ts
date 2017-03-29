@@ -7,7 +7,7 @@ export interface Event extends Document {
 	location: number;
 	accuracy: number;
 	date: string;
-	fuzzyDate: boolean;
+	fuzzyTime: boolean;
 	needsApproval: boolean;
 	awaitingApproval: boolean;
 	approved: boolean;
@@ -22,6 +22,7 @@ export interface EventRecipe {
 	description: string,
 	needsApproval: boolean,
 	fuzzyTime: boolean,
+	activity: string,
 	date: string,
 	location: number[]
 }

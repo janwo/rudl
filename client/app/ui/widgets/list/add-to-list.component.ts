@@ -1,11 +1,4 @@
-import {
-	Component,
-	Input,
-	OnInit,
-	OnDestroy,
-	Output,
-	EventEmitter
-} from "@angular/core";
+import {Component, Input, OnInit, OnDestroy, Output, EventEmitter} from "@angular/core";
 import {trigger, transition, style, animate, state} from "@angular/animations";
 import {Activity} from "../../../models/activity";
 import {Subscription} from "rxjs";

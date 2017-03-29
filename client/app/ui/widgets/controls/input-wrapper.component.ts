@@ -1,4 +1,4 @@
-import {Component, Input, ElementRef, OnInit, ViewChild, AfterViewInit, AfterContentInit} from "@angular/core";
+import {Component, AfterContentInit} from "@angular/core";
 
 @Component({
 	templateUrl: 'input-wrapper.component.html',

@@ -9,8 +9,12 @@
     margin-bottom: map_get($base-padding, 'small');
   }
 
-  input {
+  input, textarea {
     @include setup-input();
+  }
+
+  textarea {
+    line-height: map_get($base-line-height, 'multiline');
   }
 
   .split-content {

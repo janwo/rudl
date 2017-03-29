@@ -1,8 +1,16 @@
 import {
-	Component, Input, EventEmitter, Output, HostBinding, ElementRef, ViewChild, OnInit, OnDestroy
+	Component,
+	Input,
+	EventEmitter,
+	Output,
+	HostBinding,
+	ElementRef,
+	ViewChild,
+	OnInit,
+	OnDestroy
 } from "@angular/core";
 import {GeocodeService, GeocodeLocation} from "../../../services/geocode.service";
-import { Subject, ReplaySubject, Subscription} from "rxjs";
+import {Subject, ReplaySubject, Subscription} from "rxjs";
 
 @Component({
 	templateUrl: 'location-search.component.html',
@@ -42,6 +50,7 @@ export class LocationSearchComponent implements OnInit, OnDestroy {
 	}
 	
 	onClick(event: any, location: number[]): void {
+		this.searchElement.nativeElement.value = null;
 		this.locations = [];
 		this.locationSelected.emit(location);
 	}
