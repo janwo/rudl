@@ -12,7 +12,6 @@ $datetime-border-color: map_get($base-colors, 'secondary');
   border: $datetime-border-size inactive($datetime-border-color) solid;
   border-radius: $datetime-border-radius;
   overflow: hidden;
-  margin-top: map_get($base-padding, 'small');
   margin-bottom: map_get($base-padding, 'small');
 
   .input-mask {
@@ -49,10 +48,10 @@ $datetime-border-color: map_get($base-colors, 'secondary');
       flex: 1 1 auto;
       margin: $datetime-padding;
       color: inactive(map_get($base-colors, 'primary-text'));
+    }
 
-      &.dirty {
-        color: map_get($base-colors, 'primary-text');
-      }
+    &.dirty span {
+      color: map_get($base-colors, 'primary-text');
     }
   }
 
@@ -145,7 +144,7 @@ $datetime-border-color: map_get($base-colors, 'secondary');
       background-color: map_get($base-colors, 'background-highlighted');
     }
 
-    &.date li:not(.header) {
+    &.day li:not(.header) {
       $item-size: 100% / 7;
       flex: 0 1 $item-size;
 

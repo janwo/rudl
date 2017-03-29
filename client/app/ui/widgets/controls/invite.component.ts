@@ -1,7 +1,5 @@
-import {
-	Component, Input, EventEmitter, Output, HostBinding, trigger,
-	style, transition, animate, OnInit, OnDestroy, ViewChild, ElementRef, state
-} from "@angular/core";
+import { Component, Input, EventEmitter, Output, HostBinding, OnInit, OnDestroy, ViewChild, ElementRef } from "@angular/core";
+import {trigger, transition, style, animate, state} from "@angular/animations";
 import {User} from "../../../models/user";
 import {UserService} from "../../../services/user.service";
 import {ReplaySubject, Subject, Subscription} from "rxjs";

@@ -19,7 +19,7 @@ $base-line-height: (
   'default': 1.15,
   'multiline': 1.5
 );
-$base-heading-font-family: 'Baloo';
+$base-heading-font-family: 'Fredoka One';
 $base-heading-font-weight-normal: 400;
 $base-heading-font-bold-normal: $base-heading-font-weight-normal;
 $base-heading-font-size: (
@@ -43,7 +43,6 @@ $base-line-widths: (
 $base-colors: (
   'primary': #50e3c2,
   'secondary': #00cbb9,
-  'heading-text': #18181a,
   'primary-text': #4f4e52,
   'secondary-text': #a09da3,
   'warning-text': #a31420,
@@ -100,5 +99,32 @@ $base-max-width: (
     @include breakpoint(null, $name) {
       max-width: map_get($base-max-width, $name);
     }
+  }
+}
+
+@mixin setup-input() {
+  $input-field-input-font-size: map_get($base-font-size, 'default');
+  $input-field-input-padding: $input-field-input-font-size / 1.5; // --> 1 / 1.5 = 0.666
+
+  resize: none;
+  width: 100%;
+  display: inline-block;
+  color: map_get($base-colors, 'primary-text');
+  padding: $input-field-input-padding;
+  margin-bottom: map_get($base-padding, 'small');
+  font-size: $input-field-input-font-size;
+  font-family: $base-font-family;
+  font-weight: $base-font-weight-normal;
+  line-height: map_get($base-line-height, 'multiline');
+  border: map_get($base-line-widths, 'default') inactive(map_get($base-colors, 'secondary')) solid;
+  border-radius: $base-border-radius;
+  outline: none;
+
+  &::placeholder {
+    color: inactive(map_get($base-colors, 'primary-text'));
+  }
+
+  &:focus {
+    border-color: map_get($base-colors, 'secondary');
   }
 }

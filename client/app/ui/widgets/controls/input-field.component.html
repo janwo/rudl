@@ -1,6 +1,0 @@
-<!--suppress XmlDuplicatedId -->
-<label #inputField *ngIf="description" id="label_of_{{id}}" [innerHTML]="description | format"></label>
-<input #inputField *ngIf="type == 'mail'" id="{{id}}" placeholder="{{placeholder}}" [attr.aria-labelledby]="description ? 'label_of_' + id : null" value="{{value}}" type="email" spellcheck="false" autocomplete="off" (keyup)="keyup.emit($event.target.value)">
-<input #inputField *ngIf="type == 'text'" id="{{id}}" placeholder="{{placeholder}}" [attr.aria-labelledby]="description ? 'label_of_' + id : null" value="{{value}}" type="text" (keyup)="keyup.emit($event.target.value)">
-<input #inputField *ngIf="type == 'password'" id="{{id}}" placeholder="{{placeholder}}" [attr.aria-labelledby]="description ? 'label_of_' + id : null" value="{{value}}" type="password" (keyup)="keyup.emit($event.target.value)">
-<textarea #inputField *ngIf="type == 'textarea'" id="{{id}}" placeholder="{{placeholder}}" [attr.aria-labelledby]="description ? 'label_of_' + id : null" (keyup)="keyup.emit($event.target.value)"></textarea>

@@ -10,6 +10,7 @@ $invite-border-color: map_get($base-colors, 'secondary');
   display: block;
   border: $invite-border-size solid inactive($invite-border-color);
   border-radius: $invite-border-radius;
+  margin-bottom: map_get($base-padding, 'small');
   overflow: hidden;
 
   &.focused {

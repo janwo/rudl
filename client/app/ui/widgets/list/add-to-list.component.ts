@@ -1,16 +1,12 @@
 import {
 	Component,
 	Input,
-	trigger,
-	state,
-	style,
-	transition,
-	animate,
 	OnInit,
 	OnDestroy,
 	Output,
 	EventEmitter
 } from "@angular/core";
+import {trigger, transition, style, animate, state} from "@angular/animations";
 import {Activity} from "../../../models/activity";
 import {Subscription} from "rxjs";
 import {ListService} from "../../../services/list.service";

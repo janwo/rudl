@@ -7,7 +7,7 @@
 			<menu-item *ngIf="availableLanguages.indexOf('fr') >= 0" [title]="'Französisch'" (click)="switchLanguage(takenLanguage, 'fr')"></menu-item>
 		</dropdown-menu>
 		<styled-button [disabled]="availableLanguages.length == 0" [style]="buttonStyle" (click)="menu.toggle()" [flag]="takenLanguage"></styled-button>
-		<input-field [value]="translations[takenLanguage]" (keyup)="setTranslationText(takenLanguage, $event.target.value)"></input-field>
+		<input [ngModel]="translations[takenLanguage]" (keyup)="setTranslationText(takenLanguage, $event.target.value)">
 		<styled-button *ngIf="takenLanguages.length > 1" [fa]="'trash-o'" [style]="buttonStyle" (click)="deleteLanguage(takenLanguage)"></styled-button>
 	</li>
 </ul>

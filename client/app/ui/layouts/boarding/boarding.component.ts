@@ -1,4 +1,5 @@
-import {Component, OnInit, OnDestroy, transition, animate, style, trigger} from "@angular/core";
+import {Component, OnInit, OnDestroy} from "@angular/core";
+import {trigger, transition, style, animate} from "@angular/animations";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Params, Router} from "@angular/router";
 import {ButtonStyles} from "../../widgets/controls/styled-button.component";

@@ -1,14 +1,14 @@
-<div class="content">
+<location-search [locationFocus]="recipe.location" (locationSelected)="recipe.location = $event"></location-search>
+<map [location]="recipe.location"></map>
+<div class="split-content">
 	<div>
-		<input-field [type]="'text'" [placeholder]="'Give your event a title...'"></input-field>
-		<input-field [type]="'textarea'" [placeholder]="'Enter a short summary of all public details here...'"></input-field>
+		<input [(ngModel)]="recipe.title"[type]="'text'" placeholder="Give your event a title...">
+		<input [(ngModel)]="recipe.description" [type]="'textarea'" placeholder="Enter a short summary of all public details here...">
 		<checkbox [value]="'Zugangsbeschränkung'"></checkbox>
-		<checkbox [value]="'Öffentliche Uhrzeit'"></checkbox>
 	</div>
 	<div>
-		<datetime [dateTime]="'30-12-2018 12:34'" [locale]="'de'"></datetime>
-		<locationpicker [location]="userService.getAuthenticatedUser().user.location"></locationpicker>
-		<invite></invite>
+		<datetime (datetimeSelected)="recipe.date = $event" [dateTime]="'30-12-2018 12:34'" [locale]="'de'"></datetime>
+		<checkbox [value]="'Öffentliche Uhrzeit'"></checkbox>
 	</div>
 </div>
 <div class="buttons">

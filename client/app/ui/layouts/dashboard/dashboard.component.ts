@@ -94,7 +94,7 @@ export class DashboardComponent implements OnInit {
         // Save last non search location.
         this.onSaveLastLocationSubscription = this.router.events.filter(event => {
             return event instanceof NavigationEnd && !this.router.isActive(this.router.createUrlTree(['/search']), false);
-        }).map(event => event.url).subscribe(url => this.lastUrl = [ url ]);
+        }).map((event: any) => event.url).subscribe(url => this.lastUrl = [ url ]);
     }
     
     signOut(): void {

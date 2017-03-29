@@ -136,7 +136,6 @@ export module EventController {
 		title: string,
 		description: string,
 		needsApproval: boolean,
-		slots: number,
 		date: string,
 		fuzzyTime: boolean,
 		location: number[]
@@ -146,7 +145,6 @@ export module EventController {
 			title: options.title,
 			description: options.description,
 			needsApproval: options.needsApproval,
-			slots: options.slots,
 			date: options.date,
 			location: options.location,
 			fuzzyTime: options.fuzzyTime,
@@ -194,7 +192,6 @@ export module EventController {
 		 * @param request.payload.title title
 		 * @param request.payload.description description
 		 * @param request.payload.needsApproval needsApproval
-		 * @param request.payload.slots slots
 		 * @param request.payload.date date
 		 * @param request.payload.location location
 		 * @param request.payload.fuzzyTime fuzzyDate
@@ -209,7 +206,6 @@ export module EventController {
 					title: request.payload.title,
 					description: request.payload.description,
 					needsApproval: request.payload.needsApproval,
-					slots: request.payload.slots,
 					date: request.payload.date,
 					location: request.payload.location,
 					fuzzyTime: request.payload.fuzzyTime

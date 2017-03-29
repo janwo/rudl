@@ -1,4 +1,5 @@
-import {Component, OnInit, Input, Output, EventEmitter, trigger, transition, style, animate} from "@angular/core";
+import {Component, OnInit, Input, Output, EventEmitter} from "@angular/core";
+import {trigger, transition, style, animate} from "@angular/animations";
 import {UserService} from "../../../services/user.service";
 import {Locale} from "../../../models/locale";
 import {ButtonStyles} from "../controls/styled-button.component";

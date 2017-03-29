@@ -1,4 +1,5 @@
-import {Component, trigger, transition, style, animate, Input, Output, EventEmitter} from "@angular/core";
+import {Component, Input, Output, EventEmitter} from "@angular/core";
+import {trigger, transition, style, animate} from "@angular/animations";
 
 @Component({
 	templateUrl: 'modal.component.html',

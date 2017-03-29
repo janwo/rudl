@@ -42,12 +42,11 @@
   // Set headings.
   @each $heading, $size in $base-heading-font-size {
     /deep/ #{$heading} {
-      font-family: 'Fredoka One', sans-serif;
+      font-family: $base-heading-font-family;
       font-weight: $base-font-weight-normal;
       margin-top: $size * 1.5;
       margin-bottom: $size;
       font-size: $size;
-      color: map_get($base-colors, 'heading-text');
 
       &:first-child {
         margin-top: 0;
