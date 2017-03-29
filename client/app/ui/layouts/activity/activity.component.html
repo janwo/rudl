@@ -20,7 +20,7 @@
 		<i #titleIcon class="fa fa-plus"></i>
 		<span i18n [@expandHorizontally]="expandedEventCreation" (@expandHorizontally.start)="$event.toState && titleIcon.style.display = 'none'" (@expandHorizontally.done)="$event.fromState && titleIcon.style.display = 'block'">Event hinzufügen</span>
 	</div>
-	<create-event *ngIf="expandedEventCreation" [@expandVertically]="expandedEventCreation" (onCanceled)="expandedEventCreation = false"></create-event>
+	<create-event [activity]="activity" *ngIf="expandedEventCreation" [@expandVertically]="expandedEventCreation" (onCanceled)="expandedEventCreation = false"></create-event>
 </div>
 <menu>
 	<menu-item [title]="'Deine Events'" [icon]="'calendar-check-o'" [link]="['your-events']"></menu-item>

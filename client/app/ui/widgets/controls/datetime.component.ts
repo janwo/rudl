@@ -1,7 +1,7 @@
-import { Component, Input, EventEmitter, Output, HostBinding } from "@angular/core";
+import {Component, Input, EventEmitter, Output, HostBinding} from "@angular/core";
 import * as moment from "moment";
-import Moment = moment.Moment;
 import {trigger, transition, style, animate} from "@angular/animations";
+import Moment = moment.Moment;
 
 @Component({
 	templateUrl: 'datetime.component.html',
@@ -33,24 +33,25 @@ import {trigger, transition, style, animate} from "@angular/animations";
 	]
 })
 export class DateTimeComponent {
-
-    static format: string = 'DD-MM-YYYY HH:mm';
 	
 	@Input() dirty: boolean;
 	@Output() datetimeSelected: EventEmitter<string> = new EventEmitter();
 	
 	@Input() set locale(string: string) {
+		if(!string) return;
 		this.selectedMoment.locale(string);
 		this.invalidate();
 	}
 	
 	@Input() set dateTime(string: string) {
-		this.selectedMoment = moment.utc(string, DateTimeComponent.format).second(0).milliseconds(0).local();
+		if(!string) return;
+		this.selectedMoment = moment.utc(string).second(0).milliseconds(0).local();
 		this.invalidate();
 	}
 	
 	@Input() set minDateTime(string: string) {
-		this.minMoment = moment.utc(string, DateTimeComponent.format).second(0).milliseconds(0).local();
+		if(!string) return;
+		this.minMoment = moment.utc(string).second(0).milliseconds(0).local();
 		this.invalidate();
 	}
 	
@@ -137,7 +138,7 @@ export class DateTimeComponent {
 	initialState(): void {
 		this.state = 'collapsed';
 		this.dirty = true;
-		this.datetimeSelected.emit(this.dateTime);
+		this.datetimeSelected.emit(this.selectedMoment.toISOString());
 	}
 	
 	nextState(): void {

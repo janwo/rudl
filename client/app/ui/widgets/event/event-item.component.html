@@ -1,17 +1,17 @@
-<div class="card" [routerLink]="['/events', 0]">
+<div class="card" [routerLink]="['/events', event.id]">
 	<header>
 		<slots [users]="" [slots]="3" [free]="1"></slots>
 		<ul>
 			<li>
 				<i class="fa fa-map-marker"></i>
-				<span>300m</span>
+				<span>{{event.location}}</span>
 			</li>
 			<li>
 				<i class="fa fa-clock-o"></i>
-				<span>Heute Abend</span>
+				<span>{{event.date}}</span>
 			</li>
 		</ul>
 	</header>
-	<h3>Kohlfahrt am Werdersee</h3>
-	<map [zoom]="14"></map>
+	<h3>{{event.title}}</h3>
+	<map [zoom]="14" [location]="event.location"></map>
 </div>

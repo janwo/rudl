@@ -115,7 +115,7 @@ $base-max-width: (
   font-size: $input-field-input-font-size;
   font-family: $base-font-family;
   font-weight: $base-font-weight-normal;
-  line-height: map_get($base-line-height, 'multiline');
+  line-height: map_get($base-line-height, 'default');
   border: map_get($base-line-widths, 'default') inactive(map_get($base-colors, 'secondary')) solid;
   border-radius: $base-border-radius;
   outline: none;

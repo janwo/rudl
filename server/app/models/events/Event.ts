@@ -14,7 +14,8 @@ export const EventsValidation = {
 	title: Joi.string().min(3),
 	description: Joi.string().optional(),
 	needsApproval: Joi.boolean().default(false),
-	date: Joi.date(),
+	date: Joi.date().iso(),
+	activity: Joi.string(),
 	fuzzyTime: Joi.boolean().default(false),
 	location: Joi.array().items(Joi.number())
 };

@@ -1,14 +1,14 @@
 <location-search [locationFocus]="recipe.location" (locationSelected)="recipe.location = $event"></location-search>
-<map [location]="recipe.location"></map>
+<map [location]="recipe.location" (change)="assign({location: $event})"></map>
 <div class="split-content">
 	<div>
-		<input [(ngModel)]="recipe.title"[type]="'text'" placeholder="Give your event a title...">
-		<input [(ngModel)]="recipe.description" [type]="'textarea'" placeholder="Enter a short summary of all public details here...">
-		<checkbox [value]="'Zugangsbeschränkung'"></checkbox>
+		<input [(ngModel)]="recipe.title" type="text" placeholder="Give your event a title...">
+		<textarea [(ngModel)]="recipe.description" placeholder="Enter a short summary of all public details here..."></textarea>
+		<checkbox [value]="'Zugangsbeschränkung'" (change)="assign({needsApproval: $event})"></checkbox>
 	</div>
 	<div>
-		<datetime (datetimeSelected)="recipe.date = $event" [dateTime]="'30-12-2018 12:34'" [locale]="'de'"></datetime>
-		<checkbox [value]="'Öffentliche Uhrzeit'"></checkbox>
+		<datetime (datetimeSelected)="assign({date: $event})" [locale]="'de'"></datetime>
+		<checkbox [value]="'Öffentliche Uhrzeit'" (change)="assign({fuzzyTime: !$event})"></checkbox>
 	</div>
 </div>
 <div class="buttons">

@@ -23,33 +23,7 @@ export module EventController {
 	
 	export function getPublicEvent(event: Event | Event[], relatedUser: User) : Promise<any> {
 		let createPublicEvent = (event: Event) : Promise<any> => {
-			/*
-			title: string;
-			description: string;
-			needsApproval: boolean;
-			slots: number;
-			date: string;
-			fuzzyDate: boolean;
-			location: Array<number>;
-			
-			title: string;
-			description?: string;
-			location: number;
-			accuracy: number;
-			date: string;
-			fuzzyDate: boolean;
-			needsApproval: boolean;
-			awaitingApproval: boolean;
-			approved: boolean;
-			totalSlots: number;
-			freeSlots: number;
-			owner: User;
-			membersSample: User[];*/
-			/*return Promise.all([
-				activityOwnerPromise,
-				publicActivityOwnerPromise,
-				activityStatisticsPromise
-			]).then((values: [User, any, ActivityStatistics]) => {
+			return Promise.all([]).then((values: [any]) => {
 				// Add default links.
 				let links = {};
 				
@@ -57,14 +31,18 @@ export module EventController {
 				return Promise.resolve(dot.transform({
 					'event._key': 'id',
 					'event.title': 'title',
-					'owner': 'owner',
+					'event.description': 'description',
+					'event.fuzzyTime': 'fuzzyTime',
+					'event.date': 'date',
+					'event.needsApproval': 'needsApproval',
 					'event.location': 'location',
+					'owner': 'owner',
 				}, {
 					event: event,
 					links: links,
 					owner: values[1],
 				}));
-			});*/return Promise.resolve(()=>{return {}});
+			});
 		};
 		let now = Date.now();
 		let transformed = event instanceof Array ? Promise.all(event.map(createPublicEvent)) : createPublicEvent(event);
@@ -194,7 +172,7 @@ export module EventController {
 		 * @param request.payload.needsApproval needsApproval
 		 * @param request.payload.date date
 		 * @param request.payload.location location
-		 * @param request.payload.fuzzyTime fuzzyDate
+		 * @param request.payload.fuzzyTime fuzzyTime
 		 * @param request.payload.activity activity
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object

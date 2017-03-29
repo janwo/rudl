@@ -1,4 +1,7 @@
-import {Component, Input, ViewChild, ElementRef, AfterViewInit, OnInit, OnChanges, SimpleChanges} from "@angular/core";
+import {
+	Component, Input, ViewChild, ElementRef, AfterViewInit, OnChanges, SimpleChanges,
+	EventEmitter, Output
+} from "@angular/core";
 import * as L from "leaflet";
 import {UserService} from "../../../services/user.service";
 
@@ -25,6 +28,8 @@ export class MapComponent implements AfterViewInit, OnChanges {
     @Input() location: L.LatLngTuple = [0,0];
     @Input() zoom: number = 16;
     @ViewChild('map') mapElement: ElementRef;
+    @Output() change: EventEmitter<L.LatLngTuple> = new EventEmitter();
+    
 	map: L.Map;
 	marker: L.Marker;
     
@@ -92,7 +97,11 @@ export class MapComponent implements AfterViewInit, OnChanges {
 			clickable: false
 		}).addTo(this.map);
 		
-		this.map.on('click', (e: any) => this.setLocation([e.latlng.lat, e.latlng.lng]));
+		this.map.on('click', (e: any) => {
+			let clickedLocation: L.LatLngTuple = [e.latlng.lat, e.latlng.lng];
+			this.setLocation(clickedLocation);
+			this.change.emit(clickedLocation);
+		});
 	}
 	
 	ngOnChanges(changes: SimpleChanges): void {

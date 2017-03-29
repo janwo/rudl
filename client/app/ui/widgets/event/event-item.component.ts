@@ -1,4 +1,5 @@
 import {Component, Input} from "@angular/core";
+import {Event} from "../../../models/event";
 
 @Component({
 	templateUrl: 'event-item.component.html',
@@ -7,5 +8,5 @@ import {Component, Input} from "@angular/core";
 })
 export class EventItemComponent {
 	
-	@Input() event: Event = null;
+	@Input() event: Event;
 }

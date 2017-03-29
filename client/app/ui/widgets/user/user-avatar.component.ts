@@ -8,5 +8,5 @@ import {User} from "../../../models/user";
 })
 export class UserAvatarComponent {
 	
-	@Input() user: User = null;
+	@Input() user: User;
 }

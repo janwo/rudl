@@ -8,6 +8,6 @@ import {Activity} from "../../../models/activity";
 })
 export class ActivityItemComponent {
 	
-	@Input() activity: Activity = null;
+	@Input() activity: Activity;
 	@Input() highlight: string;
 }
