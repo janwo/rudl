@@ -31,16 +31,16 @@ import {ActivityService} from "../../../services/activity.service";
 })
 export class SearchComponent implements OnDestroy, OnInit {
 	
-	private activities: Activity[] = null;
-	private collapsedActivities: boolean = true;
-	private expandedActivityCreation: boolean = false;
-	private lists: List[] = null;
-	private collapsedLists: boolean = true;
-	private expandedListCreation: boolean = false;
-	private users: User[] = null;
-	private collapsedUsers: boolean = true;
-	private querySubscription: Subscription;
-	private searchValue: string = null;
+	activities: Activity[] = null;
+	collapsedActivities: boolean = true;
+	expandedActivityCreation: boolean = false;
+	lists: List[] = null;
+	collapsedLists: boolean = true;
+	expandedListCreation: boolean = false;
+	users: User[] = null;
+	collapsedUsers: boolean = true;
+	querySubscription: Subscription;
+	searchValue: string = null;
 	
 	constructor(
 		private listService: ListService,

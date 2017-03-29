@@ -5,7 +5,9 @@ import {Component, Input, ElementRef, OnInit, ViewChild, AfterViewInit, AfterCon
 	styleUrls: ['input-wrapper.component.scss'],
 	selector: 'input-wrapper'
 })
-export class InputFieldComponent implements AfterContentInit {
+export class InputFieldWrapper implements AfterContentInit {
+	
+	input: any = {};
 	
 	ngAfterContentInit(): void {
 	}

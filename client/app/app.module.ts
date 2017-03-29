@@ -70,6 +70,7 @@ import {GeocodeService} from "./services/geocode.service";
 import {LocationSearchComponent} from "./ui/widgets/controls/location-search.component";
 import {FormatCoordinatesPipe} from "./pipes/coordinates.pipe";
 import {InviteComponent} from "./ui/widgets/controls/invite.component";
+import {InputFieldWrapper} from "./ui/widgets/controls/input-wrapper.component";
 
 @NgModule({
     declarations: [
@@ -122,6 +123,7 @@ import {InviteComponent} from "./ui/widgets/controls/invite.component";
 	    SearchBarComponent,
 	    CreateEventComponent,
 	    LegalComponent,
+	    InputFieldWrapper,
 	    UserComponent,
 	    UserActivitiesComponent,
 	    UserFolloweesComponent,
