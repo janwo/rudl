@@ -1,4 +1,4 @@
-import {Component, Output, EventEmitter} from "@angular/core";
+import {Component, Output, EventEmitter, AfterViewInit, OnInit} from "@angular/core";
 import {Router} from "@angular/router";
 import {Locale} from "../../../models/locale";
 import {ButtonStyles} from "../controls/styled-button.component";
@@ -13,7 +13,7 @@ import {UserService} from "../../../services/user.service";
     styleUrls: ['create-event.component.scss'],
     selector: 'create-event'
 })
-export class CreateEventComponent {
+export class CreateEventComponent implements OnInit {
     
     @Output() onCanceled: EventEmitter<any> = new EventEmitter();
     buttonStyle: ButtonStyles = ButtonStyles.uncolored;
@@ -21,7 +21,6 @@ export class CreateEventComponent {
 	    title: null,
 	    description: null,
 	    needsApproval: false,
-	    slots: 1,
 	    date: '',
 	    fuzzyTime: false,
 	    location: []
@@ -32,12 +31,16 @@ export class CreateEventComponent {
         private userService: UserService,
         private router: Router
     ) {}
+	
+	ngOnInit(): void {
+		this.recipe.location = this.userService.getAuthenticatedUser().user.location;
+	}
+	
+	submit() {
+		this.eventService.create(this.recipe).subscribe(event => this.router.navigate(['/events', event.id]));
+	}
     
     cancel() {
         this.onCanceled.emit();
-    }
-    
-    submit() {
-        this.eventService.create(this.recipe).subscribe(event => this.router.navigate(['/events', event.id]));
     }
 }

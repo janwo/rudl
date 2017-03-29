@@ -1,0 +1,7 @@
+<input #searchElement placeholder="Search for places..." type="text" (keyup)="onKey($event)">
+<ul class="results">
+	<li *ngFor="let geocodedLocation of locations" (click)="onClick($event, geocodedLocation.location)">
+		<span>{{geocodedLocation.label}}</span>
+		<small>{{geocodedLocation.location | formatCoordinates}}</small>
+	</li>
+</ul>

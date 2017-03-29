@@ -9,21 +9,17 @@
 
 <div [ngClass]="{hide: isCollapsed}">
 	<div [ngClass]="{hide: !(signInOnly || indicatorComponent.selectedIndex == 0)}">
-		<input-field [id]="'username'" [description]="'Enter ' + (signInOnly ? 'your' : 'an') + ' **username**'"
-				[type]="'text'"></input-field>
-		<input-field [ngClass]="{hide: signInOnly}" [id]="'email'" [description]="'Enter your **email address**'"
-				[type]="'mail'"></input-field>
-		<input-field [id]="'password'" [description]="'Enter ' + (signInOnly ? 'your' : 'a strong') + ' **password**'"
-				[type]="'password'"></input-field>
+		<input id="username" placeholder="{{'Enter ' + (signInOnly ? 'your' : 'an') + ' **username**' | highlight }}" type="text">
+		<input [ngClass]="{hide: signInOnly}" id="email" placeholder="{{'Enter your **email address**' | highlight }}" type="email">
+		<input id="password" placeholder="{{'Enter ' + (signInOnly ? 'your' : 'a strong') + ' **password**' | highlight }}" type="password">
 	</div>
 	<div [ngClass]="{hide: !(!signInOnly && indicatorComponent.selectedIndex == 1) }">
-		<input-field [id]="'firstname'" [description]="'Enter your **firstname**'" [type]="'text'"></input-field>
-		<input-field [id]="'lastname'" [description]="'Enter your **lastname**'" [type]="'text'"></input-field>
+		<input id="firstname" placeholder="{{'Enter your **firstname**' | highlight }}" type="text">
+		<input id="lastname" placeholder="{{'Enter your **lastname**' | highlight }}" type="text">
 	</div>
 	<indicator [ngClass]="{hide: signInOnly}" [indicators]="['Basic Information', 'Personal Information']"></indicator>
 </div>
-<styled-button class="auth-button-mail" (click)="onClickMailButton()" [fa]="'envelope'"
-		[text]="(signInOnly ? 'Sign In with Mail' : ( isCollapsed || indicatorComponent.selectedIndex == 1 ? 'Sign Up with Mail' : 'Continue'))"></styled-button>
+<styled-button class="auth-button-mail" (click)="onClickMailButton()" [fa]="'envelope'" [text]="(signInOnly ? 'Sign In with Mail' : ( isCollapsed || indicatorComponent.selectedIndex == 1 ? 'Sign Up with Mail' : 'Continue'))"></styled-button>
 
 <small>
 	<span>{{ signInOnly ? 'You want to sign up?' : 'Have an account already?' }}</span>

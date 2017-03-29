@@ -3,7 +3,17 @@
 :host {
   display: block;
 
-  .content {
+  map {
+    height: 15rem;
+    border-radius: $base-border-radius;
+    margin-bottom: map_get($base-padding, 'small');
+  }
+
+  input {
+    @include setup-input();
+  }
+
+  .split-content {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -15,8 +25,14 @@
     & > div {
       flex: 0 1 50%;
 
-      &:last-child {
-        margin-left: map_get($base-padding, 'default');
+      @include breakpoint('small') {
+        &:last-child {
+          margin-left: map_get($base-padding, 'default');
+        }
+      }
+
+      @include breakpoint(null, 'small') {
+        flex: 0 1 auto;
       }
     }
   }

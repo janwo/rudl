@@ -1,7 +1,7 @@
 import {
-	Component, OnInit, OnDestroy, ViewChild, trigger, state, style, transition, animate,
-	keyframes
+	Component, OnInit, OnDestroy, ViewChild
 } from "@angular/core";
+import {trigger, transition, style, animate, state} from "@angular/animations";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Params} from "@angular/router";
 import {Activity} from "../../../models/activity";

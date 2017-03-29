@@ -22,7 +22,6 @@ export interface EventRecipe {
 	description: string,
 	needsApproval: boolean,
 	fuzzyTime: boolean,
-	slots: number,
 	date: string,
 	location: number[]
 }

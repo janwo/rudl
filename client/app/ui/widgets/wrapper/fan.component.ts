@@ -1,4 +1,5 @@
-import {Component, trigger, style, transition, animate, OnInit, Input} from "@angular/core";
+import {Component, OnInit, Input} from "@angular/core";
+import {trigger, transition, style, animate} from "@angular/animations";
 import {UrlTree, Router, NavigationEnd} from "@angular/router";
 
 @Component({
@@ -57,7 +58,6 @@ export class FanComponent implements OnInit {
 	
 	ngOnInit(): void {
 		this.router.events.filter(event => event instanceof NavigationEnd).subscribe(event => {
-			console.log(event.url);
 			this.expanded = this.expandedUrl && this.router.isActive(this.expandedUrl, false);
 		});
 	}

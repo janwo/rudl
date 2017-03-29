@@ -56,6 +56,10 @@ $login-text-divider-font-size: map_get($base-font-size, 'default') * 0.75;
     }
   }
 
+  input {
+    @include setup-input();
+  }
+
   indicator {
     margin-bottom: map_get($base-padding, 'smaller');
   }

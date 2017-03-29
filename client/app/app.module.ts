@@ -5,12 +5,12 @@ import {LoginComponent} from "./ui/widgets/login.component";
 import {ExploreComponent} from "./ui/layouts/explore/explore.component";
 import {DashboardComponent} from "./ui/layouts/dashboard/dashboard.component";
 import {StyledButtonComponent} from "./ui/widgets/controls/styled-button.component";
-import {InputFieldComponent} from "./ui/widgets/controls/input-field.component";
 import {HttpModule, JsonpModule} from "@angular/http";
 import {LoginGuard} from "./guards/login";
 import {DataService} from "./services/data.service";
 import {routing, appRoutingProviders} from "./app.routes";
 import {FormsModule} from "@angular/forms";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {UserService} from "./services/user.service";
 import {IndicatorComponent} from "./ui/widgets/state/indicator.component";
 import {DropdownMenuComponent} from "./ui/widgets/menus/dropdown-menu.component";
@@ -67,7 +67,7 @@ import {UserAvatarComponent} from "./ui/widgets/user/user-avatar.component";
 import {UserItemComponent} from "./ui/widgets/user/user-item.component";
 import {DateTimeComponent} from "./ui/widgets/controls/datetime.component";
 import {GeocodeService} from "./services/geocode.service";
-import {LocationPickerComponent} from "./ui/widgets/controls/locationpicker.component";
+import {LocationSearchComponent} from "./ui/widgets/controls/location-search.component";
 import {FormatCoordinatesPipe} from "./pipes/coordinates.pipe";
 import {InviteComponent} from "./ui/widgets/controls/invite.component";
 
@@ -76,7 +76,6 @@ import {InviteComponent} from "./ui/widgets/controls/invite.component";
 	    AppComponent,
 	    LoginComponent,
 	    StyledButtonComponent,
-	    InputFieldComponent,
 	    DropdownMenuComponent,
 	    ActivityItemComponent,
 	    ItemWrapperComponent,
@@ -130,7 +129,7 @@ import {InviteComponent} from "./ui/widgets/controls/invite.component";
 	    UserListsComponent,
 	    BoardingComponent,
 	    FanComponent,
-	    LocationPickerComponent,
+	    LocationSearchComponent,
 	    TranslationListComponent,
         DateTimeComponent
     ],
@@ -148,6 +147,7 @@ import {InviteComponent} from "./ui/widgets/controls/invite.component";
     ],
     imports: [
         FormsModule,
+        BrowserAnimationsModule,
         HttpModule,
         JsonpModule,
         BrowserModule,

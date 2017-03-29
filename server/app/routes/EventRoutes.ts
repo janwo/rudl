@@ -6,6 +6,7 @@ import BasicStrategy = require("../strategies/BasicStrategy");
 import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
+import {EventsValidation} from "../models/events/Event";
 
 const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.string().regex(/^me$/));
 
@@ -126,15 +127,7 @@ export const RoutesConfig: RoutesConfiguration = [
 				]
 			},
 			validate: {
-				payload: {
-					title: Joi.string().min(3),
-					description: Joi.string().optional(),
-					needsApproval: Joi.boolean().default(false),
-					slots: Joi.number().min(0).default(0),
-					date: Joi.date(),
-					fuzzyTime: Joi.boolean().default(false),
-					location: Joi.array().items(Joi.number())
-				}
+				payload: EventsValidation
 			}
 		}
 	},

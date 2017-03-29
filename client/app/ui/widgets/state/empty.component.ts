@@ -1,4 +1,5 @@
-import {Component, Input, OnInit, trigger, transition, style, animate} from "@angular/core";
+import {Component, Input, OnInit} from "@angular/core";
+import {trigger, transition, style, animate} from "@angular/animations";
 import {SafeStyle, DomSanitizer} from "@angular/platform-browser";
 
 @Component({

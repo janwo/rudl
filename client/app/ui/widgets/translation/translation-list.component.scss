@@ -12,8 +12,9 @@
       flex-direction: row;
       align-items: center;
 
-      input-field {
+      input {
         flex: 1 1 auto;
+        @include setup-input();
       }
 
       styled-button {
