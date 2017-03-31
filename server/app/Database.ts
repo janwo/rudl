@@ -228,19 +228,14 @@ export class DatabaseManager {
 			});
 		});
 		
-		// Delete graphs.
-		let dropGraphs = DatabaseManager.arangoClient.graphs().then((existingGraphs: any) => {
-			let droppedGraphs = existingGraphs.map(graph => {
-				console.log(`Graph "${graph.name}" dropped!`);
-				return graph.drop();
-			});
-			
-			return Promise.all(droppedGraphs);
-		});
-		
 		// Create graphs.
-		let createGraphs = Promise.resolve(Object.keys(DatabaseManager.arangoGraphs)).then(graphNames => {
-			let createdGraphs = graphNames.map(key => DatabaseManager.arangoGraphs[key]).map(missingGraph => {
+		let graphs = DatabaseManager.arangoClient.graphs().then((existingGraphs: any) => {
+			// Filter graphs.
+			let graphs = Object.keys(DatabaseManager.arangoGraphs).map(key => DatabaseManager.arangoGraphs[key]).filter(graph => {
+				let exists = existingGraphs.map(obj => obj.name).indexOf(graph.name) >= 0;
+				console.log(`Graph "${graph.name}" ${exists ? 'exists!' : 'does not exist!'}`);
+				return !exists;
+			}).map(missingGraph => {
 				let graphInstance = missingGraph.instance = DatabaseManager.arangoClient.graph(missingGraph.name);
 				return graphInstance.create({}).then(() => {
 					// Create vertices.
@@ -264,10 +259,12 @@ export class DatabaseManager {
 				}).then(() => console.log(`Created graph "${missingGraph.name}" successfully`));
 			});
 			
-			return Promise.all(createdGraphs);
+			return Promise.all(graphs).then((promises) => {
+				console.log(`Created all ${promises.length} graphs successfully.`);
+				return promises;
 		});
-		
-		return collections.then(() => dropGraphs).then(() => createGraphs);
+		});
+		return collections.then(() => graphs);
 	}
 	
 	public static connect(): Promise<void> {
