@@ -27,7 +27,7 @@ class StartupManager {
 	
 	static createBackendServer(debug = false, onStart = () => {}){
 		let command = [
-			debug ? `npm run nodemon -- -e js --debug --watch ${root('server')}` : 'node',
+			debug ? `npm run nodemon -- -e js --inspect --watch ${root('server')}` : 'node',
 			'run/backend-server.js'
 		];
 		
