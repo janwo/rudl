@@ -40,6 +40,7 @@ export module ActivityController {
 				return Promise.resolve(dot.transform({
 					'activity._key': 'id',
 					'activity.translations': 'translations',
+					'defaultLocation': 'defaultLocation',
 					'owner': 'owner',
 					'links': 'links',
 					'isOwner': 'relations.isOwned',
@@ -50,6 +51,7 @@ export module ActivityController {
 					'statistics.events': 'statistics.events'
 				}, {
 					activity: activity,
+					defaultLocation: activity.defaultLocation || relatedUser.location,
 					links: links,
 					statistics: values[2],
 					owner: values[1],
@@ -208,7 +210,7 @@ export module ActivityController {
 		}).then(() => {
 			let now = new Date().toISOString();
 			let activity : Activity = {
-				location: [],//TODO Add location
+				defaultLocation: null,
 				createdAt: now,
 				updatedAt: now,
 				translations: translations

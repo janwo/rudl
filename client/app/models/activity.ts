@@ -14,6 +14,7 @@ export interface Activity extends Document {
 		lists: number;
 		events: number;
 	};
+	defaultLocation: number[];
 	translations: Locale.Translations;
 }
 
