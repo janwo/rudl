@@ -1,5 +1,5 @@
 <loading *ngIf="events == null"></loading>
 <empty [emptyState]="emptyState" *ngIf="events && events.length == 0"></empty>
-<item-wrapper [columns]="3">
+<item-wrapper [columns]="2">
 	<event-item *ngFor="let event of events" [event]="event"></event-item>
 </item-wrapper>

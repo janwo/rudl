@@ -1,17 +1,18 @@
 <div class="card" [routerLink]="['/events', event.id]">
 	<header>
-		<slots [users]="" [slots]="3" [free]="1"></slots>
+		<slots [users]="[event.owner]" [slots]="event.statistics.approvedUsers"></slots>
 		<ul>
 			<li>
 				<i class="fa fa-map-marker"></i>
-				<span>{{event.location}}</span>
+				<span>{{formattedLocation}}</span>
 			</li>
 			<li>
 				<i class="fa fa-clock-o"></i>
-				<span>{{event.date}}</span>
+				<span>{{formattedDate}}</span>
 			</li>
 		</ul>
 	</header>
 	<h3>{{event.title}}</h3>
+	<p>{{event.description}}</p>
 	<map [zoom]="14" [location]="event.location"></map>
 </div>

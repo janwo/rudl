@@ -80,7 +80,7 @@ export module TestController {
 			casual.date('YYYY-MM-DD HH:MM:SS.MMM')
 		].sort();
 		let activity : Activity = {
-			location: [
+			defaultLocation: [
 				Number.parseFloat(casual.latitude),
 				Number.parseFloat(casual.longitude)
 			],

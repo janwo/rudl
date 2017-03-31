@@ -1,13 +1,13 @@
-import {Component, Output, EventEmitter, OnInit, Input} from "@angular/core";
+import {Component, Output, EventEmitter, Input} from "@angular/core";
 import {Router} from "@angular/router";
 import {Locale} from "../../../models/locale";
 import {ButtonStyles} from "../controls/styled-button.component";
 import {EventRecipe} from "../../../models/event";
 import {EventService} from "../../../services/event.service";
-import {UserService} from "../../../services/user.service";
 import Language = Locale.Language;
 import Translations = Locale.Translations;
 import {Activity} from "../../../models/activity";
+import {UserService} from "../../../services/user.service";
 
 @Component({
     templateUrl: 'create-event.component.html',
@@ -27,18 +27,17 @@ export class CreateEventComponent {
 	    needsApproval: false,
 	    fuzzyTime: false
     };
-	
+    
 	@Input() set activity(activity: Activity) {
-		if(activity) this.recipe.activity = activity.id;
-	}
-	
-	@Input() set location(location: number[]) {
-		if(location) this.recipe.location = location;
+		this.recipe.activity = activity.id;
+		this.recipe.location = activity.defaultLocation;
+		this.recipe.title = Locale.getBestTranslation(activity.translations, this.userService.getAuthenticatedUser().user.languages);
 	}
 	
     constructor(
-        private eventService: EventService,
-        private router: Router
+	    private router: Router,
+        private userService: UserService,
+		private eventService: EventService
     ) {}
 	
 	submit() {

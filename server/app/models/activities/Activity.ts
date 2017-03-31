@@ -3,5 +3,5 @@ import {Document} from "../Document";
 
 export interface Activity extends Document {
 	translations: Translations;
-	location: Array<number>;
+	defaultLocation: Array<number>;
 }

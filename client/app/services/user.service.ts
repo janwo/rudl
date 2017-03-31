@@ -3,8 +3,6 @@ import {Router} from "@angular/router";
 import {Injectable} from "@angular/core";
 import {Observable, BehaviorSubject, ReplaySubject} from "rxjs";
 import {User} from "../models/user";
-import {Locale} from "../models/locale";
-import Translations = Locale.Translations;
 
 export interface UserStatus {
     loggedIn: boolean;
@@ -19,22 +17,9 @@ export class UserService {
     private currentLocation: ReplaySubject<Position> = new ReplaySubject(1);
     private locationUpdates: Observable<[number, number]> = this.currentLocation.asObservable().flatMap((position: Position) => {
         let userStatus = this.getAuthenticatedUser();
-        
-        // It's an location update?
-        if(userStatus.user.location) {
-            let usersLat = userStatus.user.location[0];
-            let usersLon = userStatus.user.location[1];
     
-            // Calculate distance.
-            let pi = Math.PI / 180;
-            let a = 0.5 - Math.cos((usersLat - position.coords.latitude) * pi) / 2 + Math.cos(position.coords.latitude * pi)
-                * Math.cos(usersLat * pi) * (1 - Math.cos((usersLon - position.coords.longitude) * pi)) / 2;
-            let distance = 6371 * Math.asin(Math.sqrt(a)) * 2;
-           
-            // Just return Update location, return position.
-            console.log(distance);
-            if (distance <= 0.1) return Observable.of(userStatus.user.location); // Accuracy of 100 meters.
-        }
+        // Just return current location, if new location is less than 100 meters away.
+        if(userStatus.user.location && this.getUsersDistance(userStatus.user.location) <= 100) return Observable.of(userStatus.user.location);
     
         return this.updateLocation(position.coords.latitude, position.coords.longitude).map(user => user.location);
     });
@@ -70,6 +55,21 @@ export class UserService {
         });
     }
     
+    getUsersDistance(location: number[]): number {
+        let userStatus = this.getAuthenticatedUser();
+        if(!userStatus.user || !userStatus.user.location) return NaN;
+        
+        let usersLat = userStatus.user.location[0];
+        let usersLon = userStatus.user.location[1];
+    
+        // Calculate distance.
+        let pi = Math.PI / 180;
+        let R = 6378137; // Earth’s radius
+        let a = 0.5 - Math.cos((usersLat - location[0]) * pi) / 2 + Math.cos(location[1] * pi)
+            * Math.cos(usersLat * pi) * (1 - Math.cos((usersLon - location[1]) * pi)) / 2;
+        return Math.floor(R * Math.asin(Math.sqrt(a)) * 2);
+    }
+    
     getAuthenticatedUser() : UserStatus {
         return this.authenticatedProfile.getValue();
     }
@@ -101,13 +101,13 @@ export class UserService {
     getCurrentPosition(): Observable<[number, number]> {
         return this.locationUpdates;
     }
-        
+    
     signUp(username: string, password: string) : void {
 
     }
     
     signIn(username: string, password: string) : void {
-        
+    
     }
     
     signOut() : void {

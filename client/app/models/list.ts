@@ -5,6 +5,7 @@ import {User} from "./user";
 export interface List extends Document {
 	name: string;
 	owner: User;
+	links: ListLinks;
 	relations: {
 		isFollowed: boolean;
 		isOwned: boolean;
@@ -14,6 +15,9 @@ export interface List extends Document {
 		activities: number;
 	};
 	translations: Locale.Translations;
+}
+
+export interface ListLinks {
 }
 
 export interface ListRecipe {
