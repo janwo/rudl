@@ -34,3 +34,6 @@ run/**/*.js
 
 # Let's Encrypt
 letsencrypt/
+
+# Cache
+.cache

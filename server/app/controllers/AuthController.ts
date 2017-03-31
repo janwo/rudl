@@ -1,6 +1,6 @@
 import Nodemailer = require("nodemailer");
 import Boom = require("boom");
-import Uuid = require("node-uuid");
+import Uuid = require("uuid");
 import dot = require("dot-object");
 import fs = require('fs');
 import path = require('path');
