@@ -12,10 +12,9 @@ services:
       - "443:443"
       - "5858:5858"
     volumes:
-      - ./server:/root/app/server
-      - ./client:/root/app/client
-      - ./run:/root/app/run
       - ./letsencrypt:/root/letsencrypt
+      - ./.cache:/root/.cache
+      - ./yarn.lock:/root/app/yarn.lock
       - ./db/files:/root/app/db/files
       - ./logs:/root/app/logs
     depends_on:

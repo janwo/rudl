@@ -1,6 +1,5 @@
 import Nodemailer = require("nodemailer");
 import Boom = require("boom");
-import Uuid = require("node-uuid");
 import dot = require("dot-object");
 import * as CryptoJS from "crypto-js";
 import * as Joi from "joi";
