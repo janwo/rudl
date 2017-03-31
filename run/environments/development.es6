@@ -1,6 +1,5 @@
 import ExtractTextPlugin from "extract-text-webpack-plugin";
 import {root} from "../config";
-import Webpack from "webpack";
 
 export default {
 	name: 'rudl - Development Environment',
@@ -14,7 +13,6 @@ export default {
 					( Config ) => {
 						return {
 							inline: true,
-							contentBase: root('client'),
 							historyApiFallback: true,
 							proxy: [{
 								context: [

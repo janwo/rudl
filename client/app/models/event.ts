@@ -4,17 +4,24 @@ import {User} from "./user";
 export interface Event extends Document {
 	title: string;
 	description?: string;
-	location: number;
-	accuracy: number;
+	location: number[];
 	date: string;
 	fuzzyTime: boolean;
 	needsApproval: boolean;
-	awaitingApproval: boolean;
-	approved: boolean;
-	totalSlots: number;
-	freeSlots: number;
 	owner: User;
-	membersSample: User[];
+	links: EventLinks;
+	relations: {
+		isAwaiting: boolean;
+		isApproved: boolean;
+		isOwned: boolean;
+	};
+	statistics: {
+		approvedUsers: number;
+		awaitingUsers: number;
+	};
+}
+
+export interface EventLinks {
 }
 
 export interface EventRecipe {

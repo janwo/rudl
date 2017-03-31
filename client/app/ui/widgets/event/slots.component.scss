@@ -15,10 +15,10 @@ $slot-avatar-size: 2.5rem;
       position: relative;
 
       &:not(:first-child) {
-        margin-left: - $slot-avatar-size / 3;
+        margin-left: - $slot-avatar-size / 2;
       }
 
-      avatar {
+      user-avatar {
         width: $slot-avatar-size;
         height: $slot-avatar-size;
       }

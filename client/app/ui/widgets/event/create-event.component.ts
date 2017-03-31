@@ -7,6 +7,7 @@ import {EventService} from "../../../services/event.service";
 import Language = Locale.Language;
 import Translations = Locale.Translations;
 import {Activity} from "../../../models/activity";
+import {UserService} from "../../../services/user.service";
 
 @Component({
     templateUrl: 'create-event.component.html',
@@ -26,15 +27,17 @@ export class CreateEventComponent {
 	    needsApproval: false,
 	    fuzzyTime: false
     };
-	
+    
 	@Input() set activity(activity: Activity) {
-		if(activity) this.recipe.activity = activity.id;
-		if(activity) this.recipe.location = activity.defaultLocation;
+		this.recipe.activity = activity.id;
+		this.recipe.location = activity.defaultLocation;
+		this.recipe.title = Locale.getBestTranslation(activity.translations, this.userService.getAuthenticatedUser().user.languages);
 	}
 	
     constructor(
-        private eventService: EventService,
-        private router: Router
+	    private router: Router,
+        private userService: UserService,
+		private eventService: EventService
     ) {}
 	
 	submit() {

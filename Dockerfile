@@ -9,6 +9,4 @@ RUN curl -o- -L https://yarnpkg.com/install.sh | bash
 ADD package.json yarn.lock ./
 RUN yarn install
 
-ADD . .
-
 CMD yarn start

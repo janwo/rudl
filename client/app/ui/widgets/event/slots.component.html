@@ -2,9 +2,9 @@
 	<li *ngFor="let user of users">
 		<user-avatar [user]="user"></user-avatar>
 	</li>
-	<li>
+	<li *ngIf="!users || slots - users.length > 0">
 		<div class="statistics">
-			<span>{{free > 0 ? '+' + free : 0}}</span>
+			<span>+{{slots - (users.length || 0)}}</span>
 		</div>
 	</li>
 </ul>

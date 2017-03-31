@@ -34,7 +34,7 @@ export class LocationSearchComponent implements OnInit, OnDestroy {
 	
 	ngOnInit(): void {
 		// Set up search observable.
-		this.searchResultsObservable = this.searchEvent.asObservable().filter((query: string) => query.length >= 3).distinctUntilChanged().debounceTime(1000).flatMap((query: string) => {
+		this.searchResultsObservable = this.searchEvent.asObservable().do(() => this.locations = []).filter((query: string) => query.length >= 3).distinctUntilChanged().debounceTime(500).flatMap((query: string) => {
 			return this.geocodeService.search(query, [0,0]);
 		}).subscribe((locations: GeocodeLocation[]) => this.locations = locations);
 	}

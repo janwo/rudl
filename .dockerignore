@@ -1,7 +1,0 @@
-*
-!.env
-!client
-!run
-!server
-!package.json
-!yarn.lock

@@ -24,8 +24,8 @@ import {ActivityService} from "../../../services/activity.service";
 				height: 0,
 				opacity: 0
 			})),
-			transition(':leave', animate('300ms')),
-			transition(':enter', animate('300ms'))
+			transition(':leave', animate('0.3s')),
+			transition(':enter', animate('0.3s'))
 		])
 	]
 })

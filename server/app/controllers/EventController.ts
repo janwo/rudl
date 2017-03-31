@@ -16,15 +16,44 @@ import {EventIsItem} from "../models/events/EventIsItem";
 import {ActivityController} from "./ActivityController";
 import randomstring = require("randomstring");
 import jwt = require("jsonwebtoken");
+import * as moment from "moment";
 import _ = require("lodash");
 
 export module EventController {
 	
+	export const FUZZY_HOURS = 3;
+	export const FUZZY_METERS = 1000;
+	
 	export function getPublicEvent(event: Event | Event[], relatedUser: User) : Promise<any> {
 		let createPublicEvent = (event: Event) : Promise<any> => {
-			return Promise.all([]).then((values: [any]) => {
+			let eventOwnerPromise = getEventOwner(event);
+			let publicEventOwnerPromise = eventOwnerPromise.then((owner: User) => {
+				return UserController.getPublicUser(owner, relatedUser);
+			});
+			let eventStatisticsPromise = getEventStatistics(event, relatedUser);
+			
+			return Promise.all([
+				eventOwnerPromise,
+				publicEventOwnerPromise,
+				eventStatisticsPromise
+			]).then((values: [User, any, EventStatistics]) => {
 				// Add default links.
 				let links = {};
+				
+				// Mask data for unapproved users.
+				if(!values[2].isApproved) {
+					// Mask time.
+					if(event.fuzzyTime) moment(event.date).add(Math.random() * FUZZY_HOURS * 2 - FUZZY_HOURS, 'hours').minute(0).second(0).millisecond(0);
+					
+					// Mask location.
+					let distance = [Math.random() * 2000 - 1000, Math.random() * 2000 - 1000];
+					let pi = Math.PI;
+					let R = 6378137; // Earth’s radius
+					let dLat = distance[0] / R;
+					let dLng = distance[1] / ( R * Math.cos(pi * event.location[1] / 180) );
+					event.location[0] = event.location[0] + ( dLat * 180 / pi );
+					event.location[1] = event.location[1] + ( dLng * 180 / pi );
+				}
 				
 				// Build profile.
 				return Promise.resolve(dot.transform({
@@ -35,11 +64,19 @@ export module EventController {
 					'event.date': 'date',
 					'event.needsApproval': 'needsApproval',
 					'event.location': 'location',
+					'links': 'links',
 					'owner': 'owner',
+					'isOwner': 'relations.isOwned',
+					'statistics.isApproved': 'relations.isApproved',
+					'statistics.isAwaiting': 'relations.isAwaiting',
+					'statistics.awaitingUsers': 'statistics.awaitingUsers',
+					'statistics.approvedUsers': 'statistics.approvedUsers'
 				}, {
+					statistics: values[2],
 					event: event,
 					links: links,
 					owner: values[1],
+					isOwner: values[0]._key == relatedUser._key
 				}));
 			});
 		};
@@ -48,6 +85,32 @@ export module EventController {
 		return transformed.then((result: any | Array<any>) => {
 			console.log(`Building profile of ${result instanceof Array ? result.length + ' events' : '1 event'} took ${Date.now() - now} millis`);
 			return result;
+		});
+	}
+	
+	export interface EventStatistics {
+		approvedUsers: number;
+		awaitingUsers: number;
+		isApproved: boolean;
+		isAwaiting: boolean;
+	}
+	
+	export function getEventStatistics(event: Event, relatedUser: User) : Promise<EventStatistics> {
+	/*	let aqlQuery = `LET eventApproved = (FOR approved IN INBOUND @eventId @@edgesUserFollowsActivity RETURN follower._id) LET lists = (FOR list IN INBOUND @activityId @@edgesListIsItem RETURN list._id) RETURN {isFollowed: LENGTH(INTERSECTION(activityFollowers, [@userId])) > 0, followers: LENGTH(activityFollowers), lists: LENGTH(lists)}`;
+		let aqlParams = {
+			'@edgesUserFollowsActivity': DatabaseManager.arangoCollections.userFollowsActivity.name,
+			'@edgesListIsItem': DatabaseManager.arangoCollections.listIsItem.name,
+			activityId: event._id,
+			userId: relatedUser._id
+		};
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<ActivityStatistics>;
+		TODO
+		*/
+		return Promise.resolve({
+			approvedUsers: 3,
+			awaitingUsers: 2,
+			isApproved: false,
+			isAwaiting: false
 		});
 	}
 	
@@ -77,6 +140,15 @@ export module EventController {
 			query: query.split(' ').map(word => '|prefix:' + word).join()
 		};
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Event[]>;
+	}
+	
+	export function getEventOwner(event: Event) : Promise<User> {
+		let aqlQuery = `FOR owner IN INBOUND @eventId @@userOwnsEvent RETURN owner`;
+		let aqlParams = {
+			'@userOwnsEvent': DatabaseManager.arangoCollections.userOwnsEvent.name,
+			eventId: event._id
+		};
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<User>;
 	}
 	
 	export function approveUser(event: Event, user: User) : Promise<UserFollowsActivity> {

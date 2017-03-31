@@ -9,7 +9,6 @@ import {User} from "../../../models/user";
 export class SlotsComponent {
     
     @Input() slots: number;
-    @Input() free: number;
     @Input() users: User[];
 
     constructor() {}

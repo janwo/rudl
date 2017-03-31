@@ -5,6 +5,7 @@ import {User} from "./user";
 export interface Activity extends Document {
 	name: string;
 	owner: User;
+	links: ActivityLinks;
 	relations: {
 		isFollowed: boolean;
 		isOwned: boolean;
@@ -16,6 +17,9 @@ export interface Activity extends Document {
 	};
 	defaultLocation: number[];
 	translations: Locale.Translations;
+}
+
+export interface ActivityLinks {
 }
 
 export interface ActivityRecipe {
