@@ -3,10 +3,9 @@
   "version": "0.2.0",
   "scripts": {
     "forever": "forever",
-    "start": "./run-docker.sh",
     "nodemon": "nodemon",
     "i18n": "ng-xi18n --project client ",
-    "docker-cmd": "npm run babel && node run/index.js",
+    "start": "npm run babel && node run/index.js",
     "babel": "babel run --out-dir run --presets es2015,stage-2"
   },
   "dependencies": {
