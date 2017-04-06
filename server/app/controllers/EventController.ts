@@ -201,7 +201,7 @@ export module EventController {
 			updatedAt: now
 		};
 		// TODO Change to vertexCollection, see bug https://github.com/arangodb/arangojs/issues/354
-		return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.events.name).save(event).then((event: Event) => {
+		return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.events.name).save(event, true).then(event => event.new).then((event: Event) => {
 			let userOwnsEvent : UserOwnsEvent = {
 				_from: user._id,
 				_to: event._id,

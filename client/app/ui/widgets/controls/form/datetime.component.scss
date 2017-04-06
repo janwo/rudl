@@ -1,18 +1,10 @@
-@import '../../variables';
+@import '../../../variables';
 
-$datetime-label-font-size: map_get($base-font-size, 'small');
-$datetime-font-size: map_get($base-font-size, 'default');
-$datetime-border-size: map_get($base-line-widths, 'default');
-$datetime-border-radius: $base-border-radius;
-$datetime-padding: $datetime-font-size / 1.5; // --> 1 / 1.5 = 0.666
-$datetime-border-color: map_get($base-colors, 'secondary');
+$datetime-padding: map_get($base-font-size, 'default') / 1.5; // Golden Ratio <3
 
 :host {
   display: block;
-  border: $datetime-border-size inactive($datetime-border-color) solid;
-  border-radius: $datetime-border-radius;
   overflow: hidden;
-  margin-bottom: map_get($base-padding, 'small');
 
   .input-mask {
     display: flex;
@@ -28,18 +20,7 @@ $datetime-border-color: map_get($base-colors, 'secondary');
       font-size: map_get($base-font-size, 'default');
       width: map_get($base-font-size, 'default') + 2 * $datetime-padding;
       text-align: center;
-      border-bottom: $datetime-border-size inactive($datetime-border-color) solid;
       color: map_get($base-colors, 'primary-text');
-
-      &:first-of-type {
-        border-radius: 0 0 $datetime-border-radius 0;
-        border-right: $datetime-border-size inactive($datetime-border-color) solid;
-      }
-
-      &:last-of-type {
-        border-radius: 0 0 0 $datetime-border-radius;
-        border-left: $datetime-border-size inactive($datetime-border-color) solid;
-      }
     }
 
     span {
@@ -49,14 +30,10 @@ $datetime-border-color: map_get($base-colors, 'secondary');
       margin: $datetime-padding;
       color: inactive(map_get($base-colors, 'primary-text'));
     }
-
-    &.dirty span {
-      color: map_get($base-colors, 'primary-text');
-    }
   }
 
-  &.focused {
-    border-color: $datetime-border-color;
+  &.ng-valid .input-mask span {
+    color: map_get($base-colors, 'primary-text');
   }
 
   ul {

@@ -6,41 +6,43 @@ import {Cursor} from "arangojs";
 import {User, UserRoles} from "../app/models/users/User";
 import {Config} from "../../run/config";
 import {AccountController} from "../app/controllers/AccountController";
-import casual = require('casual');
+import * as faker from 'faker';
 
 function generateUser(): User {
+	let firstName = faker.name.firstName();
+	let lastName = faker.name.lastName();
 	let user: User = {
-		firstName: casual.first_name,
-		lastName: casual.last_name,
-		username: casual.username,
+		firstName: firstName,
+		lastName: lastName,
+		username: faker.internet.userName(firstName, lastName),
 		languages: [
 			//TODO: Dynamic languages
 			'de',
 		    'en'
 		],
 		mails: [{
-			mail: casual.email,
+			mail: faker.internet.email(firstName, lastName),
 			verified: true
 		}],
 		scope: [
 			UserRoles.user
 		],
 		location: [
-			Number.parseFloat(casual.latitude),
-			Number.parseFloat(casual.longitude)
+			Number.parseFloat(faker.address.latitude()),
+			Number.parseFloat(faker.address.longitude())
 		],
 		meta: {
 			hasAvatar: false,
-			profileText: casual.short_description,
+			profileText: faker.lorem.sentences(2),
 			fulltextSearchData: null,
 			onBoard: true
 		},
 		auth: {
-			password: casual.password,
+			password: faker.internet.password(),
 			providers: [],
 		},
-		createdAt: casual.date('YYYY-MM-DD HH:MM:SS.MMM'),
-		updatedAt: casual.date('YYYY-MM-DD HH:MM:SS.MMM'),
+		createdAt: faker.date.past().toISOString(),
+		updatedAt: faker.date.past().toISOString(),
 	};
 	
 	// Apply fulltext search data.

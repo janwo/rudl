@@ -19,7 +19,6 @@ import {Subject, ReplaySubject, Subscription} from "rxjs";
 })
 export class LocationSearchComponent implements OnInit, OnDestroy {
 	
-	@HostBinding('class.focused') focused: boolean = false;
 	@ViewChild('searchElement') searchElement: ElementRef;
 	@Input() locationFocus: number[] = [0, 0];
 	@Output() locationSelected: EventEmitter<number[]> = new EventEmitter();
@@ -35,7 +34,7 @@ export class LocationSearchComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		// Set up search observable.
 		this.searchResultsObservable = this.searchEvent.asObservable().do(() => this.locations = []).filter((query: string) => query.length >= 3).distinctUntilChanged().debounceTime(500).flatMap((query: string) => {
-			return this.geocodeService.search(query, [0,0]);
+			return this.geocodeService.search(query, this.locationFocus);
 		}).subscribe((locations: GeocodeLocation[]) => this.locations = locations);
 	}
 	

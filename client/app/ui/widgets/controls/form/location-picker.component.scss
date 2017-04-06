@@ -1,0 +1,19 @@
+@import '../../../variables';
+
+:host {
+  display: flex;
+  overflow: hidden;
+
+  div {
+    flex: 1 1 auto;
+
+    /deep/ .leaflet-icon {
+      $width: 1.7rem * 2;
+      $height: 2rem * 2;
+      width: $width;
+      height: $height;
+      margin-left: -$width / 2;
+      margin-top: -$height;
+    }
+  }
+}

@@ -98,6 +98,10 @@
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@types/dot-object/-/dot-object-1.5.0.tgz#43db81b4ffe46f745b95be0c01b02b492a800551"
 
+"@types/faker@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@types/faker/-/faker-4.1.0.tgz#751cd99436a71d7856f33f65f9c5e58e5bc2711e"
+
 "@types/geojson@*":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-1.0.0.tgz#6af48a0d492c09068e97cb78e6bef940d57fb36d"
@@ -172,7 +176,7 @@
     "@types/node" "*"
     "@types/nodemailer" "*"
 
-"@types/nodemailer@*", "@types/nodemailer@^1.3.31":
+"@types/nodemailer@*", "@types/nodemailer@^1.3.32":
   version "1.3.32"
   resolved "https://registry.yarnpkg.com/@types/nodemailer/-/nodemailer-1.3.32.tgz#76388aa9389a9290416c98eafd7d24d80efa2333"
   dependencies:
@@ -407,13 +411,9 @@ async-foreach@^0.1.3:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/async-foreach/-/async-foreach-0.1.3.tgz#36121f845c0578172de419a97dbeb1d16ec34542"
 
-async@0.2.9:
+async@0.2.9, async@0.2.x, async@~0.2.9:
   version "0.2.9"
   resolved "https://registry.yarnpkg.com/async/-/async-0.2.9.tgz#df63060fbf3d33286a76aaf6d55a2986d9ff8619"
-
-async@0.2.x, async@~0.2.9:
-  version "0.2.10"
-  resolved "https://registry.yarnpkg.com/async/-/async-0.2.10.tgz#b6bbe0b0674b9d719708ca38de8c237cb526c3d1"
 
 async@^1.4.0, async@^1.5.2:
   version "1.5.2"
@@ -1328,13 +1328,6 @@ caseless@~0.12.0:
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
 
-casual@^1.5.11:
-  version "1.5.12"
-  resolved "https://registry.yarnpkg.com/casual/-/casual-1.5.12.tgz#8d3c8082cc2bfc458575997ddaf07eef7cc18240"
-  dependencies:
-    mersenne-twister "^1.0.1"
-    moment "^2.15.2"
-
 catbox-memory@2.x.x:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/catbox-memory/-/catbox-memory-2.0.4.tgz#433e255902caf54233d1286429c8f4df14e822d5"
@@ -2237,6 +2230,10 @@ extsprintf@1.0.2:
 eyes@0.1.x, eyes@~0.1.8:
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/eyes/-/eyes-0.1.8.tgz#62cf120234c683785d902348a800ef3e0cc20bc0"
+
+faker@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/faker/-/faker-4.1.0.tgz#1e45bbbecc6774b3c195fad2835109c6d748cc3f"
 
 fast-safe-stringify@1.1.x:
   version "1.1.13"
@@ -3627,10 +3624,6 @@ merge-descriptors@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/merge-descriptors/-/merge-descriptors-1.0.1.tgz#b00aaa556dd8b44568150ec9d1b953f3f90cbb61"
 
-mersenne-twister@^1.0.1:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/mersenne-twister/-/mersenne-twister-1.1.0.tgz#f916618ee43d7179efcf641bec4531eb9670978a"
-
 methods@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/methods/-/methods-1.1.2.tgz#5529a4d67654134edcc5266656835b0f851afcee"
@@ -3762,7 +3755,7 @@ moment@2.15.x:
   version "2.15.2"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.15.2.tgz#1bfdedf6a6e345f322fe956d5df5bd08a8ce84dc"
 
-moment@2.x.x, "moment@>= 2.6.0", moment@^2.15.2, moment@^2.18.1:
+moment@2.x.x, "moment@>= 2.6.0", moment@^2.18.1:
   version "2.18.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
 

@@ -12,14 +12,11 @@ if [ "$commits" ]; then
   if ! git reset --hard origin/master && git clean -f -d; then
     # Report failure.
     echo "Pulling failed..."
-    npm run docker
+    npm start
     exit 1
 
   else
     echo "Pulling was successful, restarting..."
-    npm run docker
+    npm start
   fi
 fi
-
-# Done!
-exit 0

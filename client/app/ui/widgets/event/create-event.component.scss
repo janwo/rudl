@@ -3,18 +3,8 @@
 :host {
   display: block;
 
-  map {
+  location-picker {
     height: 15rem;
-    border-radius: $base-border-radius;
-    margin-bottom: map_get($base-padding, 'small');
-  }
-
-  input, textarea {
-    @include setup-input();
-  }
-
-  textarea {
-    line-height: map_get($base-line-height, 'multiline');
   }
 
   .split-content {
@@ -45,6 +35,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    margin-top: map_get($base-padding, 'default');
 
     styled-button {
       flex: 0 0 auto;

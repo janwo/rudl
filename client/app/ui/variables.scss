@@ -102,29 +102,32 @@ $base-max-width: (
   }
 }
 
-@mixin setup-input() {
+@mixin setup-input-borders() {
+  border: map_get($base-line-widths, 'default') inactive(map_get($base-colors, 'secondary')) solid;
+  border-radius: $base-border-radius;
+}
+
+@mixin setup-input($borders: true) {
   $input-field-input-font-size: map_get($base-font-size, 'default');
-  $input-field-input-padding: $input-field-input-font-size / 1.5; // --> 1 / 1.5 = 0.666
+  $input-field-input-padding: $input-field-input-font-size / 1.5; // Golden Ratio <3
 
   resize: none;
-  width: 100%;
-  display: inline-block;
+  border: none;
+  outline: none;
+  display: block;;
   color: map_get($base-colors, 'primary-text');
   padding: $input-field-input-padding;
-  margin-bottom: map_get($base-padding, 'small');
   font-size: $input-field-input-font-size;
   font-family: $base-font-family;
   font-weight: $base-font-weight-normal;
   line-height: map_get($base-line-height, 'default');
-  border: map_get($base-line-widths, 'default') inactive(map_get($base-colors, 'secondary')) solid;
-  border-radius: $base-border-radius;
-  outline: none;
+  width: 100%;
 
   &::placeholder {
     color: inactive(map_get($base-colors, 'primary-text'));
   }
 
-  &:focus {
-    border-color: map_get($base-colors, 'secondary');
+  @if($borders) {
+    @include setup-input-borders();
   }
 }

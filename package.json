@@ -3,11 +3,11 @@
   "version": "0.2.0",
   "scripts": {
     "forever": "forever",
-    "docker": "docker-compose up --build",
+    "start": "./run-docker.sh",
+    "nodemon": "nodemon",
     "i18n": "ng-xi18n --project client ",
-    "start": "npm run babel && node run/index.js",
-    "babel": "babel run --out-dir run --presets es2015,stage-2",
-    "nodemon": "nodemon"
+    "docker-cmd": "npm run babel && node run/index.js",
+    "babel": "babel run --out-dir run --presets es2015,stage-2"
   },
   "dependencies": {
     "@angular/animations": "^4.0.0",
@@ -28,6 +28,7 @@
     "@types/core-js": "^0.9.38",
     "@types/crypto-js": "^3.1.33",
     "@types/dot-object": "^1.5.0",
+    "@types/faker": "^4.1.0",
     "@types/glob": "^5.0.30",
     "@types/hammerjs": "^2.0.34",
     "@types/handlebars": "^4.0.32",
@@ -54,13 +55,13 @@
     "babel-preset-stage-2": "^6.22.0",
     "bell": "^8.6.0",
     "boom": "^4.3.0",
-    "casual": "^1.5.11",
     "catbox-redis": "^2.0.2",
     "core-js": "^2.4.1",
     "crypto-js": "^3.1.9-1",
     "css-loader": "^0.27.3",
     "dot-object": "^1.5.4",
     "extract-text-webpack-plugin": "^2.1.0",
+    "faker": "^4.1.0",
     "file-loader": "^0.10.1",
     "font-awesome": "^4.7.0",
     "forever": "^0.15.3",

@@ -7,18 +7,42 @@
 	<span>Or authenticate via mail</span>
 </p>
 
-<div [ngClass]="{hide: isCollapsed}">
+<form [formGroup]="user" [ngClass]="{hide: isCollapsed}">
 	<div [ngClass]="{hide: !(signInOnly || indicatorComponent.selectedIndex == 0)}">
-		<input id="username" placeholder="{{'Enter ' + (signInOnly ? 'your' : 'an') + ' **username**' | highlight }}" type="text">
-		<input [ngClass]="{hide: signInOnly}" id="email" placeholder="{{'Enter your **email address**' | highlight }}" type="email">
-		<input id="password" placeholder="{{'Enter ' + (signInOnly ? 'your' : 'a strong') + ' **password**' | highlight }}" type="password">
+		<form-control-wrapper [description]="'Enter ' + (signInOnly ? 'your' : 'an') + ' **username**' | format" [errorMessages]="{
+			required: 'Bitte gebe einen Usernamen an.',
+			minlength: 'Dein Username ist zu kurz (mindestens 5 Zeichen).',
+			pattern: 'Dein Username darf nur Kleinbuchstaben, Zahlen, Bindestriche und Unterstriche enthalten.'
+		}">
+			<input id="username" formControlName="username" maxlength="16" placeholder="{{placeholders.username}}" type="text">
+		</form-control-wrapper>
+		<form-control-wrapper [ngClass]="{hide: signInOnly}" [description]="'Enter your **email address**' | format" [errorMessages]="{
+			required: 'Bitte gebe eine E-Mail-Adresse an.',
+			email: 'Deine E-Mail-Adresse ist nicht korrekt.'
+		}">
+			<input id="mail" formControlName="mail" placeholder="{{placeholders.mail}}" type="email">
+		</form-control-wrapper>
+		<form-control-wrapper [description]="'Enter ' + (signInOnly ? 'your' : 'a strong') + ' **password**' | format" [errorMessages]="{
+			required: 'Bitte gebe ein Passwort an.',
+			minlength: 'Dein Passwort ist zu kurz (mindestens 6 Zeichen).'
+		}">
+			<input id="password" formControlName="password" maxlength="32" placeholder="{{placeholders.password}}" type="password">
+		</form-control-wrapper>
 	</div>
 	<div [ngClass]="{hide: !(!signInOnly && indicatorComponent.selectedIndex == 1) }">
-		<input id="firstname" placeholder="{{'Enter your **firstname**' | highlight }}" type="text">
-		<input id="lastname" placeholder="{{'Enter your **lastname**' | highlight }}" type="text">
+		<form-control-wrapper [description]="'Enter your **firstname**' | format" [errorMessages]="{
+			required: 'Bitte gebe einen Vornamen an.'
+		}">
+			<input id="firstName" maxlength="24" formControlName="firstName" placeholder="{{placeholders.firstName}}" type="text">
+		</form-control-wrapper>
+		<form-control-wrapper [description]="'Enter your **lastname**' | format" [errorMessages]="{
+			required: 'Bitte gebe einen Nachnamen an.'
+		}">
+			<input id="lastName" maxlength="24" formControlName="lastName" placeholder="{{placeholders.lastName}}" type="text">
+		</form-control-wrapper>
 	</div>
 	<indicator [ngClass]="{hide: signInOnly}" [indicators]="['Basic Information', 'Personal Information']"></indicator>
-</div>
+</form>
 <styled-button class="auth-button-mail" (click)="onClickMailButton()" [fa]="'envelope'" [text]="(signInOnly ? 'Sign In with Mail' : ( isCollapsed || indicatorComponent.selectedIndex == 1 ? 'Sign Up with Mail' : 'Continue'))"></styled-button>
 
 <small>

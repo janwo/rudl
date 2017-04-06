@@ -1,0 +1,64 @@
+@import '../../../variables';
+
+$form-control-wrapper-input-padding: map_get($base-font-size, 'default') / 1.5; // Golden Ratio <3
+
+:host {
+  display: block;
+
+  label {
+    font-size: map_get($base-font-size, 'small');
+    color: map_get($base-colors, 'secondary-text');
+    display: inline-block;
+    margin-top: map_get($base-padding, 'smallest');
+    margin-bottom: map_get($base-padding, 'smallest');
+
+    /deep/ .bold {
+      font-weight: $base-font-weight-bold;
+    }
+  }
+
+  div {
+    overflow: hidden;
+    margin-bottom: map_get($base-padding, 'small');
+    @include setup-input-borders();
+
+    small {
+      display: none;
+      font-size: map_get($base-font-size, 'small');
+      background-color: map_get($base-colors, 'warning-text');
+      color: map_get($base-colors, 'background-highlighted');
+      padding: map_get($base-padding, 'smallest') $form-control-wrapper-input-padding;
+    }
+
+    & > /deep/ input,
+    & > /deep/ textarea {
+      @include setup-input(false);
+    }
+
+    & > /deep/ textarea {
+      line-height: map_get($base-line-height, 'multiline');
+    }
+  }
+
+  &.valid:not(.empty) {
+    div {
+      border-color: map_get($base-colors, 'secondary');
+    }
+  }
+
+  &.invalid.touched,
+  &.invalid.dirty {
+    div {
+      border-color: map_get($base-colors, 'warning-text');
+
+      & /deeo/ > input,
+      & /deep/ > textarea {
+        color: map_get($base-colors, 'warning-text');
+      }
+
+      small {
+        display: block;
+      }
+    }
+  }
+}

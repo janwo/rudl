@@ -59,7 +59,7 @@ export module ActivityController {
 				}));
 			});
 		};
-			
+		
 		let now = Date.now();
 		let transformed = activity instanceof Array ? Promise.all(activity.map(createPublicActivity)) : createPublicActivity(activity);
 		return transformed.then((result: any | Array<any>) => {
@@ -216,7 +216,7 @@ export module ActivityController {
 				translations: translations
 			};
 			// TODO Change to vertexCollection, see bug https://github.com/arangodb/arangojs/issues/354
-			return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.activities.name).save(activity).then((activity: Activity) => {
+			return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.activities.name).save(activity, true).then(activity => activity.new).then((activity: Activity) => {
 				let userOwnsActivity : UserOwnsActivity = {
 					_from: user._id,
 					_to: activity._id,
@@ -235,7 +235,7 @@ export module ActivityController {
 					DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userOwnsActivity.name).save(userOwnsActivity),
 					DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsActivity.name).save(userFollowsActivity)
 				]).then(() => activity);
-			})
+			});
 		});
 	}
 	

@@ -9,7 +9,7 @@ import {HttpModule, JsonpModule} from "@angular/http";
 import {LoginGuard} from "./guards/login";
 import {DataService} from "./services/data.service";
 import {routing, appRoutingProviders} from "./app.routes";
-import {FormsModule} from "@angular/forms";
+import { ReactiveFormsModule} from "@angular/forms";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {UserService} from "./services/user.service";
 import {IndicatorComponent} from "./ui/widgets/state/indicator.component";
@@ -36,7 +36,7 @@ import {SearchBarComponent} from "./ui/widgets/search/search-bar.component";
 import {SearchService} from "./services/search.service";
 import {CreateActivityComponent} from "./ui/widgets/activity/create-activity.component";
 import {CreateListComponent} from "./ui/widgets/list/create-list.component";
-import {CheckboxComponent} from "./ui/widgets/controls/checkbox.component";
+import {CheckboxComponent} from "./ui/widgets/controls/form/checkbox.component";
 import {LegalComponent} from "./ui/layouts/legal/legal.component";
 import {TranslationListComponent} from "./ui/widgets/translation/translation-list.component";
 import {ActivityService} from "./services/activity.service";
@@ -65,12 +65,13 @@ import {UserFollowersComponent} from "./ui/layouts/user/user-followers.component
 import {UserListsComponent} from "./ui/layouts/user/user-lists.component";
 import {UserAvatarComponent} from "./ui/widgets/user/user-avatar.component";
 import {UserItemComponent} from "./ui/widgets/user/user-item.component";
-import {DateTimeComponent} from "./ui/widgets/controls/datetime.component";
+import {DateTimeComponent} from "./ui/widgets/controls/form/datetime.component";
 import {GeocodeService} from "./services/geocode.service";
 import {LocationSearchComponent} from "./ui/widgets/controls/location-search.component";
 import {FormatCoordinatesPipe} from "./pipes/coordinates.pipe";
-import {InviteComponent} from "./ui/widgets/controls/invite.component";
-import {InputFieldWrapper} from "./ui/widgets/controls/input-wrapper.component";
+import {InviteComponent} from "./ui/widgets/controls/form/invite.component";
+import {FormControlWrapper} from "./ui/widgets/controls/form/form-control-wrapper.component";
+import {LocationPickerComponent} from "./ui/widgets/controls/form/location-picker.component";
 
 @NgModule({
     declarations: [
@@ -90,6 +91,7 @@ import {InputFieldWrapper} from "./ui/widgets/controls/input-wrapper.component";
 	    ModalComponent,
 	    QuestionComponent,
 	    LogoComponent,
+	    LocationPickerComponent,
 	    MenuComponent,
 	    MenuItemComponent,
 	    EventComponent,
@@ -123,7 +125,7 @@ import {InputFieldWrapper} from "./ui/widgets/controls/input-wrapper.component";
 	    SearchBarComponent,
 	    CreateEventComponent,
 	    LegalComponent,
-	    InputFieldWrapper,
+	    FormControlWrapper,
 	    UserComponent,
 	    UserActivitiesComponent,
 	    UserFolloweesComponent,
@@ -148,7 +150,7 @@ import {InputFieldWrapper} from "./ui/widgets/controls/input-wrapper.component";
 	    appRoutingProviders
     ],
     imports: [
-        FormsModule,
+        ReactiveFormsModule,
         BrowserAnimationsModule,
         HttpModule,
         JsonpModule,

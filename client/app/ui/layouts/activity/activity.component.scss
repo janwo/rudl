@@ -60,13 +60,12 @@
     overflow: hidden;
     display: block;
     cursor: pointer;
-    transition: padding 0.3s;
 
     .title {
       display: flex;
       color: inactive(map_get($base-colors, 'primary-text'));
       flex-direction: row;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
       font-size: map_get($base-font-size, 'large');
       transition: font-size 0.3s, color 0.3s, font-weight 0.3s;
@@ -77,20 +76,18 @@
 
       i {
         flex: 0 0 auto;
-        margin-right: map_get($base-padding, 'smaller');
+        margin-right: map_get($base-padding, 'small');
       }
     }
 
     &.expanded {
       cursor: default;
-      padding: map_get($base-padding, 'default');
 
       .title {
         font-weight: $base-heading-font-weight-normal;
         font-family: $base-heading-font-family;
         color: map_get($base-colors, 'primary-text');
         margin-bottom: map_get($base-heading-font-size, 'h1');
-        margin-left: 0;
         font-size: map_get($base-heading-font-size, 'h1');
       }
     }
