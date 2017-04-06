@@ -27,10 +27,6 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
       padding-left: $header-horizontal-padding;
       padding-right: $header-horizontal-padding;
       height: $header-vertical-padding * 2 + $header-content-size;
-
-      logo /deep/ span {
-        display: none;
-      }
     }
 
     .stretched {
