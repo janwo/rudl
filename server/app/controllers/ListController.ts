@@ -104,41 +104,31 @@ export module ListController {
 		translationKeys.forEach(translationKey => translations[translationKey] = translations[translationKey].trim());
 		
 		// Check, if list with that translation already exist.
-		return findByUser(user).then((lists: List[]) => {
-			for(let i = 0; i < lists.length; i++) {
-				let list = lists[i];
-				for(let j = 0; j < translationKeys.length; j++) {
-					let translationKey = translationKeys[j];
-					if(translations[translationKey] == list.translations[translationKey]) return Promise.reject<List>(Boom.badData(`There is already a list with the following translation: ${translationKey}`));
-				}
-			}
-		}).then(() => {
-			let now = new Date().toISOString();
-			let list : List = {
+		let now = new Date().toISOString();
+		let list : List = {
+			createdAt: now,
+			updatedAt: now,
+			translations: translations
+		};
+		// TODO Change to vertexCollection, see bug https://github.com/arangodb/arangojs/issues/354
+		return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.lists.name).save(list, true).then(list => list.new).then((list: List) => {
+			let userOwnsList : UserOwnsList = {
+				_from: user._id,
+				_to: list._id,
 				createdAt: now,
-				updatedAt: now,
-				translations: translations
+				updatedAt: now
 			};
-			// TODO Change to vertexCollection, see bug https://github.com/arangodb/arangojs/issues/354
-			return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.lists.name).save(list, true).then(list => list.new).then((list: List) => {
-				let userOwnsList : UserOwnsList = {
-					_from: user._id,
-					_to: list._id,
-					createdAt: now,
-					updatedAt: now
-				};
-				
-				let userFollowsList : UserFollowsList = {
-					_from: user._id,
-					_to: list._id,
-					createdAt: now,
-					updatedAt: now
-				};
-				return Promise.all([
-					DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userOwnsList.name).save(userOwnsList),
-					DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsList.name).save(userFollowsList)
-				]).then(() => list);
-			})
+			
+			let userFollowsList : UserFollowsList = {
+				_from: user._id,
+				_to: list._id,
+				createdAt: now,
+				updatedAt: now
+			};
+			return Promise.all([
+				DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userOwnsList.name).save(userOwnsList),
+				DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsList.name).save(userFollowsList)
+			]).then(() => list);
 		});
 	}
 	

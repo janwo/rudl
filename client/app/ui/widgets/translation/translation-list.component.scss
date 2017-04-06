@@ -10,9 +10,9 @@
     li {
       display: flex;
       flex-direction: row;
-      align-items: center;
+      position: relative;
 
-      input {
+      form-control-wrapper {
         flex: 1 1 auto;
       }
 
@@ -20,7 +20,12 @@
         flex: 0 1 auto;
       }
 
-      *:not(:last-child){
+    dropdown-menu {
+      flex: 0 1 auto;
+      top: 100%;
+    }
+
+    *:not(:last-child){
         margin-right: map_get($base-padding, 'small');
       }
     }

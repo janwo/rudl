@@ -10,6 +10,13 @@ export module Locale {
 	    'fr'
 	];
 	
+	export const languageNames = {
+		de: 'Deutsch',
+		en: 'Englisch',
+		es: 'Spanisch',
+		fr: 'Französisch'
+	};
+	
 	export function getBestTranslation(translations: Translations, knownLanguages: Array<Language>): string {
 		let translationLanguages = Object.keys(translations) as Array<Language>;
 		let bestLanguage = getBestLanguage(translationLanguages, knownLanguages);

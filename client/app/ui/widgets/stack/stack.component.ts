@@ -12,7 +12,7 @@ import {
 	AfterViewInit
 } from "@angular/core";
 import {Observable, Subscription} from "rxjs";
-import {ButtonStyles} from "../controls/styled-button.component";
+import {ButtonStyles} from "../control/styled-button.component";
 
 export interface StackResult {
 	content: any;

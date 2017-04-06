@@ -1,11 +1,13 @@
-import {Component, Input, Output, EventEmitter} from "@angular/core";
+import {Component, Input, Output, EventEmitter, ViewChild} from "@angular/core";
 import {Router} from "@angular/router";
 import {Locale} from "../../../models/locale";
-import {ButtonStyles} from "../controls/styled-button.component";
+import {ButtonStyles} from "../control/styled-button.component";
 import {ListService} from "../../../services/list.service";
 import {ListRecipe} from "../../../models/list";
 import Language = Locale.Language;
 import Translations = Locale.Translations;
+import {TranslationListComponent} from "../translation/translation-list.component";
+import {AbstractControl, FormArray, FormControl, FormGroup} from "@angular/forms";
 
 @Component({
     templateUrl: 'create-list.component.html',
@@ -16,10 +18,9 @@ export class CreateListComponent {
     
     @Input() defaultName: string;
     @Output() onCanceled: EventEmitter<any> = new EventEmitter();
-    recipe: ListRecipe = {
-        translations: {},
-        activities: []
-    };
+	@ViewChild(TranslationListComponent) translationList: TranslationListComponent;
+	
+	submitPending: boolean;
     buttonStyle: ButtonStyles = ButtonStyles.uncolored;
     
     constructor(
@@ -27,15 +28,34 @@ export class CreateListComponent {
         private router: Router
     ) {}
     
-    setTranslations(translations: Translations) {
-        this.recipe.translations = translations;
-    }
-    
     cancel() {
         this.onCanceled.emit();
     }
     
     submit() {
-        this.listService.create(this.recipe).subscribe(list => this.router.navigate(['/lists', list.id]));
+        this.translationList.markAsTouched();
+        if(!this.translationList.takenTranslations.valid) return;
+    
+        // Mark as pending.
+        this.submitPending = true;
+    
+        // Create activity recipe.
+        let listRecipe: ListRecipe = {
+		    translations: {},
+		    activities: []
+	    };
+    
+        // Fire and remove pending state when done.
+        this.translationList.takenTranslations.value.forEach((translation: {
+        	language: string, translation: string
+        }) => listRecipe.translations[translation.language] = translation.translation);
+    
+        this.listService.create(listRecipe).subscribe(list => {
+            this.submitPending = false;
+            this.router.navigate(['/lists', list.id]);
+        }, error => {
+            this.submitPending = false;
+            alert(error.message);
+        });
     }
 }

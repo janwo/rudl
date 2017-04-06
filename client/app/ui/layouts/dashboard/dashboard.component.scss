@@ -21,15 +21,12 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
     padding-left: $header-horizontal-padding-mobile;
     padding-right: $header-horizontal-padding-mobile;
     height: $header-vertical-padding-mobile * 2 + $header-content-size;
+    position: relative;
 
     @include breakpoint('small') {
       padding-left: $header-horizontal-padding;
       padding-right: $header-horizontal-padding;
       height: $header-vertical-padding * 2 + $header-content-size;
-
-      logo /deep/ span {
-        display: none;
-      }
     }
 
     .stretched {
@@ -95,7 +92,7 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
     }
 
     dropdown-menu {
-      top: $header-content-size + $header-vertical-padding * 2;
+      top: 100%;
       right: $header-horizontal-padding-mobile;
 
       @include breakpoint('small') {

@@ -3,7 +3,7 @@ import {UserService} from "../../../services/user.service";
 import {Subscription, Subject} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
 import {User} from "../../../models/user";
-import {ButtonStyles} from "../../widgets/controls/styled-button.component";
+import {ButtonStyles} from "../../widgets/control/styled-button.component";
 
 @Component({
     templateUrl: 'user.component.html',

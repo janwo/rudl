@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, Input} from "@angular/core";
 import {trigger, transition, style, animate} from "@angular/animations";
 import {MenuComponent} from "./menu.component";
 
@@ -27,6 +27,7 @@ import {MenuComponent} from "./menu.component";
 export class DropdownMenuComponent extends MenuComponent {
     
     isVisible : boolean = false;
+    @Input() arrowAlignment: 'left' | 'center' | 'right' = 'center';
     
     toggle() : void {
         this.isVisible = !this.isVisible;
