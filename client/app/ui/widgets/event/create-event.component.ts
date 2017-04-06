@@ -1,7 +1,7 @@
 import {Component, Output, EventEmitter, Input, OnInit} from "@angular/core";
 import {Router} from "@angular/router";
 import {Locale} from "../../../models/locale";
-import {ButtonStyles} from "../controls/styled-button.component";
+import {ButtonStyles} from "../control/styled-button.component";
 import {EventRecipe} from "../../../models/event";
 import {EventService} from "../../../services/event.service";
 import Language = Locale.Language;

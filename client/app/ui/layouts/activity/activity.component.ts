@@ -3,7 +3,7 @@ import {trigger, transition, style, animate, state} from "@angular/animations";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Params} from "@angular/router";
 import {Activity} from "../../../models/activity";
-import {ButtonStyles} from "../../widgets/controls/styled-button.component";
+import {ButtonStyles} from "../../widgets/control/styled-button.component";
 import {ModalComponent} from "../../widgets/modal/modal.component";
 import {ActivityService} from "../../../services/activity.service";
 

@@ -3,7 +3,7 @@ import {Subscription, Observable} from "rxjs";
 import {List} from "../../../models/list";
 import {ActivatedRoute, Params} from "@angular/router";
 import {Activity} from "../../../models/activity";
-import {ButtonStyles} from "../../widgets/controls/styled-button.component";
+import {ButtonStyles} from "../../widgets/control/styled-button.component";
 import {ModalComponent} from "../../widgets/modal/modal.component";
 import {ListService} from "../../../services/list.service";
 

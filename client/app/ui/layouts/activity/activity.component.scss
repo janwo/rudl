@@ -57,7 +57,6 @@
 
   .card.add-event {
     margin-top: map_get($base-padding, 'smaller');
-    overflow: hidden;
     display: block;
     cursor: pointer;
 
@@ -92,7 +91,8 @@
       }
     }
 
-    create-event {
+    create-event.ng-animating {
+      overflow: hidden;
     }
   }
 

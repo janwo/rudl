@@ -2,7 +2,7 @@ import {Component, OnInit, OnDestroy} from "@angular/core";
 import {trigger, transition, style, animate} from "@angular/animations";
 import {Subscription} from "rxjs";
 import {ActivatedRoute, Params, Router} from "@angular/router";
-import {ButtonStyles} from "../../widgets/controls/styled-button.component";
+import {ButtonStyles} from "../../widgets/control/styled-button.component";
 import {UserService} from "../../../services/user.service";
 import {DomSanitizer, SafeStyle} from "@angular/platform-browser";
 
@@ -87,7 +87,7 @@ export class BoardingComponent implements OnInit, OnDestroy {
     }
     
     openHelpTopic() {
-    	
+    
     }
     
     ngOnDestroy(){

@@ -1,11 +1,12 @@
-import {Component, Input, Output, EventEmitter} from "@angular/core";
+import {Component, Input, Output, EventEmitter, OnInit, ViewChild} from "@angular/core";
 import {Router} from "@angular/router";
 import {Locale} from "../../../models/locale";
-import {ButtonStyles} from "../controls/styled-button.component";
+import {ButtonStyles} from "../control/styled-button.component";
 import {ActivityService} from "../../../services/activity.service";
 import {ActivityRecipe} from "../../../models/activity";
 import Language = Locale.Language;
 import Translations = Locale.Translations;
+import {TranslationListComponent} from "../translation/translation-list.component";
 
 @Component({
     templateUrl: 'create-activity.component.html',
@@ -16,9 +17,9 @@ export class CreateActivityComponent {
     
     @Input() defaultName: string;
     @Output() onCanceled: EventEmitter<any> = new EventEmitter();
-    recipe: ActivityRecipe = {
-    	translations: {}
-    };
+    @ViewChild(TranslationListComponent) translationList: TranslationListComponent;
+    
+    submitPending: boolean;
     buttonStyle: ButtonStyles = ButtonStyles.uncolored;
     
     constructor(
@@ -26,15 +27,33 @@ export class CreateActivityComponent {
         private router: Router
     ) {}
     
-    setTranslations(translations: Translations) {
-        this.recipe.translations = translations;
-    }
-    
     cancel() {
         this.onCanceled.emit();
     }
     
     submit() {
-        this.activityService.create(this.recipe).subscribe(activity => this.router.navigate(['/activities', activity.id]));
+	    this.translationList.markAsTouched();
+	    if(!this.translationList.takenTranslations.valid) return;
+	
+	    // Mark as pending.
+	    this.submitPending = true;
+	
+		// Create activity recipe.
+	    let activityRecipe: ActivityRecipe = {
+		    translations: {}
+	    };
+	    
+	    // Fire and remove pending state when done.
+	    this.translationList.takenTranslations.value.forEach((translation: {
+	        language: string, translation: string
+	    }) => activityRecipe.translations[translation.language] = translation.translation);
+	    
+	    this.activityService.create(activityRecipe).subscribe(activity => {
+		    this.submitPending = false;
+		    this.router.navigate(['/rudel', activity.id])
+	    }, error => {
+		    this.submitPending = false;
+		    alert(error.message);
+	    });
     }
 }

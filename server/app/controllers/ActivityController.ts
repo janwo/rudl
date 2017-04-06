@@ -198,44 +198,33 @@ export module ActivityController {
 		let translationKeys = Object.keys(translations);
 		translationKeys.forEach(translationKey => translations[translationKey] = translations[translationKey].trim());
 		
-		// Check, if list with that translation already exist.
-		return findByUser(user).then((activities: Activity[]) => {
-			for(let i = 0; i < activities.length; i++) {
-				let activity = activities[i];
-				for(let j = 0; j < translationKeys.length; j++) {
-					let translationKey = translationKeys[j];
-					if(translations[translationKey] == activity.translations[translationKey]) return Promise.reject<Activity>(Boom.badData(`There is already a activity with the following translation: ${translationKey}`));
-				}
-			}
-		}).then(() => {
-			let now = new Date().toISOString();
-			let activity : Activity = {
-				defaultLocation: null,
+		let now = new Date().toISOString();
+		let activity : Activity = {
+			defaultLocation: null,
+			createdAt: now,
+			updatedAt: now,
+			translations: translations
+		};
+		// TODO Change to vertexCollection, see bug https://github.com/arangodb/arangojs/issues/354
+		return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.activities.name).save(activity, true).then(activity => activity.new).then((activity: Activity) => {
+			let userOwnsActivity : UserOwnsActivity = {
+				_from: user._id,
+				_to: activity._id,
 				createdAt: now,
-				updatedAt: now,
-				translations: translations
+				updatedAt: now
 			};
-			// TODO Change to vertexCollection, see bug https://github.com/arangodb/arangojs/issues/354
-			return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.activities.name).save(activity, true).then(activity => activity.new).then((activity: Activity) => {
-				let userOwnsActivity : UserOwnsActivity = {
-					_from: user._id,
-					_to: activity._id,
-					createdAt: now,
-					updatedAt: now
-				};
-				
-				let userFollowsActivity : UserFollowsActivity = {
-					_from: user._id,
-					_to: activity._id,
-					createdAt: now,
-					updatedAt: now
-				};
-				
-				return Promise.all([
-					DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userOwnsActivity.name).save(userOwnsActivity),
-					DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsActivity.name).save(userFollowsActivity)
-				]).then(() => activity);
-			});
+			
+			let userFollowsActivity : UserFollowsActivity = {
+				_from: user._id,
+				_to: activity._id,
+				createdAt: now,
+				updatedAt: now
+			};
+			
+			return Promise.all([
+				DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userOwnsActivity.name).save(userOwnsActivity),
+				DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsActivity.name).save(userFollowsActivity)
+			]).then(() => activity);
 		});
 	}
 	

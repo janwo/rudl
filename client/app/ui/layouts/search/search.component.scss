@@ -24,7 +24,9 @@
     }
 
     .create {
-      overflow: hidden;
+      create-activity.ng-animating {
+        overflow: hidden;
+      }
 
       .title {
         display: block;

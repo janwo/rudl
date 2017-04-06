@@ -1,0 +1,84 @@
+@import '../../variables';
+
+$dropdown-menu-arrow-size: 0.5rem;
+$dropdown-menu-border-size: 0.1rem;
+$dropdown-arrow-size-stroke: $dropdown-menu-arrow-size;
+$dropdown-arrow-size-fill: $dropdown-menu-arrow-size - $dropdown-menu-border-size;
+$dropdown-menu-background-color: #fff;
+$dropdown-menu-arrow-center-offset: 1rem;
+
+:host {
+  position: absolute;
+
+  .background {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+  }
+
+  .dropdown {
+    position: relative;
+    z-index: 101;
+    border: $dropdown-menu-border-size solid map_get($base-colors, 'primary');
+    list-style: none;
+    background: $dropdown-menu-background-color;
+    box-shadow: 0.125rem 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+
+    &:after, &:before {
+      content: '';
+      width: 0;
+      height: 0;
+      position: absolute;
+      bottom: 100%;
+      border-style: solid;
+      border-color: transparent transparent map_get($base-colors, 'primary') transparent;
+      border-width: 0 $dropdown-arrow-size-stroke $dropdown-arrow-size-stroke $dropdown-arrow-size-stroke;
+    }
+
+    &:after {
+      border-color: transparent transparent $dropdown-menu-background-color transparent;
+      border-width: 0 $dropdown-arrow-size-fill $dropdown-arrow-size-fill $dropdown-arrow-size-fill;
+    }
+
+    &.center {
+      &:after, &:before {
+        margin-right: - $dropdown-arrow-size-stroke / 2;
+        right: 50%;
+      }
+
+      &:after {
+        margin-right: - $dropdown-arrow-size-fill / 2;
+        right: 50%;
+      }
+    }
+
+    &.left {
+      &:after, &:before {
+        left: $dropdown-menu-arrow-center-offset - $dropdown-arrow-size-stroke;
+      }
+
+      &:after {
+        left: $dropdown-menu-arrow-center-offset - $dropdown-arrow-size-fill;
+      }
+    }
+
+    &.right {
+      &:after, &:before {
+        right: $dropdown-menu-arrow-center-offset - $dropdown-arrow-size-stroke;
+      }
+
+      &:after {
+        right: $dropdown-menu-arrow-center-offset - $dropdown-arrow-size-fill;
+      }
+    }
+
+    /deep/ menu-item {
+      padding: map_get($base-padding, 'smaller');
+      color: map_get($base-colors, 'primary-text');
+      margin-right: 0;
+    }
+  }
+}

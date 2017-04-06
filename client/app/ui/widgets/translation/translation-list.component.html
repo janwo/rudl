@@ -1,14 +1,18 @@
-<ul>
-	<li class="translation" *ngFor="let takenLanguage of takenLanguages" [@row]>
-		<dropdown-menu #menu>
-			<menu-item *ngIf="availableLanguages.indexOf('de') >= 0" [title]="'Deutsch'" (click)="switchLanguage(takenLanguage, 'de')"></menu-item>
-			<menu-item *ngIf="availableLanguages.indexOf('en') >= 0" [title]="'Englisch'" (click)="switchLanguage(takenLanguage, 'en')"></menu-item>
-			<menu-item *ngIf="availableLanguages.indexOf('es') >= 0" [title]="'Spanisch'" (click)="switchLanguage(takenLanguage, 'es')"></menu-item>
-			<menu-item *ngIf="availableLanguages.indexOf('fr') >= 0" [title]="'Französisch'" (click)="switchLanguage(takenLanguage, 'fr')"></menu-item>
-		</dropdown-menu>
-		<styled-button [disabled]="availableLanguages.length == 0" [style]="buttonStyle" (click)="menu.toggle()" [flag]="takenLanguage"></styled-button>
-		<input <!--[ngModel]="translations[takenLanguage]"--> (keyup)="setTranslationText(takenLanguage, $event.target.value)">
-		<styled-button *ngIf="takenLanguages.length > 1" [fa]="'trash-o'" [style]="buttonStyle" (click)="deleteLanguage(takenLanguage)"></styled-button>
-	</li>
-</ul>
-<styled-button class="add-button" [disabled]="availableLanguages.length == 0" (click)="addLanguage()" [style]="buttonStyle" [text]="'Add Language'"></styled-button><!--TODO i18n-->
+<form [formGroup]="form">
+	<ul formArrayName="translations">
+		<li class="translation" [formGroupName]="i" *ngFor="let takenTranslationControl of takenTranslations.controls; let i=index" [@row]>
+			<dropdown-menu #menu [arrowAlignment]="'left'">
+				<menu-item *ngFor="let availableTranslationControl of availableTranslations.controls" [title]="languageNames[availableTranslationControl.value.language]" (click)="switchLanguage(takenTranslationControl.value.language, availableTranslationControl.value.language)"></menu-item>
+			</dropdown-menu>
+			<styled-button [disabled]="availableTranslations.controls.length == 0" [style]="buttonStyle" (click)="menu.toggle()" [flag]="takenTranslationControl.value.language"></styled-button>
+			<form-control-wrapper [errorMessages]="{
+				required: 'Bitte fülle die Übersetzung aus.',
+				minlength: 'Die Übersetzung ist zu kurz (mindestens 5 Zeichen).'
+			}">
+				<input type="text" maxlength="32" formControlName="translation">
+			</form-control-wrapper>
+			<styled-button *ngIf="takenTranslations.length > 1" [fa]="'trash-o'" [style]="buttonStyle" (click)="deleteLanguage(takenTranslationControl.value.language)"></styled-button>
+		</li>
+	</ul>
+	<styled-button class="add-button" [disabled]="availableTranslations.length == 0" (click)="addLanguage()" [style]="buttonStyle" [text]="'Add Language'"></styled-button><!--TODO i18n-->
+</form>
