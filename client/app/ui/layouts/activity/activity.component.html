@@ -17,8 +17,8 @@
 
 <div class="card add-event" [ngClass]="{expanded: expandedEventCreation}" (click)="expandedEventCreation = true">
 	<div class="title">
-		<i #titleIcon class="fa fa-plus"></i>
-		<span i18n [@expandHorizontally]="expandedEventCreation" (@expandHorizontally.start)="$event.toState && titleIcon.style.display = 'none'" (@expandHorizontally.done)="$event.fromState && titleIcon.style.display = 'block'">Event hinzufügen</span>
+		<!--TODO<i class="fa fa-plus">-->
+		<span i18n [@expandHorizontally]="expandedEventCreation">Event hinzufügen</span>
 	</div>
 	<create-event [activity]="activity" *ngIf="expandedEventCreation" [@expandVertically]="expandedEventCreation" (onCanceled)="expandedEventCreation = false"></create-event>
 </div>

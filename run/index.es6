@@ -27,7 +27,7 @@ class StartupManager {
 	
 	static createBackendServer(debug = false, onStart = () => {}){
 		let command = [
-			debug ? `npm run nodemon -- -e js --inspect --watch ${root('server')}` : 'node',
+			debug ? `npm run nodemon -- --watch ${root('server')} --inspect=0.0.0.0:9229 --ext js,json` : 'node',
 			'run/backend-server.js'
 		];
 		
@@ -62,9 +62,6 @@ class StartupManager {
 	}
 	
 	static start(){
-		// Show generated config.
-		print();
-		
 		// Create forever's monitor instances.
 		let backendServerMonitor = StartupManager.createBackendServer(Config.debug);
 		let watchTypescriptMonitor = StartupManager.createTypescriptCompiler(Config.debug);

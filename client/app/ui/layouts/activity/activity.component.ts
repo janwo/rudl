@@ -74,6 +74,8 @@ export class ActivityComponent implements OnInit, OnDestroy {
         this.activitySubscription.unsubscribe();
     }
     
+    log(e:any){console.log(e)}
+    
     onToggleFollow(checkOwnerStatus: boolean = false): void {
         if(checkOwnerStatus && this.activity.relations.isOwned) {
             this.unfollowModal.open();

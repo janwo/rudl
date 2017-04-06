@@ -120,7 +120,7 @@ export module ListController {
 				translations: translations
 			};
 			// TODO Change to vertexCollection, see bug https://github.com/arangodb/arangojs/issues/354
-			return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.lists.name).save(list).then((list: List) => {
+			return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.lists.name).save(list, true).then(list => list.new).then((list: List) => {
 				let userOwnsList : UserOwnsList = {
 					_from: user._id,
 					_to: list._id,

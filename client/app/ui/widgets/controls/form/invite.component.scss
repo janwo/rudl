@@ -1,4 +1,4 @@
-@import '../../variables';
+@import '../../../variables';
 
 $invite-font-size: map_get($base-font-size, 'default');
 $invite-border-size: map_get($base-line-widths, 'default');

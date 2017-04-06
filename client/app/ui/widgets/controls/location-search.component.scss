@@ -1,31 +1,18 @@
 @import '../../variables';
 
-$location-search-border-size: map_get($base-line-widths, 'default');
-$location-search-border-radius: $base-border-radius;
 $location-search-border-color: map_get($base-colors, 'secondary');
 
 :host {
   display: flex;
-  border: $location-search-border-size inactive($location-search-border-color) solid;
-  border-radius: $location-search-border-radius;
   overflow: hidden;
   position: relative;
   flex-direction: column;
+  @include setup-input-borders();
   margin-bottom: map_get($base-padding, 'small');
 
   input {
     flex: 1 1 auto;
-    @include setup-input();
-    border: none;
-    margin-bottom: 0;
-  }
-
-  &.focused {
-    border-color: $location-search-border-color;
-
-    .input-mask i {
-      display: block;
-    }
+    @include setup-input(false);
   }
 
   .results {

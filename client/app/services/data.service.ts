@@ -105,10 +105,9 @@ export class DataService {
         return response.json();
     }
     
-    private errorHandler(err: any) : Observable<any> {
-        if(err.status === 401) this.removeToken();
-    
-        return Observable.throw(err);
+    private errorHandler(errResponse: any) : Observable<any> {
+        if(errResponse.status === 401) this.removeToken();
+        return Observable.throw(errResponse.json());
     }
 }
 

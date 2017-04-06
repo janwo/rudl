@@ -10,7 +10,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "5858:5858"
     volumes:
       - ./letsencrypt:/root/letsencrypt
       - ./.cache:/root/.cache
@@ -34,5 +33,3 @@ services:
     environment:
       - ARANGO_RANDOM_ROOT_PASSWORD=1
     image: arangodb
-    ports:
-      - "8529:8529"

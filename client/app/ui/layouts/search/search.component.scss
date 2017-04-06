@@ -2,9 +2,9 @@
 
 :host {
   display: flex;
-  @include setup-max-width();
   padding: map_get($base-padding, 'default');
   flex-direction: column;
+  @include setup-max-width();
 
   section:not(:first-child) {
     margin-top: map_get($base-padding, 'default');
@@ -25,7 +25,6 @@
 
     .create {
       overflow: hidden;
-      transition: padding 0.3s;
 
       .title {
         display: block;
@@ -47,8 +46,6 @@
       }
 
       &.expanded {
-        padding: map_get($base-padding, 'default');
-
         .title {
           cursor: default;
           font-weight: $base-heading-font-weight-normal;

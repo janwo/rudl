@@ -13,6 +13,7 @@ export class EventItemComponent implements OnInit {
 	@Input() event: Event;
 	formattedDate: string;
 	formattedLocation: string;
+	formattedAwaitingApproval: string;
 	
 	constructor(
 		private userService: UserService
@@ -23,6 +24,21 @@ export class EventItemComponent implements OnInit {
 		this.formattedDate = this.event.fuzzyTime ? `in about ${humanizedDate}` : `in ${humanizedDate}`;
 		
 		let distance = this.userService.getUsersDistance(this.event.location);
-		this.formattedLocation = this.event.needsApproval && !this.event.relations.isApproved ? `ca. ${Math.ceil(distance / 100) / 10} km(s) away` : `${Math.ceil(distance / 100) / 10} km(s) away`;
+		distance = distance <= 10000 ? Math.ceil(distance / 100) / 10 : Math.ceil(distance / 1000);
+		this.formattedLocation = this.event.needsApproval && !this.event.relations.isApproved ? `ca. ${distance} km` : `${distance} km`;
+		
+		switch(this.event.statistics.awaitingUsers) {
+			case 0:
+				this.formattedAwaitingApproval = 'Keine Anfragen';
+				break;
+			
+			case 1:
+				this.formattedAwaitingApproval = 'Eine Anfrage';
+				break;
+			
+			default:
+				this.formattedAwaitingApproval = `${this.event.statistics.awaitingUsers} Anfragen`;
+				break;
+		}
 	}
 }

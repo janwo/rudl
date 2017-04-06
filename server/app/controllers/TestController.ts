@@ -13,7 +13,7 @@ import {UserFollowsUser} from "../models/users/UserFollowsUser";
 import {AccountController} from "./AccountController";
 import randomstring = require("randomstring");
 import jwt = require("jsonwebtoken");
-import casual = require('casual');
+import * as faker from 'faker';
 
 export module TestController {
 	
@@ -28,38 +28,39 @@ export module TestController {
 	
 	function generateUser(): User {
 		let date = [
-			casual.date('YYYY-MM-DD HH:MM:SS.MMM'),
-			casual.date('YYYY-MM-DD HH:MM:SS.MMM')
+			faker.date.past().toISOString(),
+			faker.date.past().toISOString()
 		].sort();
-		
+		let firstName = faker.name.firstName();
+		let lastName = faker.name.lastName();
 		 let user: User = {
-			firstName: casual.first_name,
-			lastName: casual.last_name,
+			firstName: firstName,
+			lastName: lastName,
 			languages: [
 				//TODO Dynamic languages
 				'de',
 			    'en'
 			],
-			username: casual.username.toLowerCase().replace(/[^0-9a-z_-]/, '-'),
+			username: faker.internet.userName(firstName, lastName).toLowerCase().replace(/[^0-9a-z_-]/, '-'),
 			mails: [{
-				mail: casual.email,
+				mail: faker.internet.email(firstName, lastName),
 				verified: true
 			}],
 			scope: [
 				UserRoles.user
 			],
 			location: [
-				Number.parseFloat(casual.latitude),
-				Number.parseFloat(casual.longitude)
+				Number.parseFloat(faker.address.latitude()),
+				Number.parseFloat(faker.address.longitude())
 			],
 			meta: {
 				hasAvatar: false,
-				profileText: casual.short_description,
+				profileText: faker.lorem.sentences(2),
 				fulltextSearchData: null,
 				onBoard: true
 			},
 			auth: {
-				password: casual.password,
+				password: faker.internet.password(),
 				providers: [],
 			},
 			createdAt: date[0],
@@ -76,13 +77,13 @@ export module TestController {
 	function generateActivity(): Activity {
 		let translations = ['de', 'en', 'fr', 'es'];
 		let date = [
-			casual.date('YYYY-MM-DD HH:MM:SS.MMM'),
-			casual.date('YYYY-MM-DD HH:MM:SS.MMM')
+			faker.date.past().toISOString(),
+			faker.date.past().toISOString()
 		].sort();
 		let activity : Activity = {
 			defaultLocation: [
-				Number.parseFloat(casual.latitude),
-				Number.parseFloat(casual.longitude)
+				Number.parseFloat(faker.address.latitude()),
+				Number.parseFloat(faker.address.longitude())
 			],
 			translations: {},
 			createdAt: date[0],
@@ -91,7 +92,7 @@ export module TestController {
 		
 		// Generate random translations.
 		_.sampleSize(translations, Math.round(Math.random() * (translations.length - 1)) + 1).forEach(translation => {
-			activity.translations[translation] = `${casual.words(Math.random() * 5 + 3)} (${translation})`;
+			activity.translations[translation] = `${faker.lorem.words(Math.random() * 5 + 3)} (${translation})`;
 		});
 		
 		return activity;

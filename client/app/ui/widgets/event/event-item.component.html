@@ -1,7 +1,15 @@
 <div class="card" [routerLink]="['/events', event.id]">
 	<header>
 		<slots [users]="[event.owner]" [slots]="event.statistics.approvedUsers"></slots>
-		<ul>
+		<ul class="users-info">
+			<li>
+				<span>{{event.owner.firstName + ' ' + event.owner.lastName}}</span>
+			</li>
+			<li>
+				<span i18n>{{formattedAwaitingApproval}}</span>
+			</li>
+		</ul>
+		<ul class="event-info">
 			<li>
 				<i class="fa fa-map-marker"></i>
 				<span>{{formattedLocation}}</span>

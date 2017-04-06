@@ -1,7 +1,8 @@
-import {Component, Input, EventEmitter, Output, HostBinding} from "@angular/core";
+import {Component, Input, Optional} from "@angular/core";
 import * as moment from "moment";
 import {trigger, transition, style, animate} from "@angular/animations";
 import Moment = moment.Moment;
+import {ControlValueAccessor, NgControl} from "@angular/forms";
 
 @Component({
 	templateUrl: 'datetime.component.html',
@@ -32,20 +33,15 @@ import Moment = moment.Moment;
 		])
 	]
 })
-export class DateTimeComponent {
+export class DateTimeComponent implements ControlValueAccessor {
 	
-	@Input() dirty: boolean;
-	@Output() datetimeSelected: EventEmitter<string> = new EventEmitter();
+	constructor(@Optional() ngControl: NgControl) {
+		if (ngControl) ngControl.valueAccessor = this;
+	}
 	
 	@Input() set locale(string: string) {
 		if(!string) return;
 		this.selectedMoment.locale(string);
-		this.invalidate();
-	}
-	
-	@Input() set dateTime(string: string) {
-		if(!string) return;
-		this.selectedMoment = moment.utc(string).second(0).milliseconds(0).local();
 		this.invalidate();
 	}
 	
@@ -54,11 +50,7 @@ export class DateTimeComponent {
 		this.minMoment = moment.utc(string).second(0).milliseconds(0).local();
 		this.invalidate();
 	}
-	
-	@HostBinding('class.focused') get focused() {
-		return this.state != 'collapsed';
-	}
-    
+ 
 	selectedMoment: Moment = moment().add(1, 'days').add(1, 'hours').add(15, 'minutes');
 	minMoment: Moment = moment().add(1, 'hours');
 	state: 'collapsed' | 'day' | 'hour' | 'minute' = 'collapsed';
@@ -137,8 +129,7 @@ export class DateTimeComponent {
 	
 	initialState(): void {
 		this.state = 'collapsed';
-		this.dirty = true;
-		this.datetimeSelected.emit(this.selectedMoment.toISOString());
+		this.onTouched();
 	}
 	
 	nextState(): void {
@@ -157,10 +148,29 @@ export class DateTimeComponent {
 				break;
 			
 			case 'minute':
+				this.onChange(this.dateTime);
 				this.initialState();
 				break;
 		}
 	}
+	
+	writeValue(value: string): void {
+		if(value) this.dateTime = value;
+	}
+	
+	get dateTime(): string {
+		return this.selectedMoment.toISOString();
+	};
+	
+	@Input() set dateTime(value: string) {
+		if(value) this.selectedMoment = moment.utc(value).second(0).milliseconds(0).local();
+		this.invalidate();
+	}
+	
+	onChange = (_: any) => {};
+	onTouched = () => {};
+	registerOnChange(fn: (_: any) => void): void { this.onChange = fn; }
+	registerOnTouched(fn: () => void): void { this.onTouched = fn; }
 }
 
 interface CalendarItem {

@@ -11,12 +11,21 @@
     margin-bottom: map_get($base-padding, 'smaller');
 
     slots {
-      flex: 1 1 auto;
+      flex: 0 0 auto;
+      margin-right: map_get($base-padding, 'small');
     }
 
     ul {
       list-style: none;
       flex: 0 0 auto;
+
+      &:first-of-type {
+        flex: 1 1 auto;
+
+        li {
+          justify-content: flex-start;
+        }
+      }
 
       li {
         color: map_get($base-colors, 'secondary-text');
