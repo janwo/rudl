@@ -7,6 +7,6 @@ if [ -f $FILE ]; then
 	echo "Merging docker-compose files for $ENV environment..."
     docker-compose -f docker-compose.common.yml -f $FILE up --build;
 else
-	echo "Merging docker-compose files.2.."
+	echo "Merging docker-compose files..."
     docker-compose -f docker-compose.common.yml up --build;
 fi
