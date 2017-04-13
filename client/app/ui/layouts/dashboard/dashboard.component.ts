@@ -87,7 +87,7 @@ export class DashboardComponent implements OnInit {
         });
 
         // React to any search mode changes.
-        this.onSearchModeChangedSubscription = this.searchService.onSearchEvent.map(event => event.state).distinctUntilChanged().subscribe((state: SearchState) => {
+        this.onSearchModeChangedSubscription = this.searchService.onSearchEvent.map(expedition => expedition.state).distinctUntilChanged().subscribe((state: SearchState) => {
             this.inSearchMode = state == SearchState.OPENED;
         });
 

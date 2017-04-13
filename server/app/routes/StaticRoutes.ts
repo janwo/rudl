@@ -5,6 +5,19 @@ import {Config} from "../../../run/config";
 export const RoutesConfig: RoutesConfiguration = [
 	{
 		method: 'GET',
+		path: `${Config.paths.icons.publicPath}{path*}`,
+		handler: {
+			directory: {
+				path: Config.paths.icons.dir,
+				listing: Config.debug
+			}
+		},
+		config: {
+			auth: false
+		}
+	},
+	{
+		method: 'GET',
 		path: `${Config.paths.avatars.publicPath}{path*}`,
 		handler: {
 			directory: {

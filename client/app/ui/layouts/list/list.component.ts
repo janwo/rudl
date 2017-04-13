@@ -11,21 +11,20 @@ import {ListService} from "../../../services/list.service";
     templateUrl: 'list.component.html',
     styleUrls: ['list.component.scss']
 })
-export class ListComponent implements OnInit, OnDestroy {
+export class ListComponent implements OnInit {
     
     list: List;
     activities: Activity[];
-    listSubscription: Subscription;
     pendingFollowRequest: boolean = false;
-    buttonStyleDefault: ButtonStyles = ButtonStyles.minimal;
-    buttonStyleFollowing: ButtonStyles = ButtonStyles.minimalInverse;
+    buttonStyleDefault: ButtonStyles = ButtonStyles.outlined;
+    buttonStyleFollowing: ButtonStyles = ButtonStyles.filled;
     @ViewChild(ModalComponent) unfollowModal: ModalComponent;
     modalChoices = [{
-        style: ButtonStyles.default,
+        style: ButtonStyles.filledInverse,
         text: 'Abbrechen',
         callback: () => this.unfollowModal.close()
     }, {
-        style: ButtonStyles.uncolored,
+        style: ButtonStyles.outlinedInverse,
         text: 'Entfolgen',
         callback: () => {
             this.unfollowModal.close();
@@ -41,22 +40,12 @@ export class ListComponent implements OnInit, OnDestroy {
     ngOnInit(){
         // Get params.
         this.route.params.forEach((params: Params) => {
-            // Get selected tab.
-            let list = params['list'];
-    
-            this.listSubscription = Observable.zip(
-                this.listService.get(list),
-                this.listService.activities(list),
-                (list: List, activities: Activity[]) => {
-                    this.list = list;
-                    this.activities = activities;
-                }
-            ).subscribe();
+	        // Define changed params subscription.
+	        this.route.data.subscribe((data: { list: List }) => {
+		        this.list = data.list;
+		        this.listService.activities(data.list.id).subscribe((activities: Activity[]) => this.activities = activities);
+	        });
         });
-    }
-    
-    ngOnDestroy(){
-        this.listSubscription.unsubscribe();
     }
     
     onToggleFollow(checkOwnerStatus: boolean = false): void {

@@ -22,7 +22,7 @@ export class UserService {
         if(userStatus.user.location && this.getUsersDistance(userStatus.user.location) <= 100) return Observable.of(userStatus.user.location);
     
         return this.updateLocation(position.coords.latitude, position.coords.longitude).map(user => user.location);
-    });
+    }).share();
     
     private watchPositionCallerId: number | false = false;
 
@@ -44,7 +44,7 @@ export class UserService {
                 console.log(`authenticatedProfile got removed.`);
         });
         
-        // Listen on token events in data service and redirect it to the authenticatedProfile observer.
+        // Listen on token expeditions in data service and redirect it to the authenticatedProfile observer.
         this.dataService.getTokenObservable().flatMap((tokenString: string) => {
             return tokenString ? this.get() : Observable.of(null);
         }).subscribe((user: User) => {
@@ -53,6 +53,9 @@ export class UserService {
                 user: user
             });
         });
+        
+        // Subscribe to location updates.
+	    this.locationUpdates.subscribe();
     }
     
     getUsersDistance(location: number[]): number {

@@ -1,5 +1,10 @@
-<div class="translations">
-	<translation-list [defaultText]="defaultName"></translation-list>
+<div class="form-wrapper">
+	<form [formGroup]="form">
+		<form-control-wrapper>
+			<emoji-picker formControlName="icon"></emoji-picker>
+		</form-control-wrapper>
+		<translation-list [defaultText]="defaultName" [takenTranslations]="form.controls.translations"></translation-list>
+	</form>
 	<div class="info">
 		<h2 class="hide-max-small">Erhöhe deine Reichweite!</h2>
 		<p class="hide-max-small">Durch das hinzufügen weiterer Sprachen kannst du die Reichweite deiner Aktivität ganz einfach erhöhen! Probiere es doch jetzt einfach mal aus.</p>
@@ -7,6 +12,6 @@
 	</div>
 </div>
 <div class="buttons">
-	<styled-button (click)="cancel()" [style]="buttonStyle" [text]="'Abbrechen'"></styled-button>
+	<styled-button (click)="cancel()" [style]="cancelButtonStyle" [text]="'Abbrechen'"></styled-button>
 	<styled-button (click)="submit()" [text]="'Create'"></styled-button>
 </div>

@@ -2,6 +2,6 @@
 <ul class="results">
 	<li *ngFor="let geocodedLocation of locations" (click)="onClick($event, geocodedLocation.location)">
 		<span>{{geocodedLocation.label}}</span>
-		<small>{{geocodedLocation.location | formatCoordinates}}</small>
+		<small>{{geocodedLocation.location | coordinates}}</small>
 	</li>
 </ul>

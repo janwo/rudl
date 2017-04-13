@@ -8,7 +8,7 @@ import {ButtonStyles} from "./styled-button.component";
 })
 export class ExpanderComponent {
 	@Input() title: string;
-	buttonStyle: ButtonStyles = ButtonStyles.minimal;
+	buttonStyle: ButtonStyles = ButtonStyles.filled;
 	collapsed: boolean = true;
 	
 	onToggleCollapseState(){

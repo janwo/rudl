@@ -1,5 +1,5 @@
-<form [formGroup]="form">
-	<ul formArrayName="translations">
+<form [formGroup]="takenTranslations">
+	<ul>
 		<li class="translation" [formGroupName]="i" *ngFor="let takenTranslationControl of takenTranslations.controls; let i=index" [@row]>
 			<dropdown-menu #menu [arrowAlignment]="'left'">
 				<menu-item *ngFor="let availableTranslationControl of availableTranslations.controls" [title]="languageNames[availableTranslationControl.value.language]" (click)="switchLanguage(takenTranslationControl.value.language, availableTranslationControl.value.language)"></menu-item>

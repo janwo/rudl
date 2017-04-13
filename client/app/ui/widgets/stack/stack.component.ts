@@ -5,14 +5,12 @@ import {
 	OnDestroy,
 	EventEmitter,
 	OnInit,
-	Renderer,
 	QueryList,
 	ElementRef,
 	ViewChildren,
-	AfterViewInit
+	AfterViewInit, Renderer2
 } from "@angular/core";
 import {Observable, Subscription} from "rxjs";
-import {ButtonStyles} from "../control/styled-button.component";
 
 export interface StackResult {
 	content: any;
@@ -28,7 +26,7 @@ export class StackCardComponent implements AfterViewInit {
 	@Input() amplitude: number = 5;
 	
 	constructor(
-		private renderer: Renderer,
+		private renderer: Renderer2,
 		private element: ElementRef
 	) {}
 	
@@ -38,24 +36,31 @@ export class StackCardComponent implements AfterViewInit {
 	
 	setRotation(rotation: number) {
 		// Transform nested card.
-		this.renderer.setElementStyle(this.element.nativeElement.firstElementChild, 'transform', `rotate(${rotation}deg)`);
+		this.renderer.setStyle(this.element.nativeElement.firstElementChild, 'transform', `rotate(${rotation}deg)`);
 	}
 	
 	setProgress(markedAs: 'like' | 'dislike', range: number) {
 		// Style overlay.
 		let overlay = this.element.nativeElement.firstElementChild.lastElementChild;
-		this.renderer.setElementStyle(overlay, 'opacity', range.toString());
-		this.renderer.setElementStyle(overlay.lastElementChild, 'width', `${range * 100}%`);
-		this.renderer.setElementClass(overlay.lastElementChild, 'complete', range == 1);
-		if(markedAs) {
-			this.renderer.setElementClass(overlay, 'like', markedAs == 'like');
-			this.renderer.setElementClass(overlay, 'dislike', markedAs == 'dislike');
+		this.renderer.setStyle(overlay, 'opacity', range.toString());
+		this.renderer.setStyle(overlay.lastElementChild, 'width', `${range * 100}%`);
+		this.renderer.setStyle(overlay.lastElementChild, 'complete', range == 1);
+		switch(markedAs) {
+			case 'like':
+				this.renderer.removeClass(overlay, 'dislike');
+				this.renderer.addClass(overlay, 'like');
+				break;
+				
+			case 'dislike':
+				this.renderer.removeClass(overlay, 'like');
+				this.renderer.addClass(overlay, 'dislike');
+				break;
 		}
 	}
 	
 	transform(rotation: number, translateX: number, translateY: number) {
 		// Transform whole stack item.
-		this.renderer.setElementStyle(this.element.nativeElement, 'transform', `rotate(${rotation}deg) translate3d(0, 0, 0) translate(${translateX}px, ${translateY}px)`);
+		this.renderer.setStyle(this.element.nativeElement, 'transform', `rotate(${rotation}deg) translate3d(0, 0, 0) translate(${translateX}px, ${translateY}px)`);
 	}
 }
 
@@ -76,7 +81,6 @@ export class StackComponent implements OnDestroy, OnInit {
 	stackIndex: number = 0;
 	currentStackItem: StackCardComponent;
 	@ViewChildren(StackCardComponent) stackItems: QueryList<StackCardComponent>;
-	buttonStyle: ButtonStyles = ButtonStyles.minimal;
 	
 	constructor(
 		private rootElement: ElementRef

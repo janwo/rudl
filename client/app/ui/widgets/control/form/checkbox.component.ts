@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, Input, Optional} from "@angular/core";
+import {Component, ElementRef, HostBinding, HostListener, Input, Optional} from "@angular/core";
 import {ControlValueAccessor, NgControl} from "@angular/forms";
 
 @Component({
@@ -7,8 +7,8 @@ import {ControlValueAccessor, NgControl} from "@angular/forms";
     selector: 'checkbox'
 })
 export class CheckboxComponent implements ControlValueAccessor {
- 
-	checked: boolean;
+
+	@HostBinding('class.checked') checked: boolean;
 	@Input() text: string;
 	
     @HostListener('click') toggle(): void {

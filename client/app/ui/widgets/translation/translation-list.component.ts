@@ -40,11 +40,10 @@ import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 export class TranslationListComponent implements OnInit {
 	
 	@Input() defaultText: string = null;
-	@Output() form: FormGroup;
+	@Input() @Output() takenTranslations: FormArray = this.fb.array([]);
 	
-	takenTranslations: FormArray;
 	availableTranslations: FormArray;
-    buttonStyle: ButtonStyles = ButtonStyles.uncolored;
+    buttonStyle: ButtonStyles = ButtonStyles.filledInverseShadowed;
     languagePool: string[];
     languageNames = Locale.languageNames;
     
@@ -69,10 +68,6 @@ export class TranslationListComponent implements OnInit {
 	    });
 	    
 	    // Create form groups.
-	    this.takenTranslations = this.fb.array([]);
-	    this.form = this.fb.group({
-		    translations: this.takenTranslations
-	    });
 	    this.availableTranslations = this.fb.array(this.languagePool.map(key => {
 	    	return this.fb.group({
 			    language: [key, [

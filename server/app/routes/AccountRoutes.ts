@@ -1,4 +1,4 @@
-import {UserRoles} from "../models/users/User";
+import {UserRoles} from "../models/user/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {Config} from "../../../run/config";
 import {AccountController} from "../controllers/AccountController";

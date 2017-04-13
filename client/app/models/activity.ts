@@ -13,15 +13,18 @@ export interface Activity extends Document {
 	statistics: {
 		followers: number;
 		lists: number;
-		events: number;
+		expeditions: number;
 	};
 	defaultLocation: number[];
+	icon: string;
 	translations: Locale.Translations;
 }
 
 export interface ActivityLinks {
+	icon: string;
 }
 
 export interface ActivityRecipe {
 	translations: Locale.Translations;
+	icon: string,
 }

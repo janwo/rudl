@@ -1,4 +1,4 @@
-<div class="card" *ngIf="list">
+<div class="card">
 	<div class="user" [routerLink]="['/people', list.owner.username]">
 		<user-avatar [user]="list.owner"></user-avatar>
 		<div>
@@ -22,6 +22,6 @@
 		<activity-item [activity]="activity"></activity-item>
 	</li>
 </item-wrapper>
-<modal #modal>
+<modal #modal [title]="'Are you sure to unfollow list?'">
 	<question [choices]="modalChoices" [title]="'Are you sure to unfollow list?'" [description]='"Du bist der Ersteller dieser Liste. Durch das Entfolgen geht die Liste in den Besitz eines anderen Followers über. Listen ohne andere Follower werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."'></question>
 </modal>

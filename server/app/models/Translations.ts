@@ -16,4 +16,4 @@ export const TranslationsValidation = Joi.object().keys({
 	en: Joi.string().min(5).max(32),
 	es: Joi.string().min(5).max(32),
 	fr: Joi.string().min(5).max(32)
-}).min(1);
+}).min(1).optional();

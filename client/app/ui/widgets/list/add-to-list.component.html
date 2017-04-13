@@ -1,5 +1,7 @@
-<item-wrapper [noMargins]="true" [ngClass]="{disabled: pendingToggleRequest}">
-	<li *ngFor="let ownedList of ownedLists" [ngClass]="{checked: selectedListKeysOfActivity.indexOf(ownedList.id) >= 0}" (click)="toggleListMembership($event, ownedList)">
-		<span>{{ownedList.name}}</span><i class="fa fa-check"></i><i class="fa fa-plus"></i>
-	</li>
-</item-wrapper>
+<form [formGroup]="form">
+	<item-wrapper formArrayName="lists" [noMargins]="true" [ngClass]="{disabled: pendingToggleRequest}">
+		<li [formGroupName]="i" *ngFor="let formGroup of form.get('lists').controls; let i = index">
+			<checkbox [text]="formGroup.controls.list.value.name" formControlName="selected"></checkbox>
+		</li>
+	</item-wrapper>
+</form>

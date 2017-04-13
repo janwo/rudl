@@ -1,0 +1,23 @@
+@import '../variables';
+
+$emoji-size: 3rem;
+
+:host {
+  width: $emoji-size;
+  height: $emoji-size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $emoji-size / 2;
+  overflow: hidden;
+
+  div {
+    margin: 0;
+    display: block;
+    height: 115%;
+    width: 115%;
+    flex: 0 0 auto;
+    background-size: cover;
+    background-color: map_get($base-colors, 'background');
+  }
+}

@@ -8,7 +8,6 @@ import {SettingsComponent} from "./ui/layouts/settings/settings.component";
 import {ListComponent} from "./ui/layouts/list/list.component";
 import {SearchComponent} from "./ui/layouts/search/search.component";
 import {LegalComponent} from "./ui/layouts/legal/legal.component";
-import {EventComponent} from "./ui/layouts/event/event.component";
 import {BoardingComponent} from "./ui/layouts/boarding/boarding.component";
 import {BoardingGuard} from "./guards/boarding";
 import {UserComponent} from "./ui/layouts/user/user.component";
@@ -17,10 +16,12 @@ import {UserActivitiesComponent} from "./ui/layouts/user/user-activities.compone
 import {UserFolloweesComponent} from "./ui/layouts/user/user-followees.component";
 import {UserFollowersComponent} from "./ui/layouts/user/user-followers.component";
 import {ActivityComponent} from "./ui/layouts/activity/activity.component";
-import {ActivityPastEventsComponent} from "./ui/layouts/activity/activity-past-events.component";
-import {ActivityNearbyEventsComponent} from "./ui/layouts/activity/activity-nearby-events.component";
-import {ActivityUserEventsComponent} from "./ui/layouts/activity/activity-user-events.component";
 import {LandingComponent} from "./ui/layouts/landing/landing.component";
+import {ActivityResolver} from "./resolver/activity";
+import {ListResolver} from "./resolver/list";
+import {UserResolver} from "./resolver/user";
+import {ExpeditionResolver} from "./resolver/expedition";
+import {ExpeditionComponent} from "./ui/layouts/expedition/expedition.component";
 
 const appRoutes: Routes = [
     {
@@ -51,7 +52,9 @@ const appRoutes: Routes = [
 	        
 	        { path: 'people', component: PeopleComponent, pathMatch: 'full', canActivate: [ BoardingGuard ] },
            
-            { path: 'people/:username', component: UserComponent, canActivate: [BoardingGuard ], children: [
+            { path: 'people/:username', resolve: {
+	            user: UserResolver
+            }, component: UserComponent, canActivate: [BoardingGuard ], children: [
 	            { path: '', redirectTo: 'rudel', pathMatch: 'full' },
 	            { path: 'rudel', component: UserActivitiesComponent },
 	            { path: 'lists', component: UserListsComponent },
@@ -59,19 +62,20 @@ const appRoutes: Routes = [
 	            { path: 'followees', component: UserFolloweesComponent },
             ] },
            
-            { path: 'lists/:list', component: ListComponent, canActivate: [ BoardingGuard ] },
+            { path: 'lists/:list', component: ListComponent, resolve: {
+	            list: ListResolver
+            }, canActivate: [ BoardingGuard ] },
            
             { path: 'search', redirectTo: 'search/', pathMatch: 'full', canActivate: [ BoardingGuard ] },
             { path: 'search/:query', component: SearchComponent, canActivate: [ BoardingGuard ] },
-          
-	        { path: 'rudel/:activity', component: ActivityComponent, canActivate: [ BoardingGuard ], children: [
-                { path: '', redirectTo: 'nearby-events', pathMatch: 'full' },
-                { path: 'past-events', component: ActivityPastEventsComponent },
-                { path: 'nearby-events', component: ActivityNearbyEventsComponent },
-                { path: 'your-events', component: ActivityUserEventsComponent }
-            ] },
-          
-            { path: 'events/:event', component: EventComponent, canActivate: [ BoardingGuard ] },
+	
+	        { path: 'rudel/:activity', component: ActivityComponent, resolve: {
+            	activity: ActivityResolver
+	        }, canActivate: [ BoardingGuard ] },
+	        
+	        { path: 'expeditions/:expedition', component: ExpeditionComponent, resolve: {
+		        expedition: ExpeditionResolver
+	        }, canActivate: [ BoardingGuard ] },
 	        
 	        // No boarding required.
 	        { path: 'boarding', component: BoardingComponent },

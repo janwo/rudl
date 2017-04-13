@@ -1,5 +1,5 @@
 import {Config} from "../../../run/config";
-import {User, UserProvider} from "../models/users/User";
+import {User, UserProvider} from "../models/user/User";
 import {StrategyConfiguration} from "../binders/StrategiesBinder";
 import {UserController} from "../controllers/UserController";
 import {AuthController} from "../controllers/AuthController";

@@ -16,7 +16,7 @@ export class UserFollowersComponent implements OnInit, OnDestroy {
 	emptyState: EmptyState = {
 		title: 'No Followers',
 		image: require('../../../../assets/boarding/radar.png'),
-		description: 'Nobody follows you. Create events to make yourself visible!'
+		description: 'Nobody follows you. Create expeditions to make yourself visible!'
 	};
 	
 	constructor(

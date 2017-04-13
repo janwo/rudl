@@ -7,40 +7,56 @@ import {ActivityRecipe} from "../../../models/activity";
 import Language = Locale.Language;
 import Translations = Locale.Translations;
 import {TranslationListComponent} from "../translation/translation-list.component";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
     templateUrl: 'create-activity.component.html',
     styleUrls: ['create-activity.component.scss'],
     selector: 'create-activity'
 })
-export class CreateActivityComponent {
-    
-    @Input() defaultName: string;
+export class CreateActivityComponent implements OnInit {
+	
+	@Input() defaultName: string;
     @Output() onCanceled: EventEmitter<any> = new EventEmitter();
     @ViewChild(TranslationListComponent) translationList: TranslationListComponent;
+	form: FormGroup;
     
     submitPending: boolean;
-    buttonStyle: ButtonStyles = ButtonStyles.uncolored;
+    cancelButtonStyle: ButtonStyles = ButtonStyles.outlined;
     
     constructor(
         private activityService: ActivityService,
-        private router: Router
+        private router: Router,
+        private fb: FormBuilder
     ) {}
     
-    cancel() {
+	ngOnInit(): void {
+		this.form = this.fb.group({
+			translations: this.fb.array([]),
+			icon: [ null, [
+				Validators.required
+			]]
+		});
+		
+	}
+	
+	
+	cancel() {
         this.onCanceled.emit();
     }
     
     submit() {
 	    this.translationList.markAsTouched();
-	    if(!this.translationList.takenTranslations.valid) return;
+	    this.form.controls.icon.markAsTouched();
+	    if(!this.form.valid) return;
 	
 	    // Mark as pending.
 	    this.submitPending = true;
 	
 		// Create activity recipe.
 	    let activityRecipe: ActivityRecipe = {
-		    translations: {}
+		    translations: {},
+		    icon: this.form.controls.icon.value
 	    };
 	    
 	    // Fire and remove pending state when done.

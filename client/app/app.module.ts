@@ -10,6 +10,7 @@ import {LoginGuard} from "./guards/login";
 import {DataService} from "./services/data.service";
 import {routing, appRoutingProviders} from "./app.routes";
 import { ReactiveFormsModule} from "@angular/forms";
+import { ActivityResolver} from "./resolver/activity";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {UserService} from "./services/user.service";
 import {IndicatorComponent} from "./ui/widgets/state/indicator.component";
@@ -44,20 +45,13 @@ import {ListService} from "./services/list.service";
 import {AddToListComponent} from "./ui/widgets/list/add-to-list.component";
 import {LogoComponent} from "./ui/widgets/logo.component";
 import {MapComponent} from "./ui/widgets/map/map.component";
-import {EventComponent} from "./ui/layouts/event/event.component";
-import {SlotsComponent} from "./ui/widgets/event/slots.component";
-import {EventItemComponent} from "./ui/widgets/event/event-item.component";
-import {EventService} from "./services/event.service";
+import {SlotsComponent} from "./ui/widgets/expedition/slots.component";
 import {BoardingComponent} from "./ui/layouts/boarding/boarding.component";
 import {BoardingGuard} from "./guards/boarding";
 import {LoadingComponent} from "./ui/widgets/state/loading.component";
 import {EmptyComponent} from "./ui/widgets/state/empty.component";
 import {MenuItemComponent} from "./ui/widgets/menu/menu-item.component";
-import {CreateEventComponent} from "./ui/widgets/event/create-event.component";
 import {LandingComponent} from "./ui/layouts/landing/landing.component";
-import {ActivityNearbyEventsComponent} from "./ui/layouts/activity/activity-nearby-events.component";
-import {ActivityPastEventsComponent} from "./ui/layouts/activity/activity-past-events.component";
-import {ActivityUserEventsComponent} from "./ui/layouts/activity/activity-user-events.component";
 import {UserComponent} from "./ui/layouts/user/user.component";
 import {UserActivitiesComponent} from "./ui/layouts/user/user-activities.component";
 import {UserFolloweesComponent} from "./ui/layouts/user/user-followees.component";
@@ -68,10 +62,22 @@ import {UserItemComponent} from "./ui/widgets/user/user-item.component";
 import {DateTimeComponent} from "./ui/widgets/control/form/datetime.component";
 import {GeocodeService} from "./services/geocode.service";
 import {LocationSearchComponent} from "./ui/widgets/control/location-search.component";
-import {FormatCoordinatesPipe} from "./pipes/coordinates.pipe";
+import {CoordinatesPipe} from "./pipes/coordinates.pipe";
 import {InviteComponent} from "./ui/widgets/control/form/invite.component";
 import {FormControlWrapper} from "./ui/widgets/control/form/form-control-wrapper.component";
 import {LocationPickerComponent} from "./ui/widgets/control/form/location-picker.component";
+import {UserResolver} from "./resolver/user";
+import {ListResolver} from "./resolver/list";
+import {ExpeditionComponent} from "./ui/layouts/expedition/expedition.component";
+import {CreateExpeditionComponent} from "./ui/widgets/expedition/create-expedition.component";
+import {ExpeditionService} from "./services/expedition.service";
+import {ExpeditionResolver} from "./resolver/expedition";
+import {ExpeditionItemComponent} from "./ui/widgets/expedition/expedition-item.component";
+import {EmojiComponent} from "./ui/widgets/emoji.component";
+import {EmojiPickerComponent} from "./ui/widgets/control/form/emoji-picker.component";
+import {UtilService} from "./services/util.service";
+import {KeysPipe} from "./pipes/keys.pipe";
+import {SafePipe} from "./pipes/safe.pipe";
 
 @NgModule({
     declarations: [
@@ -83,18 +89,18 @@ import {LocationPickerComponent} from "./ui/widgets/control/form/location-picker
 	    ItemWrapperComponent,
 	    ListComponent,
 	    ActivityComponent,
-	    ActivityNearbyEventsComponent,
-	    ActivityPastEventsComponent,
-	    ActivityUserEventsComponent,
 	    StatisticsComponent,
 	    SlotsComponent,
 	    ModalComponent,
 	    QuestionComponent,
 	    LogoComponent,
+	    ExpeditionItemComponent,
 	    LocationPickerComponent,
 	    MenuComponent,
+	    EmojiPickerComponent,
 	    MenuItemComponent,
-	    EventComponent,
+	    EmojiComponent,
+	    ExpeditionComponent,
 	    LandingComponent,
 	    IndicatorComponent,
 	    EmptyComponent,
@@ -107,7 +113,6 @@ import {LocationPickerComponent} from "./ui/widgets/control/form/location-picker
 	    PeopleComponent,
 	    StackComponent,
 	    UserItemComponent,
-	    EventItemComponent,
 	    RedirectComponent,
 	    ExpanderComponent,
 	    HighlightPipe,
@@ -121,21 +126,23 @@ import {LocationPickerComponent} from "./ui/widgets/control/form/location-picker
 	    CheckboxComponent,
 	    InviteComponent,
 	    SearchComponent,
-	    FormatCoordinatesPipe,
+	    CoordinatesPipe,
 	    SearchBarComponent,
-	    CreateEventComponent,
+	    CreateExpeditionComponent,
 	    LegalComponent,
 	    FormControlWrapper,
 	    UserComponent,
 	    UserActivitiesComponent,
 	    UserFolloweesComponent,
+	    KeysPipe,
 	    UserFollowersComponent,
 	    UserListsComponent,
 	    BoardingComponent,
 	    FanComponent,
 	    LocationSearchComponent,
+	    SafePipe,
 	    TranslationListComponent,
-        DateTimeComponent
+	    DateTimeComponent
     ],
     providers: [
 	    UserService,
@@ -145,8 +152,13 @@ import {LocationPickerComponent} from "./ui/widgets/control/form/location-picker
 	    DataService,
 	    BoardingGuard,
 	    GeocodeService,
+	    UtilService,
+	    ActivityResolver,
 	    LoginGuard,
-	    EventService,
+	    UserResolver,
+	    ExpeditionResolver,
+	    ListResolver,
+	    ExpeditionService,
 	    appRoutingProviders
     ],
     imports: [

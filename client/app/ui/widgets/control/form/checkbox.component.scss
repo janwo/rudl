@@ -3,11 +3,6 @@
 $checkbox-text-font-size: map_get($base-font-size, 'default');
 $checkbox-icon-font-size: map_get($base-font-size, 'large');
 $checkbox-padding: $checkbox-text-font-size / 1.5; // --> 1 / 1.5 = 0.666
-$checkbox-colors: (
-  'border': inactive(map_get($base-colors, 'secondary')),
-  'toggle': map_get($base-colors, 'secondary'),
-  'text': map_get($base-colors, 'primary-text')
-);
 
 :host {
   display: flex;
@@ -19,13 +14,9 @@ $checkbox-colors: (
   i {
     display: block;
     font-size: $checkbox-icon-font-size;
-    color: inactive(map_get($checkbox-colors, 'toggle'));
+    color: inactive(map_get($base-colors, 'secondary'));
     margin-right: $checkbox-padding;
     margin-left: $checkbox-padding;
-
-    &.checked {
-      color: map_get($checkbox-colors, 'toggle');
-    }
   }
 
   span {
@@ -33,10 +24,16 @@ $checkbox-colors: (
     margin: $checkbox-padding;
     display: block;
     font-size: $checkbox-text-font-size;
-    color: inactive(map_get($checkbox-colors, 'text'));
+    color: inactive(map_get($base-colors, 'primary-text'));
+  }
 
-    &.checked {
-      color: map_get($checkbox-colors, 'text');
+  &.checked {
+    i {
+      color: map_get($base-colors, 'secondary');
+    }
+
+    span {
+      color: map_get($base-colors, 'primary-text');
     }
   }
 }

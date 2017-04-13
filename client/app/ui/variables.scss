@@ -2,7 +2,7 @@ $base-padding: (
   'large': 4rem,
   'larger': 3rem,
   'default': 2rem,
-  'smaller': 1rem,
+  'smaller': 1.25rem,
   'small' : 0.75rem,
   'smallest' : 0.25rem
 );
@@ -31,7 +31,7 @@ $base-heading-font-size: (
 );
 
 @function inactive($color) {
-  @return transparentize(desaturate($color, 100%), 0.77);
+  @return transparentize(desaturate($color, 100%), 0.75);
 }
 
 $base-line-widths: (
@@ -45,9 +45,10 @@ $base-colors: (
   'secondary': #00cbb9,
   'primary-text': #4f4e52,
   'secondary-text': #a09da3,
-  'warning-text': #a31420,
+  'warning-text': #cb525c,
   'background': #fafafa,
   'background-highlighted': #fff,
+  'background-modal': rgba(255,255,255,0.5),
   'background-inverse': #c2c2c2,
   'swipe-like': #50e3c2,
   'swipe-dislike': #ea8484
@@ -56,7 +57,7 @@ $base-colors: (
 $base-shadow: (
   'default': 0 0.1rem 0.15rem rgba(0, 0, 0, 0.0375),
   'elevated': 0 0.25rem 0.25rem rgba(0, 0, 0, 0.01875),
-  'modal': 0 0.5rem 1rem rgba(0, 0, 0, 0.1)
+  'modal': 1rem 1rem 1rem rgba(0, 0, 0, 0.1)
 );
 
 $base-breakpoints: (

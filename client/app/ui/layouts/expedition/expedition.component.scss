@@ -1,0 +1,23 @@
+@import '../../variables';
+
+:host {
+  display: block;
+  @include setup-max-width();
+  padding: map_get($base-padding, 'default');
+
+  .attribution {
+    opacity: 0.5;
+    color: map_get($base-colors, 'secondary-text');
+    display: block;
+    margin-top: map_get($base-padding, 'default');
+    text-align: center;
+
+    a {
+      color: map_get($base-colors, 'primary-text');
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

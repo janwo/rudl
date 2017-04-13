@@ -21,7 +21,7 @@ export class CreateListComponent {
 	@ViewChild(TranslationListComponent) translationList: TranslationListComponent;
 	
 	submitPending: boolean;
-    buttonStyle: ButtonStyles = ButtonStyles.uncolored;
+    cancelButtonStyle: ButtonStyles = ButtonStyles.outlined;
     
     constructor(
         private listService: ListService,
