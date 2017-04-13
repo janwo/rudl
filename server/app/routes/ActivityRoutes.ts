@@ -1,4 +1,4 @@
-import {UserRoles, UserValidation} from "../models/users/User";
+import {UserRoles, UserValidation} from "../models/user/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {ActivityController} from "../controllers/ActivityController";
 import {TranslationsValidation} from "../models/Translations";
@@ -7,6 +7,7 @@ import BasicStrategy = require("../strategies/BasicStrategy");
 import FacebookStrategy = require("../strategies/FacebookStrategy");
 import TwitterStrategy = require("../strategies/TwitterStrategy");
 import GoogleStrategy = require("../strategies/GoogleStrategy");
+import {ActivityValidation} from "../models/activity/Activity";
 
 const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.string().regex(/^me$/));
 
@@ -111,10 +112,8 @@ export const RoutesConfig: RoutesConfiguration = [
 				]
 			},
 			validate: {
-				payload: {
-					translations: TranslationsValidation
-				}
+				payload: ActivityValidation
 			}
 		}
-	},
+	}
 ];

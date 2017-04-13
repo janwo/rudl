@@ -5,46 +5,49 @@ import {Subscription} from "rxjs";
 import {ListService} from "../../../services/list.service";
 import {ActivityService} from "../../../services/activity.service";
 import {List} from "../../../models/list";
+import {FormGroup, FormBuilder, FormArray, Validators} from "@angular/forms";
 
 @Component({
 	templateUrl: 'add-to-list.component.html',
 	styleUrls: ['add-to-list.component.scss'],
-	selector: 'add-to-list',
-	animations: [
-		trigger('container', [
-			state('true', style({
-				height: '*',
-				opacity: 1
-			})),
-			state('false', style({
-				height: 0,
-				opacity: 0
-			})),
-			transition('1 => 0', animate('300ms')),
-			transition('0 => 1', animate('300ms'))
-		])
-	]
+	selector: 'add-to-list'
 })
 export class AddToListComponent implements OnInit, OnDestroy {
 	
-	@Output() onToggled: EventEmitter<[List, boolean]> = new EventEmitter();
+	@Output() onToggled: EventEmitter<ListItem> = new EventEmitter();
 	@Input() activity: Activity;
-	ownedLists: List[];
-	selectedListKeysOfActivity: string[];
+	form: FormGroup;
 	
 	listSubscription: Subscription;
 	pendingToggleRequest: boolean = false;
 	
 	constructor(
 		private listService: ListService,
-	    private activityService: ActivityService
+	    private activityService: ActivityService,
+	    private fb: FormBuilder
 	){}
 	
 	ngOnInit(): void {
+		// Create form.
+		this.form = this.fb.group({
+			lists: this.fb.array([])
+		});
+		
 		// Retrieve lists.
 		this.listSubscription = this.listService.by(null, true).combineLatest(this.activityService.lists(this.activity.id, 'owned')).subscribe((combination: [List[], List[]]) => {
-			this.ownedLists = combination[0];
-			this.selectedListKeysOfActivity = combination[1].map(list => list.id);
+			let selectedIds = combination[1].map(list => list.id);
+			combination[0].forEach(list => {
+				let form = this.fb.group({
+					list: list,
+					selected: [
+						selectedIds.indexOf(list.id) >= 0, [
+							Validators.required
+						]
+					]
+				});
+				
+				(<FormArray> this.form.get('lists')).push(form);
+			});
 		});
 	}
 	
@@ -52,7 +55,7 @@ export class AddToListComponent implements OnInit, OnDestroy {
 		this.listSubscription.unsubscribe();
 	}
 	
-	toggleListMembership(event: Event, list: List): void {
+	toggleListMembership(expedition: Event, targetList: ListItem): void {
 		event.stopPropagation();
 		event.preventDefault();
 		
@@ -63,21 +66,25 @@ export class AddToListComponent implements OnInit, OnDestroy {
 		this.pendingToggleRequest = true;
 		
 		// Delete activity from list, if selected.
-		let index = this.selectedListKeysOfActivity.indexOf(list.id);
-		if(index >= 0) {
-			this.listService.deleteActivity(this.activity.id, list.id).subscribe(() => {
-				this.selectedListKeysOfActivity.splice(index, 1);
+		if(targetList.selected) {
+			this.listService.deleteActivity(this.activity.id, targetList.list.id).subscribe(() => {
+				targetList.selected = false;
+				this.onToggled.emit(targetList);
 				this.pendingToggleRequest = false;
-				this.onToggled.emit([list, false]);
 			});
 			return;
 		}
 		
 		// Add activity to list, if unselected.
-		this.listService.addActivity(this.activity.id, list.id).subscribe(() => {
-			this.selectedListKeysOfActivity.push(list.id);
+		this.listService.addActivity(this.activity.id, targetList.list.id).subscribe(() => {
+			targetList.selected = true;
+			this.onToggled.emit(targetList);
 			this.pendingToggleRequest = false;
-			this.onToggled.emit([list, true]);
 		});
 	}
+}
+
+interface ListItem {
+	list: List,
+	selected: boolean
 }

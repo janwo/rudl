@@ -1,0 +1,110 @@
+@import '../../../variables';
+
+$emoji-picker-padding: map_get($base-font-size, 'default') / 1.5; // Golden Ratio <3
+$emoji-picker-icons-row-size: 8;
+$emoji-picker-categories-row-size: 7;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+
+  .pages {
+    overflow: hidden;
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    &.dragging * {
+      pointer-events: none;
+    }
+
+    & > div {
+      display: flex;
+      flex-direction: row;
+      transform: translateX(-100%);
+
+      &.animating {
+        transition: transform 0.3s;
+      }
+
+      .page {
+        flex: 0 0 100%;
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        flex-direction: row;
+        padding: $emoji-picker-padding;
+
+        li {
+          flex: 0 0 100% / $emoji-picker-icons-row-size;
+
+          div {
+            padding-bottom: 100%;
+            background: no-repeat center;
+            background-size: 75% 75%;
+            opacity: 0.5;
+
+            &.active {
+              opacity: 1;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .categories {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    cursor: pointer;
+
+    li {
+      flex: 1 1 100% / $emoji-picker-categories-row-size;
+
+      div {
+        padding-bottom: 100%;
+        background-size: 100% 100%;
+        background: no-repeat center;
+        opacity: 0.25;
+
+        &.active {
+          opacity: 1;
+        }
+
+        &.activity {
+          background-image: url(../../../../../assets/icon-categories/activity.svg);
+        }
+
+        &.flags {
+          background-image: url(../../../../../assets/icon-categories/flags.svg);
+        }
+
+        &.food {
+          background-image: url(../../../../../assets/icon-categories/food.svg);
+        }
+
+        &.nature {
+          background-image: url(../../../../../assets/icon-categories/nature.svg);
+        }
+
+        &.objects {
+          background-image: url(../../../../../assets/icon-categories/objects.svg);
+        }
+
+        &.travel {
+          background-image: url(../../../../../assets/icon-categories/travel.svg);
+        }
+
+        &.people {
+          background-image: url(../../../../../assets/icon-categories/people.svg);
+        }
+      }
+    }
+  }
+
+}

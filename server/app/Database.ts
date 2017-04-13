@@ -40,8 +40,8 @@ export class DatabaseManager {
 				};
 			})
 		},
-		events: {
-			name: 'events',
+		expeditions: {
+			name: 'expeditions',
 			type: 'document',
 			indices: [
 				{
@@ -88,16 +88,16 @@ export class DatabaseManager {
 			name: 'user-follows-activity',
 			type: 'edge'
 		},
-		userOwnsEvent: {
-			name: 'user-owns-event',
+		userOwnsExpedition: {
+			name: 'user-owns-expedition',
 			type: 'edge'
 		},
-		userJoinsEvent: {
-			name: 'user-joins-event',
+		userJoinsExpedition: {
+			name: 'user-joins-expedition',
 			type: 'edge'
 		},
-		eventIsItem: {
-			name: 'event-is-item',
+		expeditionIsItem: {
+			name: 'expedition-is-item',
 			type: 'edge'
 		},
 		listIsItem: {
@@ -113,7 +113,7 @@ export class DatabaseManager {
 				DatabaseManager.arangoCollections.users.name,
 				DatabaseManager.arangoCollections.lists.name,
 				DatabaseManager.arangoCollections.activities.name,
-				DatabaseManager.arangoCollections.events.name
+				DatabaseManager.arangoCollections.expeditions.name
 			],
 			relations: [
 				{
@@ -152,19 +152,19 @@ export class DatabaseManager {
 					to: [DatabaseManager.arangoCollections.activities.name]
 				},
 				{
-					name: DatabaseManager.arangoCollections.eventIsItem.name,
-					from: [DatabaseManager.arangoCollections.events.name],
+					name: DatabaseManager.arangoCollections.expeditionIsItem.name,
+					from: [DatabaseManager.arangoCollections.expeditions.name],
 					to: [DatabaseManager.arangoCollections.activities.name]
 				},
 				{
-					name: DatabaseManager.arangoCollections.userJoinsEvent.name,
+					name: DatabaseManager.arangoCollections.userJoinsExpedition.name,
 					from: [DatabaseManager.arangoCollections.users.name],
-					to: [DatabaseManager.arangoCollections.events.name]
+					to: [DatabaseManager.arangoCollections.expeditions.name]
 				},
 				{
-					name: DatabaseManager.arangoCollections.userOwnsEvent.name,
+					name: DatabaseManager.arangoCollections.userOwnsExpedition.name,
 					from: [DatabaseManager.arangoCollections.users.name],
-					to: [DatabaseManager.arangoCollections.events.name]
+					to: [DatabaseManager.arangoCollections.expeditions.name]
 				}
 			]
 		}

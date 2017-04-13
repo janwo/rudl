@@ -7,7 +7,7 @@ import {DatabaseManager} from "../Database";
 import {Cursor} from "arangojs";
 import {UserController} from "./UserController";
 import {AccountController} from "./AccountController";
-import {User} from "../models/users/User";
+import {User} from "../models/user/User";
 import randomstring = require("randomstring");
 import jwt = require("jsonwebtoken");
 import _ = require("lodash");

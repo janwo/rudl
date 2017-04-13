@@ -13,11 +13,13 @@ export default {
 					( Config ) => {
 						return {
 							inline: true,
+							contentBase: root('client'),
 							historyApiFallback: true,
 							proxy: [{
 								context: [
 									Config.paths.api.publicPath,
 									Config.paths.avatars.publicPath,
+									Config.paths.icons.publicPath,
 									Config.backend.providers.facebook.callbackURL,
 									Config.backend.providers.twitter.callbackURL,
 									Config.backend.providers.google.callbackURL

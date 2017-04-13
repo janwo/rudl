@@ -32,9 +32,9 @@ export class DataService {
     }
     
     private registerAuthenticationMessageListener() {
-        window.addEventListener('message', event => {
-            if (event.origin != DataService.domain || event.data.type !== DataService.callbackMessageType) return;
-            this.token.next(event.data.message);
+        window.addEventListener('message', expedition => {
+            if (expedition.origin != DataService.domain || expedition.data.type !== DataService.callbackMessageType) return;
+            this.token.next(expedition.data.message);
         }, false);
     }
     

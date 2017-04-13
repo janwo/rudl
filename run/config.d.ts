@@ -43,6 +43,7 @@ export const Config : {
 		host: string,
 		port: number,
 		domain: string,
+		icons: any,
 		ssl: boolean,
 		secretPassphrase: string,
 		jwt: {

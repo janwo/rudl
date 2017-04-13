@@ -20,6 +20,10 @@ export default {
 		avatars: {
 			dir: root( 'db/files/avatars' ),
 			publicPath: '/user-data/avatars/'
+		},
+		icons: {
+			dir: root( 'db/files/icons' ),
+			publicPath: '/static/icons/'
 		}
 	},
 	frontend: {
@@ -45,8 +49,7 @@ export default {
 						resolve: {
 							extensions: [ '.js', '.ts', '.json' ],
 							modules: [
-								root('client'),
-								root('node_modules')
+								root( 'client' ), root( 'node_modules' )
 							],
 						},
 						entry: {
@@ -59,21 +62,17 @@ export default {
 								{
 									test: /\.html$/,
 									use: 'html-loader'
-								},
-								{
+								}, {
 									test: /\.((png|jpe?g|gif|svg|woff2?|ttf|eot|ico)(\?v=\d*\.\d*\.\d*)?)$/,
 									use: `file-loader?name=static/[name].[hash].[ext]`
-								},
-								{
+								}, {
 									test: /manifest.json$/,
 									loader: 'file-loader?name=[name].[hash].[ext]!web-app-manifest-loader'
-								},
-								{
+								}, {
 									test: /\.css$/,
 									include: root( 'client', 'app' ),
 									use: [
-										'to-string-loader',
-										'css-loader', {
+										'to-string-loader', 'css-loader', {
 											loader: 'postcss-loader',
 											options: {
 												plugins: () => {
@@ -82,14 +81,13 @@ export default {
 													];
 												}
 											}
-										} ]
-								},
-								{
+										}
+									]
+								}, {
 									test: /\.(scss)$/,
 									include: root( 'client', 'app' ),
 									loaders: [
-										'to-string-loader',
-										'css-loader', {
+										'to-string-loader', 'css-loader', {
 											loader: 'postcss-loader',
 											options: {
 												plugins: () => {
@@ -98,12 +96,9 @@ export default {
 													];
 												}
 											}
-										},
-										'resolve-url-loader',
-										'sass-loader'
+										}, 'resolve-url-loader', 'sass-loader'
 									]
-								},
-								{
+								}, {
 									test: /\.css$/,
 									exclude: root( 'client', 'app' ),
 									use: ExtractTextPlugin.extract( {
@@ -120,32 +115,27 @@ export default {
 							publicPath: '/'
 						},
 						plugins: [
-							new Webpack.ContextReplacementPlugin(
-								/angular(\\|\/)core(\\|\/)src(\\|\/)linker/,
-								root('src')
-							),
-							new Webpack.DefinePlugin({
+							new Webpack.ContextReplacementPlugin( /angular(\\|\/)core(\\|\/)src(\\|\/)linker/, root( 'src' ) ),
+							new Webpack.DefinePlugin( {
 								'process.env': {
 									ENV: JSON.stringify( Config.env ),
 									DOMAIN: JSON.stringify( Config.backend.domain ),
 									MESSAGE_TYPES: JSON.stringify( Config.frontend.messageTypes ),
 									API_KEYS: JSON.stringify( Config.frontend.apiKeys )
 								}
-							}),
-							new HtmlWebpackPlugin({
+							} ),
+							new HtmlWebpackPlugin( {
 								filename: Config.paths.public.filename,
-								template: root('client/index.ejs'),
+								template: root( 'client/index.ejs' ),
 								title: Config.name,
 								baseUrl: '/',
 								metadata: Config.frontend.metadata
-							}),
-							new Webpack.optimize.CommonsChunkPlugin({
+							} ),
+							new Webpack.optimize.CommonsChunkPlugin( {
 								name: [
-									'static/app',
-									'static/vendor',
-									'static/polyfill'
+									'static/app', 'static/vendor', 'static/polyfill'
 								]
-							})
+							} )
 						],
 					}
 				}
@@ -158,6 +148,7 @@ export default {
 		domain: process.env.DOMAIN || 'http://localhost',
 		ssl: false,
 		secretPassphrase: process.env.SALT_PASSWORD,
+		icons: require('../../db/files/icons/data.json'),
 		jwt: {
 			expiresIn: 60 * 60 * 24 * 50,
 			deleteIn: 60 * 60 * 24 * 30,

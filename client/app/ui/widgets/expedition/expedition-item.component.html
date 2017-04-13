@@ -1,0 +1,26 @@
+<div class="card" [routerLink]="['/expeditions', expedition.id]">
+	<emoji [emoji]="expedition.links.icon"></emoji>
+	<h2>{{expedition.title}}</h2>
+	<p>{{expedition.description}}</p>
+	<footer>
+		<slots [users]="[expedition.owner]" [slots]="expedition.statistics.approvedUsers"></slots>
+		<ul class="users-info">
+			<li>
+				<span>{{expedition.owner.firstName + ' ' + expedition.owner.lastName}}</span>
+			</li>
+			<li>
+				<span i18n>{{formattedAwaitingApproval}}</span>
+			</li>
+		</ul>
+		<ul class="event-info">
+			<li>
+				<i class="fa fa-map-marker"></i>
+				<span>{{formattedLocation}}</span>
+			</li>
+			<li>
+				<i class="fa fa-clock-o"></i>
+				<span>{{formattedDate}}</span>
+			</li>
+		</ul>
+	</footer>
+</div>

@@ -31,18 +31,18 @@ export class MapComponent implements AfterViewInit, OnChanges {
     @Output() change: EventEmitter<L.LatLngTuple> = new EventEmitter();
     
 	map: L.Map;
-	marker: L.Marker;
-    
+	marker: L.Circle;
+ 
 	ngAfterViewInit(): void {
 		// Create app.
 		this.map = L.map(this.mapElement.nativeElement, {
-			dragging: true,
+			dragging: false,
 			zoomControl: false,
-			scrollWheelZoom: true,
-			touchZoom: true,
-			doubleClickZoom: true,
-			boxZoom: true,
-			tap: true,
+			scrollWheelZoom: false,
+			touchZoom: false,
+			doubleClickZoom: false,
+			boxZoom: false,
+			tap: false,
 			center: this.location,
 			keyboard: false,
 			attributionControl: false,
@@ -74,9 +74,9 @@ export class MapComponent implements AfterViewInit, OnChanges {
 			e.tile.src = canvas.toDataURL();
 		}).addTo(this.map);
 		
-		/*
+		
 		// Add circle layer.
-		L.circle(this.location, this.accuracy, {
+		this.marker = L.circle(this.location, 200, {
 			stroke: true,
 			weight: 10,
 			color: '#fff',
@@ -84,24 +84,12 @@ export class MapComponent implements AfterViewInit, OnChanges {
 			fill: true,
 			fillColor: '#50e3c2',
 			fillOpacity: 0.75
-		}).addTo(map);
-		*/
-		
-		let icon = L.icon({
-			iconUrl: require('../../../../assets/map-marker.png') as string,
-			className: 'leaflet-icon'
-		});
-		
-		this.marker = L.marker(this.location, {
-			icon: icon,
-			clickable: false
 		}).addTo(this.map);
 		
-		this.map.on('click', (e: any) => {
-			let clickedLocation: L.LatLngTuple = [e.latlng.lat, e.latlng.lng];
-			this.setLocation(clickedLocation);
-			this.change.emit(clickedLocation);
-		});
+		/*this.marker = L.marker(this.location, {
+			icon: icon,
+			clickable: false
+		}).addTo(this.map);*/
 	}
 	
 	ngOnChanges(changes: SimpleChanges): void {

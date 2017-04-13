@@ -4,7 +4,7 @@ import dot = require("dot-object");
 import * as CryptoJS from "crypto-js";
 import * as Joi from "joi";
 import {Config} from "../../../run/config";
-import {User, UserProvider, UserValidation, UserRoles} from "../models/users/User";
+import {User, UserProvider, UserValidation, UserRoles} from "../models/user/User";
 import {DatabaseManager} from "../Database";
 import {Cursor} from "arangojs";
 import {UserController} from "./UserController";
@@ -147,7 +147,7 @@ export module AccountController {
 				reject(Boom.badRequest('Combination of username and password does not match.'));
 				return;
 			}
-				
+			
 			resolve(user);
 		});
 	}

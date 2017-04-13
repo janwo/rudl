@@ -5,7 +5,7 @@ import dot = require("dot-object");
 import fs = require('fs');
 import path = require('path');
 import {Config} from "../../../run/config";
-import {User} from "../models/users/User";
+import {User} from "../models/user/User";
 import {DatabaseManager} from "../Database";
 import {DecodedToken, UserDataCache, TokenData} from "../models/Token";
 import {AccountController} from "./AccountController";

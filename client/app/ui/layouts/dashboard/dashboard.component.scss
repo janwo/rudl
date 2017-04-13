@@ -17,6 +17,7 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    box-shadow: map_get($base-shadow, 'default');
     background-color: $header-background-color;
     padding-left: $header-horizontal-padding-mobile;
     padding-right: $header-horizontal-padding-mobile;

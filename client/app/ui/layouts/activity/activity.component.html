@@ -1,7 +1,7 @@
-<div class="card" *ngIf="activity">
+<div class="card">
 	<div class="header">
+		<emoji [emoji]="activity.links.icon"></emoji>
 		<h1>{{activity.name}}</h1>
-		<span class="username" [routerLink]="['/people', activity.owner.username]">{{activity.owner.username}}</span>
 	</div>
 	<div class="statistics">
 		<statistics [statistics]="[
@@ -17,22 +17,20 @@
 
 <div class="card add-event" [ngClass]="{expanded: expandedEventCreation}" (click)="expandedEventCreation = true">
 	<div class="title">
-		<!--TODO<i class="fa fa-plus">-->
 		<span i18n [@expandHorizontally]="expandedEventCreation">Event hinzufügen</span>
 	</div>
-	<create-event [activity]="activity" *ngIf="expandedEventCreation" [@expandVertically]="expandedEventCreation" (onCanceled)="expandedEventCreation = false"></create-event>
+	<create-expedition [activity]="activity" *ngIf="expandedEventCreation" [@expandVertically]="expandedEventCreation" (onCanceled)="expandedEventCreation = false"></create-expedition>
 </div>
-<menu>
-	<menu-item [title]="'Deine Events'" [icon]="'calendar-check-o'" [link]="['your-events']"></menu-item>
-	<menu-item [title]="'Nahe Events'" [icon]="'compass'" [link]="['nearby-events']"></menu-item>
-	<menu-item [title]="'Bisherige Events'" [icon]="'calendar-times-o'" [link]="['past-events']"></menu-item>
-</menu>
-<router-outlet></router-outlet>
-<small class="attribution">Maps provided by © <a target="_blank" href="https://openstreetmap.org/copyright">OpenStreetMap</a> Contributors via <a target="_blank" href="http://leafletjs.com">Leaflet</a></small>
-
+<loading *ngIf="expeditions == null"></loading>
+<empty [emptyState]="emptyState" *ngIf="expeditions && expeditions.length == 0"></empty>
+<item-wrapper *ngFor="let expedition of expeditions" [columns]="2">
+	<li>
+		<expedition-item (click)="selectExpedition(expedition)" [expedition]="expedition"></expedition-item>
+	</li>
+</item-wrapper>
 <modal [title]="'Folgende Listen'" #listsModal>
 	<add-to-list *ngIf="activity" [activity]="activity" (onToggled)="listsModal.close()"></add-to-list>
 </modal>
-<modal #unfollowModal [title]="'Are you sure to unfollow activity?'" >
+<modal #unfollowModal [title]="'Are you sure to unfollow activity?'">
 	<question [choices]="modalChoices" [description]='"Du bist der Ersteller dieser Aktivität. Durch das Entfolgen geht die Aktivität in den Besitz eines anderen Followers über. Aktivitäten ohne andere Follower werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."'></question>
 </modal>

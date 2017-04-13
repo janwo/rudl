@@ -12,7 +12,7 @@ export class StyledButtonComponent {
     @Input() link: string = null;
     @Input() flag: string = null;
     @Input() disabled: boolean = false;
-    @Input() style: ButtonStyles = ButtonStyles.default;
+    @Input() style: ButtonStyles = ButtonStyles.filled;
     @Output() click: EventEmitter<Event> = new EventEmitter();
 
     public onClick(event: Event) {
@@ -34,16 +34,27 @@ export class StyledButtonComponent {
     
     getStyleClass(){
         switch(this.style) {
-            case ButtonStyles.default: return 'default';
-            case ButtonStyles.facebook: return 'default facebook';
-            case ButtonStyles.google: return 'default google';
-            case ButtonStyles.minimal: return 'minimal';
-            case ButtonStyles.uncolored: return 'uncolored';
-            case ButtonStyles.minimalInverse: return 'minimal-inverse';
+            case ButtonStyles.facebook: return 'filled facebook shadowed';
+            case ButtonStyles.google: return 'filled google shadowed';
+	        case ButtonStyles.filled: return 'filled';
+	        case ButtonStyles.filledShadowed: return 'filled shadowed';
+	        case ButtonStyles.filledInverse: return 'filled-inverse';
+	        case ButtonStyles.filledInverseShadowed: return 'filled-inverse shadowed';
+	        case ButtonStyles.outlined: return 'outlined';
+	        case ButtonStyles.outlinedShadowed: return 'outlined shadowed';
+	        case ButtonStyles.outlinedInverse: return 'outlined-inverse';
+	        case ButtonStyles.outlinedInverseShadowed: return 'outlined-inverse shadowed';
         }
     }
 }
 
 export enum ButtonStyles {
-    default, minimal, minimalInverse, uncolored, facebook, google, dislike, like
+	filled, filledShadowed,
+	filledInverse, filledInverseShadowed,
+	outlined, outlinedShadowed,
+	outlinedInverse, outlinedInverseShadowed,
+	facebook,
+	google,
+	dislike,
+	like
 }

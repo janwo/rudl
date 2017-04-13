@@ -9,7 +9,7 @@ import {ButtonStyles} from "../../widgets/control/styled-button.component";
     templateUrl: 'user.component.html',
     styleUrls: ['user.component.scss']
 })
-export class UserComponent implements OnInit, OnDestroy {
+export class UserComponent implements OnInit {
     
     user: User;
     paramsChangedSubscription: Subscription;
@@ -17,8 +17,8 @@ export class UserComponent implements OnInit, OnDestroy {
     changeFollowStateSubscription: Subscription;
     
     pendingFollowRequest: boolean = false;
-    buttonStyleDefault: ButtonStyles = ButtonStyles.minimal;
-    buttonStyleFollowing: ButtonStyles = ButtonStyles.minimalInverse;
+    buttonStyleDefault: ButtonStyles = ButtonStyles.filled;
+    buttonStyleFollowing: ButtonStyles = ButtonStyles.outlined;
     
     constructor(
         private route: ActivatedRoute,
@@ -27,9 +27,9 @@ export class UserComponent implements OnInit, OnDestroy {
     
     ngOnInit(): void {
         // Define changed params subscription.
-        this.paramsChangedSubscription = this.route.params.distinctUntilChanged((x, y) => x['username'] == y['username']).flatMap(params => {
-            return this.userService.get(params['username']);
-        }).subscribe((user: User) => this.user = user);
+        this.route.data.subscribe((data: { user: User }) => {
+            this.user = data.user;
+        });
         
         // Define changed follow state subscription.
         this.changeFollowStateSubscription = this.changeFollowStateSubject.asObservable().distinctUntilChanged().flatMap(follow => {
@@ -39,10 +39,6 @@ export class UserComponent implements OnInit, OnDestroy {
             this.user = updatedUser;
             this.pendingFollowRequest = false;
         });
-    }
-    
-    ngOnDestroy(): void {
-        if(this.paramsChangedSubscription) this.paramsChangedSubscription.unsubscribe();
     }
     
     onToggleFollow(): void {

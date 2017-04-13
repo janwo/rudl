@@ -4,16 +4,17 @@ import dot = require("dot-object");
 import fs = require('fs');
 import path = require('path');
 import _ = require('lodash');
-import {User, UserRoles} from "../models/users/User";
+import {User, UserRoles} from "../models/user/User";
 import {Cursor} from "arangojs";
 import {DatabaseManager} from "../Database";
-import {Activity} from "../models/activities/Activity";
+import {Activity} from "../models/activity/Activity";
 import {UserController} from "./UserController";
-import {UserFollowsUser} from "../models/users/UserFollowsUser";
+import {UserFollowsUser} from "../models/user/UserFollowsUser";
 import {AccountController} from "./AccountController";
 import randomstring = require("randomstring");
 import jwt = require("jsonwebtoken");
 import * as faker from 'faker';
+import {Config} from "../../../run/config";
 
 export module TestController {
 	
@@ -86,6 +87,7 @@ export module TestController {
 				Number.parseFloat(faker.address.longitude())
 			],
 			translations: {},
+			icon: faker.random.arrayElement(Object.keys(faker.random.objectElement<any>(Config.backend.icons).icons)),
 			createdAt: date[0],
 			updatedAt: date[1]
 		};

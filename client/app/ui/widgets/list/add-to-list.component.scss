@@ -3,49 +3,21 @@
 :host {
 
   item-wrapper {
-    border: map_get($base-line-widths, 'default') map_get($base-colors, 'primary') solid;
-
     &.disabled {
       opacity: 0.5;
     }
 
     li {
-      display: flex;
-      padding: map_get($base-padding, 'smaller');
-      cursor: pointer;
+      padding-top: map_get($base-padding, 'smaller');
+      padding-bottom: map_get($base-padding, 'smaller');
 
-      i {
-        flex: 0 0 auto;
-        margin-left: map_get($base-padding, 'small');
-        display: none;
-      }
-
-      span {
-        flex: 1 0 auto;
-      }
-
-      &.checked {
-        span {
-          opacity: 1;
+      checkbox {
+        /deep/ * {
+          color: map_get($base-colors, 'background-highlighted');
         }
 
-        i {
-          &.fa-check {
-            display: inline-block;
-          }
-        }
-      }
-
-      &:not(.checked) {
-        span {
-          opacity: 0.5;
-        }
-
-        i {
-          &.fa-plus {
-            display: inline-block;
-            opacity: 0.5;
-          }
+        &:not(.checked) /deep/ i {
+          color: inactive(map_get($base-colors, 'background-highlighted'));
         }
       }
     }

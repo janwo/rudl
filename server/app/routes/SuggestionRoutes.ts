@@ -1,4 +1,4 @@
-import {UserRoles, UserValidation} from "../models/users/User";
+import {UserRoles, UserValidation} from "../models/user/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {SuggestionController} from "../controllers/SuggestionController";
 import BasicStrategy = require("../strategies/BasicStrategy");

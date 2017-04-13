@@ -1,8 +1,11 @@
 import Webpack from "webpack";
 import WebpackDevServer from "webpack-dev-server";
-import {Config, print, root} from "./config";
+import {Config, root} from "./config";
 import * as forever from "forever";
 import rimraf from "rimraf";
+import path from "path";
+import fs from 'fs';
+import _ from 'lodash';
 
 class StartupManager {
 	
@@ -28,7 +31,7 @@ class StartupManager {
 	static createBackendServer(debug = false, onStart = () => {}){
 		let command = [
 			debug ? `npm run nodemon -- --watch ${root('server')} --inspect=0.0.0.0:9229 --ext js,json` : 'node',
-			'run/backend-server.js'
+			'run/scripts/backend-server.js'
 		];
 		
 		let options = {

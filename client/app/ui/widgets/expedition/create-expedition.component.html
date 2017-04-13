@@ -1,0 +1,42 @@
+<location-search [locationFocus]="recipe.get('location').value" (locationSelected)="recipe.get('location').setValue($event)"></location-search>
+<form [formGroup]="recipe">
+	<form-control-wrapper>
+		<location-picker formControlName="location"></location-picker>
+	</form-control-wrapper>
+	<div class="split-content">
+		<div>
+			<form-control-wrapper [errorMessages]="{
+				minlength: 'Der Titel ist zu kurz (mindestens 3 Zeichen).',
+				required: 'Gebe einen Titel an.'
+			}">
+				<input formControlName="title" type="text" placeholder="Give your expedition a title...">
+			</form-control-wrapper>
+			<form-control-wrapper>
+				<emoji-picker formControlName="icon"></emoji-picker>
+			</form-control-wrapper>
+			<form-control-wrapper [errorMessages]="{
+				minlength: 'Die Beschreibung ist zu kurz (mindestens 10 Zeichen).',
+				required: 'Gebe eine Beschreibung an.'
+			}">
+				<textarea formControlName="description" placeholder="Enter a short summary of all public details here..."></textarea>
+			</form-control-wrapper>
+			<form-control-wrapper>
+				<checkbox formControlName="needsApproval" [text]="'Zugangsbeschränkung'"></checkbox>
+			</form-control-wrapper>
+		</div>
+		<div>
+			<form-control-wrapper [errorMessages]="{
+			required: 'Gebe ein Datum an.'
+			}">
+				<datetime formControlName="date" [locale]="'de'"></datetime>
+			</form-control-wrapper>
+			<form-control-wrapper>
+				<checkbox formControlName="fuzzyTime" [text]="'Öffentliche Uhrzeit'"></checkbox>
+			</form-control-wrapper>
+		</div>
+	</div>
+</form>
+<div class="buttons">
+	<styled-button (click)="cancel()" [disabled]="submitPending" [style]="buttonStyleCancel" [text]="'Abbrechen'"></styled-button>
+	<styled-button (click)="submit()" [disabled]="submitPending" [text]="'Create Expedition'"></styled-button>
+</div>

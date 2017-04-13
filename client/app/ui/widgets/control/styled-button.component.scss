@@ -4,23 +4,8 @@ $button-font-size: 0.95rem;
 $button-border-size: 0.1rem;
 $button-border-radius: 0.25rem;
 $button-padding: $button-font-size / 1.5; // --> 1 / 1.5 = 0.666
-$button-colors: (
-  'default-background': map_get($base-colors, 'secondary'),
-  'default-inactive-background': inactive(map_get($base-colors, 'secondary')),
-  'default-color': #fff,
-  'default-inactive-color': #fff,
-  'uncolored-color': map_get($base-colors, 'secondary'),
-  'uncolored-inactive-color': inactive(map_get($base-colors, 'primary-text')),
-  'uncolored-background': map_get($base-colors, 'background'),
-  'minimal-color': map_get($base-colors, 'secondary'),
-  'minimal-border-color': map_get($base-colors, 'secondary'),
-  'minimal-inactive-color': inactive(map_get($base-colors, 'primary-text')),
-  'minimal-inactive-border-color': inactive(map_get($base-colors, 'primary-text')),
-  'minimal-inverse-color': #fff,
-  'minimal-inverse-background-color': map_get($base-colors, 'secondary'),
-  'minimal-inverse-inactive-color': #fff,
-  'minimal-inverse-inactive-background-color': inactive(map_get($base-colors, 'primary-text')),
-);
+$button-default-scale-icon: 1.25;
+$button-default-scale-text: 1;
 
 :host {
   display: inline-block;
@@ -40,59 +25,115 @@ $button-colors: (
     justify-content: center;
     width: 100%;
 
-    &.minimal {
-      border: map_get($base-line-widths, 'default') map_get($button-colors, 'minimal-border-color') solid;
-      color: map_get($button-colors, 'minimal-color');
-      background-color: transparent;
+    &:focus {
+      outline: none;
+      border: transparentize(map_get($base-colors, 'secondary'), 0.5) $button-border-size solid;
+    }
 
-      &.disabled {
-        border-color: map_get($button-colors, 'minimal-inactive-border-color');
-        color: map_get($button-colors, 'minimal-inactive-color');
+    .fa {
+      transform: scale($button-default-scale-icon);
+
+      &:not(:only-child) {
+        margin-right: map_get($base-padding, 'small');
+      }
+    }
+
+    span {
+      transform: scale($button-default-scale-text);
+    }
+
+    .flag {
+      width: $button-font-size;
+      height: $button-font-size;
+      border-radius: 50%;
+    }
+
+    &:not(.disabled):not(.shadowed) {
+      &:hover {
+        span {
+          transform: scale($button-default-scale-text * 1.025);
+        }
+
+        .fa {
+          transform: scale($button-default-scale-icon * 1.025);
+        }
       }
 
-      &:not(.disabled) {
-        &:active span {
-          transform: scale(0.95);
+      &:active {
+        span {
+          transform: scale($button-default-scale-text * 0.95);
+        }
+
+        .fa {
+          transform: scale($button-default-scale-icon * 0.95);
         }
       }
     }
 
-    &.minimal-inverse {
-      border: map_get($base-line-widths, 'default') transparent solid;
-      color: map_get($button-colors, 'minimal-inverse-color');
-      background-color: map_get($button-colors, 'minimal-inverse-background-color');
+    &.disabled {
+      cursor: default;
 
-      &.disabled {
-        color: map_get($button-colors, 'minimal-inactive-color');
-        background-color: map_get($button-colors, 'minimal-inverse-inactive-background-color');
-      }
-
-      &:not(.disabled) {
-        &:active span {
-          transform: scale(0.95);
-        }
+      .flag {
+        opacity: 0.5;
       }
     }
 
-    &.default {
-      border: map_get($base-line-widths, 'default') transparent solid;
-      color: map_get($button-colors, 'default-color');
-      background-color: map_get($button-colors, 'default-background');
-      box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.15);
+    &.shadowed {
+      box-shadow: 0.05rem 0.05rem 0.2rem rgba(0, 0, 0, 0.15);
 
       &:not(.disabled) {
         &:hover {
-          box-shadow: 0.05rem 0.05rem 0.2rem rgba(0, 0, 0, 0.25);
+          box-shadow: 0.05rem 0.05rem 0.3rem rgba(0, 0, 0, 0.25);
         }
 
         &:active {
           box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.125);
         }
       }
+    }
+
+    // Definitions of button styles.
+    &.outlined {
+      border: map_get($base-line-widths, 'default') map_get($base-colors, 'secondary') solid;
+      color: map_get($base-colors, 'secondary');
+      background-color: transparent;
 
       &.disabled {
-        background-color: map_get($button-colors, 'default-inactive-background');
-        color: map_get($button-colors, 'default-inactive-color');
+        border-color: inactive(map_get($base-colors, 'secondary'));
+        color: inactive(map_get($base-colors, 'secondary'));
+      }
+    }
+
+    &.outlined-inverse {
+      border: map_get($base-line-widths, 'default') map_get($base-colors, 'background-highlighted') solid;
+      color: map_get($base-colors, 'background-highlighted');
+      background-color: transparent;
+
+      &.disabled {
+        border-color: inactive(map_get($base-colors, 'background-highlighted'));
+        color: inactive(map_get($base-colors, 'background-highlighted'));
+      }
+    }
+
+    &.filled {
+      border: map_get($base-line-widths, 'default') transparent solid;
+      color: map_get($base-colors, 'background-highlighted');
+      background-color: map_get($base-colors, 'secondary');
+
+      &.disabled {
+        color: inactive(map_get($base-colors, 'background-highlighted'));
+        background-color: inactive(map_get($base-colors, 'secondary'));
+      }
+    }
+
+    &.filled-inverse {
+      border: map_get($base-line-widths, 'default') transparent solid;
+      color: map_get($base-colors, 'secondary');
+      background-color: map_get($base-colors, 'background-highlighted');
+
+      &.disabled {
+        color: inactive(map_get($base-colors, 'secondary'));
+        background-color: inactive(map_get($base-colors, 'background-highlighted'));
       }
     }
 
@@ -111,54 +152,6 @@ $button-colors: (
 
       &.disabled {
         background-color: inactive($google-color);
-      }
-    }
-
-    &.uncolored {
-      border: map_get($base-line-widths, 'default') transparent solid;
-      color: map_get($button-colors, 'uncolored-color');
-      background-color: map_get($button-colors, 'uncolored-background');
-      box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.15);
-
-      &:not(.disabled) {
-        &:hover {
-          box-shadow: 0.05rem 0.05rem 0.2rem rgba(0, 0, 0, 0.25);
-        }
-
-        &:active {
-          box-shadow: 0.05rem 0.05rem 0.1rem rgba(0, 0, 0, 0.125);
-        }
-      }
-
-      &.disabled {
-        color: map_get($button-colors, 'uncolored-inactive-color');
-      }
-    }
-
-    &:focus {
-      outline: none;
-      border: transparentize(map_get($base-colors, 'secondary'), 0.5) $button-border-size solid;
-    }
-
-    .fa {
-      transform: scale(1.25);
-
-      &:not(:only-child) {
-        margin-right: map_get($base-padding, 'small');
-      }
-    }
-
-    .flag {
-      width: $button-font-size;
-      height: $button-font-size;
-      border-radius: 50%;
-    }
-
-    &.disabled {
-      cursor: default;
-
-      .flag {
-        opacity: 0.5;
       }
     }
   }

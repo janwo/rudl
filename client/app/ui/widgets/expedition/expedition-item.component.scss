@@ -1,0 +1,67 @@
+@import '../../variables';
+
+:host {
+  display: block;
+
+  .card {
+
+    footer {
+      margin-top: map_get($base-padding, 'default');
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      slots {
+        flex: 0 0 auto;
+        margin-right: map_get($base-padding, 'small');
+      }
+
+      ul {
+        list-style: none;
+        flex: 0 0 auto;
+
+        &:first-of-type {
+          flex: 1 1 auto;
+
+          li {
+            justify-content: flex-start;
+          }
+        }
+
+        li {
+          color: map_get($base-colors, 'secondary-text');
+          font-size: map_get($base-font-size, 'small');
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-end;
+
+          &:not(:first-child) {
+            margin-top: map_get($base-padding, 'smallest');
+          }
+
+          i {
+            width: map_get($base-padding, 'smaller');
+          }
+        }
+      }
+    }
+
+    emoji {
+      margin: map_get($base-padding, 'smaller') auto;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    p {
+      text-align: center;
+      color: map_get($base-colors, 'secondary-text');
+    }
+
+    &.approved {
+      border: transparentize(map_get($base-colors, 'primary'), 0.5) solid map_get($base-line-widths, 'default');
+    }
+  }
+}
