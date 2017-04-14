@@ -1,23 +1,24 @@
-<div class="card" [routerLink]="['/expeditions', expedition.id]">
+<div class="card" [routerLink]="['/expeditions', expedition.id]" [ngClass]="{approved: expedition.relations.isApproved}">
 	<emoji [emoji]="expedition.links.icon"></emoji>
 	<h2>{{expedition.title}}</h2>
 	<p>{{expedition.description}}</p>
 	<footer>
 		<slots [users]="[expedition.owner]" [slots]="expedition.statistics.approvedUsers"></slots>
-		<ul class="users-info">
-			<li>
+		<ul>
+			<li class="owner">
 				<span>{{expedition.owner.firstName + ' ' + expedition.owner.lastName}}</span>
 			</li>
-			<li>
-				<span i18n>{{formattedAwaitingApproval}}</span>
+			<li class="approval-status">
+				<span *ngIf="!expedition.relations.isApproved" i18n>{{formattedAwaitingApproval}}</span>
+				<span *ngIf="expedition.relations.isApproved" i18n>Du bist Teilnehmer</span>
 			</li>
 		</ul>
-		<ul class="event-info">
-			<li>
+		<ul>
+			<li class="location">
 				<i class="fa fa-map-marker"></i>
 				<span>{{formattedLocation}}</span>
 			</li>
-			<li>
+			<li class="date">
 				<i class="fa fa-clock-o"></i>
 				<span>{{formattedDate}}</span>
 			</li>

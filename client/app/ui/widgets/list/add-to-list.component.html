@@ -1,6 +1,6 @@
 <form [formGroup]="form">
 	<item-wrapper formArrayName="lists" [noMargins]="true" [ngClass]="{disabled: pendingToggleRequest}">
-		<li [formGroupName]="i" *ngFor="let formGroup of form.get('lists').controls; let i = index">
+		<li [formGroupName]="i" *ngFor="let formGroup of form.controls.lists.controls; let i = index">
 			<checkbox [text]="formGroup.controls.list.value.name" formControlName="selected"></checkbox>
 		</li>
 	</item-wrapper>

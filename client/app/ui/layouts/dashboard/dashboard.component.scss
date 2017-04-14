@@ -23,6 +23,7 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
     padding-right: $header-horizontal-padding-mobile;
     height: $header-vertical-padding-mobile * 2 + $header-content-size;
     position: relative;
+    z-index: 100;
 
     @include breakpoint('small') {
       padding-left: $header-horizontal-padding;
@@ -130,5 +131,10 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
     @include breakpoint('small'){
       height: calc(100% - #{$header-vertical-padding * 2 + $header-content-size});
     }
+  }
+
+  footer {
+    padding: map_get($base-padding, 'default');
+    text-align: center;
   }
 }

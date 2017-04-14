@@ -27,6 +27,7 @@ export class ExpeditionItemComponent implements OnInit {
 		distance = distance <= 10000 ? Math.ceil(distance / 100) / 10 : Math.ceil(distance / 1000);
 		this.formattedLocation = this.expedition.needsApproval && !this.expedition.relations.isApproved ? `ca. ${distance} km` : `${distance} km`;
 		
+		// Awaiting approval formatting.
 		switch(this.expedition.statistics.awaitingUsers) {
 			case 0:
 				this.formattedAwaitingApproval = 'Keine Anfragen';
