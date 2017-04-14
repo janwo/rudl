@@ -2,37 +2,8 @@ version: '2'
 
 services:
   app:
-    build: .
-    container_name: rudl
-    environment:
-      - ENV
-      - DOMAIN
     ports:
-      - "80:80"
-      - "443:443"
       - "9229:9229"
-    volumes:
-      - ./letsencrypt:/root/letsencrypt
-      - ./.cache:/root/.cache
-      - ./server:/root/app/server
-      - ./client:/root/app/client
-      - ./run:/root/app/run
-      - ./yarn.lock:/root/app/yarn.lock
-      - ./db/files:/root/app/db/files
-      - ./logs:/root/app/logs
-    depends_on:
-      - redis
-      - arango
-  redis:
-    image: redis
-    volumes:
-      - ./db/redis:/data
   arango:
-    command: arangod --server.authentication-unix-sockets true
-    volumes:
-      - ./db/arango:/var/lib/arangodb3
     environment:
       - ARANGO_RANDOM_ROOT_PASSWORD=1
-    image: arangodb
-    ports:
-      - "8529:8529"
