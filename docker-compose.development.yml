@@ -4,6 +4,3 @@ services:
   app:
     ports:
       - "9229:9229"
-  arango:
-    environment:
-      - ARANGO_RANDOM_ROOT_PASSWORD=1

@@ -23,8 +23,8 @@
 </div>
 <loading *ngIf="expeditions == null"></loading>
 <empty [emptyState]="emptyState" *ngIf="expeditions && expeditions.length == 0"></empty>
-<item-wrapper *ngFor="let expedition of expeditions" [columns]="2">
-	<li>
+<item-wrapper [columns]="2">
+	<li *ngFor="let expedition of expeditions">
 		<expedition-item (click)="selectExpedition(expedition)" [expedition]="expedition"></expedition-item>
 	</li>
 </item-wrapper>
