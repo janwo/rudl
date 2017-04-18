@@ -1,8 +1,6 @@
-import {Component, OnInit, OnDestroy, ViewChild} from "@angular/core";
-import {Subscription, Observable} from "rxjs";
+import {Component, OnInit, ViewChild} from "@angular/core";
 import {List} from "../../../models/list";
 import {ActivatedRoute, Params} from "@angular/router";
-import {Activity} from "../../../models/activity";
 import {ButtonStyles} from "../../widgets/control/styled-button.component";
 import {ModalComponent} from "../../widgets/modal/modal.component";
 import {ListService} from "../../../services/list.service";
@@ -14,7 +12,6 @@ import {ListService} from "../../../services/list.service";
 export class ListComponent implements OnInit {
     
     list: List;
-    activities: Activity[];
     pendingFollowRequest: boolean = false;
     buttonStyleDefault: ButtonStyles = ButtonStyles.outlined;
     buttonStyleFollowing: ButtonStyles = ButtonStyles.filled;
@@ -41,10 +38,7 @@ export class ListComponent implements OnInit {
         // Get params.
         this.route.params.forEach((params: Params) => {
 	        // Define changed params subscription.
-	        this.route.data.subscribe((data: { list: List }) => {
-		        this.list = data.list;
-		        this.listService.activities(data.list.id).subscribe((activities: Activity[]) => this.activities = activities);
-	        });
+	        this.route.data.subscribe((data: { list: List }) => this.list = data.list);
         });
     }
     

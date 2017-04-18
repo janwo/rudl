@@ -71,6 +71,15 @@ export module ListController {
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<User>;
 	}
 	
+	export function getFollowers(list: List) : Promise<User[]> {
+		let aqlQuery = `FOR follower IN INBOUND @listId @@userFollowsList RETURN follower`;
+		let aqlParams = {
+			'@userFollowsList': DatabaseManager.arangoCollections.userFollowsList.name,
+			listId: list._id
+		};
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<User[]>;
+	}
+	
 	export interface ListStatistics {
 		activities: number;
 		followers: number;
@@ -388,6 +397,23 @@ export module ListController {
 			// Create promise.
 			//TODO offset
 			let promise : Promise<List[]> = ListController.findByFulltext(request.params.query).then((lists: List[]) => getPublicList(lists.slice(request.params.offset, request.params.offset + 30), request.auth.credentials));
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [GET] /api/lists/=/{key}/followers/{offset?}/{limit?}
+		 * @param request Request-Object
+		 * @param request.params.key key
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function getFollowers(request: any, reply: any): void {
+			// Create promise.
+			let promise : Promise<any> = ListController.findByKey(request.params.key).then((list: List) => {
+				if (!list) return Promise.reject<User[]>(Boom.badRequest('list does not exist!'));
+				return ListController.getFollowers(list);
+			}).then((users: User[]) => UserController.getPublicUser(users, request.auth.credentials));
 			
 			reply.api(promise);
 		}

@@ -10,27 +10,20 @@
 	]"></statistics>
 		<div class="cta">
 			<styled-button [style]="activity.relations.isFollowed ? buttonStyleActivated : buttonStyleDefault" (click)="onToggleFollow(true)" [disabled]="pendingFollowRequest" [text]="'Interested'"></styled-button>
-			<styled-button [fa]="'list'" (click)="listsModal.open()"></styled-button>
+			<styled-button [fa]="'bars'" (click)="dropdownMenu.toggle()"></styled-button>
+			<dropdown-menu #dropdownMenu [arrowAlignment]="'right'">
+				<menu-item [icon]="'pencil'" [title]="'Rudel bearbeiten'" [link]="['edit']" *ngIf="activity.relations.isOwned"></menu-item>
+				<menu-item [icon]="'list'" [title]="'In Liste speichern'" [link]="['add-to-list']"></menu-item>
+				<menu-item [icon]="'compass'" [title]="'Streifzug erstellen'" [link]="['create-expedition']"></menu-item>
+			</dropdown-menu>
 		</div>
 	</div>
 </div>
-
-<div class="card add-event" [ngClass]="{expanded: expandedEventCreation}" (click)="expandedEventCreation = true">
-	<div class="title">
-		<span i18n [@expandHorizontally]="expandedEventCreation">Event hinzufügen</span>
-	</div>
-	<create-expedition [activity]="activity" *ngIf="expandedEventCreation" [@expandVertically]="expandedEventCreation" (onCanceled)="expandedEventCreation = false"></create-expedition>
-</div>
-<loading *ngIf="expeditions == null"></loading>
-<empty [emptyState]="emptyState" *ngIf="expeditions && expeditions.length == 0"></empty>
-<item-wrapper [columns]="2">
-	<li *ngFor="let expedition of expeditions">
-		<expedition-item (click)="selectExpedition(expedition)" [expedition]="expedition"></expedition-item>
-	</li>
-</item-wrapper>
-<modal [title]="'Folgende Listen'" #listsModal>
-	<add-to-list *ngIf="activity" [activity]="activity" (onToggled)="listsModal.close()"></add-to-list>
-</modal>
+<menu>
+	<menu-item [icon]="'compass'" [title]="'Streifzüge'" [link]="['expeditions']"></menu-item>
+	<menu-item [icon]="'user-o'" [title]="'Rudelmitglieder'" [link]="['followers']"></menu-item>
+</menu>
+<router-outlet></router-outlet>
 <modal #unfollowModal [title]="'Are you sure to unfollow activity?'">
 	<question [choices]="modalChoices" [description]='"Du bist der Ersteller dieser Aktivität. Durch das Entfolgen geht die Aktivität in den Besitz eines anderen Followers über. Aktivitäten ohne andere Follower werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."'></question>
 </modal>

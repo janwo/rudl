@@ -109,6 +109,15 @@ export module ActivityController {
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<User>;
 	}
 	
+	export function getFollowers(activity: Activity) : Promise<User[]> {
+		let aqlQuery = `FOR follower IN INBOUND @activityId @@userFollowsActivity RETURN follower`;
+		let aqlParams = {
+			'@userFollowsActivity': DatabaseManager.arangoCollections.userFollowsActivity.name,
+			activityId: activity._id
+		};
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<User[]>;
+	}
+	
 	export interface ActivityStatistics {
 		lists: number;
 		followers: number;
@@ -320,6 +329,23 @@ export module ActivityController {
 			}).then((lists: List[]) => {
 				return lists.slice(request.params.interval[0], request.params.interval[1] > 0 ? request.params.interval[0] + request.params.interval[1] : lists.length);
 			}).then((lists: List[]) => ListController.getPublicList(lists, request.auth.credentials));
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [GET] /api/activities/=/{key}/followers/{offset?}/{limit?}
+		 * @param request Request-Object
+		 * @param request.params.key key
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function getFollowers(request: any, reply: any): void {
+			// Create promise.
+			let promise : Promise<any> = ActivityController.findByKey(request.params.key).then((activity: Activity) => {
+				if (!activity) return Promise.reject<User[]>(Boom.badRequest('Activity does not exist!'));
+				return ActivityController.getFollowers(activity);
+			}).then((users: User[]) => UserController.getPublicUser(users, request.auth.credentials));
 			
 			reply.api(promise);
 		}

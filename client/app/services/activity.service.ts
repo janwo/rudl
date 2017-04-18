@@ -5,6 +5,7 @@ import {List} from "../models/list";
 import {Activity, ActivityRecipe} from "../models/activity";
 import {Locale} from "../models/locale";
 import {UserService} from "./user.service";
+import {User} from "../models/user";
 import Translations = Locale.Translations;
 
 @Injectable()
@@ -28,6 +29,10 @@ export class ActivityService {
     
     follow(activity: string): Observable<Activity> {
         return this.dataService.post(`/api/activities/follow/${activity}`, null, true).map((json: JsonResponse) => json.data as Activity).share();
+    }
+    
+    followers(activity: string): Observable<User[]> {
+        return this.dataService.get(`/api/activities/=/${activity}/followers`, true).map((json: JsonResponse) => json.data as User[]).share();
     }
     
     unfollow(activity: string): Observable<Activity> {

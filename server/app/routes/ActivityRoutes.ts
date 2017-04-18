@@ -65,6 +65,23 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
+		path: '/api/activities/=/{key}/followers',
+		method: 'GET',
+		handler: ActivityController.RouteHandlers.getFollowers,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					key: Joi.string()
+				}
+			}
+		}
+	},
+	{
 		path: '/api/activities/=/{key}/lists/{filter}/{interval?}',
 		method: 'GET',
 		handler: ActivityController.RouteHandlers.getLists,

@@ -28,7 +28,11 @@ export default {
 									host: Config.backend.host,
 									port: Config.backend.port
 								}
-							}]
+							}],
+							watchOptions: {
+								aggregateTimeout: 300,
+								poll: 1000
+							}
 						}
 					}
 				]

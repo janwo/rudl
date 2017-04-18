@@ -1,8 +1,5 @@
-import {
-	Component, Input, ViewChild, ElementRef, AfterViewInit, Optional
-} from "@angular/core";
+import {AfterViewInit, Component, ElementRef, Input, Optional, ViewChild} from "@angular/core";
 import * as L from "leaflet";
-import {UserService} from "../../../../services/user.service";
 import {ControlValueAccessor, NgControl} from "@angular/forms";
 
 @Component({

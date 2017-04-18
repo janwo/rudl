@@ -1,5 +1,5 @@
 import {Component, Input} from "@angular/core";
-import {Router, ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 export interface StatisticItem {
     subject: string;

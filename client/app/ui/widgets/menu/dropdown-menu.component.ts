@@ -1,5 +1,5 @@
 import {Component, Input} from "@angular/core";
-import {trigger, transition, style, animate} from "@angular/animations";
+import {animate, style, transition, trigger} from "@angular/animations";
 import {MenuComponent} from "./menu.component";
 
 @Component({

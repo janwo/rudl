@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Subject, Observable, ReplaySubject} from "rxjs";
+import {Observable, ReplaySubject, Subject} from "rxjs";
 import {Router} from "@angular/router";
 
 export enum SearchState {

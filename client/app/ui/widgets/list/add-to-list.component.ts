@@ -1,11 +1,10 @@
-import {Component, Input, OnInit, OnDestroy, Output, EventEmitter} from "@angular/core";
-import {trigger, transition, style, animate, state} from "@angular/animations";
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
 import {Activity} from "../../../models/activity";
 import {Subscription} from "rxjs";
 import {ListService} from "../../../services/list.service";
 import {ActivityService} from "../../../services/activity.service";
 import {List} from "../../../models/list";
-import {FormGroup, FormBuilder, FormArray, Validators} from "@angular/forms";
+import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
 	templateUrl: 'add-to-list.component.html',

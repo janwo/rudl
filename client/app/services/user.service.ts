@@ -1,7 +1,7 @@
 import {DataService, JsonResponse} from "./data.service";
 import {Router} from "@angular/router";
 import {Injectable} from "@angular/core";
-import {Observable, BehaviorSubject, ReplaySubject} from "rxjs";
+import {BehaviorSubject, Observable, ReplaySubject} from "rxjs";
 import {User} from "../models/user";
 
 export interface UserStatus {

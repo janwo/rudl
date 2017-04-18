@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
-import {trigger, transition, style, animate, state} from "@angular/animations";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Observable, Subscription} from "rxjs";
 import {UserService} from "../../../services/user.service";
 import {Activity} from "../../../models/activity";

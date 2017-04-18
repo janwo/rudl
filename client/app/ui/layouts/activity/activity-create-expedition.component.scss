@@ -1,0 +1,82 @@
+@import '../../variables';
+
+:host {
+  display: block;
+
+  .split {
+    display: flex;
+    flex-direction: column-reverse;
+
+    & > * {
+      flex: 1 1 auto;
+    }
+
+    @include breakpoint('small') {
+      flex-direction: row;
+
+      & > * {
+        flex: 1 1 50%;
+      }
+    }
+  }
+
+  .image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      flex: 0 0 auto;
+      width: 70%;
+    }
+
+    @include breakpoint(null, 'small') {
+      display: none;
+    }
+  }
+
+  .map {
+    margin: map_get($base-padding, 'default') map_get($base-padding, 'default') 0;
+  }
+
+  .content {
+    margin: map_get($base-padding, 'default');
+
+    & > p {
+      margin-bottom: map_get($base-padding, 'default');
+    }
+  }
+
+  footer {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    margin-top: map_get($base-padding, 'default');
+
+    styled-button {
+      margin: 0;
+      position: relative;
+      flex: 0 0 auto;
+      z-index: 2;
+
+      &.done,
+      &.next {
+        margin-left: auto;
+      }
+
+      &.back {
+        margin-right: auto;
+      }
+    }
+
+    indicator {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 1;
+    }
+  }
+}

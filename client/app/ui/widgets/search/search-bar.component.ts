@@ -1,4 +1,4 @@
-import {Component, ViewChild, ElementRef, OnInit, OnDestroy} from "@angular/core";
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {Subscription} from "rxjs";
 import {SearchService, SearchState} from "../../../services/search.service";
 

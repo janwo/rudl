@@ -5,6 +5,7 @@ import {List, ListRecipe} from "../models/list";
 import {Activity} from "../models/activity";
 import {Locale} from "../models/locale";
 import {UserService} from "./user.service";
+import {User} from "../models/user";
 import Translations = Locale.Translations;
 
 @Injectable()
@@ -42,6 +43,10 @@ export class ListService {
     
     follow(list: string): Observable<List> {
         return this.dataService.post(`/api/lists/follow/${list}`, null, true).map((json: JsonResponse) => json.data as List).share();
+    }
+    
+    followers(list: string): Observable<User[]> {
+        return this.dataService.get(`/api/lists/=/${list}/followers`, true).map((json: JsonResponse) => json.data as User[]).share();
     }
     
     unfollow(list: string): Observable<List> {

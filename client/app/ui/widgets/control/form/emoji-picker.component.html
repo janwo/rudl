@@ -3,7 +3,7 @@
 		<div (click)="selectCategory(category)" class="{{category}}" [ngClass]="{active: pages && category == pages[page].category}"></div>
 	</li>
 </ul>
-<div class="pages" *ngIf="pages;else loading" (pan)="pan($event)" [@expandVertically]="!!expanded" [ngClass]="{dragging: dragging}">
+<div class="pages" *ngIf="pages;else loading" (pan)="pan($event)" [ngClass]="{dragging: dragging}">
 	<div #pagesSlider [ngClass]="{animating: animateTimer.timerId}">
 		<ul class="page">
 			<ng-container *ngIf="pages[page - 1]">

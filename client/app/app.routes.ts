@@ -1,5 +1,5 @@
 import {ModuleWithProviders} from "@angular/core";
-import {Routes, RouterModule} from "@angular/router";
+import {RouterModule, Routes} from "@angular/router";
 import {DashboardComponent} from "./ui/layouts/dashboard/dashboard.component";
 import {LoginGuard} from "./guards/login";
 import {ExploreComponent} from "./ui/layouts/explore/explore.component";
@@ -22,6 +22,13 @@ import {ListResolver} from "./resolver/list";
 import {UserResolver} from "./resolver/user";
 import {ExpeditionResolver} from "./resolver/expedition";
 import {ExpeditionComponent} from "./ui/layouts/expedition/expedition.component";
+import {ActivityCreateExpeditionComponent} from "./ui/layouts/activity/activity-create-expedition.component";
+import {ActivityFollowersComponent} from "./ui/layouts/activity/activity-followers.component";
+import {ActivityExpeditionsComponent} from "./ui/layouts/activity/activity-expeditions.component";
+import {ActivityEditComponent} from "./ui/layouts/activity/activity-edit.component";
+import {ActivityAddToListComponent} from "./ui/layouts/activity/activity-add-to-list.component";
+import {ListActivitiesComponent} from "./ui/layouts/list/list-activities.component";
+import {ListFollowersComponent} from "./ui/layouts/list/list-followers.component";
 
 const appRoutes: Routes = [
     {
@@ -64,13 +71,28 @@ const appRoutes: Routes = [
            
             { path: 'lists/:list', component: ListComponent, resolve: {
 	            list: ListResolver
-            }, canActivate: [ BoardingGuard ] },
+            }, canActivate: [ BoardingGuard ], children: [
+	            { path: '', redirectTo: 'rudel', pathMatch: 'full' },
+	            { path: 'rudel', component: ListActivitiesComponent },
+	            { path: 'followers', component: ListFollowersComponent }
+            ] },
            
             { path: 'search', redirectTo: 'search/', pathMatch: 'full', canActivate: [ BoardingGuard ] },
             { path: 'search/:query', component: SearchComponent, canActivate: [ BoardingGuard ] },
 	
 	        { path: 'rudel/:activity', component: ActivityComponent, resolve: {
-            	activity: ActivityResolver
+		        activity: ActivityResolver
+	        }, canActivate: [ BoardingGuard ], children: [
+				{ path: '', redirectTo: 'expeditions', pathMatch: 'full' },
+				{ path: 'expeditions', component: ActivityExpeditionsComponent },
+		        { path: 'edit', component: ActivityEditComponent },
+		        { path: 'add-to-list', component: ActivityAddToListComponent },
+				{ path: 'followers', component: ActivityFollowersComponent },
+				{ path: 'create-expedition', component: ActivityCreateExpeditionComponent },
+			] },
+	        
+	        { path: 'rudel/:activity', component: ActivityComponent, resolve: {
+		        activity: ActivityResolver
 	        }, canActivate: [ BoardingGuard ] },
 	        
 	        { path: 'expeditions/:expedition', component: ExpeditionComponent, resolve: {

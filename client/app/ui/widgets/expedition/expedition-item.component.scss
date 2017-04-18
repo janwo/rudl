@@ -4,6 +4,8 @@
   display: block;
 
   .card {
+    cursor: pointer;
+
     emoji {
       margin: map_get($base-padding, 'smaller') auto;
     }

@@ -1,12 +1,12 @@
-import {Component, OnInit, Input, Output, EventEmitter} from "@angular/core";
-import {trigger, transition, style, animate} from "@angular/animations";
+import {Component, Input, OnInit, Output} from "@angular/core";
+import {animate, style, transition, trigger} from "@angular/animations";
 import {UserService} from "../../../services/user.service";
 import {Locale} from "../../../models/locale";
 import {ButtonStyles} from "../control/styled-button.component";
+import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import Language = Locale.Language;
 import languages = Locale.languages;
 import Translations = Locale.Translations;
-import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
     templateUrl: 'translation-list.component.html',

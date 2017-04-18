@@ -1,6 +1,13 @@
 import {
-	Component, Input, ViewChild, ElementRef, AfterViewInit, OnChanges, SimpleChanges,
-	EventEmitter, Output
+	AfterViewInit,
+	Component,
+	ElementRef,
+	EventEmitter,
+	Input,
+	OnChanges,
+	Output,
+	SimpleChanges,
+	ViewChild
 } from "@angular/core";
 import * as L from "leaflet";
 import {UserService} from "../../../services/user.service";

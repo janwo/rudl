@@ -1,6 +1,6 @@
-import {Component, OnInit, OnDestroy} from "@angular/core";
+import {Component, OnInit} from "@angular/core";
 import {UserService} from "../../../services/user.service";
-import {Subscription, Subject} from "rxjs";
+import {Subject, Subscription} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
 import {User} from "../../../models/user";
 import {ButtonStyles} from "../../widgets/control/styled-button.component";

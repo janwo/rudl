@@ -1,10 +1,9 @@
-import {Component, OnInit, OnDestroy} from "@angular/core";
-import {trigger, transition, style, animate} from "@angular/animations";
+import {Component, OnDestroy, OnInit} from "@angular/core";
+import {animate, style, transition, trigger} from "@angular/animations";
 import {Subscription} from "rxjs";
-import {ActivatedRoute, Params, Router} from "@angular/router";
+import {Router} from "@angular/router";
 import {ButtonStyles} from "../../widgets/control/styled-button.component";
 import {UserService} from "../../../services/user.service";
-import {DomSanitizer, SafeStyle} from "@angular/platform-browser";
 
 @Component({
     templateUrl: 'boarding.component.html',
@@ -28,13 +27,8 @@ export class BoardingComponent implements OnInit, OnDestroy {
     
     constructor(
         private userService: UserService,
-        private route: ActivatedRoute,
-        private router: Router,
-        private sanitizer: DomSanitizer
-    ) {
-	    // Sanitize style.
-	    this.itemTransformation = this.sanitizer.bypassSecurityTrustStyle(`translateX(-${this.step * 100}%)`);
-    }
+        private router: Router
+    ) {}
     
     step: number = 0;
     steps: string[] = [
@@ -45,28 +39,10 @@ export class BoardingComponent implements OnInit, OnDestroy {
         'Grant Permissions'
     ];
 	permissionStatus: 'ungranted' | 'granting' | 'granted' | 'denied' = 'ungranted';
-	itemTransformation: SafeStyle;
 	locationSubscription: Subscription;
     ButtonStyles = ButtonStyles;
     
     ngOnInit(){
-    	// Get params.
-        this.route.params.forEach((params: Params) => {
-        	let step = parseInt(params['step']) || 0;
-        	
-        	// Finish line?
-	        if(step > this.steps.length) {
-	        	
-	        	//return;
-	        }
-        	
-            // Get selected step.
-            this.step = Math.min(Math.max(0, step), this.steps.length - 1);
-            
-            // Sanitize style.
-	        this.itemTransformation = this.sanitizer.bypassSecurityTrustStyle(`translateX(-${this.step * 100}%)`);
-        });
-        
 	    // Subscribe to permissions.
 	    this.locationSubscription = this.userService.getCurrentPosition().subscribe(() => {
 	    	this.permissionStatus = 'granted'

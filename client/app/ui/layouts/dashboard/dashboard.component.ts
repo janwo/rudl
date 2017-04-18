@@ -1,8 +1,8 @@
 import {Component, OnInit} from "@angular/core";
 import {Subscription} from "rxjs";
-import {UserStatus, UserService} from "../../../services/user.service";
+import {UserService, UserStatus} from "../../../services/user.service";
 import {SearchService, SearchState} from "../../../services/search.service";
-import {Router, NavigationEnd} from "@angular/router";
+import {NavigationEnd, Router} from "@angular/router";
 
 @Component({
     templateUrl: 'dashboard.component.html',

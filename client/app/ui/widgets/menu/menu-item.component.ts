@@ -1,5 +1,5 @@
-import {Component, Input, OnDestroy, OnInit, HostBinding, HostListener} from "@angular/core";
-import {Router, NavigationEnd, ActivatedRoute} from "@angular/router";
+import {Component, HostBinding, HostListener, Input, OnDestroy, OnInit} from "@angular/core";
+import {ActivatedRoute, NavigationEnd, Router} from "@angular/router";
 import {Subscription} from "rxjs/Subscription";
 
 @Component({

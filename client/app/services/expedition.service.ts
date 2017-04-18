@@ -1,7 +1,6 @@
 import {DataService, JsonResponse} from "./data.service";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
-import {Activity} from "../models/activity";
 import {Locale} from "../models/locale";
 import {UserService} from "./user.service";
 import {Expedition, ExpeditionRecipe} from "../models/expedition";

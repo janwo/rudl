@@ -168,4 +168,21 @@ export const RoutesConfig: RoutesConfiguration = [
 			}
 		}
 	},
+	{
+		path: '/api/lists/=/{key}/followers',
+		method: 'GET',
+		handler: ListController.RouteHandlers.getFollowers,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					key: Joi.string()
+				}
+			}
+		}
+	}
 ];

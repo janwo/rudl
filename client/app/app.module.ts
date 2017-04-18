@@ -8,9 +8,9 @@ import {StyledButtonComponent} from "./ui/widgets/control/styled-button.componen
 import {HttpModule, JsonpModule} from "@angular/http";
 import {LoginGuard} from "./guards/login";
 import {DataService} from "./services/data.service";
-import {routing, appRoutingProviders} from "./app.routes";
-import { ReactiveFormsModule} from "@angular/forms";
-import { ActivityResolver} from "./resolver/activity";
+import {appRoutingProviders, routing} from "./app.routes";
+import {ReactiveFormsModule} from "@angular/forms";
+import {ActivityResolver} from "./resolver/activity";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {UserService} from "./services/user.service";
 import {IndicatorComponent} from "./ui/widgets/state/indicator.component";
@@ -69,7 +69,6 @@ import {LocationPickerComponent} from "./ui/widgets/control/form/location-picker
 import {UserResolver} from "./resolver/user";
 import {ListResolver} from "./resolver/list";
 import {ExpeditionComponent} from "./ui/layouts/expedition/expedition.component";
-import {CreateExpeditionComponent} from "./ui/widgets/expedition/create-expedition.component";
 import {ExpeditionService} from "./services/expedition.service";
 import {ExpeditionResolver} from "./resolver/expedition";
 import {ExpeditionItemComponent} from "./ui/widgets/expedition/expedition-item.component";
@@ -78,12 +77,21 @@ import {EmojiPickerComponent} from "./ui/widgets/control/form/emoji-picker.compo
 import {UtilService} from "./services/util.service";
 import {KeysPipe} from "./pipes/keys.pipe";
 import {SafePipe} from "./pipes/safe.pipe";
+import {ActivityEditComponent} from "./ui/layouts/activity/activity-edit.component";
+import {ActivityExpeditionsComponent} from "./ui/layouts/activity/activity-expeditions.component";
+import {ActivityCreateExpeditionComponent} from "./ui/layouts/activity/activity-create-expedition.component";
+import {ActivityAddToListComponent} from "./ui/layouts/activity/activity-add-to-list.component";
+import {ActivityFollowersComponent} from "./ui/layouts/activity/activity-followers.component";
+import {ListFollowersComponent} from "./ui/layouts/list/list-followers.component";
+import {ListActivitiesComponent} from "./ui/layouts/list/list-activities.component";
+import {CarouselComponent} from "./ui/widgets/wrapper/carousel.component";
 
 @NgModule({
     declarations: [
 	    AppComponent,
 	    LoginComponent,
 	    StyledButtonComponent,
+	    CarouselComponent,
 	    DropdownMenuComponent,
 	    ActivityItemComponent,
 	    ItemWrapperComponent,
@@ -106,6 +114,11 @@ import {SafePipe} from "./pipes/safe.pipe";
 	    EmptyComponent,
 	    LoadingComponent,
 	    DashboardComponent,
+	    ActivityEditComponent,
+	    ActivityCreateExpeditionComponent,
+	    ActivityExpeditionsComponent,
+	    ActivityFollowersComponent,
+	    ActivityAddToListComponent,
 	    UserAvatarComponent,
 	    MapComponent,
 	    AddToListComponent,
@@ -128,7 +141,6 @@ import {SafePipe} from "./pipes/safe.pipe";
 	    SearchComponent,
 	    CoordinatesPipe,
 	    SearchBarComponent,
-	    CreateExpeditionComponent,
 	    LegalComponent,
 	    FormControlWrapper,
 	    UserComponent,
@@ -138,6 +150,8 @@ import {SafePipe} from "./pipes/safe.pipe";
 	    UserFollowersComponent,
 	    UserListsComponent,
 	    BoardingComponent,
+	    ListFollowersComponent,
+	    ListActivitiesComponent,
 	    FanComponent,
 	    LocationSearchComponent,
 	    SafePipe,

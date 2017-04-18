@@ -1,7 +1,6 @@
 @import '../../../variables';
 
-$emoji-picker-padding: map_get($base-font-size, 'default') / 1.5; // Golden Ratio <3
-$emoji-picker-icons-row-size: 8;
+$emoji-picker-icons-row-size: 6;
 $emoji-picker-categories-row-size: 7;
 
 :host {
@@ -36,7 +35,6 @@ $emoji-picker-categories-row-size: 7;
         justify-content: space-around;
         flex-wrap: wrap;
         flex-direction: row;
-        padding: $emoji-picker-padding;
 
         li {
           flex: 0 0 100% / $emoji-picker-icons-row-size;

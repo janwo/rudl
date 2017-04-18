@@ -1,6 +1,6 @@
-import {Component, OnInit, Input} from "@angular/core";
-import {trigger, transition, style, animate} from "@angular/animations";
-import {UrlTree, Router, NavigationEnd} from "@angular/router";
+import {Component, Input, OnInit} from "@angular/core";
+import {animate, style, transition, trigger} from "@angular/animations";
+import {NavigationEnd, Router, UrlTree} from "@angular/router";
 
 @Component({
 	templateUrl: 'fan.component.html',
