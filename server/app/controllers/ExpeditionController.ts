@@ -1,8 +1,5 @@
-import Nodemailer = require("nodemailer");
-import Boom = require("boom");
-import dot = require("dot-object");
-import fs = require('fs');
-import path = require('path');
+import * as Boom from "boom";
+import * as dot from "dot-object";
 import {DatabaseManager} from "../Database";
 import {Cursor} from "arangojs";
 import {Activity} from "../models/activity/Activity";
@@ -14,10 +11,7 @@ import {UserOwnsExpedition} from "../models/expedition/UserOwnsExpedition";
 import {UserJoinsExpedition} from "../models/expedition/UserJoinsExpedition";
 import {ExpeditionIsItem} from "../models/expedition/ExpeditionIsItem";
 import {ActivityController} from "./ActivityController";
-import randomstring = require("randomstring");
-import jwt = require("jsonwebtoken");
 import * as moment from "moment";
-import _ = require("lodash");
 import {UtilController} from "./UtilController";
 
 export module ExpeditionController {
@@ -157,10 +151,12 @@ export module ExpeditionController {
 	
 	export function approveUser(expedition: Expedition, user: User) : Promise<UserFollowsActivity> {
 		let collection = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsActivity.name);
-		return collection.firstExample({
+		return collection.byExample({
 			_from: user._id,
 			_to: expedition._id
-		}).then((cursor: Cursor) => cursor.next()).then((userFollowsActivity: UserFollowsActivity) => {
+		}, {
+			limit: 1
+		}).then((cursor: Cursor) => cursor.next() as any as UserFollowsActivity).then((userFollowsActivity: UserFollowsActivity) => {
 			// Try to return any existing connection.
 			if(userFollowsActivity) return userFollowsActivity;
 			
@@ -183,6 +179,21 @@ export module ExpeditionController {
 			_to: activity._id
 		};
 		return DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsActivity.name).removeByExample(edge).then(() => {});
+	}
+	
+	export function removeExpeditions(activity: Activity): Promise<Activity> {
+		return DatabaseManager.arangoFunctions.outbounds(activity._id, DatabaseManager.arangoCollections.expeditionIsItem.name).then((expeditions: Expedition[]) => {
+			return Promise.all(expeditions.map(expedition => ExpeditionController.removeExpedition(expedition)));
+		}).then(() => activity);
+	}
+	
+	export function removeExpedition(expedition: Expedition): Promise<any> {
+		let graph = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name);
+		
+		// TODO Remove all comments.
+		
+		// Remove expedition.
+		return graph.vertexCollection(DatabaseManager.arangoCollections.expeditions.name).remove(expedition._id);
 	}
 	
 	export function createExpedition(user: User, activity: Activity, options: {
@@ -258,7 +269,9 @@ export module ExpeditionController {
 		export function createExpedition(request: any, reply: any): void {
 			// Create promise.
 			let promise: Promise<any> = ActivityController.findByKey(request.payload.activity).then((activity: Activity) => {
-				if(activity) return ExpeditionController.createExpedition(request.auth.credentials, activity, {
+				if(!activity) return Promise.reject(Boom.badRequest('Activity does not exist!'));
+				
+				return ExpeditionController.createExpedition(request.auth.credentials, activity, {
 					title: request.payload.title,
 					description: request.payload.description,
 					needsApproval: request.payload.needsApproval,
@@ -267,8 +280,6 @@ export module ExpeditionController {
 					location: request.payload.location,
 					fuzzyTime: request.payload.fuzzyTime
 				}).then(expedition => ExpeditionController.getPublicExpedition(expedition, request.auth.credentials));
-				
-				return Promise.reject(Boom.badRequest('Activity does not exist!'));
 			});
 			
 			reply.api(promise);
@@ -283,7 +294,10 @@ export module ExpeditionController {
 		 */
 		export function getExpedition(request: any, reply: any): void {
 			// Create promise.
-			let promise : Promise<Expedition> = ExpeditionController.findByKey(request.params.key).then((expedition: Expedition) => ExpeditionController.getPublicExpedition(expedition, request.auth.credentials));
+			let promise : Promise<Expedition> = ExpeditionController.findByKey(request.params.key).then((expedition: Expedition) => {
+				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
+				return ExpeditionController.getPublicExpedition(expedition, request.auth.credentials);
+			});
 			
 			reply.api(promise);
 		}
@@ -314,8 +328,8 @@ export module ExpeditionController {
 		export function getExpeditionBy(request: any, reply: any): void {
 			// Create promise.
 			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
-				if(user) return ExpeditionController.findByUser(user);
-				return Promise.reject(Boom.notFound('User not found!'));
+				if(!user) return Promise.reject(Boom.notFound('User not found!'));
+				return ExpeditionController.findByUser(user);
 			}).then((expeditions: Expedition[]) => getPublicExpedition(expeditions, request.auth.credentials));
 			
 			reply.api(promise);
@@ -329,11 +343,12 @@ export module ExpeditionController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getActivityExpeditonsBy(request: any, reply: any): void {
+		
+		export function getActivityExpeditionsBy(request: any, reply: any): void {
 			// Create promise.
 			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
-				if(user) return ExpeditionController.findByUser(user);
-				return Promise.reject(Boom.notFound('User not found!'));
+				if(!user) return Promise.reject(Boom.notFound('User not found!'));
+				return ExpeditionController.findByUser(user);
 			}).then((expeditions: Expedition[]) => getPublicExpedition(expeditions, request.auth.credentials));
 			
 			reply.api(promise);
@@ -350,8 +365,8 @@ export module ExpeditionController {
 		export function getExpeditionsNearby(request: any, reply: any): void {
 			// Create promise.
 			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
-				if(user) return ExpeditionController.findByUser(user);
-				return Promise.reject(Boom.notFound('User not found!'));
+				if(!user) return Promise.reject(Boom.notFound('User not found!'));
+				return ExpeditionController.findByUser(user);
 			}).then((expeditions: Expedition[]) => getPublicExpedition(expeditions, request.auth.credentials));
 			
 			reply.api(promise);
@@ -368,8 +383,8 @@ export module ExpeditionController {
 		export function getActivityExpeditionsNearby(request: any, reply: any): void {
 			// Create promise.
 			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
-				if(user) return ExpeditionController.findByUser(user);
-				return Promise.reject(Boom.notFound('User not found!'));
+				if(!user) return Promise.reject(Boom.notFound('User not found!'));
+				return ExpeditionController.findByUser(user);
 			}).then((expeditions: Expedition[]) => getPublicExpedition(expeditions, request.auth.credentials));
 			
 			reply.api(promise);

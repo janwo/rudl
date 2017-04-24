@@ -18,7 +18,6 @@ export class ActivityCreateExpeditionComponent implements OnInit {
     activity: Activity;
 	form: FormGroup;
 	submitPending: boolean;
-	ButtonStyles = ButtonStyles;
 	@ViewChild(CarouselComponent) carousel: CarouselComponent;
 	
 	constructor(

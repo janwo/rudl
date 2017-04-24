@@ -3,7 +3,7 @@ export default {
 	frontend: {
 		webpack: {
 			config: [
-				( Config ) => {
+				( Config: any ) => {
 					return {
 						devtool: 'cheap-module-source-map',
 					}

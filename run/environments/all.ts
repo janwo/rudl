@@ -1,6 +1,6 @@
-import Webpack from "webpack";
-import ExtractTextPlugin from "extract-text-webpack-plugin";
-import HtmlWebpackPlugin from "html-webpack-plugin";
+import * as Webpack from "webpack";
+import * as ExtractTextPlugin from "extract-text-webpack-plugin";
+import * as HtmlWebpackPlugin from "html-webpack-plugin";
 import {root} from "../config";
 
 export default {
@@ -43,7 +43,7 @@ export default {
 		},
 		webpack: {
 			config: [
-				( Config ) => {
+				( Config: any ) => {
 					return {
 						devtool: 'source-map',
 						resolve: {

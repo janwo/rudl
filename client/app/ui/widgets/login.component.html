@@ -13,7 +13,7 @@
 		<form-control-wrapper [description]="'Enter ' + (signInOnly ? 'your' : 'an') + ' **username**' | format" [errorMessages]="{
 			required: 'Bitte gebe einen Usernamen an.',
 			minlength: 'Dein Username ist zu kurz (mindestens 5 Zeichen).',
-			pattern: 'Dein Username darf nur Kleinbuchstaben, Zahlen, Bindestriche und Unterstriche enthalten.'
+			pattern: 'Dein Username darf nur Kleinbuchstaben, Zahlen und Unterstriche enthalten.'
 		}">
 			<input id="username" formControlName="username" maxlength="16" placeholder="{{placeholders.username}}" type="text">
 		</form-control-wrapper>

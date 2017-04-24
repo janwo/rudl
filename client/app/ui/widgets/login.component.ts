@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
 					Validators.required,
 					Validators.minLength(5),
 					Validators.maxLength(16),
-					Validators.pattern(/^[a-z0-9-_]*$/)
+					Validators.pattern(/^[a-z0-9_]*$/)
 			    ]
 			],
 			mail: [

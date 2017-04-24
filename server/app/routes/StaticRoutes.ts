@@ -1,4 +1,4 @@
-import Path = require("path");
+import * as Path from "path";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {Config} from "../../../run/config";
 

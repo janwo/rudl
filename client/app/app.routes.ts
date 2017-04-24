@@ -29,6 +29,7 @@ import {ActivityEditComponent} from "./ui/layouts/activity/activity-edit.compone
 import {ActivityAddToListComponent} from "./ui/layouts/activity/activity-add-to-list.component";
 import {ListActivitiesComponent} from "./ui/layouts/list/list-activities.component";
 import {ListFollowersComponent} from "./ui/layouts/list/list-followers.component";
+import {NotFoundComponent} from "./ui/layouts/404/404.component";
 
 const appRoutes: Routes = [
     {
@@ -58,7 +59,17 @@ const appRoutes: Routes = [
             { path: 'explore', component: ExploreComponent, canActivate: [ BoardingGuard ]},
 	        
 	        { path: 'people', component: PeopleComponent, pathMatch: 'full', canActivate: [ BoardingGuard ] },
-           
+	
+	        { path: 'people/not-found', component: NotFoundComponent, data: {
+		        title: 'Invalid username!',
+		        image: require('../assets/boarding/radar.png'),
+		        description: 'The requested user does not exist!'
+	        }},
+	        { path: 'people/deleted-message', component: NotFoundComponent, data: {
+		        title: 'We deleted your account!',
+		        image: require('../assets/boarding/radar.png'),
+		        description: 'Hope you come back soon <3.'
+	        }},
             { path: 'people/:username', resolve: {
 	            user: UserResolver
             }, component: UserComponent, canActivate: [BoardingGuard ], children: [
@@ -68,7 +79,17 @@ const appRoutes: Routes = [
 	            { path: 'followers', component: UserFollowersComponent },
 	            { path: 'followees', component: UserFolloweesComponent },
             ] },
-           
+	
+	        { path: 'lists/not-found', component: NotFoundComponent, data: {
+		        title: 'Invalid list id!',
+		        image: require('../assets/boarding/radar.png'),
+		        description: 'The requested list does not exist!'
+	        }},
+	        { path: 'lists/deleted-message', component: NotFoundComponent, data: {
+		        title: 'List deleted!',
+		        image: require('../assets/boarding/radar.png'),
+		        description: 'We deleted the list as no followers remained.'
+	        }},
             { path: 'lists/:list', component: ListComponent, resolve: {
 	            list: ListResolver
             }, canActivate: [ BoardingGuard ], children: [
@@ -80,6 +101,16 @@ const appRoutes: Routes = [
             { path: 'search', redirectTo: 'search/', pathMatch: 'full', canActivate: [ BoardingGuard ] },
             { path: 'search/:query', component: SearchComponent, canActivate: [ BoardingGuard ] },
 	
+	        { path: 'rudel/not-found', component: NotFoundComponent, data: {
+		        title: 'Invalid rudel id!',
+		        image: require('../assets/boarding/radar.png'),
+		        description: 'The requested rudel does not exist!'
+	        }},
+	        { path: 'rudel/deleted-message', component: NotFoundComponent, data: {
+		        title: 'Rudel deleted!',
+		        image: require('../assets/boarding/radar.png'),
+		        description: 'We deleted the rudel as no followers remained.'
+	        }},
 	        { path: 'rudel/:activity', component: ActivityComponent, resolve: {
 		        activity: ActivityResolver
 	        }, canActivate: [ BoardingGuard ], children: [
@@ -90,20 +121,37 @@ const appRoutes: Routes = [
 				{ path: 'followers', component: ActivityFollowersComponent },
 				{ path: 'create-expedition', component: ActivityCreateExpeditionComponent },
 			] },
-	        
-	        { path: 'rudel/:activity', component: ActivityComponent, resolve: {
-		        activity: ActivityResolver
-	        }, canActivate: [ BoardingGuard ] },
-	        
+	        { path: 'expeditions/not-found', component: NotFoundComponent, data: {
+		        title: 'Invalid expedition id!',
+		        image: require('../assets/boarding/radar.png'),
+		        description: 'The requested expedition does not exist!'
+	        }},
+	        { path: 'expeditions/deleted-message', component: NotFoundComponent, data: {
+		        title: 'Expedition deleted!',
+		        image: require('../assets/boarding/radar.png'),
+		        description: 'We deleted the expedition as no followers remained.'
+	        }},
 	        { path: 'expeditions/:expedition', component: ExpeditionComponent, resolve: {
 		        expedition: ExpeditionResolver
 	        }, canActivate: [ BoardingGuard ] },
 	        
 	        // No boarding required.
 	        { path: 'boarding', component: BoardingComponent },
-	        { path: 'settings', component: SettingsComponent }
+	        { path: 'settings', component: SettingsComponent },
+	        { path: '404', component: NotFoundComponent, data: {
+		        title: 'Oops, nothing here!',
+		        image: require('../assets/boarding/radar.png'),
+		        description: 'The requested page does not exist!'
+	        }},
+	        { path: '**', redirectTo: '404' }
         ]
     },
+	{ path: '404', component: NotFoundComponent, data: {
+		title: 'Oops, nothing here!',
+		image: require('../assets/boarding/radar.png'),
+		description: 'The requested page does not exist!'
+	}},
+	{ path: '**', redirectTo: '404' }
 ];
 
 export const appRoutingProviders: any[] = [];

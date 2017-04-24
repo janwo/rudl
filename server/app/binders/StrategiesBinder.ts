@@ -1,12 +1,12 @@
 import {Server} from "hapi";
-import Glob = require("glob");
-import Path = require("path");
+import * as Glob from "glob";
+import * as Path from 'path';
 
 export class StrategiesBinder {
 	
 	public static bind(server: Server) {
 		let defaultStrategiesFound: number = 0;
-		Glob.sync(Path.resolve(__dirname, `../strategies/**/*.js`)).forEach(file => {
+		Glob.sync(Path.resolve(__dirname, `../strategies/**/*.ts`)).forEach(file => {
 			// Configure strategy.
 			let config: any = require(file).StrategyConfig;
 			server.auth.strategy(config.strategyName, config.schemeName, config.strategyConfig);

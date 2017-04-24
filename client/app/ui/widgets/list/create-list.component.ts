@@ -40,8 +40,7 @@ export class CreateListComponent {
     
         // Create activity recipe.
         let listRecipe: ListRecipe = {
-		    translations: {},
-		    activities: []
+		    translations: {}
 	    };
     
         // Fire and remove pending state when done.

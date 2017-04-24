@@ -39,4 +39,9 @@ export class ExpeditionComponent implements OnInit {
 	        this.formattedLocation = this.expedition.needsApproval && !this.expedition.relations.isApproved ? `ca. ${distance} km` : `${distance} km`;
         });
     }
+	
+	
+	 // Show delete message.
+	 // this.router.navigate(['/lists/deleted-message']);
+	 
 }

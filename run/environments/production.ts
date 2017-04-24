@@ -1,14 +1,14 @@
-import Webpack from "webpack";
-import ExtractTextPlugin from "extract-text-webpack-plugin";
+import * as Webpack from "webpack";
+import * as ExtractTextPlugin from "extract-text-webpack-plugin";
 import {AotPlugin} from "@ngtools/webpack";
 import {root} from "../config";
 
 export default {
-	name: 'rudl - Secure Production Environment',
+	name: 'rudl - Production Environment',
 	frontend: {
 		webpack: {
 			config: [
-				( Config ) => {
+				( Config: any ) => {
 					return {
 						module: {
 							rules: [
@@ -27,9 +27,7 @@ export default {
 								compress: {
 									warnings: false
 								},
-								output: {
-									comments: false
-								},
+								comments: false,
 								sourceMap: false
 							}),
 							new Webpack.NoEmitOnErrorsPlugin(),
@@ -42,8 +40,6 @@ export default {
 	},
 	backend: {
 		host: process.env.BACKEND_SERVER_HOST || 'app',
-		port: 443,
-		domain: process.env.DOMAIN || 'https://localhost',
 		db: {
 			redis: {
 				host: process.env.REDIS_HOST || 'redis'
@@ -52,7 +48,6 @@ export default {
 				host: process.env.ARANGO_HOST || 'arango'
 			}
 		},
-		ssl: true,
 		log: {
 			serverLogs: {
 				file: {

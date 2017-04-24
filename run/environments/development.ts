@@ -1,4 +1,4 @@
-import ExtractTextPlugin from "extract-text-webpack-plugin";
+import * as ExtractTextPlugin from "extract-text-webpack-plugin";
 import {root} from "../config";
 
 export default {
@@ -10,7 +10,7 @@ export default {
 				host: process.env.WEBPACK_SERVER_HOST || 'app',
 				port: process.env.WEBPACK_SERVER_PORT || 80,
 				config: [
-					( Config ) => {
+					( Config: any ) => {
 						return {
 							inline: true,
 							contentBase: root('client'),
@@ -38,7 +38,7 @@ export default {
 				]
 			},
 			config: [
-				( Config ) => {
+				( Config: any ) => {
 					return {
 						devtool: 'inline-source-map',
 						entry: {

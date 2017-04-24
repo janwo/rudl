@@ -1,16 +1,8 @@
-import Nodemailer = require("nodemailer");
-import Boom = require("boom");
-import dot = require("dot-object");
-import fs = require('fs');
-import path = require('path');
 import {DatabaseManager} from "../Database";
 import {Cursor} from "arangojs";
 import {UserController} from "./UserController";
 import {AccountController} from "./AccountController";
 import {User} from "../models/user/User";
-import randomstring = require("randomstring");
-import jwt = require("jsonwebtoken");
-import _ = require("lodash");
 
 export module SuggestionController {
 	

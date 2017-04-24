@@ -2,11 +2,7 @@ import {UserRoles, UserValidation} from "../models/user/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {ListController} from "../controllers/ListController";
 import {TranslationsValidation} from "../models/Translations";
-import BasicStrategy = require("../strategies/BasicStrategy");
-import FacebookStrategy = require("../strategies/FacebookStrategy");
-import TwitterStrategy = require("../strategies/TwitterStrategy");
-import GoogleStrategy = require("../strategies/GoogleStrategy");
-import Joi = require('joi');
+import * as Joi from 'joi';
 import {ListValidation} from "../models/list/List";
 
 const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.string().regex(/^me$/));
@@ -122,7 +118,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/lists/create',
 		method: 'POST',
-		handler: ListController.RouteHandlers.createList,
+		handler: ListController.RouteHandlers.create,
 		config: {
 			auth: {
 				scope: [
@@ -135,9 +131,29 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
+		path: '/api/lists/=/{key}',
+		method: 'POST',
+		handler: ListController.RouteHandlers.update,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					key: Joi.string()
+				},
+				payload: {
+					translations: ListValidation.translations.optional()
+				}
+			}
+		}
+	},
+	{
 		path: '/api/lists/follow/{list}',
 		method: 'POST',
-		handler: ListController.RouteHandlers.addFollowee,
+		handler: ListController.RouteHandlers.follow,
 		config: {
 			auth: {
 				scope: [
@@ -154,7 +170,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/lists/unfollow/{list}',
 		method: 'POST',
-		handler: ListController.RouteHandlers.deleteFollowee,
+		handler: ListController.RouteHandlers.unfollow,
 		config: {
 			auth: {
 				scope: [
@@ -171,7 +187,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/lists/=/{key}/followers',
 		method: 'GET',
-		handler: ListController.RouteHandlers.getFollowers,
+		handler: ListController.RouteHandlers.followers,
 		config: {
 			auth: {
 				scope: [

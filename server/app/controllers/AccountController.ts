@@ -1,6 +1,6 @@
-import Nodemailer = require("nodemailer");
-import Boom = require("boom");
-import dot = require("dot-object");
+
+import * as Boom from "boom";
+import * as Path from 'path';
 import * as CryptoJS from "crypto-js";
 import * as Joi from "joi";
 import {Config} from "../../../run/config";
@@ -8,11 +8,7 @@ import {User, UserProvider, UserValidation, UserRoles} from "../models/user/User
 import {DatabaseManager} from "../Database";
 import {Cursor} from "arangojs";
 import {UserController} from "./UserController";
-import fs = require('fs');
-import path = require('path');
-import jwt = require("jsonwebtoken");
-import _ = require("lodash");
-import sharp = require("sharp");
+import * as sharp from "sharp";
 
 export module AccountController {
 	
@@ -24,24 +20,17 @@ export module AccountController {
 		lastName: string;
 	}
 	
+	//TODO ERROR HANDLING FOR USERNAME OR MAIL COLLISION
 	export function createUser(recipe: UserRecipe): Promise<User> {
 		return new Promise<User>(resolve => {
 			// Does user already exist?
 			let promise = Promise.all([
-				UserController.findByUsername(recipe.username).catch(() => null),
-				UserController.findByMail(recipe.mail).catch(() => null)
+				UserController.findByUsername(recipe.username),
+				UserController.findByMail(recipe.mail)
 			]).then((values: User[]) => {
-				return new Promise((resolve, reject) => {
-					if(values[0] || values[1]) {
-						reject(Boom.badRequest('Cannot create user as the username or mail is already in use.'));
-						return;
-					}
-					resolve();
-				});
-			});
+				if(values[0] || values[1]) return Promise.reject<User>('Cannot create user as the username or mail is already in use.');
 			
-			// Create user.
-			promise.then(() => {
+				// Create user.
 				return {
 					firstName: recipe.firstName ,
 					lastName: recipe.lastName,
@@ -72,7 +61,10 @@ export module AccountController {
 					createdAt: null,
 					updatedAt: null
 				};
-			}).then((user: User) => setPassword(user, user.auth.password)).then(resolve);
+			});
+			
+			// Create user.
+			promise.then((user: User) => setPassword(user, user.auth.password)).then(resolve);
 		});
 		
 	}
@@ -83,6 +75,7 @@ export module AccountController {
 		recommendations?: Array<string>
 	}
 	
+	//TODO GET RID OF BOOM HERE
 	export function checkUsername(username: string): Promise<CheckUsernameResult> {
 		//TODO The recommendation array does return strings greater than 16 chars.
 		// Check validity.
@@ -140,6 +133,7 @@ export module AccountController {
 		});
 	}
 	
+	// TODO GET RID OF BOOM HERE
 	export function checkPassword(user: User, password: string): Promise<User> {
 		return new Promise<User>((resolve, reject) => {
 			let decrypted = CryptoJS.AES.decrypt(user.auth.password, Config.backend.secretPassphrase).toString(CryptoJS.enc.Utf8);
@@ -159,7 +153,7 @@ export module AccountController {
 				user.auth.providers[existingProviderIndex] = provider;
 			else
 				user.auth.providers.push(provider);
-			return resolve(save ? saveUser(user) : user);
+			return resolve(save ? AccountController.save(user) : user);
 		});
 	}
 	
@@ -167,7 +161,7 @@ export module AccountController {
 		return new Promise<User>(resolve => {
 			let existingProviderIndex: number = user.auth.providers.findIndex(elem => elem.provider === provider.provider && elem.userIdentifier === provider.userIdentifier);
 			if (existingProviderIndex >= 0) user.auth.providers.splice(existingProviderIndex, 1);
-			return resolve(save ? saveUser(user) : user);
+			return resolve(save ? AccountController.save(user) : user);
 		});
 	}
 	
@@ -179,24 +173,12 @@ export module AccountController {
 		].join(' ');
 	}
 	
-	export function saveUser(user: User): Promise<User> {
+	export function save(user: User): Promise<User> {
 		// Redefine search data.
 		updateFulltextSearchData(user);
 		
-		// Set new timestamps.
-		let now = new Date().toISOString();
-		user.updatedAt = now;
-		if (!user._key) user.createdAt = now;
-		
-		let aqlQuery = user._key ?
-			`REPLACE @document IN @@collection RETURN NEW` :
-			`INSERT @document INTO @@collection RETURN NEW`;
-		let aqlParams = {
-			'@collection': DatabaseManager.arangoCollections.users.name,
-			document: user
-		};
-		
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<User>;
+		// Create.
+		return DatabaseManager.arangoFunctions.updateOrCreate(user, DatabaseManager.arangoCollections.users.name);
 	}
 	
 	export namespace RouteHandlers {
@@ -221,7 +203,7 @@ export module AccountController {
 				request.payload.filename.pipe(transformer);
 				
 				// Make paths retrievable.
-				let getAvatarPath = (size: string) => path.resolve(Config.paths.avatars.dir, `${user._key}-${size}`);
+				let getAvatarPath = (size: string) => Path.resolve(Config.paths.avatars.dir, `${user._key}-${size}`);
 				
 				// Set transformation streams.
 				let transformations = [
@@ -233,7 +215,7 @@ export module AccountController {
 				// Execute transformations, update and return user profile.
 				let promise = Promise.all(transformations).then(() => {
 					user.meta.hasAvatar = true;
-					return saveUser(user);
+					return AccountController.save(user);
 				}).then((user: User) => UserController.getPublicUser(user, user));
 				
 				resolve(promise);
@@ -262,7 +244,7 @@ export module AccountController {
 			];
 			
 			// Save user.
-			let promise = saveUser(request.auth.credentials).then((user: User) => {
+			let promise = AccountController.save(request.auth.credentials).then((user: User) => {
 				return UserController.getPublicUser(user, user);
 			});
 			
@@ -281,7 +263,7 @@ export module AccountController {
 			request.auth.credentials.meta.onBoard = request.payload.boarded;
 			
 			// Save user.
-			let promise = saveUser(request.auth.credentials).then((user: User) => {
+			let promise = AccountController.save(request.auth.credentials).then((user: User) => {
 				return UserController.getPublicUser(user, user);
 			});
 			

@@ -85,6 +85,7 @@ import {ActivityFollowersComponent} from "./ui/layouts/activity/activity-followe
 import {ListFollowersComponent} from "./ui/layouts/list/list-followers.component";
 import {ListActivitiesComponent} from "./ui/layouts/list/list-activities.component";
 import {CarouselComponent} from "./ui/widgets/wrapper/carousel.component";
+import {NotFoundComponent} from "./ui/layouts/404/404.component";
 
 @NgModule({
     declarations: [
@@ -141,6 +142,7 @@ import {CarouselComponent} from "./ui/widgets/wrapper/carousel.component";
 	    SearchComponent,
 	    CoordinatesPipe,
 	    SearchBarComponent,
+	    NotFoundComponent,
 	    LegalComponent,
 	    FormControlWrapper,
 	    UserComponent,

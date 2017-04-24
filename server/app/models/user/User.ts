@@ -7,7 +7,7 @@ export class UserRoles {
 }
 
 export const UserValidation = {
-	username: Joi.string().min(5).max(16).regex(/^[a-z0-9-_]*$/).required(),
+	username: Joi.string().min(5).max(16).regex(/^[a-z0-9_]*$/).required(),
 	mail: Joi.string().email().required(),
 	password: Joi.string().min(6).max(32).required(),
 	firstName: Joi.string().min(1).max(24).required(),

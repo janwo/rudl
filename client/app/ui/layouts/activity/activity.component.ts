@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {Activity} from "../../../models/activity";
 import {ButtonStyles} from "../../widgets/control/styled-button.component";
 import {ModalComponent} from "../../widgets/modal/modal.component";
@@ -32,7 +32,8 @@ export class ActivityComponent implements OnInit {
     
     constructor(
 	    private activityService: ActivityService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ) {}
     
     ngOnInit(){
@@ -48,9 +49,17 @@ export class ActivityComponent implements OnInit {
         
         this.pendingFollowRequest = true;
         let obs = this.activity.relations.isFollowed ? this.activityService.unfollow(this.activity.id) : this.activityService.follow(this.activity.id);
-        obs.do((updatedActivity: Activity) => {
-            this.activity = updatedActivity;
+        obs.subscribe((updatedActivity: Activity) => {
             this.pendingFollowRequest = false;
-        }).subscribe();
+            
+            // Set updated list.
+            if(updatedActivity) {
+                this.activity = updatedActivity;
+                return;
+            }
+    
+            // Show delete message.
+            this.router.navigate(['/rudel/deleted-message']);
+        });
     }
 }

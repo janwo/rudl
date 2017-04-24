@@ -4,8 +4,8 @@ import {StrategyConfiguration} from "../binders/StrategiesBinder";
 import {UserController} from "../controllers/UserController";
 import {AuthController} from "../controllers/AuthController";
 import {AccountController} from "../controllers/AccountController";
-import Boom = require("boom");
-import randomstring = require("randomstring");
+import * as Boom from "boom";
+import * as randomstring from"randomstring";
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -40,27 +40,31 @@ export function handleTwitter(request: any, reply: any): void {
 		refreshToken: request.auth.credentials.refreshToken || undefined
 	};
 	
-	UserController.findByProvider(provider).catch((err: Error) => {
-		// Create the user profile
-		let displayName = profile.displayName.trim();
-		let iSpace = displayName.indexOf(' '); // index of the whitespace following the firstName
-		let firstName = iSpace !== -1 ? displayName.substring(0, iSpace) : displayName;
-		let lastName = iSpace !== -1 ? displayName.substring(iSpace + 1) : '';
-		
-		// Create User.
-		return AccountController.checkUsername(profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then(checkResults => {
-			if (checkResults.available) return checkResults.username;
-			return checkResults.recommendations[Math.trunc(Math.random() * checkResults.recommendations.length)];
-		}).then(username => {
-			return AccountController.createUser({
-				firstName: firstName,
-				lastName: lastName,
-				password: randomstring.generate(10),
-				username: username,
-				mail: null /* default, Twitter does not return mails in those requests */
+	UserController.findByProvider(provider).then((user: User) => {
+		// Create user?
+		if(!user) {
+			let displayName = profile.displayName.trim();
+			let iSpace = displayName.indexOf(' '); // index of the whitespace following the firstName
+			let firstName = iSpace !== -1 ? displayName.substring(0, iSpace) : displayName;
+			let lastName = iSpace !== -1 ? displayName.substring(iSpace + 1) : '';
+			
+			// Create User.
+			return AccountController.checkUsername(profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then(checkResults => {
+				if (checkResults.available) return checkResults.username;
+				return checkResults.recommendations[Math.trunc(Math.random() * checkResults.recommendations.length)];
+			}).then(username => {
+				return AccountController.createUser({
+					firstName: firstName,
+					lastName: lastName,
+					password: randomstring.generate(10),
+					username: username,
+					mail: null /* default, Twitter does not return mails in those requests */
+				});
 			});
-		});
-	}).then((user: User) => AccountController.addProvider(user, provider)).then(AccountController.saveUser).then(AuthController.signToken).then(token => {
+		}
+		
+		return user;
+	}).then((user: User) => AccountController.addProvider(user, provider)).then(user => AccountController.save(user)).then(user => AuthController.signToken(user)).then(token => {
 		reply.view('message', {
 			title: 'Authentication',
 			domain: Config.backend.domain,

@@ -3,9 +3,13 @@
 :host {
   display: block;
 
+  h1 {
+    margin: map_get($base-padding, 'smaller') map_get($base-padding, 'smaller') map_get($base-heading-font-size, 'h1');
+  }
+
   .split {
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
 
     & > * {
       flex: 1 1 auto;
@@ -20,30 +24,21 @@
     }
   }
 
-  .image {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    img {
-      flex: 0 0 auto;
-      width: 70%;
-    }
-
-    @include breakpoint(null, 'small') {
-      display: none;
-    }
-  }
-
   .map {
-    margin: map_get($base-padding, 'default') map_get($base-padding, 'default') 0;
+    margin: 0 map_get($base-padding, 'smaller') map_get($base-padding, 'smaller');
+
+    form-control-wrapper {
+      margin: 0;
+    }
   }
 
   .content {
-    margin: map_get($base-padding, 'default');
+    margin: 0 map_get($base-padding, 'smaller') map_get($base-padding, 'smaller');
 
-    & > p {
-      margin-bottom: map_get($base-padding, 'default');
+    &:not(:first-child) {
+      @include breakpoint(null, 'small') {
+        margin-top: 0;
+      }
     }
   }
 
@@ -52,7 +47,6 @@
     display: flex;
     flex-direction: row;
     position: relative;
-    margin-top: map_get($base-padding, 'default');
 
     styled-button {
       margin: 0;

@@ -4,8 +4,8 @@ import {StrategyConfiguration} from "../binders/StrategiesBinder";
 import {UserController} from "../controllers/UserController";
 import {AuthController} from "../controllers/AuthController";
 import {AccountController} from "../controllers/AccountController";
-import Boom = require("boom");
-import randomstring = require("randomstring");
+import * as Boom from "boom";
+import * as randomstring from "randomstring";
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -25,7 +25,7 @@ export const StrategyConfig: StrategyConfiguration = {
  * @param request Request-Object
  * @param reply Reply-Object
  */
-export function handleGoogle(request, reply): void {
+export function handleGoogle(request: any, reply: any): void {
 	// Authenticated successful?
 	if (!request.auth.isAuthenticated) reply(Boom.badRequest('Authentication failed: ' + request.auth.error.message));
 	
@@ -40,9 +40,9 @@ export function handleGoogle(request, reply): void {
 		refreshToken: request.auth.credentials.refreshToken || undefined
 	};
 	
-	UserController.findByProvider(provider).catch((err: Error) => {
-		// Create User.
-		return AccountController.checkUsername(profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then(checkResults => {
+	UserController.findByProvider(provider).then((user: User) => {
+		// Create User?
+		if(!user) return AccountController.checkUsername(profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then(checkResults => {
 			if (checkResults.available) return checkResults.username;
 			return checkResults.recommendations[Math.trunc(Math.random() * checkResults.recommendations.length)];
 		}).then(username => {
@@ -54,7 +54,8 @@ export function handleGoogle(request, reply): void {
 				mail: profile.email
 			});
 		});
-	}).then((user: User) => AccountController.addProvider(user, provider)).then(AccountController.saveUser).then(AuthController.signToken).then(token => {
+		return user;
+	}).then((user: User) => AccountController.addProvider(user, provider)).then(user => AccountController.save(user)).then(user => AuthController.signToken(user)).then(token => {
 		reply.view('message', {
 			title: 'Authentication',
 			domain: Config.backend.domain,

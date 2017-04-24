@@ -32,9 +32,6 @@ db/*
 db/files/*
 !db/files/icons/
 
-# Run
-run/**/*.js
-
 # Let's Encrypt
 letsencrypt/
 

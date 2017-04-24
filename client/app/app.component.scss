@@ -18,6 +18,7 @@
 // Set paragraphs
 /deep/ p {
   margin-bottom: map_get($base-padding, 'small');
+  line-height: map_get($base-line-height, 'multiline');
 }
 
 // Reset text decorations.

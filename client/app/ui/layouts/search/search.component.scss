@@ -34,7 +34,7 @@
         color: map_get($base-colors, 'secondary-text');
         font-size: map_get($base-font-size, 'large');
         transition: color 0.3s, font-size 0.3s, margin 0.3s;
-        margin-bottom: 0;
+        margin: 0;
 
         .highlight {
           color: map_get($base-colors, 'primary');
@@ -53,7 +53,7 @@
           font-weight: $base-heading-font-weight-normal;
           font-family: $base-heading-font-family;
           color: map_get($base-colors, 'primary-text');
-          margin-bottom: map_get($base-heading-font-size, 'h1');
+          margin: map_get($base-padding, 'smaller') map_get($base-padding, 'smaller') map_get($base-heading-font-size, 'h1');
           font-size: map_get($base-heading-font-size, 'h1');
         }
       }

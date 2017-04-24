@@ -3,51 +3,60 @@
 :host {
   display: block;
 
-  .form-wrapper {
+  .split {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+
+    & > * {
+      flex: 1 1 auto;
+    }
 
     @include breakpoint('small') {
       flex-direction: row;
-    }
 
-    form {
-      flex: 1 1 50%;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .info {
-      flex: 1 1 50%;
-
-      @include breakpoint('small') {
-        margin-left: map_get($base-padding, 'default');
-        max-width: 25rem;
-      }
-
-      h2 {
-        color: map_get($base-colors, 'secondary-text');
-      }
-
-      p {
-        color: map_get($base-colors, 'secondary-text');
-        text-align: justify;
+      & > * {
+        flex: 1 1 50%;
       }
     }
   }
 
-  .buttons {
+  .content {
+    margin: 0 map_get($base-padding, 'smaller') map_get($base-padding, 'smaller');
+
+    & > p {
+      margin-bottom: map_get($base-padding, 'default');
+    }
+  }
+
+  footer {
+    flex: 0 0 auto;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    position: relative;
 
     styled-button {
+      margin: 0;
+      position: relative;
       flex: 0 0 auto;
+      z-index: 2;
 
-      & /deep/ button {
-        margin-bottom: 0;
+      &.done,
+      &.next {
+        margin-left: auto;
       }
+
+      &.back {
+        margin-right: auto;
+      }
+    }
+
+    indicator {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 1;
     }
   }
 }

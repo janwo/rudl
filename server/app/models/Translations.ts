@@ -1,10 +1,11 @@
-import Joi = require('joi')
+import * as Joi from 'joi';
 
 export interface Translations {
 	de?: string;
 	en?: string;
 	es?: string;
 	fr?: string;
+	[key: string]: string;
 }
 
 export const TranslationsKeys = [

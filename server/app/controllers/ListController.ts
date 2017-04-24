@@ -1,8 +1,5 @@
-import Nodemailer = require("nodemailer");
-import Boom = require("boom");
-import dot = require("dot-object");
-import fs = require('fs');
-import path = require('path');
+import * as Boom from "boom";
+import * as dot from "dot-object";
 import {User} from "../models/user/User";
 import {DatabaseManager} from "../Database";
 import {Cursor} from "arangojs";
@@ -14,17 +11,15 @@ import {ListIsItem} from "../models/list/ListIsItem";
 import {Translations} from "../models/Translations";
 import {UserOwnsList} from "../models/list/UserOwnsList";
 import {UserFollowsList} from "../models/list/UserFollowsList";
-import randomstring = require("randomstring");
-import jwt = require("jsonwebtoken");
-import _ = require("lodash");
+import {ListRecipe} from "../../../client/app/models/list";
 
 export module ListController {
 	
 	export function getPublicList(list: List | List[], relatedUser: User) : Promise<any> {
 		let createPublicList = (list: List) : Promise<any> => {
-			let listOwnerPromise = getListOwner(list);
+			let listOwnerPromise = ListController.getOwner(list);
 			let publicListOwnerPromise = listOwnerPromise.then((owner: User) => UserController.getPublicUser(owner, relatedUser));
-			let listStatisticsPromise = getListStatistics(list, relatedUser);
+			let listStatisticsPromise = ListController.getStatistics(list, relatedUser);
 			
 			return Promise.all([
 				listOwnerPromise,
@@ -62,31 +57,13 @@ export module ListController {
 		});
 	}
 	
-	export function getListOwner(list: List) : Promise<User> {
-		let aqlQuery = `FOR owner IN INBOUND @listId @@userOwnsList RETURN owner`;
-		let aqlParams = {
-			'@userOwnsList': DatabaseManager.arangoCollections.userOwnsList.name,
-			listId: list._id
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<User>;
-	}
-	
-	export function getFollowers(list: List) : Promise<User[]> {
-		let aqlQuery = `FOR follower IN INBOUND @listId @@userFollowsList RETURN follower`;
-		let aqlParams = {
-			'@userFollowsList': DatabaseManager.arangoCollections.userFollowsList.name,
-			listId: list._id
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<User[]>;
-	}
-	
 	export interface ListStatistics {
 		activities: number;
 		followers: number;
 		isFollowed: boolean;
 	}
 	
-	export function getListStatistics(list: List, relatedUser: User) : Promise<ListStatistics> {
+	export function getStatistics(list: List, relatedUser: User) : Promise<ListStatistics> {
 		let aqlQuery = `LET listFollowers = (FOR follower IN INBOUND @listId @@edgesUserFollowsList RETURN follower._id) LET listActivities = (FOR activity IN OUTBOUND @listId @@edgesListIsItem RETURN activity._id) RETURN {isFollowed: LENGTH(INTERSECTION(listFollowers, [@userId])) > 0, followers: LENGTH(listFollowers), activities: LENGTH(listActivities)}`;
 		let aqlParams = {
 			'@edgesUserFollowsList': DatabaseManager.arangoCollections.userFollowsList.name,
@@ -98,52 +75,70 @@ export module ListController {
 	}
 	
 	export function findByUser(user: User, ownsOnly = false) : Promise<List[]>{
-		let aqlQuery = `FOR list IN OUTBOUND @userId @@edgeCollection RETURN list`;
-		let aqlParams = {
-			'@edgeCollection': ownsOnly ? DatabaseManager.arangoCollections.userOwnsList.name : DatabaseManager.arangoCollections.userFollowsList.name,
-			userId: user._id
-		};
-		
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<List[]>;
+		return DatabaseManager.arangoFunctions.outbounds(user._id, ownsOnly ? DatabaseManager.arangoCollections.userOwnsList.name : DatabaseManager.arangoCollections.userFollowsList.name);
 	}
 	
-	export function createList(user: User, translations: Translations) : Promise<List>{
-		// Trim translations.
-		let translationKeys = Object.keys(translations);
-		translationKeys.forEach(translationKey => translations[translationKey] = translations[translationKey].trim());
-		
-		// Check, if list with that translation already exist.
-		let now = new Date().toISOString();
+	export function create(recipe: ListRecipe): Promise<List>{
 		let list : List = {
-			createdAt: now,
-			updatedAt: now,
-			translations: translations
+			createdAt: null,
+			updatedAt: null,
+			translations: recipe.translations
 		};
-		// TODO Change to vertexCollection, see bug https://github.com/arangodb/arangojs/issues/354
-		return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.lists.name).save(list, true).then(list => list.new).then((list: List) => {
-			let userOwnsList : UserOwnsList = {
-				_from: user._id,
+		return Promise.resolve(list);
+	}
+	
+	export function save(list: List): Promise<List> {
+		// Trim translations.
+		let translationKeys: string[] = Object.keys(list.translations);
+		translationKeys.forEach((translationKey: string) => list.translations[translationKey] = list.translations[translationKey].trim());
+		
+		// Save.
+		return DatabaseManager.arangoFunctions.updateOrCreate(list, DatabaseManager.arangoCollections.lists.name);
+	}
+	
+	/**
+	 * Changes the ownership of the list to a user.
+	 * @param list
+	 * @returns {Promise<any>|Promise<TResult|any>|Promise<TResult>|Promise<TResult2|TResult1>}
+	 */
+	export function setOwner(list: List, owner: User): Promise<List> {
+		let graph = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name);
+		let owns = graph.edgeCollection(DatabaseManager.arangoCollections.userOwnsList.name);
+		
+		// Exists owner edge?
+		return owns.byExample({
+			_to: list._id
+		}, {
+			limit: 1
+		}).then(cursor => cursor.next() as any as UserOwnsList).then((edge: UserOwnsList) => {
+			// Create new edge?
+			if(!edge) edge = {
 				_to: list._id,
-				createdAt: now,
-				updatedAt: now
+				_from: owner._id
 			};
 			
-			let userFollowsList : UserFollowsList = {
-				_from: user._id,
-				_to: list._id,
-				createdAt: now,
-				updatedAt: now
-			};
-			return Promise.all([
-				DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userOwnsList.name).save(userOwnsList),
-				DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsList.name).save(userFollowsList)
-			]).then(() => list);
-		});
+			// Update edge.
+			edge._from = owner._id;
+			return DatabaseManager.arangoFunctions.updateOrCreate(edge, DatabaseManager.arangoCollections.userOwnsList.name);
+		}).then(() => list);
+	}
+	
+	export function getOwner(list: List) : Promise<User> {
+		return DatabaseManager.arangoFunctions.inbound(list._id, DatabaseManager.arangoCollections.userOwnsList.name);
+	}
+	
+	export function remove(list: List): Promise<any> {
+		let graph = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name);
+		return graph.vertexCollection(DatabaseManager.arangoCollections.lists.name).remove(list._id);
 	}
 	
 	export function findByKey(key: string | string[]) : Promise<List | List[]>{
 		let collection = DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.lists.name);
-		return key instanceof Array ? collection.lookupByKeys(key) as Promise<List[]> : collection.document(key) as Promise<List>;
+		return key instanceof Array ? collection.lookupByKeys(key) as Promise<List[]> : collection.byExample({
+			_key: key
+		}, {
+			limit: 1
+		}).then(cursor => cursor.next()) as any as Promise<List|List[]>;
 	}
 	
 	export function findByFulltext(query: string) : Promise<List[]>{
@@ -157,8 +152,8 @@ export module ListController {
 	}
 	
 	export function getActivities(list: List, follower: User = null, ownsOnly: boolean = false) : Promise<Activity[]>{
-		let aqlQuery = `FOR activity IN OUTBOUND @listId @@listIsItem RETURN activity`;
-		let aqlParams = {
+		let aqlQuery: string = `FOR activity IN OUTBOUND @listId @@listIsItem RETURN activity`;
+		let aqlParams: {[key: string]: string} = {
 			'@listIsItem': DatabaseManager.arangoCollections.listIsItem.name,
 			listId: list._id
 		};
@@ -172,30 +167,28 @@ export module ListController {
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Activity[]>;
 	}
 	
-	export function addActivityConnection(list: List, activity: Activity) : Promise<ListIsItem>{
+	export function addActivity(list: List, activity: Activity) : Promise<ListIsItem>{
 		let collection = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.listIsItem.name);
-		return collection.firstExample({
+		return collection.byExample({
 			_from: list._id,
 			_to: activity._id
-		}).then((listIsItem : ListIsItem) => {
+		}, {
+			limit: 1
+		}).then(cursor => cursor.next() as any as ListIsItem).then((listIsItem : ListIsItem) => {
 			// Try to return any existing connection.
 			if(listIsItem) return listIsItem;
-		}).catch(() => {
+			
 			// Add connection.
-			let now = new Date().toISOString();
 			let edge : ListIsItem = {
 				_from: list._id,
-				_to: activity._id,
-				createdAt: now,
-				updatedAt: now
+				_to: activity._id
 			};
 			
-			return collection.save(edge);
-			//TODO nicht in catch
+			return DatabaseManager.arangoFunctions.updateOrCreate(edge, DatabaseManager.arangoCollections.listIsItem.name);
 		});
 	}
 	
-	export function removeActivityConnection(list: List, activity: Activity) : Promise<List>{
+	export function removeActivity(list: List, activity: Activity) : Promise<List>{
 		let collection = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).vertexCollection(DatabaseManager.arangoCollections.listIsItem.name);
 		return collection.removeByExample({
 			_from: list._id,
@@ -203,60 +196,103 @@ export module ListController {
 		}).then(() => list);
 	}
 	
-	export function addUserConnection(list: List, user: User) : Promise<UserFollowsList> {
+	export function followers(list: List) : Promise<User[]> {
+		return DatabaseManager.arangoFunctions.inbounds(list._id, DatabaseManager.arangoCollections.userFollowsList.name);
+	}
+	
+	export function follow(list: List, user: User) : Promise<UserFollowsList> {
 		let collection = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsList.name);
-		return collection.firstExample({
+		return collection.byExample({
 			_from: user._id,
 			_to: list._id
-		}).then((cursor: Cursor) => cursor.next()).then((userFollowsList: UserFollowsList) => {
+		}, {
+			limit: 1
+		}).then((cursor: Cursor) => cursor.next() as any as UserFollowsList).then((userFollowsList: UserFollowsList) => {
 			// Try to return any existing connection.
 			if(userFollowsList) return userFollowsList;
 			
 			// Add connection.
-			let now = new Date().toISOString();
-			let edge : UserFollowsList = {
+			let edge: UserFollowsList = {
 				_from: user._id,
-				_to: list._id,
-				createdAt: now,
-				updatedAt: now
+				_to: list._id
 			};
 			
-			return collection.save(edge);
+			return DatabaseManager.arangoFunctions.updateOrCreate(edge, DatabaseManager.arangoCollections.userFollowsList.name);
 		});
 	}
 	
-	export function removeUserConnection(list: List, user: User): Promise<void> {
-		let edge = {
+	export function unfollow(list: List, user: User): Promise<void> {
+		let graph = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name);
+		let follows = graph.edgeCollection(DatabaseManager.arangoCollections.userFollowsList.name);
+		return follows.removeByExample({
 			_from: user._id,
 			_to: list._id
-		};
-		return DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsList.name).removeByExample(edge).then(() => {});
+		}).then(() => {
+			return ListController.getOwner(list).then(owner => {
+				// Change owner ship?
+				if(owner._id == user._id) {
+					// Get a remaining follower.
+					return DatabaseManager.arangoFunctions.inbound(list._id, DatabaseManager.arangoCollections.userFollowsList.name).then((follower: User) => {
+						// Change ownership, if follower exists or delete list.
+						if(follower) return ListController.setOwner(list, follower).then(() => {});
+						return ListController.remove(list);
+					});
+				}
+			})
+		});
 	}
-	
-	//TODO Ownership
 	
 	export namespace RouteHandlers {
 		
 		/**
 		 * Handles [POST] /api/lists/create
 		 * @param request Request-Object
+		 * @param request.payload.icon icon
 		 * @param request.payload.translations translations
-		 * @param request.payload.activities activities
+		 * @param request.payload.activities activities (optional)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function createList(request: any, reply: any): void {
-			// Create promise.
-			let activities = request.payload.activities || [];
-			let promise: Promise<any> = ListController.createList(request.auth.credentials, request.payload.translations).then(list => {
-				activities = activities.map(activity => {
-					return ActivityController.findByKey(activity).then(activity => {
-						if(activity) return ListController.addActivityConnection(list, activity);
-					});
-				});
+		export function create(request: any, reply: any): void {
+				// Create promise.
+			let promise: Promise<List> = ListController.create({
+					translations: request.payload.translations
+			}).then(list => ListController.save(list)).then(list => {
+				let jobs: any[] = [
+					ListController.follow(list, request.auth.credentials),
+					ListController.setOwner(list, request.auth.credentials),
+					ActivityController.findByKey(request.payload.activities || []).then((activities: Activity[]) => {
+						return Promise.all(activities.map(activity => ListController.addActivity(list, activity)));
+					})
+				];
 				
-				return Promise.all(activities).then(() => list);
-			}).then(list => getPublicList(list, request.auth.credentials));
+				return Promise.all(jobs).then(() => list);
+			}).then(list => ListController.getPublicList(list, request.auth.credentials));
+			
+			reply.api(promise);
+		}
+		
+		/**
+		 * Handles [POST] /api/lists/=/{key}
+		 * @param request Request-Object
+		 * @param request.params.key list
+		 * @param request.payload.translations translations
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function update(request: any, reply: any): void {
+			// Create promise.
+			let promise: Promise<List> = ListController.findByKey(request.params.key).then((list: List) => {
+				if(!list) return Promise.reject<List>(Boom.badRequest('List does not exist!'));
+				
+				return ListController.getOwner(list).then(owner => {
+					if (owner._key != request.auth.credentials._key) return Promise.reject<List>(Boom.forbidden('You do not have enough privileges to perform this operation'));
+					
+					// Update list.
+					if (request.payload.translations) list.translations = request.payload.translations;
+					return ListController.save(list);
+				}).then(list => ListController.getPublicList(list, request.auth.credentials));
+			});
 			
 			reply.api(promise);
 		}
@@ -271,8 +307,8 @@ export module ListController {
 		export function getList(request: any, reply: any): void {
 			// Create promise.
 			let promise: Promise<List> = ListController.findByKey(request.params.key).then(list => {
-				if(list) return getPublicList(list, request.auth.credentials);
-				return Promise.reject(Boom.notFound('List not found!'));
+				if (!list) return Promise.reject(Boom.notFound('List not found!'));
+				return getPublicList(list, request.auth.credentials);
 			});
 			
 			reply.api(promise);
@@ -324,7 +360,7 @@ export module ListController {
 			// Create promise.
 			let promise = Promise.all([
 				ListController.findByKey(request.payload.list).then((list: List) => {
-					if(list) return ListController.getListOwner(list).then(user => user && user._key == request.auth.credentials._key ? list : null);
+					if(list) return ListController.getOwner(list).then(user => user && user._key == request.auth.credentials._key ? list : null);
 					return null;
 				}),
 				ActivityController.findByKey(request.payload.activity)
@@ -334,7 +370,7 @@ export module ListController {
 				
 				if(!list || !activity) return Promise.reject(Boom.badData('List or activity does not exist or is not owned by authenticated user!'));
 				
-				return ListController.addActivityConnection(list, activity);
+				return ListController.addActivity(list, activity);
 			});
 			
 			reply.api(promise);
@@ -352,7 +388,7 @@ export module ListController {
 			// Create promise.
 			let promise = Promise.all([
 				ListController.findByKey(request.payload.list).then((list: List) => {
-					if(list) return ListController.getListOwner(list).then(user => user && user._key == request.auth.credentials._key ? list : null);
+					if(list) return ListController.getOwner(list).then(user => user && user._key == request.auth.credentials._key ? list : null);
 					return null;
 				}),
 				ActivityController.findByKey(request.payload.activity)
@@ -362,7 +398,7 @@ export module ListController {
 				
 				if(!list || !activity) return Promise.reject(Boom.badData('List or activity does not exist or is not owned by authenticated user!'));
 				
-				return ListController.removeActivityConnection(list, activity);
+				return ListController.removeActivity(list, activity);
 			});
 			
 			reply.api(promise);
@@ -378,8 +414,8 @@ export module ListController {
 		export function getListsBy(request: any, reply: any): void {
 			// Create promise.
 			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
-				if(user) return ListController.findByUser(user);
-				return Promise.reject(Boom.notFound('User not found!'));
+				if(!user) return Promise.reject(Boom.notFound('User not found!'));
+				return ListController.findByUser(user);
 			}).then((lists: List[]) => getPublicList(lists, request.auth.credentials));
 			
 			reply.api(promise);
@@ -396,7 +432,9 @@ export module ListController {
 		export function getListsLike(request: any, reply: any): void {
 			// Create promise.
 			//TODO offset
-			let promise : Promise<List[]> = ListController.findByFulltext(request.params.query).then((lists: List[]) => getPublicList(lists.slice(request.params.offset, request.params.offset + 30), request.auth.credentials));
+			let promise : Promise<List[]> = ListController.findByFulltext(request.params.query).then((lists: List[]) => {
+				return ListController.getPublicList(lists.slice(request.params.offset, request.params.offset + 30), request.auth.credentials);
+			});
 			
 			reply.api(promise);
 		}
@@ -408,11 +446,11 @@ export module ListController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getFollowers(request: any, reply: any): void {
+		export function followers(request: any, reply: any): void {
 			// Create promise.
 			let promise : Promise<any> = ListController.findByKey(request.params.key).then((list: List) => {
-				if (!list) return Promise.reject<User[]>(Boom.badRequest('list does not exist!'));
-				return ListController.getFollowers(list);
+				if (!list) return Promise.reject<User[]>(Boom.badRequest('List does not exist!'));
+				return ListController.followers(list);
 			}).then((users: User[]) => UserController.getPublicUser(users, request.auth.credentials));
 			
 			reply.api(promise);
@@ -425,9 +463,10 @@ export module ListController {
 		 * @param request.params.list list
 		 * @param reply Reply-Object
 		 */
-		export function addFollowee(request: any, reply: any): void {
+		export function follow(request: any, reply: any): void {
 			let promise = ListController.findByKey(request.params.list).then((list: List) => {
-				return ListController.addUserConnection(list, request.auth.credentials).then(() => getPublicList(list, request.auth.credentials));
+				if (!list) return Promise.reject(Boom.badRequest('List does not exist!'));
+				return ListController.follow(list, request.auth.credentials).then(() => ListController.getPublicList(list, request.auth.credentials));
 			});
 			
 			reply.api(promise);
@@ -440,9 +479,12 @@ export module ListController {
 		 * @param request.params.list list
 		 * @param reply Reply-Object
 		 */
-		export function deleteFollowee(request: any, reply: any): void {
+		export function unfollow(request: any, reply: any): void {
 			let promise = ListController.findByKey(request.params.list).then((list: List) => {
-				return removeUserConnection(list, request.auth.credentials).then(() => ListController.getPublicList(list, request.auth.credentials));
+				if (!list) return Promise.reject(Boom.badRequest('List does not exist!'));
+				return ListController.unfollow(list, request.auth.credentials).then(() => {
+					return ListController.findByKey(list._key).then(list => list ? ListController.getPublicList(list, request.auth.credentials) : null);
+				});
 			});
 			
 			reply.api(promise);

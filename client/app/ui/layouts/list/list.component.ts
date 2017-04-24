@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from "@angular/core";
 import {List} from "../../../models/list";
-import {ActivatedRoute, Params} from "@angular/router";
+import {ActivatedRoute, Params, Router} from "@angular/router";
 import {ButtonStyles} from "../../widgets/control/styled-button.component";
 import {ModalComponent} from "../../widgets/modal/modal.component";
 import {ListService} from "../../../services/list.service";
@@ -31,7 +31,8 @@ export class ListComponent implements OnInit {
     
     constructor(
         private listService: ListService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private router: Router
     ) {}
     
     ngOnInit(){
@@ -50,9 +51,17 @@ export class ListComponent implements OnInit {
         
         this.pendingFollowRequest = true;
         let obs = this.list.relations.isFollowed ? this.listService.unfollow(this.list.id) : this.listService.follow(this.list.id);
-        obs.do((updatedList: List) => {
-            this.list = updatedList;
+        obs.subscribe((updatedList: List) => {
             this.pendingFollowRequest = false;
-        }).subscribe();
+            
+            // Set updated list.
+            if(updatedList) {
+                this.list = updatedList;
+                return;
+            }
+            
+            // Show delete message.
+	        this.router.navigate(['/lists/deleted-message']);
+        });
     }
 }

@@ -6,14 +6,14 @@ export const DecoratorsConfig: DecoratorsConfiguration = [
 		type: 'reply',
 		property: 'api',
 		method: function (input: Promise<any> | any) {
-			let respondWithSuccess = (data) => {
-				let response = {};
+			let respondWithSuccess = (data: any) => {
+				let response: any = {};
 				response['statusCode'] = 200;
 				if(data) response['data'] = data;
 				return this.response(response);
 			};
 			
-			let respondWithError = (err) => {
+			let respondWithError = (err: any) => {
 				if (err instanceof Error === false) err = Boom.badImplementation(err);
 				
 				// Log.

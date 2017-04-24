@@ -68,21 +68,34 @@ export class TranslationListComponent implements OnInit {
 	    });
 	    
 	    // Create form groups.
-	    this.availableTranslations = this.fb.array(this.languagePool.map(key => {
+	    this.availableTranslations = this.fb.array(this.languagePool.filter(key => {
+	    	return (<any[]>this.takenTranslations.controls).findIndex(control => control.get('language').value == key) < 0;
+	    }).map(key => {
 	    	return this.fb.group({
-			    language: [key, [
-				    Validators.required
-			    ]],
-			    translation: [this.defaultText, [
-				    Validators.required,
-			        Validators.minLength(5),
-			        Validators.maxLength(32)
-			    ]]
+			    language: [key],
+			    translation: [this.defaultText]
 		    });
 	    }));
-        
-        // Add initial language.
-        this.addLanguage();
+	    
+	    // Set validators.
+	    let validators: any = {
+		    language: [
+			    Validators.required
+		    ],
+		    translation: [
+			    Validators.required,
+			    Validators.minLength(5),
+			    Validators.maxLength(32)
+		    ]
+	    };
+	
+	    Object.keys(validators).forEach(key => {
+		    this.takenTranslations.controls.forEach(control => control.get(key).setValidators(validators[key]));
+		    this.availableTranslations.controls.forEach(control => control.get(key).setValidators(validators[key]));
+	    });
+	
+	    // Add initial language.
+        if(this.takenTranslations.controls.length == 0) this.addLanguage();
     }
     
     addLanguage(): void {

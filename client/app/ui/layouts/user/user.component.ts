@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnDestroy, OnInit} from "@angular/core";
 import {UserService} from "../../../services/user.service";
 import {Subject, Subscription} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
@@ -9,7 +9,7 @@ import {ButtonStyles} from "../../widgets/control/styled-button.component";
     templateUrl: 'user.component.html',
     styleUrls: ['user.component.scss']
 })
-export class UserComponent implements OnInit {
+export class UserComponent implements OnInit, OnDestroy {
     
     user: User;
     paramsChangedSubscription: Subscription;
@@ -40,6 +40,10 @@ export class UserComponent implements OnInit {
             this.pendingFollowRequest = false;
         });
     }
+    
+	ngOnDestroy(): void {
+    	this.changeFollowStateSubscription.unsubscribe();
+	}
     
     onToggleFollow(): void {
         this.changeFollowStateSubject.next(!this.user.relations.isFollowee);

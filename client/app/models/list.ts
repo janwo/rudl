@@ -6,6 +6,7 @@ export interface List extends Document {
 	name: string;
 	owner: User;
 	links: ListLinks;
+	icon: string;
 	relations: {
 		isFollowed: boolean;
 		isOwned: boolean;
@@ -18,9 +19,10 @@ export interface List extends Document {
 }
 
 export interface ListLinks {
+	icon: string;
 }
 
 export interface ListRecipe {
 	translations: Locale.Translations;
-	activities: string[];
+	activities?: string[];
 }

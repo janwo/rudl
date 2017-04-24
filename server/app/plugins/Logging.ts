@@ -1,6 +1,6 @@
 import {Config} from "../../../run/config";
 import {PluginsConfiguration} from "../binders/PluginsBinder";
-import Path = require('path');
+import * as Path from 'path';
 
 const whiteOutArgs = [
 	{
