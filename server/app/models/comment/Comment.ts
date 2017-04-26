@@ -1,5 +1,6 @@
-import {Document} from "../Document";
+import {Edge} from '../Edge';
 
-export interface Comment extends Document {
+export interface Comment extends Edge {
 	message: string;
+	pinned: boolean;
 }
