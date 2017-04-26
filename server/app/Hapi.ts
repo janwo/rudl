@@ -47,7 +47,7 @@ export function hapiServer(): Promise<Server>{
 		default:
 			// Create server connection.
 			server.connection({
-				port: Config.backend.port,
+				port: Config.backend.ssl ? Config.backend.ports.https : Config.backend.ports.http,
 				host: Config.backend.host
 			});
 			break;
@@ -55,17 +55,15 @@ export function hapiServer(): Promise<Server>{
 		case 'secure':
 			// Load SSL key and certificate. TODO Respect conig domain
 			let autoSni = AutoSNI({
-				email: 'we@rudl.me',
+				email: Config.backend.mails.admin,
 				agreeTos: true,
 				debug: Config.debug,
 				domains: [
-					"rudl.me"
+					Config.backend.domain
 				],
-				forceSSL: true,
-				redirectCode: 301,
 				ports: {
-					http: 80,
-					https: 443
+					http: Config.backend.ports.http,
+					https: Config.backend.ports.https
 				}
 			});
 

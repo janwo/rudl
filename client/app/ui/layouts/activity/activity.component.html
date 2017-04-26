@@ -1,12 +1,12 @@
 <div class="card">
-	<div class="header">
+	<div class="about">
 		<emoji [emoji]="activity.links.icon"></emoji>
 		<h1>{{activity.name}}</h1>
 	</div>
 	<div class="statistics">
 		<statistics [statistics]="[
-		{value: activity.statistics.lists, subject: 'List Member'},
-		{value: activity.statistics.followers, subject: 'Follower', link: 'follower'}
+		{value: activity.statistics.expeditions, subject: 'Expeditions', link: ['expeditions']},
+		{value: activity.statistics.followers, subject: 'Follower', link: ['followers']}
 	]"></statistics>
 		<div class="cta">
 			<styled-button [style]="activity.relations.isFollowed ? buttonStyleActivated : buttonStyleDefault" (click)="onToggleFollow(true)" [disabled]="pendingFollowRequest" [text]="'Interested'"></styled-button>

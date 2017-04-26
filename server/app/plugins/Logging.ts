@@ -14,7 +14,7 @@ export const PluginsConfig: PluginsConfiguration = [
 		register: require('good'),
 		options: {
 			ops: {
-				interval: 10000
+				interval: 60000 * 15 // 15 Minutes
 			},
 			reporters: (() => {
 				let reporters: any = {};

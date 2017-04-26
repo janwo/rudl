@@ -72,6 +72,12 @@
     magic-string "^0.19.0"
     source-map "^0.5.6"
 
+"@types/auto-sni@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@types/auto-sni/-/auto-sni-2.1.0.tgz#76f0fd36b18ca377dd056ae35b357274fcdf845e"
+  dependencies:
+    "@types/node" "*"
+
 "@types/bluebird@*":
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/@types/bluebird/-/bluebird-3.5.2.tgz#ecf1104217495e50fe0b588d538146cd6f733b89"

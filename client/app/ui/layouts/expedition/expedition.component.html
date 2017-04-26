@@ -1,29 +1,42 @@
 <div class="card">
-	<h3>{{expedition.title}}</h3>
-	<p>{{expedition.description}}</p>
-	<slots [users]="[expedition.owner]" [slots]="expedition.statistics.approvedUsers"></slots>
-	<ul class="users-info">
-		<li>
-			<span>{{expedition.owner.firstName + ' ' + expedition.owner.lastName}}</span>
-		</li>
-	</ul>
-	<ul class="event-info">
-		<li>
-			<i class="fa fa-map-marker"></i>
-			<span>{{formattedLocation}}</span>
-		</li>
-		<li>
-			<i class="fa fa-clock-o"></i>
-			<span>{{formattedDate}}</span>
-		</li>
-	</ul>
+	<aside [routerLink]="['rudel', expedition.activity.id]">
+		<span i18n>Streifzug von</span>
+		<emoji [emoji]="expedition.activity.links.icon"></emoji>
+		<span class="name">{{expedition.activity.name}}</span>
+	</aside>
+	<div class="about">
+		<header>
+			<emoji [emoji]="expedition.links.icon"></emoji>
+			<h1>{{expedition.title}}</h1>
+		</header>
+		<div class="statistics">
+			<statistics [statistics]="[
+			{value: expedition.statistics.approvedUsers, subject: 'Teilnehmer', link: ['attendees']},
+			{value: expedition.statistics.awaitingUsers, subject: 'Anfragen', link: ['attendes']}
+		]"></statistics>
+			<div class="cta">
+				<styled-button [style]="expedition.relations.isApproved ? buttonStyleActivated : buttonStyleDefault" [disabled]="pendingFollowRequest" [text]="'Teilnahme anfragen'"></styled-button>
+				<styled-button [fa]="'pencil'" *ngIf="expedition.relations.isOwned"></styled-button>
+			</div>
+		</div>
+	</div>
 </div>
-<map [zoom]="14" [location]="expedition.location"></map>
-<empty [emptyState]="unapprovedState" *ngIf="!expedition.relations.isApproved"></empty>
+<div class="card details">
+	<h2>Streifzug-Details</h2>
+	<div class="content">
+		<map [zoom]="16" [location]="expedition.location.latLng" [accuracy]="expedition.location.accuracy" (click)="openLocation()"></map>
+		<div>{{expedition.description}}</div>
+	</div>
+</div>
+<menu>
+	<menu-item [icon]="'comments-o'" [title]="'Diskussion'" [link]="['expeditions']"></menu-item>
+	<menu-item [icon]="'info-circle'" [title]="'Informationen'" [link]="['followers']"></menu-item>
+</menu>
+<!--<empty [emptyState]="unapprovedState" *ngIf="!expedition.relations.isApproved"></empty>
 <section *ngIf="expedition.relations.isApproved">
 	Approved!
 	Comments
 </section>
-
+-->
 <small class="attribution">Maps provided by © <a target="_blank" href="https://openstreetmap.org/copyright">OpenStreetMap</a> Contributors via <a target="_blank" href="http://leafletjs.com">Leaflet</a></small>
 

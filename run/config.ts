@@ -66,9 +66,13 @@ export const Config: {
 	},
 	backend: {
 		host: string,
-		port: number,
+		ports: {
+			http: number,
+			https: number,
+		},
 		domain: string,
 		icons: any,
+		mails: {[key: string]: string},
 		ssl: boolean,
 		secretPassphrase: string,
 		jwt: {

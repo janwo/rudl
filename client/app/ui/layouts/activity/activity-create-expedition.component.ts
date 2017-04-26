@@ -36,14 +36,14 @@ export class ActivityCreateExpeditionComponent implements OnInit {
 				title: [
 					Locale.getBestTranslation(this.activity.translations, this.userService.getAuthenticatedUser().user.languages), [
 						Validators.required,
-						Validators.minLength(3),
+						Validators.minLength(5),
 						Validators.maxLength(100)
 					]
 				],
 				description: [
 					null, [
 						Validators.required,
-						Validators.minLength(10),
+						Validators.minLength(5),
 						Validators.maxLength(300)
 					]
 				],
@@ -122,5 +122,9 @@ export class ActivityCreateExpeditionComponent implements OnInit {
 			this.submitPending = false;
 			alert(error.message);
 		});
+	}
+	
+	formControlCount(value: string, maxChars: number = 0): (value: string) => {} {
+		return (value: string) => `${value.length} of ${maxChars} characters used`;
 	}
 }

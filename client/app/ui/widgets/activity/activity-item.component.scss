@@ -1,29 +1,60 @@
 @import '../../variables';
 
+$activity-item-emoji-size: 2.5rem;
+
 :host {
   display: block;
 
   .card {
     cursor: pointer;
     flex: 1 1 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
     .name {
+      flex: 1 1 auto;
       font-family: $base-heading-font-family;
       font-size: map_get($base-heading-font-size, 'h3');
       display: block;
+      margin-right: map_get($base-padding, 'smaller');
+      margin-left: map_get($base-padding, 'smaller');
 
       /deep/ .highlight {
         color: map_get($base-colors, 'primary');
       }
     }
 
-    .relation {
-      display: block;
-      margin-top: map_get($base-padding, 'small');
-      color: map_get($base-colors, 'primary');
+    slots {
+      flex: 0 0 auto;
+      margin-right: map_get($base-padding, 'small');
+    }
 
-      a {
-        color: map_get($base-colors, 'secondary');
+    emoji {
+      flex: 0 0 auto;
+      height: $activity-item-emoji-size;
+      width: $activity-item-emoji-size;
+      margin-right: map_get($base-padding, 'smallest');
+    }
+
+    ul {
+      list-style: none;
+      color: map_get($base-colors, 'secondary-text');
+      font-size: map_get($base-font-size, 'small');
+      flex: 0 0 auto;
+
+      li {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+
+        &:not(:first-child) {
+          margin-top: map_get($base-padding, 'smallest');
+        }
+
+        i {
+          width: map_get($base-padding, 'smaller');
+        }
       }
     }
   }

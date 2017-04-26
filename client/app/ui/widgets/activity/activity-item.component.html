@@ -1,4 +1,13 @@
 <div class="card" [routerLink]="['/rudel', activity.id]">
+	<emoji [emoji]="activity.links.icon"></emoji>
 	<span class="name" [innerHTML]="highlight ? (activity.name | highlight: highlight) : activity.name"></span>
-	<span class="relation"></span>
+	<slots [users]="[activity.owner]" [slots]="activity.statistics.followers"></slots>
+	<ul>
+		<li class="owner">
+			<span>{{activity.owner.firstName + ' ' + activity.owner.lastName}}</span>
+		</li>
+		<li class="approval-status">
+			<span>{{activity.statistics.followers}} Follower</span>
+		</li>
+	</ul>
 </div>

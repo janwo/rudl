@@ -21,17 +21,21 @@ export module ExpeditionController {
 	
 	export function getPublicExpedition(expedition: Expedition | Expedition[], relatedUser: User) : Promise<any> {
 		let createPublicExpedition = (expedition: Expedition) : Promise<any> => {
-			let expeditionOwnerPromise = getExpeditionOwner(expedition);
+			let expeditionOwnerPromise = ExpeditionController.getExpeditionOwner(expedition);
 			let publicExpeditionOwnerPromise = expeditionOwnerPromise.then((owner: User) => {
 				return UserController.getPublicUser(owner, relatedUser);
 			});
-			let expeditionStatisticsPromise = getExpeditionStatistics(expedition, relatedUser);
+			let expeditionStatisticsPromise = ExpeditionController.getExpeditionStatistics(expedition, relatedUser);
+			let activityPromise = ExpeditionController.getActivity(expedition).then((activity: Activity) => {
+				return ActivityController.getPublicActivity(activity, relatedUser);
+			});
 			
 			return Promise.all([
 				expeditionOwnerPromise,
 				publicExpeditionOwnerPromise,
-				expeditionStatisticsPromise
-			]).then((values: [User, any, ExpeditionStatistics]) => {
+				expeditionStatisticsPromise,
+			    activityPromise
+			]).then((values: [User, any, ExpeditionStatistics, Activity]) => {
 				// Add default links.
 				let links = {
 					icon: UtilController.getIconUrl(expedition.icon)
@@ -43,7 +47,7 @@ export module ExpeditionController {
 					if(expedition.fuzzyTime) moment(expedition.date).add(Math.random() * FUZZY_HOURS * 2 - FUZZY_HOURS, 'hours').minute(0).second(0).millisecond(0);
 					
 					// Mask location.
-					let distance = [Math.random() * 2000 - 1000, Math.random() * 2000 - 1000];
+					let distance = [Math.random() * ExpeditionController.FUZZY_METERS * 2 - ExpeditionController.FUZZY_METERS, Math.random() * ExpeditionController.FUZZY_METERS * 2 - ExpeditionController.FUZZY_METERS];
 					let pi = Math.PI;
 					let R = 6378137; // Earth’s radius
 					let dLat = distance[0] / R;
@@ -57,11 +61,13 @@ export module ExpeditionController {
 					'expedition._key': 'id',
 					'expedition.title': 'title',
 					'expedition.description': 'description',
-					'expedition.fuzzyTime': 'fuzzyTime',
-					'expedition.date': 'date',
+					'expedition.date': 'date.isoString',
+					'dateAccuracy': 'date.accuracy',
 					'expedition.icon': 'icon',
 					'expedition.needsApproval': 'needsApproval',
-					'expedition.location': 'location',
+					'expedition.location': 'location.latLng',
+					"locationAccuracy": "location.accuracy",
+					"activity": "activity",
 					'links': 'links',
 					'owner': 'owner',
 					'isOwner': 'relations.isOwned',
@@ -70,8 +76,11 @@ export module ExpeditionController {
 					'statistics.awaitingUsers': 'statistics.awaitingUsers',
 					'statistics.approvedUsers': 'statistics.approvedUsers'
 				}, {
+					locationAccuracy: expedition.needsApproval ? ExpeditionController.FUZZY_METERS : 0,
+					dateAccuracy: expedition.fuzzyTime ? ExpeditionController.FUZZY_HOURS * 3600 : 0,
 					statistics: values[2],
 					expedition: expedition,
+					activity: values[3],
 					links: links,
 					owner: values[1],
 					isOwner: values[0]._key == relatedUser._key
@@ -119,6 +128,10 @@ export module ExpeditionController {
 			user: user._id
 		};
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Expedition[]>;
+	}
+	
+	export function getActivity(expedition: Expedition): Promise<Activity> {
+		return DatabaseManager.arangoFunctions.outbound(expedition._id, DatabaseManager.arangoCollections.expeditionIsItem.name);
 	}
 	
 	export function findByKey(key: string) : Promise<Expedition>{

@@ -4,16 +4,16 @@
 		<div class="item split" formGroupName="general">
 			<div class="content">
 				<form-control-wrapper [errorMessages]="{
-						minlength: 'Der Titel ist zu kurz (mindestens 3 Zeichen).',
+						minlength: 'Der Titel ist zu kurz (mindestens 5 Zeichen).',
 						required: 'Gebe einen Titel an.'
-					}">
-					<input formControlName="title" type="text" placeholder="Give your expedition a title...">
+					}" [infoMessage]="formControlCount(form.get('general').get('description').value, 50)">
+					<input maxlength="50" formControlName="title" type="text" placeholder="Give your expedition a title...">
 				</form-control-wrapper>
 				<form-control-wrapper [errorMessages]="{
-						minlength: 'Die Beschreibung ist zu kurz (mindestens 10 Zeichen).',
+						minlength: 'Die Beschreibung ist zu kurz (mindestens 5 Zeichen).',
 						required: 'Gebe eine Beschreibung an.'
-					}">
-					<textarea formControlName="description" placeholder="Enter a short summary of all public details here..."></textarea>
+					}" [infoMessage]="formControlCount(form.get('general').get('description').value, 300)">
+					<textarea maxlength="300" formControlName="description" placeholder="Enter a short public description..."></textarea>
 				</form-control-wrapper>
 				<form-control-wrapper>
 					<checkbox formControlName="needsApproval" [text]="'Zugangsbeschränkung'"></checkbox>

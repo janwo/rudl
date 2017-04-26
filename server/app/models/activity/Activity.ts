@@ -5,7 +5,7 @@ import {Config} from "../../../../run/config";
 
 export interface Activity extends Document {
 	translations: Translations;
-	defaultLocation: number[]; //TODO
+	defaultLocation: number[]; //TODO Median über alle Locations von öffentlichen Expeditions, bei jedem erstellen und löschen von expeditions neu generieren
 	icon: string
 }
 

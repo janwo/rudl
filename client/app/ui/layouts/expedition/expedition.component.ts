@@ -31,16 +31,18 @@ export class ExpeditionComponent implements OnInit {
         this.route.data.subscribe((data: { expedition: Expedition }) => {
             this.expedition = data.expedition;
             
-	        let humanizedDate = moment.duration(moment().diff(this.expedition.date)).humanize();
-	        this.formattedDate = this.expedition.fuzzyTime ? `in about ${humanizedDate}` : `in ${humanizedDate}`;
+	        let humanizedDate = moment.duration(moment().diff(this.expedition.date.isoString)).humanize();
+	        this.formattedDate = this.expedition.date.accuracy > 0 ? `in about ${humanizedDate}` : `in ${humanizedDate}`;
 	
-	        let distance = this.userService.getUsersDistance(this.expedition.location);
+	        let distance = this.userService.getUsersDistance(this.expedition.location.latLng);
 	        distance = distance <= 10000 ? Math.ceil(distance / 100) / 10 : Math.ceil(distance / 1000);
 	        this.formattedLocation = this.expedition.needsApproval && !this.expedition.relations.isApproved ? `ca. ${distance} km` : `${distance} km`;
         });
     }
-	
-	
+    
+    openLocation(): void {
+	    window.open('http://maps.google.com/?q=' + this.expedition.location.latLng.join());
+    }
 	 // Show delete message.
 	 // this.router.navigate(['/lists/deleted-message']);
 	 

@@ -13,6 +13,7 @@ export class FormControlWrapper implements AfterContentInit, OnDestroy {
 	@ContentChild(FormControlName) formControlName: FormControlName;
 	@Input() description: string;
 	@Input() errorMessages: {[key: string]: string};
+	@Input() infoMessage: (value: string) => {};
 	errorMessage: string;
 	
 	@HostBinding('class.valid') get valid() : boolean {

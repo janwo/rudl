@@ -7,8 +7,8 @@ export default {
 	frontend: {
 		webpack: {
 			devServer: {
-				host: process.env.WEBPACK_SERVER_HOST || 'app',
-				port: process.env.WEBPACK_SERVER_PORT || 80,
+				host: 'app',
+				port: 80,
 				config: [
 					( Config: any ) => {
 						return {
@@ -26,7 +26,7 @@ export default {
 								],
 								target: {
 									host: Config.backend.host,
-									port: Config.backend.port
+									port: Config.backend.ports.http
 								}
 							}],
 							watchOptions: {
@@ -64,15 +64,8 @@ export default {
 		}
 	},
 	backend: {
-		host: process.env.BACKEND_SERVER_HOST || 'app',
-		port: process.env.BACKEND_SERVER_PORT || 8080,
-		db: {
-			redis: {
-				host: process.env.REDIS_HOST || 'redis'
-			},
-			arango: {
-				host: process.env.ARANGO_HOST || 'arango'
-			}
+		ports: {
+			http: 8080,
 		},
 		log: {
 			serverLogs: {

@@ -26,11 +26,18 @@ $form-control-wrapper-input-padding: map_get($base-font-size, 'default') / 1.5; 
     @include setup-input-borders();
 
     small {
-      display: none;
       font-size: map_get($base-font-size, 'small');
-      background-color: map_get($base-colors, 'warning-text');
       color: map_get($base-colors, 'background-highlighted');
       padding: map_get($base-padding, 'smallest') $form-control-wrapper-input-padding;
+
+      &.error {
+        display: none;
+        background-color: map_get($base-colors, 'warning');
+      }
+
+      &.info {
+        background-color: map_get($base-colors, 'secondary');
+      }
     }
 
     & > /deep/ * {
@@ -56,11 +63,11 @@ $form-control-wrapper-input-padding: map_get($base-font-size, 'default') / 1.5; 
   &.invalid.touched,
   &.invalid.dirty {
     div {
-      border-color: map_get($base-colors, 'warning-text');
+      border-color: map_get($base-colors, 'warning');
 
       & /deeo/ > input,
       & /deep/ > textarea {
-        color: map_get($base-colors, 'warning-text');
+        color: map_get($base-colors, 'warning');
       }
 
       small {

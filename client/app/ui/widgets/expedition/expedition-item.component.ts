@@ -20,10 +20,10 @@ export class ExpeditionItemComponent implements OnInit {
 	) {}
 	
 	ngOnInit(): void {
-		let humanizedDate = moment.duration(moment().diff(this.expedition.date)).humanize();
-		this.formattedDate = this.expedition.fuzzyTime ? `in about ${humanizedDate}` : `in ${humanizedDate}`;
+		let humanizedDate = moment.duration(moment().diff(this.expedition.date.isoString)).humanize();
+		this.formattedDate = this.expedition.date.accuracy > 0 ? `in about ${humanizedDate}` : `in ${humanizedDate}`;
 		
-		let distance = this.userService.getUsersDistance(this.expedition.location);
+		let distance = this.userService.getUsersDistance(this.expedition.location.latLng);
 		distance = distance <= 10000 ? Math.ceil(distance / 100) / 10 : Math.ceil(distance / 1000);
 		this.formattedLocation = this.expedition.needsApproval && !this.expedition.relations.isApproved ? `ca. ${distance} km` : `${distance} km`;
 		

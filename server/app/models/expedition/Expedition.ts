@@ -13,8 +13,8 @@ export interface Expedition extends Document {
 }
 
 export const ExpeditionValidation = {
-	title: Joi.string().min(3).max(100).required(),
-	description: Joi.string().min(10).max(300).required(),
+	title: Joi.string().min(5).max(50).required(),
+	description: Joi.string().min(5).max(300).required(),
 	needsApproval: Joi.boolean().default(false).required(),
 	date: Joi.date().iso().required(),
 	activity: Joi.string().required(),

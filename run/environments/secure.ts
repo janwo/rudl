@@ -39,17 +39,7 @@ export default {
 		}
 	},
 	backend: {
-		host: process.env.BACKEND_SERVER_HOST || 'app',
-		port: 443,
 		domain: process.env.DOMAIN || 'https://localhost',
-		db: {
-			redis: {
-				host: process.env.REDIS_HOST || 'redis'
-			},
-			arango: {
-				host: process.env.ARANGO_HOST || 'arango'
-			}
-		},
 		ssl: true,
 		log: {
 			serverLogs: {

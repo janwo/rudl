@@ -13,6 +13,5 @@ export default {
 	},
 	backend: {
 		host: 'your host (forces overwriting)',
-		port: process.env.BACKEND_SERVER_PORT || 'your port (if no corresponding ENV is set)',
 	}
 };

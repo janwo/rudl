@@ -125,15 +125,16 @@ export module ActivityController {
 	export interface ActivityStatistics {
 		lists: number;
 		followers: number;
-		expeditions: number; //TODO
+		expeditions: number;
 		isFollowed: boolean;
 	}
 	
 	export function getStatistics(activity: Activity, relatedUser: User) : Promise<ActivityStatistics> {
-		let aqlQuery = `LET activityFollowers = (FOR follower IN INBOUND @activityId @@edgesUserFollowsActivity RETURN follower._id) LET lists = (FOR list IN INBOUND @activityId @@edgesListIsItem RETURN list._id) RETURN {isFollowed: LENGTH(INTERSECTION(activityFollowers, [@userId])) > 0, followers: LENGTH(activityFollowers), lists: LENGTH(lists)}`;
+		let aqlQuery = `LET activityFollowers = (FOR follower IN INBOUND @activityId @@edgesUserFollowsActivity RETURN follower._id) LET lists = (FOR list IN INBOUND @activityId @@edgesListIsItem RETURN list._id) LET expeditions = (FOR expedition IN INBOUND @activityId @@edgesExpeditionIsItem RETURN expedition._id) RETURN {isFollowed: LENGTH(INTERSECTION(activityFollowers, [@userId])) > 0, followers: LENGTH(activityFollowers), lists: LENGTH(lists), expeditions: LENGTH(expeditions)}`;
 		let aqlParams = {
 			'@edgesUserFollowsActivity': DatabaseManager.arangoCollections.userFollowsActivity.name,
 			'@edgesListIsItem': DatabaseManager.arangoCollections.listIsItem.name,
+			'@edgesExpeditionIsItem': DatabaseManager.arangoCollections.expeditionIsItem.name,
 			activityId: activity._id,
 			userId: relatedUser._id
 		};

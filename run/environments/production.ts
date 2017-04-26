@@ -39,15 +39,6 @@ export default {
 		}
 	},
 	backend: {
-		host: process.env.BACKEND_SERVER_HOST || 'app',
-		db: {
-			redis: {
-				host: process.env.REDIS_HOST || 'redis'
-			},
-			arango: {
-				host: process.env.ARANGO_HOST || 'arango'
-			}
-		},
 		log: {
 			serverLogs: {
 				file: {

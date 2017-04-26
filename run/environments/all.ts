@@ -143,10 +143,13 @@ export default {
 		}
 	},
 	backend: {
-		host: process.env.BACKEND_SERVER_HOST || 'localhost',
-		port: process.env.BACKEND_SERVER_PORT || 80,
+		host: process.env.BACKEND_SERVER_HOST || 'app',
 		domain: process.env.DOMAIN || 'http://localhost',
 		ssl: false,
+		ports: {
+			http: process.env.BACKEND_SERVER_PORT_HTTP || 80,
+			https: process.env.BACKEND_SERVER_PORT_HTTPS || 443,
+		},
 		secretPassphrase: process.env.SALT_PASSWORD,
 		icons: require('../../db/files/icons/data.json'),
 		jwt: {
@@ -154,13 +157,17 @@ export default {
 			deleteIn: 60 * 60 * 24 * 30,
 			salt: process.env.SALT_JWT
 		},
+		mails: {
+			admin: 'we@rudl.me',
+			noreply: 'noreply@rudl.me'
+		},
 		db: {
 			redis: {
-				host: process.env.REDIS_HOST || 'localhost',
+				host: process.env.REDIS_HOST || 'redis',
 				port: process.env.REDIS_PORT || 6379
 			},
 			arango: {
-				host: process.env.ARANGO_HOST || 'localhost',
+				host: process.env.ARANGO_HOST || 'arango',
 				port: process.env.ARANGO_PORT || 8529,
 				database: process.env.ARANGO_DB || 'rudl',
 				user: process.env.ARANGO_USER || 'rudl',

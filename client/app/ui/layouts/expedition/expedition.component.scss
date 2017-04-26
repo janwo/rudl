@@ -5,6 +5,110 @@
   @include setup-max-width();
   padding: map_get($base-padding, 'default');
 
+  .card {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+
+    aside {
+      background: map_get($base-colors, 'primary');
+      border-radius: $base-border-radius $base-border-radius 0 0;
+      padding: map_get($base-padding, 'smallest');
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+
+      emoji {
+        width: 1rem;
+        height: 1rem;
+        margin-left: map_get($base-padding, 'smallest');
+      }
+
+      span {
+        color: map_get($base-colors, 'background-highlighted');
+
+        &.name {
+          margin-left: map_get($base-padding, 'smallest');
+        }
+      }
+    }
+
+    .about {
+      display: flex;
+      flex-direction: row;
+      margin: map_get($base-padding, 'small');
+
+      header {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        emoji {
+          margin-right: map_get($base-padding, 'smaller');
+        }
+
+        h1 {
+          margin: 0;
+        }
+      }
+
+      .statistics {
+        flex: 0 1 auto;
+        display: flex;
+        flex-direction: column;
+
+        statistics {
+          flex: 1 1 auto;
+        }
+
+        .cta {
+          flex: 1 1 auto;
+          display: flex;
+          justify-content: space-between;
+          margin-top: map_get($base-padding, 'small');
+
+          styled-button {
+            flex: 1 1 auto;
+            margin-bottom: 0;
+
+            &:first-child {
+              margin-right: map_get($base-padding, 'small');
+            }
+          }
+        }
+      }
+    }
+  }
+
+  menu {
+    margin-top: map_get($base-padding, 'default');
+    margin-bottom: map_get($base-padding, 'default');
+  }
+
+  .details {
+    margin-top: map_get($base-padding, 'smaller');
+
+    h2 {
+
+    }
+
+    .content {
+      display: flex;
+      flex-direction: row;
+
+      map {
+        height: 15rem;
+        flex: 1 1 50%;
+      }
+
+      div {
+        margin-left: map_get($base-padding, 'default');
+        flex: 1 1 50%;
+      }
+    }
+  }
+
   .attribution {
     opacity: 0.5;
     color: map_get($base-colors, 'secondary-text');

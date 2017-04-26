@@ -70,19 +70,6 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 			e.tile.src = canvas.toDataURL();
 		}).addTo(this.map);
 		
-		/*
-		// Add circle layer.
-		L.circle(this.location, this.accuracy, {
-			stroke: true,
-			weight: 10,
-			color: '#fff',
-			opacity: 0.25,
-			fill: true,
-			fillColor: '#50e3c2',
-			fillOpacity: 0.75
-		}).addTo(map);
-		*/
-		
 		let icon = L.icon({
 			iconUrl: require('../../../../../assets/map-marker.png') as string,
 			className: 'leaflet-icon'
