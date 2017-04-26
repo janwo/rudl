@@ -86,6 +86,10 @@ import {ListFollowersComponent} from "./ui/layouts/list/list-followers.component
 import {ListActivitiesComponent} from "./ui/layouts/list/list-activities.component";
 import {CarouselComponent} from "./ui/widgets/wrapper/carousel.component";
 import {NotFoundComponent} from "./ui/layouts/404/404.component";
+import {ExpeditionCommentsComponent} from './ui/layouts/expedition/expedition-comments.component';
+import {ExpeditionDetailsComponent} from './ui/layouts/expedition/expedition-details.component';
+import {ExpeditionForbiddenComponent} from "./ui/layouts/expedition/expedition-forbidden.component";
+import {CommentService} from './services/comment.service';
 
 @NgModule({
     declarations: [
@@ -121,6 +125,9 @@ import {NotFoundComponent} from "./ui/layouts/404/404.component";
 	    ActivityFollowersComponent,
 	    ActivityAddToListComponent,
 	    UserAvatarComponent,
+	    ExpeditionCommentsComponent,
+	    ExpeditionDetailsComponent,
+	    ExpeditionForbiddenComponent,
 	    MapComponent,
 	    AddToListComponent,
 	    ExploreComponent,
@@ -175,6 +182,7 @@ import {NotFoundComponent} from "./ui/layouts/404/404.component";
 	    ExpeditionResolver,
 	    ListResolver,
 	    ExpeditionService,
+	    CommentService,
 	    appRoutingProviders
     ],
     imports: [

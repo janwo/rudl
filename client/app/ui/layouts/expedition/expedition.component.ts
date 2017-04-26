@@ -15,11 +15,6 @@ export class ExpeditionComponent implements OnInit {
 	formattedDate: string;
 	formattedLocation: string;
 	formattedAwaitingApproval: string;
-	unapprovedState: EmptyState = {
-		title: 'You are not approved',
-		image: require('../../../../assets/boarding/radar.png'),
-		description: 'We couldn\'t get you in there. You have to get approved!'
-	};
     
     constructor(
 	    private route: ActivatedRoute,

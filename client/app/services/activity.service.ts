@@ -20,9 +20,9 @@ export class ActivityService {
         return this.dataService.post(`/api/activities/create`, JSON.stringify(recipe), true).map((json: JsonResponse) => json.data as Activity);
     }
     
-    update(recipe: ActivityRecipe): Observable<Activity> {
+    update(key: string, recipe: ActivityRecipe): Observable<Activity> {
         //TODO Partielles updaten implementieren
-        return this.dataService.post(`/api/activities/update`, JSON.stringify(recipe), true).map((json: JsonResponse) => json.data as Activity);
+        return this.dataService.post(`/api/activities/=/${key}/update`, JSON.stringify(recipe), true).map((json: JsonResponse) => json.data as Activity);
     }
     
     get(key: string): Observable<Activity> {
