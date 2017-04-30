@@ -4,6 +4,8 @@
   display: block;
 
   .card {
+    cursor: pointer;
+
     emoji {
       margin: map_get($base-padding, 'smaller') auto;
     }
@@ -13,8 +15,9 @@
     }
 
     p {
-      text-align: center;
       color: map_get($base-colors, 'secondary-text');
+      margin-left: map_get($base-padding, 'smaller');
+      margin-right: map_get($base-padding, 'smaller');
     }
 
     footer {

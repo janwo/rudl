@@ -1,7 +1,7 @@
 @import '../../variables';
 
-$loading-size: 3rem;
-$loading-animation-speed: 1s;
+$loading-size: 2rem;
+$loading-animation-speed: 3s;
 
 :host {
   display: flex;
@@ -9,28 +9,30 @@ $loading-animation-speed: 1s;
   justify-content: center;
   align-items: center;
 
-  .loading-pulsar {
-    flex: 0 0 auto;
-    border-radius: 50%;
+  .loading {
     width: $loading-size;
     height: $loading-size;
-    opacity: 0;
-    transform: scale3d(0, 0, 0);
-    animation: $loading-animation-speed pulse linear infinite;
-    border: solid map_get($base-line-widths, 'larger') map_get($base-colors, 'primary');
+    border-radius: 50%;
+    border: solid $loading-size / 5 map_get($base-colors, 'primary');
+    border-top-color: map_get($base-colors, 'secondary');
+    animation: loading $loading-animation-speed cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
   }
 
-  @keyframes pulse {
-    0% {
-      transform: scale3d(0, 0, 0);
-      opacity: 0;
+  @keyframes loading {
+    0%{
+      transform: rotate(0deg)
+    }
+    25% {
+      transform: rotate(90deg);
     }
     50% {
-      opacity: 0.75;
+      transform: rotate(180deg);
+    }
+    75% {
+      transform: rotate(270deg);
     }
     100% {
-      transform: scale3d(1, 1, 0);
-      opacity: 0;
+      transform: rotate(360deg);
     }
   }
 }

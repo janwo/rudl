@@ -1,10 +1,11 @@
-import Joi = require('joi')
+import * as Joi from 'joi';
 
 export interface Translations {
 	de?: string;
 	en?: string;
 	es?: string;
 	fr?: string;
+	[key: string]: string;
 }
 
 export const TranslationsKeys = [
@@ -12,8 +13,8 @@ export const TranslationsKeys = [
 ];
 
 export const TranslationsValidation = Joi.object().keys({
-	de: Joi.string().min(5).max(32),
-	en: Joi.string().min(5).max(32),
-	es: Joi.string().min(5).max(32),
-	fr: Joi.string().min(5).max(32)
+	de: Joi.string().min(5).max(50),
+	en: Joi.string().min(5).max(50),
+	es: Joi.string().min(5).max(50),
+	fr: Joi.string().min(5).max(50)
 }).min(1).optional();

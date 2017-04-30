@@ -3,20 +3,141 @@
 :host {
   display: block;
   @include setup-max-width();
-  padding: map_get($base-padding, 'default');
+  padding: map_get($base-padding, 'default') map_get($base-padding, 'default') 0;
 
-  .attribution {
-    opacity: 0.5;
-    color: map_get($base-colors, 'secondary-text');
-    display: block;
+  .card {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+
+    aside {
+      background: map_get($base-colors, 'primary');
+      border-radius: $base-border-radius $base-border-radius 0 0;
+      padding: map_get($base-padding, 'smallest');
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+
+      emoji {
+        width: 1rem;
+        height: 1rem;
+        margin-left: map_get($base-padding, 'smallest');
+      }
+
+      span {
+        color: map_get($base-colors, 'background-highlighted');
+
+        &.name {
+          margin-left: map_get($base-padding, 'smallest');
+        }
+      }
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      margin: map_get($base-padding, 'small');
+
+      .title {
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+
+        @include breakpoint('small') {
+          flex-direction: row;
+        }
+
+        emoji {
+          margin-right: map_get($base-padding, 'smaller');
+        }
+
+        h1 {
+          margin: 0;
+
+          @include breakpoint(null, 'small') {
+            margin-top: map_get($base-padding, 'smaller');
+          }
+        }
+      }
+
+      .description {
+        margin: map_get($base-padding, 'small');
+
+        @include breakpoint(null, 'small') {
+          text-align: center;
+        }
+      }
+
+      .statistics {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        margin-top: map_get($base-padding, 'small');
+
+        @include breakpoint('small') {
+          flex-direction: row;
+          justify-content: space-between;
+        }
+
+        statistics {
+          flex: 1 1 auto;
+
+          @include breakpoint('small') {
+            flex: 0 0 auto;
+          }
+        }
+
+        .cta {
+          flex: 1 1 auto;
+          display: flex;
+          justify-content: space-between;
+
+          @include breakpoint('small') {
+            flex: 0 0 auto;
+          }
+
+          @include breakpoint(null, 'small') {
+            margin-top: map_get($base-padding, 'small');
+          }
+
+          styled-button {
+            flex: 1 1 auto;
+            margin-bottom: 0;
+
+            &:first-child {
+              margin-right: map_get($base-padding, 'small');
+            }
+          }
+        }
+      }
+    }
+  }
+
+  menu {
     margin-top: map_get($base-padding, 'default');
-    text-align: center;
+    margin-bottom: map_get($base-padding, 'default');
+  }
 
-    a {
-      color: map_get($base-colors, 'primary-text');
+  .details {
+    margin-top: map_get($base-padding, 'smaller');
 
-      &:hover {
-        text-decoration: underline;
+    h2 {
+
+    }
+
+    .content {
+      display: flex;
+      flex-direction: row;
+
+      map {
+        height: 15rem;
+        flex: 1 1 50%;
+      }
+
+      div {
+        margin-left: map_get($base-padding, 'default');
+        flex: 1 1 50%;
       }
     }
   }

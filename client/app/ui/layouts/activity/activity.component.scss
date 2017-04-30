@@ -6,10 +6,11 @@
   padding: map_get($base-padding, 'default');
 
   .card {
+    position: relative;
     display: flex;
     flex-direction: row;
 
-    .header {
+    .about {
       flex: 1 1 auto;
       display: flex;
       flex-direction: row;
@@ -51,45 +52,12 @@
     }
   }
 
-  .card.add-event {
-    margin-top: map_get($base-padding, 'smaller');
-    margin-bottom: map_get($base-padding, 'smaller');
-    display: block;
-    cursor: pointer;
+  menu {
+    margin-top: map_get($base-padding, 'default');
+    margin-bottom: map_get($base-padding, 'default');
+  }
 
-    .title {
-      display: flex;
-      color: inactive(map_get($base-colors, 'primary-text'));
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-      font-size: map_get($base-font-size, 'large');
-      transition: font-size 0.3s, color 0.3s, font-weight 0.3s;
-
-      * {
-        flex: 0 0 auto;
-      }
-
-      i {
-        flex: 0 0 auto;
-        margin-right: map_get($base-padding, 'small');
-      }
-    }
-
-    &.expanded {
-      cursor: default;
-
-      .title {
-        font-weight: $base-heading-font-weight-normal;
-        font-family: $base-heading-font-family;
-        color: map_get($base-colors, 'primary-text');
-        margin-bottom: map_get($base-heading-font-size, 'h1');
-        font-size: map_get($base-heading-font-size, 'h1');
-      }
-    }
-
-    create-expedition.ng-animating {
-      overflow: hidden;
-    }
+  dropdown-menu {
+    top: 100%;
   }
 }

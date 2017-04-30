@@ -1,0 +1,76 @@
+@import '../../variables';
+
+:host {
+  display: block;
+
+  h1 {
+    margin: map_get($base-padding, 'smaller') map_get($base-padding, 'smaller') map_get($base-heading-font-size, 'h1');
+  }
+
+  .split {
+    display: flex;
+    flex-direction: column;
+
+    & > * {
+      flex: 1 1 auto;
+    }
+
+    @include breakpoint('small') {
+      flex-direction: row;
+
+      & > * {
+        flex: 1 1 50%;
+      }
+    }
+  }
+
+  .map {
+    margin: 0 map_get($base-padding, 'smaller') map_get($base-padding, 'smaller');
+
+    form-control-wrapper {
+      margin: 0;
+    }
+  }
+
+  .content {
+    margin: 0 map_get($base-padding, 'smaller') map_get($base-padding, 'smaller');
+
+    &:not(:first-child) {
+      @include breakpoint(null, 'small') {
+        margin-top: 0;
+      }
+    }
+  }
+
+  footer {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+
+    styled-button {
+      margin: 0;
+      position: relative;
+      flex: 0 0 auto;
+      z-index: 2;
+
+      &.done,
+      &.next {
+        margin-left: auto;
+      }
+
+      &.back {
+        margin-right: auto;
+      }
+    }
+
+    indicator {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 1;
+    }
+  }
+}

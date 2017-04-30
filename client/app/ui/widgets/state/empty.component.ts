@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from "@angular/core";
-import {trigger, transition, style, animate} from "@angular/animations";
-import {SafeStyle, DomSanitizer} from "@angular/platform-browser";
+import {animate, style, transition, trigger} from "@angular/animations";
+import {DomSanitizer, SafeStyle} from "@angular/platform-browser";
 
 @Component({
     templateUrl: 'empty.component.html',

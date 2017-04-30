@@ -1,15 +1,22 @@
 import {Document} from "./document";
 import {User} from "./user";
+import {Activity} from './activity';
 
 export interface Expedition extends Document {
 	title: string;
 	description?: string;
-	location: number[];
-	date: string;
-	fuzzyTime: boolean;
+	location: {
+		accuracy: number,
+		latLng: number[]
+	};
+	date: {
+		accuracy: number,
+		isoString: string;
+	};
 	needsApproval: boolean;
 	owner: User;
 	links: ExpeditionLinks;
+	activity: Activity;
 	icon: string;
 	relations: {
 		isAwaiting: boolean;
@@ -31,7 +38,6 @@ export interface ExpeditionRecipe {
 	description: string,
 	needsApproval: boolean,
 	fuzzyTime: boolean,
-	activity: string,
 	date: string,
 	icon: string,
 	location: number[]

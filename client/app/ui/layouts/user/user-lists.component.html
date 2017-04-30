@@ -1,5 +1,5 @@
 <loading *ngIf="lists == null"></loading>
 <empty [emptyState]="emptyState" *ngIf="lists && lists.length == 0"></empty>
-<item-wrapper [columns]="2">
+<item-wrapper>
 	<list-item *ngFor="let list of lists" [list]="list"></list-item>
 </item-wrapper>

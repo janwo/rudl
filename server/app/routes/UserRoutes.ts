@@ -1,11 +1,7 @@
 import {UserRoles, UserValidation} from "../models/user/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {UserController} from "../controllers/UserController";
-import Joi = require('joi');
-import BasicStrategy = require("../strategies/BasicStrategy");
-import FacebookStrategy = require("../strategies/FacebookStrategy");
-import TwitterStrategy = require("../strategies/TwitterStrategy");
-import GoogleStrategy = require("../strategies/GoogleStrategy");
+import * as Joi from 'joi';
 
 const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.string().regex(/^me$/));
 

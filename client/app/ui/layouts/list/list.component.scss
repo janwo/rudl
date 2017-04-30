@@ -18,7 +18,7 @@
       flex: 0 0 auto;
       width: 15rem;
     }
-    
+
     .user {
       cursor: pointer;
       display: flex;
@@ -91,18 +91,8 @@
       margin-left: map_get($base-padding, 'default');
     }
 
-    ul {
-      list-style: none;
-      margin: - map_get($base-padding, 'smaller');
-      margin-top: map_get($base-padding, 'default') - map_get($base-padding, 'smaller');
-      display: flex;
-      flex-wrap: wrap;
-
-      li {
-        flex: 1 1 auto;
-        max-width: 15rem;
-        margin: map_get($base-padding, 'smaller');
-      }
+    menu {
+      margin-bottom: map_get($base-padding, 'default');
     }
   }
 }

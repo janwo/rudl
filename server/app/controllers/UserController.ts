@@ -1,8 +1,5 @@
-import Nodemailer = require("nodemailer");
-import Boom = require("boom");
-import dot = require("dot-object");
-import fs = require('fs');
-import path = require('path');
+import * as Boom from "boom";
+import * as dot from "dot-object";
 import {Config} from "../../../run/config";
 import {User, UserProvider} from "../models/user/User";
 import {DatabaseManager} from "../Database";
@@ -10,8 +7,6 @@ import {DecodedToken} from "../models/Token";
 import {Cursor} from "arangojs";
 import {UserFollowsUser} from "../models/user/UserFollowsUser";
 import {AuthController} from "./AuthController";
-import jwt = require("jsonwebtoken");
-import _ = require("lodash");
 
 export module UserController {
 	
@@ -31,16 +26,7 @@ export module UserController {
 			provider: provider.provider,
 			userIdentifier: provider.userIdentifier
 		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User).then((user: User) => {
-			return new Promise<User>((resolve, reject) => {
-				// No user found?
-				if (user === undefined) {
-					reject(Boom.notFound('User not found.'));
-					return;
-				}
-				resolve(user);
-			});
-		});
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User);
 	}
 	
 	export function findByUsername(username: string): Promise<User> {
@@ -49,16 +35,7 @@ export module UserController {
 			'@collection': DatabaseManager.arangoCollections.users.name,
 			username: username
 		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User).then((user: User) => {
-			return new Promise<User>((resolve, reject) => {
-				// No user found?
-				if (user === undefined) {
-					reject(Boom.notFound('User not found.'));
-					return;
-				}
-				resolve(user);
-			});
-		});
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User);
 	}
 	
 	export function findByMail(mail: string): Promise<User> {
@@ -67,16 +44,7 @@ export module UserController {
 			'@collection': DatabaseManager.arangoCollections.users.name,
 			mail: mail
 		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User).then((user: User) => {
-			return new Promise<User>((resolve, reject) => {
-				// No user found?
-				if (user === undefined) {
-					reject(Boom.notFound('User not found.'));
-					return;
-				}
-				resolve(user);
-			});
-		});
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User);
 	}
 	
 	export function findByToken(token: DecodedToken): Promise<User> {
@@ -87,22 +55,17 @@ export module UserController {
 				'@collection': DatabaseManager.arangoCollections.users.name,
 				key: token.userId
 			};
-			return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User).then((user: User) => {
-				return new Promise<User>((resolve, reject) => {
-					// No user found?
-					if (user === undefined) {
-						reject(Boom.notFound('User not found.'));
-						return;
-					}
-					resolve(user);
-				});
-			});
+			return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User);
 		});
 	}
 	
 	export function findByKey(key: string | string[]): Promise<User | User[]> {
 		let collection = DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.users.name);
-		return key instanceof Array ? collection.lookupByKeys(key) as Promise<User[]> : collection.document(key) as Promise<User>;
+		return key instanceof Array ? collection.lookupByKeys(key) as Promise<User[]> : collection.byExample({
+			_key: key
+		}, {
+			limit: 1
+		}).then(cursor => cursor.next()) as any as Promise<User|User[]>;
 	}
 	
 	export interface UserStatistics {
@@ -116,7 +79,7 @@ export module UserController {
 		isFollowee?: boolean;
 	}
 	
-	export function getUserStatistics(user: User, relatedUser: User) : Promise<UserStatistics> {
+	export function getStatistics(user: User, relatedUser: User) : Promise<UserStatistics> {
 		// Base query.
 		let queries: string[] = [
 			'LET followers = (FOR follower IN INBOUND @userId @@edgesUserFollowsUser RETURN follower._id)',
@@ -132,7 +95,7 @@ export module UserController {
 			'followees: LENGTH(followees)'
 		];
 		
-		let aqlParams = {
+		let aqlParams: {[key: string]: string} = {
 			'@edgesUserFollowsUser': DatabaseManager.arangoCollections.userFollowsUser.name,
 			'@edgesUserFollowsActivity': DatabaseManager.arangoCollections.userFollowsActivity.name,
 			'@edgesUserFollowsList': DatabaseManager.arangoCollections.userFollowsList.name,
@@ -173,11 +136,11 @@ export module UserController {
 		let createPublicUser = (user: User) => {
 			// Run further promises.
 			return Promise.all([
-				getUserStatistics(user, relatedUser)
+				UserController.getStatistics(user, relatedUser)
 			]).then((results : [UserStatistics]) => {
 				// Define default links.
 				//TODO UPDATE LINKS
-				let links = {
+				let links: any = {
 					followers: `${Config.backend.domain}/api/users/${user.username}/followers`,
 					followees: `${Config.backend.domain}/api/users/${user.username}/following`
 				};
@@ -234,11 +197,11 @@ export module UserController {
 	}
 	
 	export function getUserConnections(from: User, to: User, skip: number | boolean = false, limit: number | false = false) : Promise<UserFollowsUser[]> {
-		let example = {};
+		let example: any = {};
 		if(from) example['_from'] = from._id;
 		if(to) example['_to'] = to._id;
 		
-		let opts = {};
+		let opts: any = {};
 		if(skip) opts['skip'] = skip;
 		if(limit) opts['limit'] = limit;
 		
@@ -246,7 +209,7 @@ export module UserController {
 	}
 	
 	export function addUserConnection(user: User, aimedUser: User) : Promise<UserFollowsUser> {
-		if(aimedUser._id === user._id) return Promise.reject<UserFollowsUser>(Boom.badRequest('Users cannot follow themselves.'));
+		if(aimedUser._id === user._id) return Promise.reject('Users cannot follow themselves.');
 		
 		return getUserConnections(user, aimedUser, 0, 1).then((connections: UserFollowsUser[]) => {
 			// Try to return any existing connection.
@@ -277,10 +240,10 @@ export module UserController {
 	}
 	
 	export function getMutualConnections(users: User[], inbound = true): Promise<User[]> {
-		if(!users || users.length < 2) throw('Invalid arguments: At least choose two users for mutual comparison.');
+		if(!users || users.length < 2) return Promise.reject('Invalid arguments: At least choose two users for mutual comparison.');
 		let friendsOfUser = users.map((user: User, index: number) => `(FOR v IN ${inbound ? 'INBOUND' : 'OUTBOUND'} @user_${index} @@edges RETURN v._id)`).join(',');
-		let aqlQuery = `FOR u IN INTERSECTION (${friendsOfUser}) RETURN u`;
-		let aqlParam = {
+		let aqlQuery: string = `FOR u IN INTERSECTION (${friendsOfUser}) RETURN u`;
+		let aqlParam: {[key: string]: string} = {
 			'@edges': DatabaseManager.arangoCollections.userFollowsUser.name
 		};
 		users.forEach((user: User, index: number) => {
@@ -298,7 +261,10 @@ export module UserController {
 		 * @param reply Reply-Object
 		 */
 		export function getUser(request: any, reply: any): void {
-			let promise : Promise<User> = Promise.resolve(request.params.username != 'me' ? findByUsername(request.params.username) : request.auth.credentials).then((user: User) => getPublicUser(user, request.auth.credentials));
+			let promise : Promise<User> = Promise.resolve(request.params.username != 'me' ? findByUsername(request.params.username) : request.auth.credentials).then((user: User) => {
+				if(!user) return Promise.reject(Boom.notFound('User not found!'));
+				return getPublicUser(user, request.auth.credentials);
+			});
 			reply.api(promise);
 		}
 		
@@ -328,6 +294,7 @@ export module UserController {
 		export function getFollowers(request: any, reply: any): void {
 			// Create user promise.
 			let promise : Promise<User> = Promise.resolve(request.params.username != 'me' ? findByUsername(request.params.username) : request.auth.credentials).then((user: User) => {
+				if(!user) return Promise.reject(Boom.notFound('User not found!'));
 				return getUserConnections(null, user, request.params.offset, request.params.offset + 30).then(connections => {
 					let connectionKeys: string[] = connections.map(connection => connection._from);
 					return findByKey(connectionKeys);
@@ -348,9 +315,9 @@ export module UserController {
 		export function getFollowees(request: any, reply: any): void {
 			// Create user promise.
 			let promise : Promise<User> = Promise.resolve(request.params.username != 'me' ? findByUsername(request.params.username) : request.auth.credentials).then((user: User) => {
+				if (!user) return Promise.reject(Boom.badRequest('User does not exist!'));
 				return getUserConnections(user, null, request.params.offset, request.params.offset + 30).then(connections => {
 					let connectionKeys: string[] = connections.map(connection => connection._to);
-					console.log(connectionKeys);
 					return findByKey(connectionKeys);
 				});
 			}).then((users: User[]) => getPublicUser(users, request.auth.credentials));
@@ -367,6 +334,8 @@ export module UserController {
 		 */
 		export function addFollowee(request: any, reply: any): void {
 			let promise = findByUsername(request.params.followee).then((followee: User) => {
+				if(!followee) return Promise.reject(Boom.notFound('Followee not found!'));
+				if(request.auth.credentials._id == followee._id) return Promise.reject(Boom.forbidden('Users cannot follow themselves.'));
 				return addUserConnection(request.auth.credentials, followee).then(() => getPublicUser(followee, request.auth.credentials));
 			});
 			
@@ -382,6 +351,7 @@ export module UserController {
 		 */
 		export function deleteFollowee(request: any, reply: any): void {
 			let promise = findByUsername(request.params.followee).then((followee: User) => {
+				if(!followee) return Promise.reject(Boom.notFound('Followee not found!'));
 				return removeUserConnection(request.auth.credentials, followee).then(() => getPublicUser(followee, request.auth.credentials));
 			});
 			

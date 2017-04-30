@@ -1,0 +1,36 @@
+@import '../../variables';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  map {
+    padding: 0;
+    height: 100vh;
+    align-self: stretch;
+    position: relative;
+    border-radius: $base-border-radius;
+    z-index: 1;
+    margin-bottom: map_get($base-padding, 'default');
+  }
+
+  .attribution {
+    opacity: 0.5;
+    color: map_get($base-colors, 'secondary-text');
+    display: block;
+    text-align: center;
+
+    a {
+      color: map_get($base-colors, 'primary-text');
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  styled-button {
+    margin-bottom: map_get($base-padding, 'default');
+  }
+}

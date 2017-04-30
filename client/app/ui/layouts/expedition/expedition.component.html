@@ -1,29 +1,31 @@
 <div class="card">
-	<h3>{{expedition.title}}</h3>
-	<p>{{expedition.description}}</p>
-	<slots [users]="[expedition.owner]" [slots]="expedition.statistics.approvedUsers"></slots>
-	<ul class="users-info">
-		<li>
-			<span>{{expedition.owner.firstName + ' ' + expedition.owner.lastName}}</span>
-		</li>
-	</ul>
-	<ul class="event-info">
-		<li>
-			<i class="fa fa-map-marker"></i>
-			<span>{{formattedLocation}}</span>
-		</li>
-		<li>
-			<i class="fa fa-clock-o"></i>
-			<span>{{formattedDate}}</span>
-		</li>
-	</ul>
+	<aside [routerLink]="['rudel', expedition.activity.id]">
+		<span i18n>Streifzug von</span>
+		<emoji [emoji]="expedition.activity.links.icon"></emoji>
+		<span class="name">{{expedition.activity.name}}</span>
+	</aside>
+	<header>
+		<div class="title">
+			<emoji [emoji]="expedition.links.icon"></emoji>
+			<h1>{{expedition.title}}</h1>
+		</div>
+		<div class="description">{{expedition.description}}</div>
+		<div class="statistics">
+			<statistics [statistics]="[
+			{value: expedition.statistics.approvedUsers, subject: 'Teilnehmer', link: ['attendees']},
+			{value: formattedLocation, subject: 'Entfernung', link: ['attendes']},
+			{value: formattedDate, subject: expedition.needsApproval && !expedition.relations.isApproved ? 'Grober Zeitpunkt' : 'Zeitpunkt', link: ['attendes']}
+		]"></statistics>
+			<div class="cta">
+				<styled-button [style]="expedition.relations.isApproved ? buttonStyleActivated : buttonStyleDefault" [disabled]="pendingFollowRequest" [text]="'Teilnahme anfragen'"></styled-button>
+				<styled-button [fa]="'pencil'" *ngIf="expedition.relations.isOwned"></styled-button>
+			</div>
+		</div>
+	</header>
 </div>
-<map [zoom]="14" [location]="expedition.location"></map>
-<empty [emptyState]="unapprovedState" *ngIf="!expedition.relations.isApproved"></empty>
-<section *ngIf="expedition.relations.isApproved">
-	Approved!
-	Comments
-</section>
-
-<small class="attribution">Maps provided by © <a target="_blank" href="https://openstreetmap.org/copyright">OpenStreetMap</a> Contributors via <a target="_blank" href="http://leafletjs.com">Leaflet</a></small>
-
+<menu>
+	<menu-item [makeRoomIfSmall]="true" [icon]="'comments-o'" [title]="'Diskussion'" [link]="['discussion']"></menu-item>
+	<menu-item [makeRoomIfSmall]="true" [icon]="'map-o'" [title]="'Karte'" [link]="['map']"></menu-item>
+	<menu-item [makeRoomIfSmall]="true" [icon]="'user-o'" [title]="'Teilnehmer'" [link]="['attendees']"></menu-item>
+</menu>
+<router-outlet></router-outlet>

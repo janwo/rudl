@@ -1,6 +1,6 @@
 import {Config} from "../../../run/config";
 import {PluginsConfiguration} from "../binders/PluginsBinder";
-import Path = require('path');
+import * as Path from 'path';
 
 const whiteOutArgs = [
 	{
@@ -14,7 +14,7 @@ export const PluginsConfig: PluginsConfiguration = [
 		register: require('good'),
 		options: {
 			ops: {
-				interval: 10000
+				interval: 60000 * 15 // 15 Minutes
 			},
 			reporters: (() => {
 				let reporters: any = {};

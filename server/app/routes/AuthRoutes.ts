@@ -2,9 +2,9 @@ import {Config} from "../../../run/config";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {UserRoles, UserValidation} from "../models/user/User";
 import {AuthController} from "../controllers/AuthController";
-import FacebookStrategy = require("../strategies/FacebookStrategy");
-import TwitterStrategy = require("../strategies/TwitterStrategy");
-import GoogleStrategy = require("../strategies/GoogleStrategy");
+import * as TwitterStrategy from "../strategies/TwitterStrategy";
+import * as FacebookStrategy from "../strategies/FacebookStrategy";
+import * as GoogleStrategy from "../strategies/GoogleStrategy";
 
 export const RoutesConfig: RoutesConfiguration = [
 	

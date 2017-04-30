@@ -1,17 +1,11 @@
-import Nodemailer = require("nodemailer");
-import Boom = require("boom");
-import Uuid = require("uuid");
-import dot = require("dot-object");
-import fs = require('fs');
-import path = require('path');
+import * as Boom from "boom";
+import * as Uuid from "uuid";
+import * as jwt from "jsonwebtoken";
 import {Config} from "../../../run/config";
 import {User} from "../models/user/User";
 import {DatabaseManager} from "../Database";
 import {DecodedToken, UserDataCache, TokenData} from "../models/Token";
 import {AccountController} from "./AccountController";
-import randomstring = require("randomstring");
-import jwt = require("jsonwebtoken");
-import _ = require("lodash");
 
 export module AuthController {
 	
@@ -21,7 +15,7 @@ export module AuthController {
 		recommendations?: Array<string>
 	}
 	
-	function getUserDataCache(userId: number | string): Promise<UserDataCache> {
+	export function getUserDataCache(userId: number | string): Promise<UserDataCache> {
 		return new Promise<UserDataCache>((resolve, reject) => {
 			// Retrieve user in redis.
 			let redisKey: string = `user-${userId}`;
@@ -38,7 +32,7 @@ export module AuthController {
 		});
 	}
 	
-	function saveUserDataCache(userDataCache: UserDataCache): Promise<UserDataCache> {
+	export function saveUserDataCache(userDataCache: UserDataCache): Promise<UserDataCache> {
 		return new Promise<UserDataCache>((resolve, reject) => {
 			// Retrieve user in redis.
 			let redisKey: string = `user-${userDataCache.userId}`;
@@ -72,14 +66,9 @@ export module AuthController {
 			});
 			
 			// Save changes.
-			return saveUserDataCache(userDataCache).then((userDataCache: UserDataCache) => {
-				return new Promise<TokenData>((resolve, reject) => {
-					if (foundTokenData) {
-						resolve(foundTokenData);
-						return;
-					}
-					reject(Boom.badRequest('Token is invalid!'));
-				});
+			return AuthController.saveUserDataCache(userDataCache).then((userDataCache: UserDataCache) => {
+				if(!foundTokenData) return Promise.reject<TokenData>('Token is invalid!');
+				return foundTokenData;
 			});
 		});
 	}
@@ -102,10 +91,10 @@ export module AuthController {
 				expiresAt: now + Config.backend.jwt.expiresIn
 			});
 			return userDataCache;
-		}).then(saveUserDataCache).then(() => {
+		}).then(userDataCache => AuthController.saveUserDataCache(userDataCache)).then(() => {
 			return new Promise<String>((resolve, reject) => {
 				// Sign web token.
-				jwt.sign(token, Config.backend.jwt.salt, {
+				jwt.sign(token, Config.backend.salts.jwt, {
 					algorithm: 'HS256'
 				}, (err, token: string) => {
 					if (err) {
@@ -120,19 +109,16 @@ export module AuthController {
 	
 	export function unsignToken(token: DecodedToken): Promise<UserDataCache> {
 		return getUserDataCache(token.userId).then((userDataCache: UserDataCache) => {
-			return new Promise<UserDataCache>((resolve, reject) => {
-				for (let i = 0; i < userDataCache.tokens.length; i++) {
-					let tokenItem = userDataCache.tokens[i];
-					if (tokenItem.tokenId != token.tokenId) continue;
-					
-					tokenItem.expiresAt = Math.trunc(Date.now() / 1000); // Expire.
-					resolve(userDataCache);
-					return;
-				}
+			for (let i = 0; i < userDataCache.tokens.length; i++) {
+				let tokenItem = userDataCache.tokens[i];
+				if (tokenItem.tokenId != token.tokenId) continue;
 				
-				reject(Boom.badRequest('Token is invalid.'));
-			});
-		}).then(saveUserDataCache);
+				tokenItem.expiresAt = Math.trunc(Date.now() / 1000); // Expire.
+				return userDataCache;
+			}
+			
+			return Promise.reject<UserDataCache>('Token is invalid.');
+		}).then(userDataCache => AuthController.saveUserDataCache(userDataCache));
 	}
 	
 	export namespace RouteHandlers {
@@ -166,7 +152,7 @@ export module AuthController {
 					password: request.payload.password,
 					firstName: request.payload.firstname,
 					lastName: request.payload.lastname
-				}).then(AccountController.saveUser).then((user: User) => signToken(user)).then((token: string) => {
+				}).then(user => AccountController.save(user)).then((user: User) => AuthController.signToken(user)).then((token: string) => {
 					return {
 						token: token
 					};

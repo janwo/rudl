@@ -3,7 +3,7 @@ import {UserService} from "../../services/user.service";
 import {IndicatorComponent} from "./state/indicator.component";
 import {ButtonStyles} from "./control/styled-button.component";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import * as faker from 'faker';
+import * as faker from "faker";
 
 @Component({
     templateUrl: './login.component.html',
@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
 					Validators.required,
 					Validators.minLength(5),
 					Validators.maxLength(16),
-					Validators.pattern(/^[a-z0-9-_]*$/)
+					Validators.pattern(/^[a-z0-9_]*$/)
 			    ]
 			],
 			mail: [

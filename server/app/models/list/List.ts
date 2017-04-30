@@ -7,8 +7,6 @@ export interface List extends Document {
 }
 
 export const ListValidation = {
-	
 	translations: TranslationsValidation.required(),
-	activities: Joi.array().items(Joi.string()).optional(),
-	icon: Joi.number().required()
+	activities: Joi.array().items(Joi.string()).optional()
 }

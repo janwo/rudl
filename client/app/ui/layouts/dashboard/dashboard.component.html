@@ -7,9 +7,9 @@
 		</div>
 		<div class="menu" [ngClass]="{active: !inSearchMode}">
 			<menu>
-				<menu-item [icon]="'compass'" [title]="'Entdecken'" [link]="['/explore']"></menu-item>
-				<menu-item [icon]="'users'" [title]="'Rudler'" [link]="['/people']"></menu-item>
-				<menu-item [icon]="'search'" [title]="'Suche'" [link]="['/search']"></menu-item>
+				<menu-item [makeRoomIfSmall]="true" [icon]="'compass'" [title]="'Entdecken'" [link]="['/explore']"></menu-item>
+				<menu-item [makeRoomIfSmall]="true" [icon]="'users'" [title]="'Rudler'" [link]="['/people']"></menu-item>
+				<menu-item class="search-menu-item" [icon]="'search'" [title]="'Suche'" [link]="['/search']"></menu-item>
 			</menu>
 		</div>
 	</div>
@@ -23,9 +23,5 @@
 </header>
 <section>
 	<router-outlet></router-outlet>
+	<legal-footer></legal-footer>
 </section>
-<footer>
-	<small class="legal">
-		<a [routerLink]="['/legal']" i18n>Impressum</a>
-	</small>
-</footer>

@@ -1,13 +1,12 @@
-import {Component, Input, Output, EventEmitter, ViewChild} from "@angular/core";
+import {Component, EventEmitter, Input, Output, ViewChild} from "@angular/core";
 import {Router} from "@angular/router";
 import {Locale} from "../../../models/locale";
 import {ButtonStyles} from "../control/styled-button.component";
 import {ListService} from "../../../services/list.service";
 import {ListRecipe} from "../../../models/list";
+import {TranslationListComponent} from "../translation/translation-list.component";
 import Language = Locale.Language;
 import Translations = Locale.Translations;
-import {TranslationListComponent} from "../translation/translation-list.component";
-import {AbstractControl, FormArray, FormControl, FormGroup} from "@angular/forms";
 
 @Component({
     templateUrl: 'create-list.component.html',
@@ -41,8 +40,7 @@ export class CreateListComponent {
     
         // Create activity recipe.
         let listRecipe: ListRecipe = {
-		    translations: {},
-		    activities: []
+		    translations: {}
 	    };
     
         // Fire and remove pending state when done.

@@ -1,9 +1,9 @@
-import Nodemailer = require("nodemailer");
-import Boom = require("boom");
-import dot = require("dot-object");
-import fs = require('fs');
-import path = require('path');
-import _ = require('lodash');
+import * as Boom from "boom";
+import * as dot from "dot-object";
+import * as fs from 'fs';
+import * as Path from 'path';
+import * as jwt from "jsonwebtoken";
+import * as _ from "lodash";
 import {User, UserRoles} from "../models/user/User";
 import {Cursor} from "arangojs";
 import {DatabaseManager} from "../Database";
@@ -11,8 +11,6 @@ import {Activity} from "../models/activity/Activity";
 import {UserController} from "./UserController";
 import {UserFollowsUser} from "../models/user/UserFollowsUser";
 import {AccountController} from "./AccountController";
-import randomstring = require("randomstring");
-import jwt = require("jsonwebtoken");
 import * as faker from 'faker';
 import {Config} from "../../../run/config";
 
@@ -76,8 +74,8 @@ export module TestController {
 	}
 	
 	function generateActivity(): Activity {
-		let translations = ['de', 'en', 'fr', 'es'];
-		let date = [
+		let translations: string[] = ['de', 'en', 'fr', 'es'];
+		let date: string[] = [
 			faker.date.past().toISOString(),
 			faker.date.past().toISOString()
 		].sort();
@@ -93,7 +91,7 @@ export module TestController {
 		};
 		
 		// Generate random translations.
-		_.sampleSize(translations, Math.round(Math.random() * (translations.length - 1)) + 1).forEach(translation => {
+		_.sampleSize(translations, Math.round(Math.random() * (translations.length - 1)) + 1).forEach((translation: string) => {
 			activity.translations[translation] = `${faker.lorem.words(Math.random() * 5 + 3)} (${translation})`;
 		});
 		
@@ -103,14 +101,14 @@ export module TestController {
 	/**
 	 * Handles [POST] /api/test/truncate/{collection?}
 	 * @param request Request-Object
-	 * @param request.params.collection collection (optional
+	 * @param request.params.collection collection (optional)
 	 * @param reply Reply-Object
 	 */
 	export function truncate(request: any, reply: any): void {
-		let collection = request.params.collection;
-		let collections = [];
-		if(collection && Object.keys(DatabaseManager.arangoCollections).reduce((found, currentCollection) => found || DatabaseManager.arangoCollections[currentCollection].name == collection.name, false)) {
-			collections.push(collection.name);
+		let collection: string = request.params.collection;
+		let collections: string[] = [];
+		if(collection && Object.keys(DatabaseManager.arangoCollections).reduce((found: any, currentCollection: string) => found || DatabaseManager.arangoCollections[currentCollection].name == collection, false)) {
+			collections.push(collection);
 		} else if(!collection) {
 			collections = collections.concat(Object.keys(DatabaseManager.arangoCollections).map(key => DatabaseManager.arangoCollections[key].name))
 		}

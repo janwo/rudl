@@ -1,8 +1,8 @@
 import {Component, Input, Optional} from "@angular/core";
 import * as moment from "moment";
-import {trigger, transition, style, animate} from "@angular/animations";
-import Moment = moment.Moment;
+import {animate, style, transition, trigger} from "@angular/animations";
 import {ControlValueAccessor, NgControl} from "@angular/forms";
+import Moment = moment.Moment;
 
 @Component({
 	templateUrl: 'datetime.component.html',

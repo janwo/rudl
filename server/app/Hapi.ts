@@ -1,19 +1,18 @@
-import Fs = require('fs');
-import Https = require('https');
-import Hapi = require('hapi');
-import Path = require('path');
-import Handlebars = require('handlebars');
+import * as Handlebars from 'handlebars';
 import {Config} from "../../run/config";
 import {RoutesBinder} from "./binders/RoutesBinder";
 import {StrategiesBinder} from "./binders/StrategiesBinder";
 import {DecoratorsBinder} from "./binders/DecoratorsBinder";
 import {PluginsBinder} from "./binders/PluginsBinder";
 import {DatabaseManager} from "./Database";
+import * as Fs from "fs";
 import * as AutoSNI from "auto-sni";
+import * as Path from 'path';
+import {Server} from 'hapi';
 
-export function hapiServer(): Promise<Hapi.Server>{
+export function hapiServer(): Promise<Server>{
 	// Create dirs.
-	let dirs = [];
+	let dirs: string[] = [];
 	
 	// Get all dirs of uploads.
 	Object.keys(Config.paths).forEach(key => {
@@ -25,7 +24,7 @@ export function hapiServer(): Promise<Hapi.Server>{
 	dirs.forEach(path => Fs.existsSync(path) || Fs.mkdirSync(path));
 	
 	// Initialize Hapi server.
-	let server = new Hapi.Server({
+	let server = new Server({
 		cache: [
 			{
 				name: 'redisCache',
@@ -48,25 +47,23 @@ export function hapiServer(): Promise<Hapi.Server>{
 		default:
 			// Create server connection.
 			server.connection({
-				port: Config.backend.port,
+				port: Config.backend.ssl ? Config.backend.ports.https : Config.backend.ports.http,
 				host: Config.backend.host
 			});
 			break;
 		
 		case 'secure':
-			// Load SSL key and certificate.
+			// Load SSL key and certificate. TODO Respect conig domain
 			let autoSni = AutoSNI({
-				email: 'we@rudl.me',
+				email: Config.backend.mails.admin,
 				agreeTos: true,
 				debug: Config.debug,
 				domains: [
-					"rudl.me"
+					Config.backend.domain
 				],
-				forceSSL: true,
-				redirectCode: 301,
 				ports: {
-					http: 80,
-					https: 443
+					http: Config.backend.ports.http,
+					https: Config.backend.ports.https
 				}
 			});
 
@@ -81,7 +78,6 @@ export function hapiServer(): Promise<Hapi.Server>{
 	
 	// Setup plugins.
 	return PluginsBinder.bind(server).then(() => {
-		
 		// Setup the authentication strategies.
 		StrategiesBinder.bind(server);
 		
@@ -96,12 +92,12 @@ export function hapiServer(): Promise<Hapi.Server>{
 			
 			// Catch 404 responses.
 			if (request.response.isBoom && request.response.output.statusCode === 404) {
-				let activatedPath = Object.keys(Config.paths).map(key => Config.paths[key]).find(obj => {
+				let activatedPath: any = Object.keys(Config.paths).map((key: string) => Config.paths[key]).find((obj: any) => {
 					return request.path.startsWith(obj.publicPath);
 				});
 				
 				// Do we have an activated path and is the corresponding flag set, return file.
-				if(activatedPath.ignore404) return reply.file(Path.resolve(activatedPath.dir, activatedPath.filename));
+				if (activatedPath.ignore404) return reply.file(Path.resolve(activatedPath.dir, activatedPath.filename));
 			}
 			
 			// Propagate 404 response.
@@ -118,11 +114,10 @@ export function hapiServer(): Promise<Hapi.Server>{
 		
 		// Connect to database + create collections.
 		return DatabaseManager.connect().then(() => DatabaseManager.createArangoData());
-	}).then(() => {
-		// Start server.
-		server.start(() => {
-			console.log(`Server is running...`);
-			return server;
-		});
+	}).then(() => server.start()).then(() => {
+		console.log(`Server is running...`);
+		return server;
 	});
 }
+
+hapiServer().catch(err => console.error(err));

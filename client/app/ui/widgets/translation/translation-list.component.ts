@@ -1,12 +1,12 @@
-import {Component, OnInit, Input, Output, EventEmitter} from "@angular/core";
-import {trigger, transition, style, animate} from "@angular/animations";
+import {Component, Input, OnInit, Output} from "@angular/core";
+import {animate, style, transition, trigger} from "@angular/animations";
 import {UserService} from "../../../services/user.service";
 import {Locale} from "../../../models/locale";
 import {ButtonStyles} from "../control/styled-button.component";
+import {AbstractControl, FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import Language = Locale.Language;
 import languages = Locale.languages;
 import Translations = Locale.Translations;
-import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
     templateUrl: 'translation-list.component.html',
@@ -68,21 +68,34 @@ export class TranslationListComponent implements OnInit {
 	    });
 	    
 	    // Create form groups.
-	    this.availableTranslations = this.fb.array(this.languagePool.map(key => {
+	    this.availableTranslations = this.fb.array(this.languagePool.filter(key => {
+	    	return (<any[]>this.takenTranslations.controls).findIndex(control => control.get('language').value == key) < 0;
+	    }).map(key => {
 	    	return this.fb.group({
-			    language: [key, [
-				    Validators.required
-			    ]],
-			    translation: [this.defaultText, [
-				    Validators.required,
-			        Validators.minLength(5),
-			        Validators.maxLength(32)
-			    ]]
+			    language: [key],
+			    translation: [this.defaultText]
 		    });
 	    }));
-        
-        // Add initial language.
-        this.addLanguage();
+	    
+	    // Set validators.
+	    let validators: any = {
+		    language: [
+			    Validators.required
+		    ],
+		    translation: [
+			    Validators.required,
+			    Validators.minLength(5),
+			    Validators.maxLength(50)
+		    ]
+	    };
+	
+	    Object.keys(validators).forEach(key => {
+		    this.takenTranslations.controls.forEach(control => control.get(key).setValidators(validators[key]));
+		    this.availableTranslations.controls.forEach(control => control.get(key).setValidators(validators[key]));
+	    });
+	
+	    // Add initial language.
+        if(this.takenTranslations.controls.length == 0) this.addLanguage();
     }
     
     addLanguage(): void {
@@ -93,25 +106,33 @@ export class TranslationListComponent implements OnInit {
 	    
 	    // Move translation control.
 	    let index = this.availableTranslations.controls.findIndex(control => control.value.language == newLanguage);
-	    this.takenTranslations.push(this.availableTranslations.at(index));
+	    let formControl : AbstractControl = this.availableTranslations.at(index);
 	    this.availableTranslations.removeAt(index);
+	    this.takenTranslations.push(formControl);
     }
     
     switchLanguage(original: Language, replacement: Language) {
     	// Move original from taken translations to available translations.
         let indexOriginal = this.takenTranslations.controls.findIndex(control => control.value.language == original);
-	    this.availableTranslations.push(this.takenTranslations.at(indexOriginal));
-        this.takenTranslations.removeAt(indexOriginal);
+	    let formControl : AbstractControl = this.takenTranslations.at(indexOriginal);
+	    this.takenTranslations.removeAt(indexOriginal);
+	    this.availableTranslations.push(formControl);
         
         // Move replacement from available translations to taken translations
 	    let indexReplacement = this.availableTranslations.controls.findIndex(control => control.value.language == replacement);
-        this.takenTranslations.insert(indexOriginal, this.availableTranslations.at(indexReplacement));
-        this.availableTranslations.removeAt(indexReplacement);
+	    formControl = this.availableTranslations.at(indexReplacement);
+	    this.availableTranslations.removeAt(indexReplacement);
+        this.takenTranslations.insert(indexOriginal, formControl);
     }
     
     deleteLanguage(language: Language): void {
         let index = this.takenTranslations.controls.findIndex(control => control.value.language == language);
-        this.availableTranslations.push(this.takenTranslations.at(index));
-        this.takenTranslations.removeAt(index);
+        let formControl = this.takenTranslations.at(index);
+	    this.takenTranslations.removeAt(index);
+        this.availableTranslations.push(formControl);
     }
+    
+	formControlCount(value: string, maxChars: number = 0): (value: string) => {} {
+		return (value: string) => `${value.length} of ${maxChars} characters used`;
+	}
 }

@@ -1,0 +1,17 @@
+@import '../../variables';
+
+:host {
+  overflow: hidden;
+  display: block;
+
+  .wrapper  {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    transition: transform 1s;
+
+    & /deep/ > * {
+      flex: 0 0 100%;
+    }
+  }
+}

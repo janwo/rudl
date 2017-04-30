@@ -1,14 +1,15 @@
 import {
-	Input,
+	AfterViewInit,
 	Component,
-	Output,
-	OnDestroy,
-	EventEmitter,
-	OnInit,
-	QueryList,
 	ElementRef,
-	ViewChildren,
-	AfterViewInit, Renderer2
+	EventEmitter,
+	Input,
+	OnDestroy,
+	OnInit,
+	Output,
+	QueryList,
+	Renderer2,
+	ViewChildren
 } from "@angular/core";
 import {Observable, Subscription} from "rxjs";
 

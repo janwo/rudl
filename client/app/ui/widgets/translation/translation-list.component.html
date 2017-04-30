@@ -1,6 +1,6 @@
 <form [formGroup]="takenTranslations">
 	<ul>
-		<li class="translation" [formGroupName]="i" *ngFor="let takenTranslationControl of takenTranslations.controls; let i=index" [@row]>
+		<li class="translation" [formGroupName]="i" *ngFor="let takenTranslationControl of takenTranslations.controls; let i = index" [@row]>
 			<dropdown-menu #menu [arrowAlignment]="'left'">
 				<menu-item *ngFor="let availableTranslationControl of availableTranslations.controls" [title]="languageNames[availableTranslationControl.value.language]" (click)="switchLanguage(takenTranslationControl.value.language, availableTranslationControl.value.language)"></menu-item>
 			</dropdown-menu>
@@ -8,8 +8,8 @@
 			<form-control-wrapper [errorMessages]="{
 				required: 'Bitte fülle die Übersetzung aus.',
 				minlength: 'Die Übersetzung ist zu kurz (mindestens 5 Zeichen).'
-			}">
-				<input type="text" maxlength="32" formControlName="translation">
+			}" [infoMessage]="formControlCount(takenTranslations.value[i].translation, 50)">
+				<input type="text" maxlength="50" formControlName="translation">
 			</form-control-wrapper>
 			<styled-button *ngIf="takenTranslations.length > 1" [fa]="'trash-o'" [style]="buttonStyle" (click)="deleteLanguage(takenTranslationControl.value.language)"></styled-button>
 		</li>

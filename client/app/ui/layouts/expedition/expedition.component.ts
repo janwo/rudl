@@ -1,5 +1,5 @@
-import {Component, OnInit, OnDestroy} from "@angular/core";
-import {ActivatedRoute, Params, Router} from "@angular/router";
+import {Component, OnInit} from "@angular/core";
+import {ActivatedRoute} from "@angular/router";
 import {EmptyState} from "../../widgets/state/empty.component";
 import {Expedition} from "../../../models/expedition";
 import * as moment from "moment";
@@ -15,11 +15,6 @@ export class ExpeditionComponent implements OnInit {
 	formattedDate: string;
 	formattedLocation: string;
 	formattedAwaitingApproval: string;
-	unapprovedState: EmptyState = {
-		title: 'You are not approved',
-		image: require('../../../../assets/boarding/radar.png'),
-		description: 'We couldn\'t get you in there. You have to get approved!'
-	};
     
     constructor(
 	    private route: ActivatedRoute,
@@ -31,12 +26,16 @@ export class ExpeditionComponent implements OnInit {
         this.route.data.subscribe((data: { expedition: Expedition }) => {
             this.expedition = data.expedition;
             
-	        let humanizedDate = moment.duration(moment().diff(this.expedition.date)).humanize();
-	        this.formattedDate = this.expedition.fuzzyTime ? `in about ${humanizedDate}` : `in ${humanizedDate}`;
+	        let humanizedDate = moment.duration(moment().diff(this.expedition.date.isoString)).humanize();
+	        this.formattedDate = this.expedition.date.accuracy > 0 ? `in about ${humanizedDate}` : `in ${humanizedDate}`;
 	
-	        let distance = this.userService.getUsersDistance(this.expedition.location);
+	        let distance = this.userService.getUsersDistance(this.expedition.location.latLng);
 	        distance = distance <= 10000 ? Math.ceil(distance / 100) / 10 : Math.ceil(distance / 1000);
 	        this.formattedLocation = this.expedition.needsApproval && !this.expedition.relations.isApproved ? `ca. ${distance} km` : `${distance} km`;
         });
     }
+    
+	 // Show delete message.
+	 // this.router.navigate(['/lists/deleted-message']);
+	 
 }

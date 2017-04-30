@@ -1,9 +1,15 @@
 import {
-	Component, Input, ViewChild, ElementRef, AfterViewInit, OnChanges, SimpleChanges,
-	EventEmitter, Output
+	AfterViewInit,
+	Component,
+	ElementRef,
+	EventEmitter,
+	Input,
+	OnChanges,
+	Output,
+	SimpleChanges,
+	ViewChild
 } from "@angular/core";
 import * as L from "leaflet";
-import {UserService} from "../../../services/user.service";
 
 @Component({
     templateUrl: 'map.component.html',
@@ -11,7 +17,8 @@ import {UserService} from "../../../services/user.service";
     selector: 'map'
 })
 export class MapComponent implements AfterViewInit, OnChanges {
-    
+ 
+	private static iconUrl = require('../../../../assets/map-marker.png') as string;
     private static source = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
     private static quotas: any = {
         red: 21,
@@ -20,29 +27,27 @@ export class MapComponent implements AfterViewInit, OnChanges {
         dividerTune: 0,
         divider: () => MapComponent.quotas.red + MapComponent.quotas.green + MapComponent.quotas.blue + MapComponent.quotas.dividerTune
     };
-    
-    constructor(
-        private userService: UserService
-    ) {}
-    
-    @Input() location: L.LatLngTuple = [0,0];
+	
+	@Input() location: L.LatLngTuple = [0,0];
+	@Input() accuracy: number = 0;
     @Input() zoom: number = 16;
     @ViewChild('map') mapElement: ElementRef;
     @Output() change: EventEmitter<L.LatLngTuple> = new EventEmitter();
     
 	map: L.Map;
-	marker: L.Circle;
+	centerPointLayer: L.Marker;
+	accuracyLayer: L.Circle;
  
 	ngAfterViewInit(): void {
 		// Create app.
 		this.map = L.map(this.mapElement.nativeElement, {
-			dragging: false,
+			dragging: true,
 			zoomControl: false,
 			scrollWheelZoom: false,
-			touchZoom: false,
-			doubleClickZoom: false,
+			touchZoom: true,
+			doubleClickZoom: true,
 			boxZoom: false,
-			tap: false,
+			tap: true,
 			center: this.location,
 			keyboard: false,
 			attributionControl: false,
@@ -74,30 +79,48 @@ export class MapComponent implements AfterViewInit, OnChanges {
 			e.tile.src = canvas.toDataURL();
 		}).addTo(this.map);
 		
+		// Set location.
+		this.setLocation(this.location, this.accuracy);
+	}
+	
+	setLocation(location: L.LatLngTuple, accuracy: number = 0): void {
+		// Pan map.
+		this.map.panTo(location);
 		
-		// Add circle layer.
-		this.marker = L.circle(this.location, 200, {
-			stroke: true,
-			weight: 10,
-			color: '#fff',
-			opacity: 0.25,
-			fill: true,
-			fillColor: '#50e3c2',
-			fillOpacity: 0.75
-		}).addTo(this.map);
+		// Remove markers.
+		if(this.accuracyLayer) this.map.removeLayer(this.accuracyLayer);
+		if(this.centerPointLayer) this.map.removeLayer(this.centerPointLayer);
 		
-		/*this.marker = L.marker(this.location, {
-			icon: icon,
+		// Add inaccurate marker.
+		if(accuracy > 0) {
+			this.accuracyLayer = new L.Circle(location, accuracy, {
+				stroke: true,
+				weight: 10,
+				color: '#fff',
+				opacity: 0.25,
+				fill: true,
+				fillColor: '#50e3c2',
+				fillOpacity: 0.75
+			}).addTo(this.map);
+			
+			// Fit bounds.
+			this.map.fitBounds(this.accuracyLayer.getBounds());
+		}
+		
+		// Add center marker.
+		this.centerPointLayer = L.marker(location, {
+			icon: L.icon({
+				iconUrl: MapComponent.iconUrl,
+				className: 'leaflet-icon'
+			}),
 			clickable: false
-		}).addTo(this.map);*/
+		}).addTo(this.map);
 	}
 	
 	ngOnChanges(changes: SimpleChanges): void {
-    	if(changes.location && this.marker && this.map) this.setLocation(changes.location.currentValue as L.LatLngTuple);
-	}
-	
-	private setLocation(location: L.LatLngTuple): void {
-		this.marker.setLatLng(location);
-		this.map.panTo(location);
+    	if(!this.map || !(changes.location || changes.accuracy)) return;
+		let location = changes.location.currentValue || this.location;
+	    let accuracy = changes.accuracy.currentValue || this.accuracy;
+	    this.setLocation(location, accuracy);
 	}
 }

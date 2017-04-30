@@ -9,8 +9,7 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
 
 :host {
   display: block;
-  height: 100vh;
-  width: 100vw;
+  flex: 1 0 auto;
 
   header {
     display: flex;
@@ -89,6 +88,12 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
         menu {
           flex: 1 1 auto;
           justify-content: center;
+
+          @include breakpoint(null, 'small') {
+            .search-menu-item /deep/ span {
+              display: none;
+            }
+          }
         }
       }
     }
@@ -124,17 +129,18 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
   }
 
   section {
+    display: flex;
+    flex-direction: column;
     overflow: scroll;
     position: relative;
-    height: calc(100% - #{$header-vertical-padding-mobile * 2 + $header-content-size});
+    height: calc(100vh - #{$header-vertical-padding-mobile * 2 + $header-content-size});
 
     @include breakpoint('small'){
-      height: calc(100% - #{$header-vertical-padding * 2 + $header-content-size});
+      height: calc(100vh - #{$header-vertical-padding * 2 + $header-content-size});
     }
-  }
 
-  footer {
-    padding: map_get($base-padding, 'default');
-    text-align: center;
+    legal-footer {
+      flex: 0 0 auto;
+    }
   }
 }

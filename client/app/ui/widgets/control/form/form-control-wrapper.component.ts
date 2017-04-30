@@ -1,5 +1,5 @@
-import {Component, AfterContentInit, ContentChild, Input, OnDestroy, HostBinding, ElementRef} from "@angular/core";
-import {AbstractControl, FormControl, FormControlName, FormGroup, NgModel} from "@angular/forms";
+import {AfterContentInit, Component, ContentChild, HostBinding, Input, OnDestroy} from "@angular/core";
+import {FormControlName} from "@angular/forms";
 import {Subscription} from "rxjs/Subscription";
 
 @Component({
@@ -13,6 +13,7 @@ export class FormControlWrapper implements AfterContentInit, OnDestroy {
 	@ContentChild(FormControlName) formControlName: FormControlName;
 	@Input() description: string;
 	@Input() errorMessages: {[key: string]: string};
+	@Input() infoMessage: (value: string) => {};
 	errorMessage: string;
 	
 	@HostBinding('class.valid') get valid() : boolean {

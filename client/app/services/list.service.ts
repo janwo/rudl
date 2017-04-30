@@ -5,6 +5,7 @@ import {List, ListRecipe} from "../models/list";
 import {Activity} from "../models/activity";
 import {Locale} from "../models/locale";
 import {UserService} from "./user.service";
+import {User} from "../models/user";
 import Translations = Locale.Translations;
 
 @Injectable()
@@ -40,12 +41,27 @@ export class ListService {
         return this.dataService.post(`/api/lists/create`, JSON.stringify(recipe), true).map((json: JsonResponse) => json.data as List);
     }
     
+    update(recipe: ListRecipe): Observable<List> {
+        //TODO Partielles updaten implementieren
+        return this.dataService.post(`/api/lists/update`, JSON.stringify(recipe), true).map((json: JsonResponse) => json.data as List);
+    }
+    
     follow(list: string): Observable<List> {
-        return this.dataService.post(`/api/lists/follow/${list}`, null, true).map((json: JsonResponse) => json.data as List).share();
+        return this.dataService.post(`/api/lists/follow/${list}`, null, true).map((json: JsonResponse) => json.data as List).map((list: List) => {
+	        list.name = Locale.getBestTranslation(list.translations, this.userService.getAuthenticatedUser().user.languages);
+	        return list;
+        }).share();
+    }
+    
+    followers(list: string): Observable<User[]> {
+        return this.dataService.get(`/api/lists/=/${list}/followers`, true).map((json: JsonResponse) => json.data as User[]).share();
     }
     
     unfollow(list: string): Observable<List> {
-        return this.dataService.post(`/api/lists/unfollow/${list}`, null, true).map((json: JsonResponse) => json.data as List).share();
+        return this.dataService.post(`/api/lists/unfollow/${list}`, null, true).map((json: JsonResponse) => json.data as List).map((list: List) => {
+	        if(list) list.name = Locale.getBestTranslation(list.translations, this.userService.getAuthenticatedUser().user.languages);
+	        return list;
+        }).share();
     }
     
     activities(list: string, filter: 'all' | 'owned' | 'followed' = 'all', offset: number = 0, limit: number = 0): Observable<Activity[]> {

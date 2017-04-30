@@ -1,16 +1,6 @@
-import {
-	Component,
-	Input,
-	EventEmitter,
-	Output,
-	HostBinding,
-	ElementRef,
-	ViewChild,
-	OnInit,
-	OnDestroy
-} from "@angular/core";
-import {GeocodeService, GeocodeLocation} from "../../../services/geocode.service";
-import {Subject, ReplaySubject, Subscription} from "rxjs";
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from "@angular/core";
+import {GeocodeLocation, GeocodeService} from "../../../services/geocode.service";
+import {ReplaySubject, Subject, Subscription} from "rxjs";
 
 @Component({
 	templateUrl: 'location-search.component.html',

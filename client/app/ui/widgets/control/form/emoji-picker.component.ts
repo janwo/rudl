@@ -1,8 +1,7 @@
-import {
-	Component, Optional, OnInit, OnDestroy, ViewChild, ElementRef, Renderer2
-} from "@angular/core";
-import {trigger, transition, style, animate, state} from "@angular/animations";
-import {NgControl} from "@angular/forms";import {UtilService} from "../../../../services/util.service";
+import {Component, ElementRef, OnDestroy, OnInit, Optional, Renderer2, ViewChild} from "@angular/core";
+import {animate, state, style, transition, trigger} from "@angular/animations";
+import {NgControl} from "@angular/forms";
+import {UtilService} from "../../../../services/util.service";
 import {Subscription} from "rxjs";
 
 @Component({
@@ -26,10 +25,9 @@ import {Subscription} from "rxjs";
 })
 export class EmojiPickerComponent implements OnInit, OnDestroy {
 	
-	static iconsPerPage: number = 16;
+	static iconsPerPage: number = 12;
 	
 	@ViewChild('pagesSlider') pagesSlider: ElementRef;
-	expanded: boolean;
 	dragging: boolean;
 	emoji: string;
 	animateTimer: any = {
@@ -135,14 +133,6 @@ export class EmojiPickerComponent implements OnInit, OnDestroy {
 	}
 	
 	selectCategory(category: string) {
-		if(!this.expanded) {
-			this.expanded = true;
-			
-			// Get to icon page, if category did not change.
-			let page = this.determinePageIndex();
-			if(this.pages[page].category == category) this.page = page;
-		}
-		
 		if(!this.pages) return;
 		
 		// Get to first icon position with the corresponding category.
@@ -151,7 +141,6 @@ export class EmojiPickerComponent implements OnInit, OnDestroy {
 	
 	selectEmoji(emoji: string) {
 		this.emoji = emoji;
-		this.expanded = false;
 		this.onChange(emoji);
 	}
 	

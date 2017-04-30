@@ -6,6 +6,7 @@ $tab-menu-font-size: map_get($base-font-size, 'default');
   padding-right: map_get($base-padding, 'small');
   padding-left: map_get($base-padding, 'small');
   color: inactive(map_get($base-colors, 'primary-text'));
+  white-space: nowrap;
   cursor: pointer;
   margin-right: map_get($base-padding, 'small');
   display: flex;
@@ -17,12 +18,14 @@ $tab-menu-font-size: map_get($base-font-size, 'default');
   }
 
   span {
-    display: inline-block;
+    display: block;
+    flex: 1 1 auto;
+    overflow: hidden;
     font-size: $tab-menu-font-size;
+    padding-left: map_get($base-padding, 'small');
   }
 
   i {
-    margin-right: map_get($base-padding, 'small');
     font-size: $tab-menu-font-size;
     position: relative;
   }

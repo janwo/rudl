@@ -4,9 +4,10 @@
   display: block;
 
   ul {
-    padding-left: map_get($base-padding, 'smaller');
-    padding-right: map_get($base-padding, 'smaller');
+    padding-left: map_get($base-padding, 'small');
+    padding-right: map_get($base-padding, 'small');
     list-style: none;
+    align-items: flex-end;
     display: flex;
     justify-content: space-between;
 
@@ -29,6 +30,7 @@
 
         &.subject {
           margin-top: map_get($base-padding, 'smallest');
+          font-size: map_get($base-font-size, 'small');
         }
       }
     }

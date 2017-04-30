@@ -1,6 +1,8 @@
 @import '../variables.scss';
 
 $logo-size: 2rem;
+$logo-font-family: $base-heading-font-family;
+$logo-font-weight: $base-heading-font-weight;
 
 :host {
   display: block;
@@ -17,8 +19,8 @@ $logo-size: 2rem;
     }
 
     span {
-      font-family: $base-heading-font-family;
-      font-weight: $base-heading-font-weight-normal;
+      font-family: $logo-font-family;
+      font-weight: $logo-font-weight;
       font-size: $logo-size * 0.75;
       color: map_get($base-colors, 'primary');
       margin-left: map_get($base-padding, 'small');

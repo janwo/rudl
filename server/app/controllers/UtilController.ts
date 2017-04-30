@@ -1,11 +1,5 @@
-import Nodemailer = require("nodemailer");
-import Boom = require("boom");
-import dot = require("dot-object");
-import fs = require('fs');
-import path = require('path');
 import {Cursor} from "arangojs";
-import jwt = require("jsonwebtoken");
-import _ = require("lodash");
+import * as _ from "lodash";
 import {Config} from "../../../run/config";
 
 export module UtilController {

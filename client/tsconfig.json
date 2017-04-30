@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "es2015",
+    "target": "es6",
+    "module": "commonjs",
     "moduleResolution": "node",
+    "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "noImplicitAny": true,
-    "sourceMap": true,
+    "skipLibCheck": true,
     "pretty": true,
     "removeComments": true,
     "noEmit": true,
-    "skipLibCheck": true,
     "types": [
       "node"
     ],
@@ -18,13 +18,13 @@
       "es2015", "dom"
     ]
   },
+  "exclude": [
+    "../node_modules"
+  ],
   "angularCompilerOptions": {
     "skipMetadataEmit": true
   },
   "awesomeTypescriptLoaderOptions": {
     "useWebpackText": true
-  },
-  "exclude": [
-    "../node_modules/"
-  ]
+  }
 }

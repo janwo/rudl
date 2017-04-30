@@ -1,8 +1,5 @@
-import {
-	Component, Input, ViewChild, ElementRef, AfterViewInit, Optional
-} from "@angular/core";
+import {AfterViewInit, Component, ElementRef, Input, Optional, ViewChild} from "@angular/core";
 import * as L from "leaflet";
-import {UserService} from "../../../../services/user.service";
 import {ControlValueAccessor, NgControl} from "@angular/forms";
 
 @Component({
@@ -72,19 +69,6 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 			e.tile.setAttribute('data-grayscaled', 'true');
 			e.tile.src = canvas.toDataURL();
 		}).addTo(this.map);
-		
-		/*
-		// Add circle layer.
-		L.circle(this.location, this.accuracy, {
-			stroke: true,
-			weight: 10,
-			color: '#fff',
-			opacity: 0.25,
-			fill: true,
-			fillColor: '#50e3c2',
-			fillOpacity: 0.75
-		}).addTo(map);
-		*/
 		
 		let icon = L.icon({
 			iconUrl: require('../../../../../assets/map-marker.png') as string,

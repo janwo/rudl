@@ -1,11 +1,7 @@
 import {UserRoles, UserValidation} from "../models/user/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {ExpeditionController} from "../controllers/ExpeditionController";
-import Joi = require('joi');
-import BasicStrategy = require("../strategies/BasicStrategy");
-import FacebookStrategy = require("../strategies/FacebookStrategy");
-import TwitterStrategy = require("../strategies/TwitterStrategy");
-import GoogleStrategy = require("../strategies/GoogleStrategy");
+import * as Joi from 'joi';
 import {ExpeditionValidation} from "../models/expedition/Expedition";
 
 const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.string().regex(/^me$/));
@@ -49,7 +45,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/expeditions/by/{username}/in/{activity}',
 		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.getActivityExpeditonsBy,
+		handler: ExpeditionController.RouteHandlers.getActivityExpeditionsBy,
 		config: {
 			auth: {
 				scope: [
@@ -127,7 +123,10 @@ export const RoutesConfig: RoutesConfiguration = [
 				]
 			},
 			validate: {
-				payload: ExpeditionValidation
+				payload: {
+					activity: Joi.string(),
+					expedition: ExpeditionValidation
+				}
 			}
 		}
 	}

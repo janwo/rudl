@@ -1,6 +1,6 @@
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
-import {AppComponent} from "./app.component";
+import {AppComponent} from "./ui/app.component";
 import {LoginComponent} from "./ui/widgets/login.component";
 import {ExploreComponent} from "./ui/layouts/explore/explore.component";
 import {DashboardComponent} from "./ui/layouts/dashboard/dashboard.component";
@@ -8,9 +8,9 @@ import {StyledButtonComponent} from "./ui/widgets/control/styled-button.componen
 import {HttpModule, JsonpModule} from "@angular/http";
 import {LoginGuard} from "./guards/login";
 import {DataService} from "./services/data.service";
-import {routing, appRoutingProviders} from "./app.routes";
-import { ReactiveFormsModule} from "@angular/forms";
-import { ActivityResolver} from "./resolver/activity";
+import {appRoutingProviders, routing} from "./app.routes";
+import {ReactiveFormsModule} from "@angular/forms";
+import {ActivityResolver} from "./resolver/activity";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {UserService} from "./services/user.service";
 import {IndicatorComponent} from "./ui/widgets/state/indicator.component";
@@ -69,7 +69,6 @@ import {LocationPickerComponent} from "./ui/widgets/control/form/location-picker
 import {UserResolver} from "./resolver/user";
 import {ListResolver} from "./resolver/list";
 import {ExpeditionComponent} from "./ui/layouts/expedition/expedition.component";
-import {CreateExpeditionComponent} from "./ui/widgets/expedition/create-expedition.component";
 import {ExpeditionService} from "./services/expedition.service";
 import {ExpeditionResolver} from "./resolver/expedition";
 import {ExpeditionItemComponent} from "./ui/widgets/expedition/expedition-item.component";
@@ -78,13 +77,30 @@ import {EmojiPickerComponent} from "./ui/widgets/control/form/emoji-picker.compo
 import {UtilService} from "./services/util.service";
 import {KeysPipe} from "./pipes/keys.pipe";
 import {SafePipe} from "./pipes/safe.pipe";
+import {ActivityEditComponent} from "./ui/layouts/activity/activity-edit.component";
+import {ActivityExpeditionsComponent} from "./ui/layouts/activity/activity-expeditions.component";
+import {ActivityPastExpeditionsComponent} from "./ui/layouts/activity/activity-past-expeditions.component";
+import {ActivityCreateExpeditionComponent} from "./ui/layouts/activity/activity-create-expedition.component";
+import {ActivityAddToListComponent} from "./ui/layouts/activity/activity-add-to-list.component";
+import {ActivityFollowersComponent} from "./ui/layouts/activity/activity-followers.component";
+import {ListFollowersComponent} from "./ui/layouts/list/list-followers.component";
+import {ListActivitiesComponent} from "./ui/layouts/list/list-activities.component";
+import {CarouselComponent} from "./ui/widgets/wrapper/carousel.component";
+import {NotFoundComponent} from "./ui/layouts/404/404.component";
+import {ExpeditionCommentsComponent} from './ui/layouts/expedition/expedition-comments.component';
+import {ExpeditionAttendeesComponent} from './ui/layouts/expedition/expedition-attendees.component';
+import {ExpeditionMapComponent} from "./ui/layouts/expedition/expedition-map.component";
+import {CommentService} from './services/comment.service';
+import {LegalFooterComponent} from './ui/widgets/legal-footer/legal-footer.component';
 
 @NgModule({
     declarations: [
 	    AppComponent,
 	    LoginComponent,
 	    StyledButtonComponent,
+	    CarouselComponent,
 	    DropdownMenuComponent,
+	    ActivityPastExpeditionsComponent,
 	    ActivityItemComponent,
 	    ItemWrapperComponent,
 	    ListComponent,
@@ -106,7 +122,15 @@ import {SafePipe} from "./pipes/safe.pipe";
 	    EmptyComponent,
 	    LoadingComponent,
 	    DashboardComponent,
+	    ActivityEditComponent,
+	    ActivityCreateExpeditionComponent,
+	    ActivityExpeditionsComponent,
+	    ActivityFollowersComponent,
+	    ActivityAddToListComponent,
 	    UserAvatarComponent,
+	    ExpeditionCommentsComponent,
+	    ExpeditionAttendeesComponent,
+	    ExpeditionMapComponent,
 	    MapComponent,
 	    AddToListComponent,
 	    ExploreComponent,
@@ -128,7 +152,7 @@ import {SafePipe} from "./pipes/safe.pipe";
 	    SearchComponent,
 	    CoordinatesPipe,
 	    SearchBarComponent,
-	    CreateExpeditionComponent,
+	    NotFoundComponent,
 	    LegalComponent,
 	    FormControlWrapper,
 	    UserComponent,
@@ -138,6 +162,9 @@ import {SafePipe} from "./pipes/safe.pipe";
 	    UserFollowersComponent,
 	    UserListsComponent,
 	    BoardingComponent,
+	    LegalFooterComponent,
+	    ListFollowersComponent,
+	    ListActivitiesComponent,
 	    FanComponent,
 	    LocationSearchComponent,
 	    SafePipe,
@@ -159,6 +186,7 @@ import {SafePipe} from "./pipes/safe.pipe";
 	    ExpeditionResolver,
 	    ListResolver,
 	    ExpeditionService,
+	    CommentService,
 	    appRoutingProviders
     ],
     imports: [
@@ -175,4 +203,3 @@ import {SafePipe} from "./pipes/safe.pipe";
 })
 export class AppModule {
 }
-

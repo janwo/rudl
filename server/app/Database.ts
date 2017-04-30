@@ -1,13 +1,14 @@
-import redis = require("redis");
+import * as redis from "redis";
 import {Config} from "../../run/config";
-import {Database, Collection} from "arangojs";
+import {Database, Collection, Cursor} from "arangojs";
 import * as http from "http";
-import {RedisClient} from "redis";
 import {TranslationsKeys} from "./models/Translations";
+import {Document} from "./models/Document";
+import {RedisClient} from 'redis';
 
 export class DatabaseManager {
 	
-	static arangoCollections = {
+	static arangoCollections: any = {
 		users: {
 			name: 'users',
 			type: 'document',
@@ -45,10 +46,11 @@ export class DatabaseManager {
 			type: 'document',
 			indices: [
 				{
-					type: 'fulltext',
+					type: 'geo',
 					fields: [
-						'meta.fulltextSearchData'
-					]
+						'location'
+					],
+					geoJson: true
 				}
 			]
 		},
@@ -94,7 +96,15 @@ export class DatabaseManager {
 		},
 		userJoinsExpedition: {
 			name: 'user-joins-expedition',
-			type: 'edge'
+			type: 'edge',
+			indices: [{
+				type: 'hash',
+				fields: [
+					'status'
+				],
+				unique: false,
+				sparse: false
+			}]
 		},
 		expeditionIsItem: {
 			name: 'expedition-is-item',
@@ -103,10 +113,14 @@ export class DatabaseManager {
 		listIsItem: {
 			name: 'list-is-item',
 			type: 'edge'
+		},
+		userComment: {
+			name: 'user-comment',
+			type: 'edge'
 		}
 	};
 	
-	static arangoGraphs = {
+	static arangoGraphs: any = {
 		mainGraph: {
 			name: 'mainGraph',
 			vertices: [
@@ -165,10 +179,57 @@ export class DatabaseManager {
 					name: DatabaseManager.arangoCollections.userOwnsExpedition.name,
 					from: [DatabaseManager.arangoCollections.users.name],
 					to: [DatabaseManager.arangoCollections.expeditions.name]
+				},
+				{
+					name: DatabaseManager.arangoCollections.userComment.name,
+					from: [DatabaseManager.arangoCollections.users.name],
+					to: [DatabaseManager.arangoCollections.expeditions.name]
 				}
 			]
 		}
 	};
+	
+	static arangoFunctions: any = (() => {
+		let boundDocuments = (document: string, edgeCollection: string, direction: 'INBOUND' | 'OUTBOUND', limit: number = 0): Promise<any[]> => {
+			let aqlQuery = `FOR result IN ${direction} @document @@edgeCollection ${limit > 0 ? 'LIMIT ' + limit : ''} RETURN result`;
+			let aqlParams = {
+				'@edgeCollection': edgeCollection,
+				document: document
+			};
+			return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<any[]>;
+		};
+		
+		return {
+			updateOrCreate: <T extends Document>(document: T, collection: string): Promise<T> => {
+				// Set new timestamps.
+				let now = new Date().toISOString();
+				document.updatedAt = now;
+				if (!document._key) document.createdAt = now;
+				
+				let aqlQuery = document._key ?
+					`REPLACE @document IN @@collection RETURN NEW` :
+					`INSERT @document INTO @@collection RETURN NEW`;
+				let aqlParams = {
+					'@collection': collection,
+					document: document
+				};
+				
+				return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<T>;
+			},
+			outbounds: (document: string, edgeCollection: string, limit = 0): Promise<any[]> => {
+				return boundDocuments(document, edgeCollection, 'OUTBOUND', limit);
+			},
+			outbound: (document: string, edgeCollection: string): Promise<any> => {
+				return boundDocuments(document, edgeCollection, 'OUTBOUND', 1).then(document => document.length > 0 ? document[0] : null);
+			},
+			inbounds: (document: string, edgeCollection: string, limit = 0): Promise<any[]> => {
+				return boundDocuments(document, edgeCollection, 'INBOUND', limit);
+			},
+			inbound: (document: string, edgeCollection: string): Promise<any> => {
+				return boundDocuments(document, edgeCollection, 'INBOUND', 1).then(document => document.length > 0 ? document[0] : null);
+			}
+		};
+	})();
 	
 	private static RETRY_ARANGO_MILLIS = 1000;
 	private static RETRY_REDIS_MILLIS = 1000;
@@ -179,9 +240,9 @@ export class DatabaseManager {
 	public static createArangoData(): Promise<any> {
 		// Create collections.
 		let collections = DatabaseManager.arangoClient.listCollections().then((existingCollections: any) => {
-			let collections = Object.keys(DatabaseManager.arangoCollections).map(key => DatabaseManager.arangoCollections[key]).filter(collection => {
+			let collections = Object.keys(DatabaseManager.arangoCollections).map((key: string) => DatabaseManager.arangoCollections[key]).filter((collection: any) => {
 				// Filter collections.
-				let exists = existingCollections.map(obj => obj.name).indexOf(collection.name) >= 0;
+				let exists = existingCollections.map((obj: any) => obj.name).indexOf(collection.name) >= 0;
 				console.log(`Collection "${collection.name}" ${exists ? 'exists!' : 'does not exist!'}`);
 				return !exists;
 			}).map(missingCollection => {
@@ -202,7 +263,7 @@ export class DatabaseManager {
 				return collectionInstance.create({}).then(() => {
 					// Create indices.
 					missingCollection.indices = missingCollection.indices || [];
-					let indices = missingCollection.indices.map(index => {
+					let indices = missingCollection.indices.map((index: any) => {
 						switch (index.type) {
 							case 'fulltext':
 								return collectionInstance.createFulltextIndex(index.fields);
@@ -231,8 +292,8 @@ export class DatabaseManager {
 		// Create graphs.
 		let graphs = DatabaseManager.arangoClient.graphs().then((existingGraphs: any) => {
 			// Filter graphs.
-			let graphs = Object.keys(DatabaseManager.arangoGraphs).map(key => DatabaseManager.arangoGraphs[key]).filter(graph => {
-				let exists = existingGraphs.map(obj => obj.name).indexOf(graph.name) >= 0;
+			let graphs = Object.keys(DatabaseManager.arangoGraphs).map((key: string) => DatabaseManager.arangoGraphs[key]).filter(graph => {
+				let exists = existingGraphs.map((obj: any) => obj.name).indexOf(graph.name) >= 0;
 				console.log(`Graph "${graph.name}" ${exists ? 'exists!' : 'does not exist!'}`);
 				return !exists;
 			}).map(missingGraph => {
@@ -240,14 +301,14 @@ export class DatabaseManager {
 				return graphInstance.create({}).then(() => {
 					// Create vertices.
 					let i = 0;
-					let addNext = () => graphInstance.addVertexCollection(missingGraph.vertices[i]).then(() => {
+					let addNext = (): Promise<any> => graphInstance.addVertexCollection(missingGraph.vertices[i]).then(() => {
 						i++;
 						if(i < missingGraph.vertices.length) return addNext();
 					});
 					return addNext();
 				}).then(() => {
 					let i = 0;
-					let addNext = () => graphInstance.addEdgeDefinition({
+					let addNext = (): Promise<any> => graphInstance.addEdgeDefinition({
 						collection: missingGraph.relations[i].name,
 						from: missingGraph.relations[i].from,
 						to: missingGraph.relations[i].to
@@ -310,7 +371,7 @@ export class DatabaseManager {
 				redisConnected = true;
 			});
 			
-			DatabaseManager.redisClient.on("monitor", (time, args) => {
+			DatabaseManager.redisClient.on("monitor", (time: any, args: any) => {
 				console.log(time + ": " + args);
 			});
 			

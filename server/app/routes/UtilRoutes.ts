@@ -1,6 +1,6 @@
 import {UserRoles} from "../models/user/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
-import Joi = require('joi');
+import * as Joi from 'joi';
 import {UtilController} from "../controllers/UtilController";
 
 export const RoutesConfig: RoutesConfiguration = [

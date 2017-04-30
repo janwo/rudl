@@ -22,6 +22,7 @@
 
     .name {
       font-family: $base-heading-font-family;
+      font-weight: $base-heading-font-weight;
       font-size: map_get($base-heading-font-size, 'h2');
       display: block;
 

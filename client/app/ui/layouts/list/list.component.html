@@ -9,19 +9,21 @@
 	<h1>{{list.name}}</h1>
 	<div class="statistics">
 		<statistics [statistics]="[
-			{value: list.statistics.activities, subject: 'Activities'},
-			{value: list.statistics.followers, subject: 'Follower', link: 'follower'}
+			{value: list.statistics.activities, subject: 'Activities', link: ['rudel'] },
+			{value: list.statistics.followers, subject: 'Follower', link: ['followers'] }
 		]"></statistics>
 		<div class="cta">
 			<styled-button [style]="list.relations.isFollowed ? buttonStyleFollowing : buttonStyleDefault" (click)="onToggleFollow(true)" [disabled]="pendingFollowRequest" [text]="list.relations.isFollowed ? 'Following' : 'Follow'"></styled-button>
 		</div>
 	</div>
 </div>
-<item-wrapper class="content" *ngIf="list" [columns]="2">
-	<li *ngFor="let activity of activities">
-		<activity-item [activity]="activity"></activity-item>
-	</li>
-</item-wrapper>
+<div class="content">
+	<menu>
+		<menu-item [makeRoomIfSmall]="true" [icon]="'paw'" [title]="'Rudel'" [link]="['rudel']"></menu-item>
+		<menu-item [makeRoomIfSmall]="true" [icon]="'user-o'" [title]="'Followers'" [link]="['followers']"></menu-item>
+	</menu>
+	<router-outlet></router-outlet>
+</div>
 <modal #modal [title]="'Are you sure to unfollow list?'">
 	<question [choices]="modalChoices" [title]="'Are you sure to unfollow list?'" [description]='"Du bist der Ersteller dieser Liste. Durch das Entfolgen geht die Liste in den Besitz eines anderen Followers über. Listen ohne andere Follower werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."'></question>
 </modal>

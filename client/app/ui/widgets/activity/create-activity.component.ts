@@ -1,13 +1,13 @@
-import {Component, Input, Output, EventEmitter, OnInit, ViewChild} from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from "@angular/core";
 import {Router} from "@angular/router";
 import {Locale} from "../../../models/locale";
 import {ButtonStyles} from "../control/styled-button.component";
 import {ActivityService} from "../../../services/activity.service";
-import {ActivityRecipe} from "../../../models/activity";
-import Language = Locale.Language;
-import Translations = Locale.Translations;
+import {Activity, ActivityRecipe} from "../../../models/activity";
 import {TranslationListComponent} from "../translation/translation-list.component";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import Language = Locale.Language;
+import Translations = Locale.Translations;
 
 @Component({
     templateUrl: 'create-activity.component.html',
@@ -20,6 +20,7 @@ export class CreateActivityComponent implements OnInit {
     @Output() onCanceled: EventEmitter<any> = new EventEmitter();
     @ViewChild(TranslationListComponent) translationList: TranslationListComponent;
 	form: FormGroup;
+	@Input() activity: Activity;
     
     submitPending: boolean;
     cancelButtonStyle: ButtonStyles = ButtonStyles.outlined;
@@ -31,13 +32,18 @@ export class CreateActivityComponent implements OnInit {
     ) {}
     
 	ngOnInit(): void {
+    	let translations = this.fb.array([]);
+    	if(this.activity) Object.keys(this.activity.translations).forEach(key => this.fb.group({
+		    language: [key],
+		    translation: [this.activity.translations[key]],
+	    }));
+    	
 		this.form = this.fb.group({
-			translations: this.fb.array([]),
-			icon: [ null, [
+			translations: translations,
+			icon: [ this.activity ? this.activity.icon: null, [
 				Validators.required
 			]]
 		});
-		
 	}
 	
 	
