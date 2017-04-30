@@ -65,7 +65,7 @@ export module ActivityController {
 				let links = {
 					icon: UtilController.getIconUrl(activity.icon)
 				};
-				debugger;
+				
 				// Build profile.
 				return Promise.resolve(dot.transform({
 					'activity._key': 'id',
@@ -313,7 +313,7 @@ export module ActivityController {
 		}
 		
 		/**
-		 * Handles [POST] /api/activities/=/{key}
+		 * Handles [POST] /api/activities/=/{key}/update
 		 * @param request Request-Object
 		 * @param request.params.key activity
 		 * @param request.payload.translations translations

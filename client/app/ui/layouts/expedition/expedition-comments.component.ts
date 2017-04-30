@@ -20,6 +20,11 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 		image: require('../../../../assets/boarding/radar.png'),
 		description: 'Make plans some plans, chat and smile!'
 	};
+	unapprovedState: EmptyState = {
+		title: 'You are not approved',
+		image: require('../../../../assets/boarding/radar.png'),
+		description: 'We couldn\'t get you in there. You have to get approved!'
+	};
     
     constructor(
 	    private commentService: CommentService,

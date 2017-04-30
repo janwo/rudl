@@ -128,7 +128,7 @@ export module AccountController {
 	
 	export function setPassword(user: User, password: string): Promise<User> {
 		return new Promise<User>(resolve => {
-			user.auth.password = CryptoJS.AES.encrypt(password, Config.backend.secretPassphrase).toString();
+			user.auth.password = CryptoJS.AES.encrypt(password, Config.backend.salts.password).toString();
 			resolve(user);
 		});
 	}
@@ -136,7 +136,7 @@ export module AccountController {
 	// TODO GET RID OF BOOM HERE
 	export function checkPassword(user: User, password: string): Promise<User> {
 		return new Promise<User>((resolve, reject) => {
-			let decrypted = CryptoJS.AES.decrypt(user.auth.password, Config.backend.secretPassphrase).toString(CryptoJS.enc.Utf8);
+			let decrypted = CryptoJS.AES.decrypt(user.auth.password, Config.backend.salts.password).toString(CryptoJS.enc.Utf8);
 			if(password !== decrypted) {
 				reject(Boom.badRequest('Combination of username and password does not match.'));
 				return;

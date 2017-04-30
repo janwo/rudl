@@ -5,7 +5,7 @@ import {UserController} from "../controllers/UserController";
 import {AuthController} from "../controllers/AuthController";
 import {AccountController} from "../controllers/AccountController";
 import * as Boom from "boom";
-import * as randomstring from"randomstring";
+import * as faker from "faker";
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -56,7 +56,7 @@ export function handleTwitter(request: any, reply: any): void {
 				return AccountController.createUser({
 					firstName: firstName,
 					lastName: lastName,
-					password: randomstring.generate(10),
+					password: faker.internet.password(10),
 					username: username,
 					mail: null /* default, Twitter does not return mails in those requests */
 				});

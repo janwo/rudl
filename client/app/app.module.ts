@@ -1,6 +1,6 @@
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
-import {AppComponent} from "./app.component";
+import {AppComponent} from "./ui/app.component";
 import {LoginComponent} from "./ui/widgets/login.component";
 import {ExploreComponent} from "./ui/layouts/explore/explore.component";
 import {DashboardComponent} from "./ui/layouts/dashboard/dashboard.component";
@@ -79,6 +79,7 @@ import {KeysPipe} from "./pipes/keys.pipe";
 import {SafePipe} from "./pipes/safe.pipe";
 import {ActivityEditComponent} from "./ui/layouts/activity/activity-edit.component";
 import {ActivityExpeditionsComponent} from "./ui/layouts/activity/activity-expeditions.component";
+import {ActivityPastExpeditionsComponent} from "./ui/layouts/activity/activity-past-expeditions.component";
 import {ActivityCreateExpeditionComponent} from "./ui/layouts/activity/activity-create-expedition.component";
 import {ActivityAddToListComponent} from "./ui/layouts/activity/activity-add-to-list.component";
 import {ActivityFollowersComponent} from "./ui/layouts/activity/activity-followers.component";
@@ -87,9 +88,10 @@ import {ListActivitiesComponent} from "./ui/layouts/list/list-activities.compone
 import {CarouselComponent} from "./ui/widgets/wrapper/carousel.component";
 import {NotFoundComponent} from "./ui/layouts/404/404.component";
 import {ExpeditionCommentsComponent} from './ui/layouts/expedition/expedition-comments.component';
-import {ExpeditionDetailsComponent} from './ui/layouts/expedition/expedition-details.component';
-import {ExpeditionForbiddenComponent} from "./ui/layouts/expedition/expedition-forbidden.component";
+import {ExpeditionAttendeesComponent} from './ui/layouts/expedition/expedition-attendees.component';
+import {ExpeditionMapComponent} from "./ui/layouts/expedition/expedition-map.component";
 import {CommentService} from './services/comment.service';
+import {LegalFooterComponent} from './ui/widgets/legal-footer/legal-footer.component';
 
 @NgModule({
     declarations: [
@@ -98,6 +100,7 @@ import {CommentService} from './services/comment.service';
 	    StyledButtonComponent,
 	    CarouselComponent,
 	    DropdownMenuComponent,
+	    ActivityPastExpeditionsComponent,
 	    ActivityItemComponent,
 	    ItemWrapperComponent,
 	    ListComponent,
@@ -126,8 +129,8 @@ import {CommentService} from './services/comment.service';
 	    ActivityAddToListComponent,
 	    UserAvatarComponent,
 	    ExpeditionCommentsComponent,
-	    ExpeditionDetailsComponent,
-	    ExpeditionForbiddenComponent,
+	    ExpeditionAttendeesComponent,
+	    ExpeditionMapComponent,
 	    MapComponent,
 	    AddToListComponent,
 	    ExploreComponent,
@@ -159,6 +162,7 @@ import {CommentService} from './services/comment.service';
 	    UserFollowersComponent,
 	    UserListsComponent,
 	    BoardingComponent,
+	    LegalFooterComponent,
 	    ListFollowersComponent,
 	    ListActivitiesComponent,
 	    FanComponent,
@@ -199,4 +203,3 @@ import {CommentService} from './services/comment.service';
 })
 export class AppModule {
 }
-

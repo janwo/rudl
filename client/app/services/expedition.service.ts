@@ -5,6 +5,7 @@ import {Locale} from "../models/locale";
 import {UserService} from "./user.service";
 import {Expedition, ExpeditionRecipe} from "../models/expedition";
 import Translations = Locale.Translations;
+import {Activity} from '../models/activity';
 
 @Injectable()
 export class ExpeditionService {
@@ -14,8 +15,11 @@ export class ExpeditionService {
         private dataService: DataService
     ) {}
     
-    create(recipe: ExpeditionRecipe): Observable<Expedition> {
-        return this.dataService.post(`/api/expeditions/create`, JSON.stringify(recipe), true).map((json: JsonResponse) => json.data as Expedition);
+    create(recipe: ExpeditionRecipe, activity: Activity): Observable<Expedition> {
+        return this.dataService.post(`/api/expeditions/create`, JSON.stringify({
+            activity: activity.id,
+            expedition: recipe
+        }), true).map((json: JsonResponse) => json.data as Expedition);
     }
     
     get(key: string): Observable<Expedition> {

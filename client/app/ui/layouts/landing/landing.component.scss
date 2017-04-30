@@ -10,12 +10,12 @@ $landing-page-horizontal-padding: map_get($base-padding, 'default');
 $landing-page-indicator-size: 2rem;
 
 :host {
-  min-height: 100vh;
   display: flex;
   flex-direction: column-reverse;
   flex-wrap: nowrap;
   align-items: stretch;
   align-content: stretch;
+  flex: 1 0 auto;
 
   @include breakpoint('small'){
     flex-direction: row;
@@ -58,17 +58,8 @@ $landing-page-indicator-size: 2rem;
       }
     }
 
-    .legal {
-      display: block;
+    legal-footer {
       margin-top: auto;
-      padding: 0 $landing-page-horizontal-padding $landing-page-vertical-padding;
-      color: map_get($base-colors, 'secondary-text');
-
-      @include breakpoint(null, 'small') {
-        text-align: center;
-        margin-top: $landing-page-vertical-padding-mobile;
-        padding-bottom: $landing-page-vertical-padding-mobile;
-      }
     }
   }
 

@@ -69,16 +69,23 @@ export const Config: {
 		ports: {
 			http: number,
 			https: number,
+			nodeDebug: number
 		},
 		domain: string,
 		icons: any,
-		mails: {[key: string]: string},
+		mails: {
+			noreply: string,
+			admin: string
+		},
 		ssl: boolean,
-		secretPassphrase: string,
+		salts: {
+			password: string
+			random: string
+			jwt: string
+		},
 		jwt: {
 			expiresIn: number,
-			deleteIn: number,
-			salt: string,
+			deleteIn: number
 		},
 		maxUploadBytes: { [key: string]: number },
 		log: {

@@ -15,6 +15,7 @@ $activity-item-emoji-size: 2.5rem;
     .name {
       flex: 1 1 auto;
       font-family: $base-heading-font-family;
+      font-weight: $base-heading-font-weight;
       font-size: map_get($base-heading-font-size, 'h3');
       display: block;
       margin-right: map_get($base-padding, 'smaller');

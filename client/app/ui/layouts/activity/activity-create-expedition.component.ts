@@ -108,14 +108,13 @@ export class ActivityCreateExpeditionComponent implements OnInit {
 			description: this.form.value.general.description,
 			needsApproval: this.form.value.general.needsApproval,
 			fuzzyTime: this.form.value.time.fuzzyTime,
-			activity: this.activity.id,
 			date: this.form.value.time.date,
 			icon: this.form.value.icon.icon,
 			location: this.form.value.location.location
 		};
 		
 		// Fire and remove pending state when done.
-		this.expeditionService.create(recipe).subscribe(expedition => {
+		this.expeditionService.create(recipe, this.activity).subscribe(expedition => {
 			this.submitPending = false;
 			this.router.navigate(['/expeditions', expedition.id])
 		}, error => {

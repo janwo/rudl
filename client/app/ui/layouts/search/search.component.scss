@@ -50,7 +50,7 @@
       &.expanded {
         .title {
           cursor: default;
-          font-weight: $base-heading-font-weight-normal;
+          font-weight: $base-heading-font-weight;
           font-family: $base-heading-font-family;
           color: map_get($base-colors, 'primary-text');
           margin: map_get($base-padding, 'smaller') map_get($base-padding, 'smaller') map_get($base-heading-font-size, 'h1');

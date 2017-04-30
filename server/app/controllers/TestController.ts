@@ -1,6 +1,5 @@
 import * as Boom from "boom";
 import * as dot from "dot-object";
-import * as randomstring from "randomstring";
 import * as fs from 'fs';
 import * as Path from 'path';
 import * as jwt from "jsonwebtoken";

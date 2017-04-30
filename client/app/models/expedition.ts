@@ -38,7 +38,6 @@ export interface ExpeditionRecipe {
 	description: string,
 	needsApproval: boolean,
 	fuzzyTime: boolean,
-	activity: string,
 	date: string,
 	icon: string,
 	location: number[]

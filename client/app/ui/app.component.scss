@@ -1,4 +1,4 @@
-@import "./ui/variables.scss";
+@import "./variables.scss";
 
 // Reset.
 /deep/ * {
@@ -39,7 +39,7 @@
 @each $heading, $size in $base-heading-font-size {
   /deep/ #{$heading} {
     font-family: $base-heading-font-family;
-    font-weight: $base-font-weight-normal;
+    font-weight: $base-heading-font-weight;
     margin-top: $size * 1.5;
     margin-bottom: $size;
     font-size: $size;
@@ -77,8 +77,11 @@
   box-shadow: map_get($base-shadow, 'default');
 }
 
+// App component.
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   background-color: map_get($base-colors, 'background');
   overflow: hidden;
 

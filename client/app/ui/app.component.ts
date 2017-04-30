@@ -1,5 +1,5 @@
 import {Component, ViewEncapsulation} from "@angular/core";
-import {DataService} from "./services/data.service";
+import {DataService} from "../services/data.service";
 import {Router} from "@angular/router";
 
 @Component({
@@ -9,7 +9,7 @@ import {Router} from "@angular/router";
     selector: 'app'
 })
 export class AppComponent {
-    
+
     constructor(
         private dataService: DataService,
         private router: Router

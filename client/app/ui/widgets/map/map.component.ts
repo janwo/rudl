@@ -35,24 +35,29 @@ export class MapComponent implements AfterViewInit, OnChanges {
     @Output() change: EventEmitter<L.LatLngTuple> = new EventEmitter();
     
 	map: L.Map;
-	centerPointLayer: L.Layer;
-	accuracyLayer: L.Layer;
+	centerPointLayer: L.Marker;
+	accuracyLayer: L.Circle;
  
 	ngAfterViewInit(): void {
 		// Create app.
 		this.map = L.map(this.mapElement.nativeElement, {
-			dragging: false,
+			dragging: true,
 			zoomControl: false,
 			scrollWheelZoom: false,
-			touchZoom: false,
-			doubleClickZoom: false,
+			touchZoom: true,
+			doubleClickZoom: true,
 			boxZoom: false,
-			tap: false,
+			tap: true,
 			center: this.location,
 			keyboard: false,
 			attributionControl: false,
 			zoom: this.zoom
 		});
+		
+		// Add zoom control
+		L.control.zoom({
+			position: 'bottomleft'
+		}).addTo(this.map);
 		
 		// Add map layer.
 		new L.TileLayer(MapComponent.source, {
@@ -87,15 +92,20 @@ export class MapComponent implements AfterViewInit, OnChanges {
 		if(this.centerPointLayer) this.map.removeLayer(this.centerPointLayer);
 		
 		// Add inaccurate marker.
-		if(accuracy > 0) this.accuracyLayer = new L.Circle(location, accuracy, {
-			stroke: true,
-			weight: 10,
-			color: '#fff',
-			opacity: 0.25,
-			fill: true,
-			fillColor: '#50e3c2',
-			fillOpacity: 0.75
-		}).addTo(this.map);
+		if(accuracy > 0) {
+			this.accuracyLayer = new L.Circle(location, accuracy, {
+				stroke: true,
+				weight: 10,
+				color: '#fff',
+				opacity: 0.25,
+				fill: true,
+				fillColor: '#50e3c2',
+				fillOpacity: 0.75
+			}).addTo(this.map);
+			
+			// Fit bounds.
+			this.map.fitBounds(this.accuracyLayer.getBounds());
+		}
 		
 		// Add center marker.
 		this.centerPointLayer = L.marker(location, {

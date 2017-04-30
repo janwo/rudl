@@ -1,2 +1,3 @@
 <i class="fa fa-{{icon}}" *ngIf="icon"></i>
-<span>{{title}}</span>
+<span [@expandHorizontally]="getAnimationState()">{{title}}</span>
+

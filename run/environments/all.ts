@@ -149,13 +149,17 @@ export default {
 		ports: {
 			http: process.env.BACKEND_SERVER_PORT_HTTP || 80,
 			https: process.env.BACKEND_SERVER_PORT_HTTPS || 443,
+			nodeDebug: process.env.BACKEND_SERVER_PORT_NODE_DEBUG || 9229,
 		},
-		secretPassphrase: process.env.SALT_PASSWORD,
 		icons: require('../../db/files/icons/data.json'),
 		jwt: {
 			expiresIn: 60 * 60 * 24 * 50,
-			deleteIn: 60 * 60 * 24 * 30,
-			salt: process.env.SALT_JWT
+			deleteIn: 60 * 60 * 24 * 30
+		},
+		salts: {
+			jwt: process.env.SALT_JWT,
+			random: process.env.SALT_RANDOM,
+			password: process.env.SALT_PASSWORD
 		},
 		mails: {
 			admin: 'we@rudl.me',

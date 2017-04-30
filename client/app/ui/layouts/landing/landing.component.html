@@ -6,9 +6,7 @@
 		<styled-button (click)="openExternalLink('https://docs.google.com/forms/d/e/1FAIpQLSeMl5H65jBg67wuSBc38oKDHeqBZqhMRAyTrsIChV28K_3EqQ/viewform')" [text]="'Benachrichtigen lassen'"></styled-button>
 		<login *ngIf="showLogin"></login>
 	</div>
-	<small class="legal">
-		<a [routerLink]="['/legal']" i18n>Impressum</a>
-	</small>
+	<legal-footer></legal-footer>
 </section>
 <section class="content">
 	<img class="background" src="../../../../assets/landing-page/background.png">

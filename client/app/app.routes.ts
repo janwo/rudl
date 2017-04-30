@@ -30,6 +30,10 @@ import {ActivityAddToListComponent} from "./ui/layouts/activity/activity-add-to-
 import {ListActivitiesComponent} from "./ui/layouts/list/list-activities.component";
 import {ListFollowersComponent} from "./ui/layouts/list/list-followers.component";
 import {NotFoundComponent} from "./ui/layouts/404/404.component";
+import {ExpeditionMapComponent} from "./ui/layouts/expedition/expedition-map.component";
+import {ExpeditionAttendeesComponent} from "./ui/layouts/expedition/expedition-attendees.component";
+import {ExpeditionCommentsComponent} from "./ui/layouts/expedition/expedition-comments.component";
+import {ActivityPastExpeditionsComponent} from './ui/layouts/activity/activity-past-expeditions.component';
 
 const appRoutes: Routes = [
     {
@@ -57,9 +61,9 @@ const appRoutes: Routes = [
 	        // Boarding required.
             { path: '', redirectTo: 'explore', pathMatch: 'full' },
             { path: 'explore', component: ExploreComponent, canActivate: [ BoardingGuard ]},
-	        
+
 	        { path: 'people', component: PeopleComponent, pathMatch: 'full', canActivate: [ BoardingGuard ] },
-	
+
 	        { path: 'people/not-found', component: NotFoundComponent, data: {
 		        title: 'Invalid username!',
 		        image: require('../assets/boarding/radar.png'),
@@ -77,9 +81,9 @@ const appRoutes: Routes = [
 	            { path: 'rudel', component: UserActivitiesComponent },
 	            { path: 'lists', component: UserListsComponent },
 	            { path: 'followers', component: UserFollowersComponent },
-	            { path: 'followees', component: UserFolloweesComponent },
+	            { path: 'followees', component: UserFolloweesComponent }
             ] },
-	
+
 	        { path: 'lists/not-found', component: NotFoundComponent, data: {
 		        title: 'Invalid list id!',
 		        image: require('../assets/boarding/radar.png'),
@@ -97,10 +101,10 @@ const appRoutes: Routes = [
 	            { path: 'rudel', component: ListActivitiesComponent },
 	            { path: 'followers', component: ListFollowersComponent }
             ] },
-           
+
             { path: 'search', redirectTo: 'search/', pathMatch: 'full', canActivate: [ BoardingGuard ] },
             { path: 'search/:query', component: SearchComponent, canActivate: [ BoardingGuard ] },
-	
+
 	        { path: 'rudel/not-found', component: NotFoundComponent, data: {
 		        title: 'Invalid rudel id!',
 		        image: require('../assets/boarding/radar.png'),
@@ -115,11 +119,12 @@ const appRoutes: Routes = [
 		        activity: ActivityResolver
 	        }, canActivate: [ BoardingGuard ], children: [
 				{ path: '', redirectTo: 'expeditions', pathMatch: 'full' },
-				{ path: 'expeditions', component: ActivityExpeditionsComponent },
+		        { path: 'expeditions', component: ActivityExpeditionsComponent },
+		        { path: 'past-expeditions', component: ActivityPastExpeditionsComponent },
 		        { path: 'edit', component: ActivityEditComponent },
 		        { path: 'add-to-list', component: ActivityAddToListComponent },
 				{ path: 'followers', component: ActivityFollowersComponent },
-				{ path: 'create-expedition', component: ActivityCreateExpeditionComponent },
+				{ path: 'create-expedition', component: ActivityCreateExpeditionComponent }
 			] },
 	        { path: 'expeditions/not-found', component: NotFoundComponent, data: {
 		        title: 'Invalid expedition id!',
@@ -133,8 +138,13 @@ const appRoutes: Routes = [
 	        }},
 	        { path: 'expeditions/:expedition', component: ExpeditionComponent, resolve: {
 		        expedition: ExpeditionResolver
-	        }, canActivate: [ BoardingGuard ] },
-	        
+	        }, canActivate: [ BoardingGuard ], children: [
+		        { path: '', redirectTo: 'map', pathMatch: 'full' },
+		        { path: 'attendees', component: ExpeditionAttendeesComponent },
+		        { path: 'discussion', component: ExpeditionCommentsComponent },
+		        { path: 'map', component: ExpeditionMapComponent }
+	        ] },
+
 	        // No boarding required.
 	        { path: 'boarding', component: BoardingComponent },
 	        { path: 'settings', component: SettingsComponent },

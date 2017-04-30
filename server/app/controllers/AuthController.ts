@@ -94,7 +94,7 @@ export module AuthController {
 		}).then(userDataCache => AuthController.saveUserDataCache(userDataCache)).then(() => {
 			return new Promise<String>((resolve, reject) => {
 				// Sign web token.
-				jwt.sign(token, Config.backend.jwt.salt, {
+				jwt.sign(token, Config.backend.salts.jwt, {
 					algorithm: 'HS256'
 				}, (err, token: string) => {
 					if (err) {

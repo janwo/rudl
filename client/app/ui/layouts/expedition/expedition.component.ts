@@ -35,9 +35,6 @@ export class ExpeditionComponent implements OnInit {
         });
     }
     
-    openLocation(): void {
-	    window.open('http://maps.google.com/?q=' + this.expedition.location.latLng.join());
-    }
 	 // Show delete message.
 	 // this.router.navigate(['/lists/deleted-message']);
 	 

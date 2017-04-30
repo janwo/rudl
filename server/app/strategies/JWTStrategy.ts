@@ -23,6 +23,6 @@ export const StrategyConfig: StrategyConfiguration = {
 			algorithms: ['HS256'],
 			ignoreExpiration: true
 		},
-		key: Config.backend.jwt.salt
+		key: Config.backend.salts.jwt
 	}
 };

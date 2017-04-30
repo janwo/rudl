@@ -9,14 +9,19 @@ import {EmptyState} from '../../widgets/state/empty.component';
 import {ExpeditionService} from '../../../services/expedition.service';
 
 @Component({
-    templateUrl: 'expedition-details.component.html',
-    styleUrls: ['expedition-details.component.scss']
+    templateUrl: 'expedition-attendees.component.html',
+    styleUrls: ['expedition-attendees.component.scss']
 })
-export class ExpeditionDetailsComponent implements OnInit, OnDestroy {
+export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	
 	expedition: Expedition;
 	expeditionSubscription: Subscription;
 	attendees: User[];
+	unapprovedState: EmptyState = {
+		title: 'You are not approved',
+		image: require('../../../../assets/boarding/radar.png'),
+		description: 'We couldn\'t get you in there. You have to get approved!'
+	};
 	
 	constructor(
 		private expeditionService: ExpeditionService,

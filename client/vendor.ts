@@ -13,7 +13,7 @@ WebFont.load({
 	google: {
 		families: [
 			'Lato:400,700',
-			'Fredoka+One'
+			'Quicksand:700'
 		]
 	}
 });

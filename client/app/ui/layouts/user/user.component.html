@@ -18,10 +18,10 @@
 </div>
 <div class="content">
 	<menu>
-		<menu-item [icon]="'paw'" [title]="'Rudel'" [link]="['rudel']"></menu-item>
-		<menu-item [icon]="'list'" [title]="'Listen'" [link]="['lists']"></menu-item>
-		<menu-item [icon]="'users'" [title]="'Folgt'" [link]="['followees']"></menu-item>
-		<menu-item [icon]="'users'" [title]="'Follower'" [link]="['followers']"></menu-item>
+		<menu-item [makeRoomIfSmall]="true" [icon]="'paw'" [title]="'Rudel'" [link]="['rudel']"></menu-item>
+		<menu-item [makeRoomIfSmall]="true" [icon]="'list'" [title]="'Listen'" [link]="['lists']"></menu-item>
+		<menu-item [makeRoomIfSmall]="true" [icon]="'users'" [title]="'Folgt'" [link]="['followees']"></menu-item>
+		<menu-item [makeRoomIfSmall]="true" [icon]="'users'" [title]="'Follower'" [link]="['followers']"></menu-item>
 	</menu>
 	<router-outlet></router-outlet>
 </div>

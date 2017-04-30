@@ -123,7 +123,10 @@ export const RoutesConfig: RoutesConfiguration = [
 				]
 			},
 			validate: {
-				payload: ExpeditionValidation
+				payload: {
+					activity: Joi.string(),
+					expedition: ExpeditionValidation
+				}
 			}
 		}
 	}

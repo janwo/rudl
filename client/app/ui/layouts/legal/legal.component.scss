@@ -1,28 +1,54 @@
 @import '../../variables';
 
+$legal-background-color: #fff;
+$legal-content-size: 2rem;
 $legal-vertical-padding: map_get($base-padding, 'smaller');
 $legal-vertical-padding-mobile: map_get($base-padding, 'smaller');
 $legal-horizontal-padding: map_get($base-padding, 'default');
 $legal-horizontal-padding-mobile: map_get($base-padding, 'smaller');
 
 :host {
-  background-color: map_get($base-colors, 'background');
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
 
   header {
-    background-color: map_get($base-colors, 'background-highlighted');
-    padding: $legal-vertical-padding-mobile $legal-horizontal-padding-mobile;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: map_get($base-shadow, 'default');
+    background-color: $legal-background-color;
+    padding-left: $legal-horizontal-padding-mobile;
+    padding-right: $legal-horizontal-padding-mobile;
+    height: $legal-vertical-padding-mobile * 2 + $legal-content-size;
+    position: relative;
+    z-index: 100;
 
     @include breakpoint('small') {
-      padding: $legal-vertical-padding $legal-horizontal-padding;
+      padding-left: $legal-horizontal-padding;
+      padding-right: $legal-horizontal-padding;
+      height: $legal-vertical-padding * 2 + $legal-content-size;
     }
   }
 
   section {
     margin-top: map_get($base-padding, 'default');
     padding: $legal-vertical-padding-mobile $legal-horizontal-padding-mobile;
+    @include setup-max-width();
 
     @include breakpoint('small') {
       padding: $legal-vertical-padding $legal-horizontal-padding;
+    }
+
+    .card p {
+      display: flex;
+      flex-direction: column;
+
+      & > *:first-child {
+        font-weight: $base-font-weight-bold;
+      }
     }
   }
 }

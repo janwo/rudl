@@ -1,9 +1,9 @@
 @import '../../variables';
 
-$button-font-size: 0.95rem;
 $button-border-size: 0.1rem;
 $button-border-radius: 0.25rem;
-$button-padding: $button-font-size / 1.5; // --> 1 / 1.5 = 0.666
+$button-font-size: map_get($base-font-size, 'default');
+$button-padding: $button-font-size / 1.5; // Golden Ratio <3
 $button-default-scale-icon: 1.25;
 $button-default-scale-text: 1;
 
@@ -17,8 +17,11 @@ $button-default-scale-text: 1;
     line-height: 1;
     transition: box-shadow 0.25s;
     cursor: pointer;
+    border: map_get($base-line-widths, 'default') transparent solid;
     border-radius: $button-border-radius;
-    font-size: $button-font-size;
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: inherit;
     padding: $button-padding $button-padding * 1.5;
     display: flex;
     align-items: center;

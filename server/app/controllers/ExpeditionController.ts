@@ -13,15 +13,18 @@ import {ExpeditionIsItem} from "../models/expedition/ExpeditionIsItem";
 import {ActivityController} from "./ActivityController";
 import * as moment from "moment";
 import {UtilController} from "./UtilController";
+import * as Random from 'random-seed';
+import {Config} from '../../../run/config';
+import {ExpeditionRecipe} from '../../../client/app/models/expedition';
 
 export module ExpeditionController {
 	
 	export const FUZZY_HOURS = 3;
-	export const FUZZY_METERS = 1000;
+	export const FUZZY_METERS = 500;
 	
 	export function getPublicExpedition(expedition: Expedition | Expedition[], relatedUser: User) : Promise<any> {
 		let createPublicExpedition = (expedition: Expedition) : Promise<any> => {
-			let expeditionOwnerPromise = ExpeditionController.getExpeditionOwner(expedition);
+			let expeditionOwnerPromise = ExpeditionController.getOwner(expedition);
 			let publicExpeditionOwnerPromise = expeditionOwnerPromise.then((owner: User) => {
 				return UserController.getPublicUser(owner, relatedUser);
 			});
@@ -43,11 +46,14 @@ export module ExpeditionController {
 				
 				// Mask data for unapproved users.
 				if(!values[2].isApproved) {
+					// Seedable randomness to prevent hijacking unmasked data by recalling this function multiple times.
+					let randomSeed: Random.RandomSeed = Random.create(expedition._key + Config.backend.salts.random);
+					
 					// Mask time.
-					if(expedition.fuzzyTime) moment(expedition.date).add(Math.random() * FUZZY_HOURS * 2 - FUZZY_HOURS, 'hours').minute(0).second(0).millisecond(0);
+					if(expedition.fuzzyTime) moment(expedition.date).add(randomSeed.intBetween(-FUZZY_HOURS, FUZZY_HOURS), 'hours').minute(0).second(0).millisecond(0);
 					
 					// Mask location.
-					let distance = [Math.random() * ExpeditionController.FUZZY_METERS * 2 - ExpeditionController.FUZZY_METERS, Math.random() * ExpeditionController.FUZZY_METERS * 2 - ExpeditionController.FUZZY_METERS];
+					let distance = [randomSeed.intBetween(-FUZZY_METERS, FUZZY_METERS), randomSeed.intBetween(-FUZZY_METERS, FUZZY_METERS)];
 					let pi = Math.PI;
 					let R = 6378137; // Earth’s radius
 					let dLat = distance[0] / R;
@@ -122,71 +128,54 @@ export module ExpeditionController {
 	}
 	
 	export function findByUser(user: User, ownsOnly = false) : Promise<Expedition[]>{
-		let aqlQuery = `FOR expedition IN OUTBOUND @user @@edges RETURN expedition`;
-		let aqlParams = {
-			'@edges': ownsOnly ? DatabaseManager.arangoCollections.userOwnsExpedition.name : DatabaseManager.arangoCollections.userJoinsExpedition.name,
-			user: user._id
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Expedition[]>;
+		return DatabaseManager.arangoFunctions.outbounds(user._id, ownsOnly ? DatabaseManager.arangoCollections.userOwnsExpedition.name : DatabaseManager.arangoCollections.userJoinsExpedition.name);
 	}
 	
-	export function getActivity(expedition: Expedition): Promise<Activity> {
-		return DatabaseManager.arangoFunctions.outbound(expedition._id, DatabaseManager.arangoCollections.expeditionIsItem.name);
-	}
-	
-	export function findByKey(key: string) : Promise<Expedition>{
-		let aqlQuery = `FOR expedition IN @@collection FILTER expedition._key == @key RETURN expedition`;
-		let aqlParams = {
-			'@collection': DatabaseManager.arangoCollections.expeditions.name,
-			key: key
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<Expedition>;
+	export function findByKey(key: string | string[]): Promise<Expedition | Expedition[]> {
+		let collection = DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.expeditions.name);
+		return key instanceof Array ? collection.lookupByKeys(key) as Promise<Expedition[]> : collection.byExample({
+			_key: key
+		}, {
+			limit: 1
+		}).then(cursor => cursor.next()) as any as Promise<Expedition|Expedition[]>;
 	}
 	
 	export function findByFulltext(query: string) : Promise<Expedition[]>{
-		//TODO use languages of user
-		let aqlQuery = `FOR expedition IN FULLTEXT(@@collection, "title", @query) RETURN activity`;
+		let aqlQuery = `FOR expedition IN FULLTEXT(@@collection, "title", @query) RETURN expedition`;
 		let aqlParams = {
-			'@collection': DatabaseManager.arangoCollections.activities.name,
+			'@collection': DatabaseManager.arangoCollections.expeditions.name,
 			query: query.split(' ').map(word => '|prefix:' + word).join()
 		};
 		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Expedition[]>;
 	}
 	
-	export function getExpeditionOwner(expedition: Expedition) : Promise<User> {
-		let aqlQuery = `FOR owner IN INBOUND @expeditionId @@userOwnsExpedition RETURN owner`;
-		let aqlParams = {
-			'@userOwnsExpedition': DatabaseManager.arangoCollections.userOwnsExpedition.name,
-			expeditionId: expedition._id
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<User>;
-	}
-	
-	export function approveUser(expedition: Expedition, user: User) : Promise<UserFollowsActivity> {
+	export function approveUser(expedition: Expedition, user: User) : Promise<UserJoinsExpedition> {
 		let collection = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsActivity.name);
 		return collection.byExample({
 			_from: user._id,
 			_to: expedition._id
 		}, {
 			limit: 1
-		}).then((cursor: Cursor) => cursor.next() as any as UserFollowsActivity).then((userFollowsActivity: UserFollowsActivity) => {
-			// Try to return any existing connection.
-			if(userFollowsActivity) return userFollowsActivity;
+		}).then((cursor: Cursor) => cursor.next() as any as UserJoinsExpedition).then((userJoinsExpedition: UserJoinsExpedition) => {
+			// Try to edit any existing connection.
+			if(userJoinsExpedition) {
+				
+				return userJoinsExpedition;
+			}
 			
 			// Add connection.
-			let now = new Date().toISOString();
 			let edge : UserFollowsActivity = {
 				_from: user._id,
 				_to: expedition._id,
-				createdAt: now,
-				updatedAt: now
+				createdAt: null,
+				updatedAt: null
 			};
 			
-			return collection.save(edge);
+			return DatabaseManager.arangoFunctions.saveOrUpdate(edge, DatabaseManager.arangoCollections.userJoinsExpedition.name);
 		});
 	}
 	
-	export function requestApproval(activity: User, user: User): Promise<void> {
+	export function rejectUser(activity: User, user: User): Promise<void> {
 		let edge = {
 			_from: user._id,
 			_to: activity._id
@@ -203,63 +192,95 @@ export module ExpeditionController {
 	export function removeExpedition(expedition: Expedition): Promise<any> {
 		let graph = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name);
 		
-		// TODO Remove all comments.
-		
 		// Remove expedition.
 		return graph.vertexCollection(DatabaseManager.arangoCollections.expeditions.name).remove(expedition._id);
 	}
 	
-	export function createExpedition(user: User, activity: Activity, options: {
-		title: string,
-		description: string,
-		needsApproval: boolean,
-		date: string,
-		icon: string,
-		fuzzyTime: boolean,
-		location: number[]
-	}) : Promise<Expedition> {
-		let now = new Date().toISOString();
-		let expedition : Expedition = {
-			title: options.title,
-			description: options.description,
-			needsApproval: options.needsApproval,
-			date: options.date,
-			icon: options.icon,
-			location: options.location,
-			fuzzyTime: options.fuzzyTime,
-			createdAt: now,
-			updatedAt: now
+	export function createExpedition(recipe: ExpeditionRecipe) : Promise<Expedition> {
+		let expedition: Expedition = {
+			title: recipe.title,
+			description: recipe.description,
+			needsApproval: recipe.needsApproval,
+			date: recipe.date,
+			icon: recipe.icon,
+			location: recipe.location,
+			fuzzyTime: recipe.fuzzyTime,
+			createdAt: null,
+			updatedAt: null
 		};
-		// TODO Change to vertexCollection, see bug https://github.com/arangodb/arangojs/issues/354
-		return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.expeditions.name).save(expedition, true).then(expedition => expedition.new).then((expedition: Expedition) => {
-			let userOwnsExpedition : UserOwnsExpedition = {
-				_from: user._id,
+		return Promise.resolve(expedition);
+	}
+	
+	export function save(expedition: Expedition): Promise<Expedition> {
+		expedition.description = expedition.description.trim();
+		expedition.title = expedition.title.trim();
+		
+		// Save.
+		return DatabaseManager.arangoFunctions.updateOrCreate(expedition, DatabaseManager.arangoCollections.expeditions.name);
+	}
+	
+	/**
+	 * Changes the ownership of the expedition to a user.
+	 * @param expedition
+	 * @param owner
+	 * @returns {Promise<any>|Promise<TResult|any>|Promise<TResult>|Promise<TResult2|TResult1>}
+	 */
+	export function setOwner(expedition: Expedition, owner: User): Promise<Expedition> {
+		let graph = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name);
+		let owns = graph.edgeCollection(DatabaseManager.arangoCollections.userOwnsExpedition.name);
+		
+		// Exists owner edge?
+		return owns.byExample({
+			_to: expedition._id
+		}, {
+			limit: 1
+		}).then(cursor => cursor.next() as any as UserOwnsExpedition).then((edge: UserOwnsExpedition) => {
+			// Create new edge?
+			if(!edge) edge = {
 				_to: expedition._id,
-				createdAt: now,
-				updatedAt: now
+				_from: owner._id
 			};
 			
-			let userJoinsExpedition : UserJoinsExpedition = {
-				_from: user._id,
-				_to: expedition._id,
-				createdAt: now,
-				updatedAt: now,
-				approved: true
-			};
-			
-			let expeditionIsItem : ExpeditionIsItem = {
+			// Update edge.
+			edge._from = owner._id;
+			return DatabaseManager.arangoFunctions.updateOrCreate(edge, DatabaseManager.arangoCollections.userOwnsExpedition.name);
+		}).then(() => expedition);
+	}
+	
+	export function getOwner(expedition: Expedition) : Promise<User> {
+		return DatabaseManager.arangoFunctions.inbound(expedition._id, DatabaseManager.arangoCollections.userOwnsExpedition.name);
+	}
+	
+	/**
+	 * Changes the activity of the expedition.
+	 * @param expedition
+	 * @param activity
+	 * @returns {Promise<any>|Promise<TResult|any>|Promise<TResult>|Promise<TResult2|TResult1>}
+	 */
+	export function setActivity(expedition: Expedition, activity: Activity): Promise<Expedition> {
+		let graph = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name);
+		let owns = graph.edgeCollection(DatabaseManager.arangoCollections.expeditionIsItem.name);
+		
+		// Exists owner edge?
+		return owns.byExample({
+			_from: expedition._id
+		}, {
+			limit: 1
+		}).then(cursor => cursor.next() as any as ExpeditionIsItem).then((edge: ExpeditionIsItem) => {
+			// Create new edge?
+			if(!edge) edge = {
 				_from: expedition._id,
-				_to: activity._id,
-				createdAt: now,
-				updatedAt: now
+				_to: activity._id
 			};
 			
-			return Promise.all([
-				DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.expeditionIsItem.name).save(expeditionIsItem),
-				DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userOwnsExpedition.name).save(userOwnsExpedition),
-				DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userJoinsExpedition.name).save(userJoinsExpedition)
-			]).then(() => expedition);
-		});
+			// Update edge.
+			edge._to = activity._id;
+			return DatabaseManager.arangoFunctions.updateOrCreate(edge, DatabaseManager.arangoCollections.expeditionIsItem.name);
+		}).then(() => expedition);
+	}
+	
+	export function getActivity(expedition: Expedition): Promise<Activity> {
+		return DatabaseManager.arangoFunctions.outbound(expedition._id, DatabaseManager.arangoCollections.expeditionIsItem.name);
 	}
 	
 	export namespace RouteHandlers {
@@ -268,13 +289,13 @@ export module ExpeditionController {
 		/**
 		 * Handles [POST] /api/expeditions/create
 		 * @param request Request-Object
-		 * @param request.payload.title title
-		 * @param request.payload.description description
-		 * @param request.payload.needsApproval needsApproval
-		 * @param request.payload.date date
-		 * @param request.payload.icon icon
-		 * @param request.payload.location location
-		 * @param request.payload.fuzzyTime fuzzyTime
+		 * @param request.payload.expedition.title title
+		 * @param request.payload.expedition.description description
+		 * @param request.payload.expedition.needsApproval needsApproval
+		 * @param request.payload.expedition.date date
+		 * @param request.payload.expedition.icon icon
+		 * @param request.payload.expedition.location location
+		 * @param request.payload.expedition.fuzzyTime fuzzyTime
 		 * @param request.payload.activity activity
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
@@ -284,15 +305,7 @@ export module ExpeditionController {
 			let promise: Promise<any> = ActivityController.findByKey(request.payload.activity).then((activity: Activity) => {
 				if(!activity) return Promise.reject(Boom.badRequest('Activity does not exist!'));
 				
-				return ExpeditionController.createExpedition(request.auth.credentials, activity, {
-					title: request.payload.title,
-					description: request.payload.description,
-					needsApproval: request.payload.needsApproval,
-					date: request.payload.date,
-					icon: request.payload.icon,
-					location: request.payload.location,
-					fuzzyTime: request.payload.fuzzyTime
-				}).then(expedition => ExpeditionController.getPublicExpedition(expedition, request.auth.credentials));
+				return ExpeditionController.createExpedition(request.payload.expedition).then((expedition: Expedition) => ExpeditionController.getPublicExpedition(expedition, request.auth.credentials));
 			});
 			
 			reply.api(promise);

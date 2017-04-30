@@ -4,39 +4,28 @@
 		<emoji [emoji]="expedition.activity.links.icon"></emoji>
 		<span class="name">{{expedition.activity.name}}</span>
 	</aside>
-	<div class="about">
-		<header>
+	<header>
+		<div class="title">
 			<emoji [emoji]="expedition.links.icon"></emoji>
 			<h1>{{expedition.title}}</h1>
-		</header>
+		</div>
+		<div class="description">{{expedition.description}}</div>
 		<div class="statistics">
 			<statistics [statistics]="[
 			{value: expedition.statistics.approvedUsers, subject: 'Teilnehmer', link: ['attendees']},
-			{value: expedition.statistics.awaitingUsers, subject: 'Anfragen', link: ['attendes']}
+			{value: formattedLocation, subject: 'Entfernung', link: ['attendes']},
+			{value: formattedDate, subject: expedition.needsApproval && !expedition.relations.isApproved ? 'Grober Zeitpunkt' : 'Zeitpunkt', link: ['attendes']}
 		]"></statistics>
 			<div class="cta">
 				<styled-button [style]="expedition.relations.isApproved ? buttonStyleActivated : buttonStyleDefault" [disabled]="pendingFollowRequest" [text]="'Teilnahme anfragen'"></styled-button>
 				<styled-button [fa]="'pencil'" *ngIf="expedition.relations.isOwned"></styled-button>
 			</div>
 		</div>
-	</div>
-</div>
-<div class="card details">
-	<h2>Streifzug-Details</h2>
-	<div class="content">
-		<map [zoom]="16" [location]="expedition.location.latLng" [accuracy]="expedition.location.accuracy" (click)="openLocation()"></map>
-		<div>{{expedition.description}}</div>
-	</div>
+	</header>
 </div>
 <menu>
-	<menu-item [icon]="'comments-o'" [title]="'Diskussion'" [link]="['expeditions']"></menu-item>
-	<menu-item [icon]="'info-circle'" [title]="'Informationen'" [link]="['followers']"></menu-item>
+	<menu-item [makeRoomIfSmall]="true" [icon]="'comments-o'" [title]="'Diskussion'" [link]="['discussion']"></menu-item>
+	<menu-item [makeRoomIfSmall]="true" [icon]="'map-o'" [title]="'Karte'" [link]="['map']"></menu-item>
+	<menu-item [makeRoomIfSmall]="true" [icon]="'user-o'" [title]="'Teilnehmer'" [link]="['attendees']"></menu-item>
 </menu>
-<!--<empty [emptyState]="unapprovedState" *ngIf="!expedition.relations.isApproved"></empty>
-<section *ngIf="expedition.relations.isApproved">
-	Approved!
-	Comments
-</section>
--->
-<small class="attribution">Maps provided by © <a target="_blank" href="https://openstreetmap.org/copyright">OpenStreetMap</a> Contributors via <a target="_blank" href="http://leafletjs.com">Leaflet</a></small>
-
+<router-outlet></router-outlet>

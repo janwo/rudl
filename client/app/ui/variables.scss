@@ -19,9 +19,8 @@ $base-line-height: (
   'default': 1.15,
   'multiline': 1.5
 );
-$base-heading-font-family: 'Fredoka One';
-$base-heading-font-weight-normal: 400;
-$base-heading-font-bold-normal: $base-heading-font-weight-normal;
+$base-heading-font-family: 'Quicksand';
+$base-heading-font-weight: 700;
 $base-heading-font-size: (
   'h1': 1.7rem,
   'h2': 1.4rem,
@@ -101,6 +100,9 @@ $base-max-width: (
       max-width: map_get($base-max-width, $name);
     }
   }
+
+  flex: 1 0 auto;
+  width: 100%;
 }
 
 @mixin setup-input-borders() {
@@ -119,8 +121,8 @@ $base-max-width: (
   color: map_get($base-colors, 'primary-text');
   padding: $input-field-input-padding;
   font-size: $input-field-input-font-size;
-  font-family: $base-font-family;
-  font-weight: $base-font-weight-normal;
+  font-family: inherit;
+  font-weight: inherit;
   line-height: map_get($base-line-height, 'default');
   width: 100%;
 

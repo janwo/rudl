@@ -20,8 +20,9 @@
 	</div>
 </div>
 <menu>
-	<menu-item [icon]="'compass'" [title]="'Streifzüge'" [link]="['expeditions']"></menu-item>
-	<menu-item [icon]="'user-o'" [title]="'Rudelmitglieder'" [link]="['followers']"></menu-item>
+	<menu-item [icon]="'compass'" [makeRoomIfSmall]="true" [title]="'Künftige Streifzüge'" [link]="['expeditions']"></menu-item>
+	<menu-item [icon]="'history'" [makeRoomIfSmall]="true" [title]="'Bisherige Streifzüge'" [link]="['past-expeditions']"></menu-item>
+	<menu-item [icon]="'user-o'" [makeRoomIfSmall]="true" [title]="'Rudelmitglieder'" [link]="['followers']"></menu-item>
 </menu>
 <router-outlet></router-outlet>
 <modal #unfollowModal [title]="'Are you sure to unfollow activity?'">

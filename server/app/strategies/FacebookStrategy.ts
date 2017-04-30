@@ -5,7 +5,7 @@ import {UserController} from "../controllers/UserController";
 import {AuthController} from "../controllers/AuthController";
 import {AccountController} from "../controllers/AccountController";
 import * as Boom from "boom";
-import * as randomstring from"randomstring";
+import * as faker from "faker";
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -51,7 +51,7 @@ export function handleFacebook(request: any, reply: any): void {
 				firstName: profile.name.first,
 				lastName: profile.name.last,
 				username: username,
-				password: randomstring.generate(10),
+				password: faker.internet.password(10),
 				mail: profile.email || profile.id + '@facebook.com'
 			});
 		});

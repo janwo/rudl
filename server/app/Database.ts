@@ -46,10 +46,11 @@ export class DatabaseManager {
 			type: 'document',
 			indices: [
 				{
-					type: 'fulltext',
+					type: 'geo',
 					fields: [
-						'meta.fulltextSearchData'
-					]
+						'location'
+					],
+					geoJson: true
 				}
 			]
 		},
@@ -95,7 +96,15 @@ export class DatabaseManager {
 		},
 		userJoinsExpedition: {
 			name: 'user-joins-expedition',
-			type: 'edge'
+			type: 'edge',
+			indices: [{
+				type: 'hash',
+				fields: [
+					'status'
+				],
+				unique: false,
+				sparse: false
+			}]
 		},
 		expeditionIsItem: {
 			name: 'expedition-is-item',
@@ -103,6 +112,10 @@ export class DatabaseManager {
 		},
 		listIsItem: {
 			name: 'list-is-item',
+			type: 'edge'
+		},
+		userComment: {
+			name: 'user-comment',
 			type: 'edge'
 		}
 	};
@@ -164,6 +177,11 @@ export class DatabaseManager {
 				},
 				{
 					name: DatabaseManager.arangoCollections.userOwnsExpedition.name,
+					from: [DatabaseManager.arangoCollections.users.name],
+					to: [DatabaseManager.arangoCollections.expeditions.name]
+				},
+				{
+					name: DatabaseManager.arangoCollections.userComment.name,
 					from: [DatabaseManager.arangoCollections.users.name],
 					to: [DatabaseManager.arangoCollections.expeditions.name]
 				}

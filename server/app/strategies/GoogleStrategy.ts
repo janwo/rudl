@@ -5,7 +5,7 @@ import {UserController} from "../controllers/UserController";
 import {AuthController} from "../controllers/AuthController";
 import {AccountController} from "../controllers/AccountController";
 import * as Boom from "boom";
-import * as randomstring from "randomstring";
+import * as faker from "faker";
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -50,7 +50,7 @@ export function handleGoogle(request: any, reply: any): void {
 				firstName: profile.name.given_name,
 				lastName: profile.name.family_name,
 				username: username,
-				password: randomstring.generate(10),
+				password: faker.internet.password(10),
 				mail: profile.email
 			});
 		});

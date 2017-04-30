@@ -1,32 +1,32 @@
 import {UserRoles} from "../models/user/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
-import {Config} from "../../../run/config";
 import * as Joi from 'joi';
 import {CommentController} from '../controllers/CommentController';
+import {CommentValidation} from '../models/comment/Comment';
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
-		path: '/api/comments/create',
+		path: '/api/comments/expeditions/{key}/create',
 		method: 'POST',
-		handler: CommentController.RouteHandlers.uploadAvatar,
+		handler: CommentController.RouteHandlers.createForExpedition,
 		config: {
-			payload: {
-				output: 'stream',
-				maxBytes: Config.backend.maxUploadBytes.avatars,
-				parse: true,
-				allow: 'multipart/form-data'
-			},
 			auth: {
 				scope: [
 					UserRoles.user
 				]
+			},
+			validate: {
+				params: {
+					key: Joi.string()
+				},
+				payload: CommentValidation
 			}
 		}
 	},
 	{
 		path: '/api/comments/=/${key}/update',
 		method: 'POST',
-		handler: CommentController.RouteHandlers.updateLocation,
+		handler: CommentController.RouteHandlers.update,
 		config: {
 			auth: {
 				scope: [
@@ -34,17 +34,17 @@ export const RoutesConfig: RoutesConfiguration = [
 				]
 			},
 			validate: {
-				payload: {
-					latitude: Joi.number().min(-90).max(90),
-					longitude: Joi.number().min(-180).max(180)
-				}
+				params: {
+					key: Joi.string()
+				},
+				payload: CommentValidation
 			}
 		}
 	},
 	{
 		path: '/api/comments/=/{key}',
 		method: 'DELETE',
-		handler: CommentController.RouteHandlers.updateBoarding,
+		handler: CommentController.RouteHandlers.remove,
 		config: {
 			auth: {
 				scope: [
@@ -52,16 +52,16 @@ export const RoutesConfig: RoutesConfiguration = [
 				]
 			},
 			validate: {
-				payload: {
-					boarded: Joi.boolean()
+				params: {
+					key: Joi.string()
 				}
 			}
 		}
 	},
 	{
-		path: '/api/comments/of/{collection}/{key}/{offset}/{limit}',
+		path: '/api/comments/expeditions/{key}/{offset}/{limit}',
 		method: 'GET',
-		handler: CommentController.RouteHandlers.updateBoarding,
+		handler: CommentController.RouteHandlers.getForExpedition,
 		config: {
 			auth: {
 				scope: [
@@ -69,8 +69,9 @@ export const RoutesConfig: RoutesConfiguration = [
 				]
 			},
 			validate: {
-				payload: {
-					boarded: Joi.boolean()
+				params: {
+					offset: Joi.number(),
+					limit: Joi.number()
 				}
 			}
 		}
