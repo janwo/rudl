@@ -192,5 +192,3 @@ export function print(): void {
 	console.log(`Summary of "${Config.name}":\n\n${util.inspect(Config, {showHidden: false, depth: null, colors: true})}\n`);
 	console.log('- - - - - - - - - - - - - - - -\n' );
 }
-
-print();
