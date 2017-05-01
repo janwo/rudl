@@ -18,6 +18,7 @@ let webpackCommands = [
 	'ts-node',
 	`--project ${root('run')}`,
 ];
+if(!Config.debug) webpackCommands.push(`--fast`);
 let webpack = new forever.Monitor(root('run/webpack.ts'), {
 	command: webpackCommands.join(' '),
 	watch: false,
@@ -34,6 +35,7 @@ let backendServerCommands = [
 	`--project ${root('server')}`
 ];
 if(Config.debug) backendServerCommands.push(`--inspect=0.0.0.0:${Config.backend.ports.nodeDebug}`);
+if(!Config.debug) backendServerCommands.push(`--fast`);
 let backendServer = new forever.Monitor(root('server/app/Hapi.ts'), {
 	command: backendServerCommands.join(' '),
 	watch: Config.debug,
