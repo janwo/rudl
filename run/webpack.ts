@@ -46,7 +46,9 @@ class WebpackManager {
 		// Run standalone.
 		if ( !Config.frontend.webpack.devServer ) {
 			console.log( 'Starting webpack...' );
-			webpackCompiler.run((err: any, stats: any) => {});
+			webpackCompiler.run((err: any, stats: any) => {
+				if(err) console.error(err);
+			});
 		}
 	}
 }

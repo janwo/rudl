@@ -159,7 +159,6 @@ export const Config: {
 	if (Glob.sync(Path.resolve(__dirname, `./environments/${process.env.ENV}.ts`)).length == 0) return console.warn(`No configuration file found for "${process.env.ENV}" environment!`);
 	
 	// Merge all configs.
-	console.log(`Generate config for "${process.env.ENV}" environment...`);
 	let merged = _.mergeWith(
 		require('./environments/all').default,
 		require(`./environments/${process.env.ENV}`).default,
