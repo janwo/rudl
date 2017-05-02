@@ -279,12 +279,12 @@ export class DatabaseManager {
 						}
 						return Promise.reject('Invalid index type!');
 					});
-					return Promise.all(indices).then((values) => console.log(`Created all ${values.length} indices for "${missingCollection.name}" successfully.`));
+					return Promise.all(indices).then((values) => console.log(`Created ${values.length} new indices for "${missingCollection.name}" successfully.`));
 				});
 			});
 			
 			return Promise.all(collections).then((promises) => {
-				console.log(`Created all ${promises.length} collections successfully.`);
+				console.log(`Created ${promises.length} new collections successfully.`);
 				return promises;
 			});
 		});
@@ -321,7 +321,7 @@ export class DatabaseManager {
 			});
 			
 			return Promise.all(graphs).then((promises) => {
-				console.log(`Created all ${promises.length} graphs successfully.`);
+				console.log(`Created ${promises.length} new graphs successfully.`);
 				return promises;
 		});
 		});
@@ -379,7 +379,7 @@ export class DatabaseManager {
 				console.log('Connection to redis ended...');
 			});
 			
-			if (Config.backend.log.databaseLogs.redis) {
+			if (Config.backend.log.databaseLogs.redis.enabled) {
 				console.log('Listening on any errors within redis database...');
 				DatabaseManager.redisClient.on('error', console.error);
 			}

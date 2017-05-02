@@ -2,19 +2,20 @@ import * as Webpack from "webpack";
 import * as WebpackDevServer from "webpack-dev-server";
 import {Config} from "./config";
 import * as rimraf from "rimraf";
+import * as chalk from "chalk";
 
 class WebpackManager {
 	static clean() {
 		return new Promise((resolve, reject) => {
 			// Delete generated files.
-			console.log('Delete public files...');
+			console.log(chalk.yellow('Delete public files...'));
 			rimraf(Config.paths.public.dir, (err: any) => {
 				if(err) {
 					reject(err);
 					return;
 				}
 				
-				console.log(`Successfully deleted public files...`);
+				console.log(chalk.bold.green(`Successfully deleted public files...`));
 				resolve();
 			});
 		});
@@ -26,32 +27,53 @@ class WebpackManager {
 		
 		// Listen on "done" to output stats.
 		webpackCompiler.plugin('done', (stats: any) => {
-			console.log('Webpack is done compiling...');
-			if(Config.debug) console.log(stats.toString('minimal'));
+			let colorize = stats.hasErrors() ? chalk.bold.red : chalk.green;
+			console.log(colorize('Webpack is done compiling...'));
+			
+			// Show
+			if(Config.debug && !stats.hasErrors()) {
+				console.log(stats.toString({
+					chunks: false,
+					modules: false,
+					children: false,
+					colors: true,
+					assets: true,
+					assetsSort: "field",
+					cached: true,
+					chunkModules: false,
+					chunkOrigins: true,
+					chunksSort: "field",
+					errors: true,
+					errorDetails: true,
+					hash: true,
+					timings: true,
+					version: true
+				}));
+			} else if(stats.hasErrors()) {
+				stats.toJson().errors.forEach((error: string) => console.log(colorize(error)));
+			}
 		});
 		
 		// Listen on "error" to inject it into the console.
 		webpackCompiler.plugin('failed', (err: any) => {
-			console.error('An error occurred!');
+			console.log(chalk.red('An error occurred!'));
 			throw err;
 		});
 		
 		// Run as webpack server.
 		if ( Config.frontend.webpack.devServer ) {
-			console.log( 'Starting webpack server...' );
+			console.log(chalk.yellow('Starting webpack server...'));
 			new WebpackDevServer( webpackCompiler, Config.frontend.webpack.devServer.config ).listen( Config.frontend.webpack.devServer.port, Config.frontend.webpack.devServer.host );
 			return;
 		}
 		
 		// Run standalone.
 		if ( !Config.frontend.webpack.devServer ) {
-			console.log( 'Starting webpack...' );
-			webpackCompiler.run((err: any, stats: any) => {
-				if(err) console.error(err);
-			});
+			console.log(chalk.yellow('Starting webpack...'));
+			webpackCompiler.run((err: any, stats: any) => {});
 		}
 	}
 }
 
 // Bring it up.
-WebpackManager.start();
+WebpackManager.clean().then(() => WebpackManager.start());

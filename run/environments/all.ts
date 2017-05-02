@@ -9,10 +9,10 @@ export default {
 	debug: process.env.DEBUG_BACKEND || false,
 	paths: {
 		api: {
-			publicPath: '/api'
+			publicPath: '/api/'
 		},
 		public: {
-			dir: root( '_generated/' ),
+			dir: root( '_generated' ),
 			filename: 'index.html',
 			publicPath: '/',
 			ignore404: true
@@ -56,6 +56,12 @@ export default {
 							'static/app': root( 'client/main.ts' ),
 							'static/vendor': root( 'client/vendor.ts' ),
 							'static/polyfill': root( 'client/polyfill.ts' )
+						},
+						output: {
+							path: Config.paths.public.dir,
+							filename: '[name].[hash].js',
+							chunkFilename: '[id].[hash].chunk.js',
+							publicPath: '/'
 						},
 						module: {
 							rules: [
@@ -107,12 +113,6 @@ export default {
 									} )
 								},
 							]
-						},
-						output: {
-							path: Config.paths.public.dir,
-							filename: '[name].[hash].js',
-							chunkFilename: '[id].[hash].chunk.js',
-							publicPath: '/'
 						},
 						plugins: [
 							new Webpack.ContextReplacementPlugin( /angular(\\|\/)core(\\|\/)src(\\|\/)linker/, root( 'src' ) ),
