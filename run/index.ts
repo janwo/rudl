@@ -1,16 +1,17 @@
 import * as forever from "forever-monitor";
+import * as chalk from "chalk";
 import {Config, root} from './config';
 
 let watch = (info: any) => {
-	console.warn(`Restaring script because ${info.file} changed...`);
+	console.log(chalk.bgCyan(`Restaring script because ${info.file} changed...`));
 };
 
 let restart = () => {
-	console.warn('Forever restarting script...');
+	console.log(chalk.bgCyan('Forever restarting script...'));
 };
 
 let exit = (code: number) => {
-	console.warn(`Forever detected script exited with code ${code}...`);
+	console.log(chalk.bgMagenta(`Forever detected script exited with code ${code}...`));
 };
 
 // Webpack.

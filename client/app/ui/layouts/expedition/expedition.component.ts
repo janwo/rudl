@@ -4,6 +4,7 @@ import {EmptyState} from "../../widgets/state/empty.component";
 import {Expedition} from "../../../models/expedition";
 import * as moment from "moment";
 import {UserService} from "../../../services/user.service";
+import {ButtonStyles} from '../../widgets/control/styled-button.component';
 
 @Component({
     templateUrl: 'expedition.component.html',
@@ -15,6 +16,9 @@ export class ExpeditionComponent implements OnInit {
 	formattedDate: string;
 	formattedLocation: string;
 	formattedAwaitingApproval: string;
+	pendingApprovalRequest: boolean;
+	buttonStyleDefault: ButtonStyles = ButtonStyles.outlined;
+	buttonStyleActivated: ButtonStyles = ButtonStyles.filled;
     
     constructor(
 	    private route: ActivatedRoute,

@@ -4,6 +4,7 @@ import * as Path from "path";
 import * as webpackMerge from "webpack-merge";
 import * as util from "util";
 import * as Fs from "fs";
+import * as chalk from "chalk";
 
 /**
  * Helper function to resolve the root of the project.
@@ -152,11 +153,11 @@ export const Config: {
 	// Check for environment variable.
 	if (!process.env.ENV) {
 		process.env.ENV = 'development';
-		console.log(`process.env.ENV is not defined! Set process.env.ENV to "${process.env.ENV}"...`);
+		console.log(chalk.blue(`process.env.ENV is not defined! Set process.env.ENV to "${chalk.italic(process.env.ENV)}"...`));
 	}
 	
 	// Does necessary environment files exist?
-	if (Glob.sync(Path.resolve(__dirname, `./environments/${process.env.ENV}.ts`)).length == 0) return console.warn(`No configuration file found for "${process.env.ENV}" environment!`);
+	if (Glob.sync(Path.resolve(__dirname, `./environments/${process.env.ENV}.ts`)).length == 0) return console.log(chalk.bold.red(`No configuration file found for "${chalk.italic(process.env.ENV)}" environment!`));
 	
 	// Merge all configs.
 	let merged = _.mergeWith(
@@ -187,7 +188,8 @@ export const Config: {
 
 export function print(): void {
 	// Create summary of the configuration file.
-	console.log('\n- - - - - - - - - - - - - - - -' );
-	console.log(`Summary of "${Config.name}":\n\n${util.inspect(Config, {showHidden: false, depth: null, colors: true})}\n`);
-	console.log('- - - - - - - - - - - - - - - -\n' );
+	console.log(chalk.yellow('\n- - - - - - - - - - - - - - - -'));
+	console.log(chalk.yellow(`Summary of "${chalk.italic(Config.name)}":\n`));
+	console.log(util.inspect(Config, {showHidden: false, depth: null, colors: true}));
+	console.log(chalk.yellow('\n- - - - - - - - - - - - - - - -\n'));
 }
