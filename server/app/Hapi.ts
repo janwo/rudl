@@ -59,20 +59,7 @@ export function hapiServer(): Promise<Server>{
 				agreeTos: true,
 				debug: Config.debug,
 				domains: [
-					Config.backend.domain.replace(/https?:|\//gi, '')
-				],
-				ports: {
-					http: Config.backend.ports.http,
-					https: Config.backend.ports.https
-				}
-			});
-			
-			console.log({
-				email: Config.backend.mails.admin,
-				agreeTos: true,
-				debug: Config.debug,
-				domains: [
-					Config.backend.domain.replace(/https?:|\//gi, '')
+					/^(https?:\/\/)?[\d.]*([\S][^\/]+)/i.exec(Config.backend.domain)[2]
 				],
 				ports: {
 					http: Config.backend.ports.http,
