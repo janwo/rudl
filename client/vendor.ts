@@ -7,8 +7,14 @@ import "rxjs/add/operator/mergeMap";
 import "rxjs/add/operator/switchMap";
 import "rxjs/add/operator/toPromise";
 import "hammerjs";
-// Web Font Loader.
 import * as WebFont from "webfontloader";
+
+// CSS dependencies.
+require("../node_modules/normalize.css");
+require("../node_modules/font-awesome/css/font-awesome.css");
+require("../node_modules/leaflet/dist/leaflet.css");
+
+// Initialization of selected dependencies.
 WebFont.load({
 	google: {
 		families: [
@@ -18,11 +24,3 @@ WebFont.load({
 	}
 });
 
-// Normalize.css
-require("../node_modules/normalize.css");
-
-// Font Awesome
-require("../node_modules/font-awesome/css/font-awesome.css");
-
-// Leaflet
-require("../node_modules/leaflet/dist/leaflet.css");

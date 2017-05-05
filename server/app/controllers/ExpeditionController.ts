@@ -283,6 +283,17 @@ export module ExpeditionController {
 		return DatabaseManager.arangoFunctions.outbound(expedition._id, DatabaseManager.arangoCollections.expeditionIsItem.name);
 	}
 	
+	export function getNearbyExpeditions(user: User): Promise<Expedition[]> {
+		let aqlQuery = `FOR doc IN NEAR(@@collection, @latitude, @longitude, @limit) RETURN doc`;
+		let aqlParams = {
+			'@collection': DatabaseManager.arangoCollections.expeditions.name,
+			latitude: user.location[0],
+			longitude: user.location[1],
+			limit: 10
+		};
+		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Expedition[]>;
+	}
+	
 	export namespace RouteHandlers {
 		
 		import getPublicExpedition = ExpeditionController.getPublicExpedition;
@@ -390,10 +401,9 @@ export module ExpeditionController {
 		 */
 		export function getExpeditionsNearby(request: any, reply: any): void {
 			// Create promise.
-			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
-				if(!user) return Promise.reject(Boom.notFound('User not found!'));
-				return ExpeditionController.findByUser(user);
-			}).then((expeditions: Expedition[]) => getPublicExpedition(expeditions, request.auth.credentials));
+			let promise : Promise<any> = ExpeditionController.getNearbyExpeditions(request.auth.credentials).then((expeditions: Expedition[]) => {
+				return getPublicExpedition(expeditions, request.auth.credentials);
+			});
 			
 			reply.api(promise);
 		}

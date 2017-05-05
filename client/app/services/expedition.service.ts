@@ -35,7 +35,7 @@ export class ExpeditionService {
     }
     
     nearby(activity: string | boolean = false): Observable<Expedition[]> {
-        return this.dataService.get(activity === false ? `/api/expedition/nearby` : `/api/expeditions/nearby/${activity}`, true).map((json: JsonResponse) => {
+        return this.dataService.get(activity === false ? `/api/expeditions/nearby` : `/api/expeditions/nearby/${activity}`, true).map((json: JsonResponse) => {
             return json.data;
         }).share();
     }

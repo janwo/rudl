@@ -76,4 +76,13 @@ export class ActivityService {
             });
         }).share();
     }
+    
+    suggestActivities(): Observable<Activity[]> {
+        return this.dataService.get(`/api/suggestions/activities`, true).map((json: JsonResponse) => {
+            return json.data.filter((activity: Activity) => {
+                activity.name = Locale.getBestTranslation(activity.translations, this.userService.getAuthenticatedUser().user.languages);
+                return activity;
+            });
+        }).share();
+    }
 }

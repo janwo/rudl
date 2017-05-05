@@ -50,6 +50,8 @@ export module ActivityController {
 	
 	export function getPublicActivity(activity: Activity | Activity[], relatedUser: User) : Promise<any> {
 		let createPublicActivity = (activity: Activity) : Promise<any> => {
+			console.log('#');
+			console.log(activity);
 			let activityOwnerPromise = ActivityController.getOwner(activity);
 			let publicActivityOwnerPromise = activityOwnerPromise.then((owner: User) => {
 				return UserController.getPublicUser(owner, relatedUser);

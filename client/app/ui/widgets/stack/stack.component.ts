@@ -12,6 +12,7 @@ import {
 	ViewChildren
 } from "@angular/core";
 import {Observable, Subscription} from "rxjs";
+import {ButtonStyles} from '../control/styled-button.component';
 
 export interface StackResult {
 	content: any;
@@ -82,6 +83,8 @@ export class StackComponent implements OnDestroy, OnInit {
 	stackIndex: number = 0;
 	currentStackItem: StackCardComponent;
 	@ViewChildren(StackCardComponent) stackItems: QueryList<StackCardComponent>;
+	dislikeButtonStyle: ButtonStyles = ButtonStyles.dislike;
+	likeButtonStyle: ButtonStyles = ButtonStyles.like;
 	
 	constructor(
 		private rootElement: ElementRef

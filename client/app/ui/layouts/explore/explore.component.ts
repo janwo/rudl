@@ -2,6 +2,9 @@ import {Component, Input, OnDestroy} from "@angular/core";
 import {Activity} from "../../../models/activity";
 import {Observable} from "rxjs";
 import {ListService} from "../../../services/list.service";
+import {ExpeditionService} from '../../../services/expedition.service';
+import {Expedition} from '../../../models/expedition';
+import {ActivityService} from '../../../services/activity.service';
 
 export enum UserSuggestionsType {
     GENERAL, NEARBY
@@ -14,16 +17,16 @@ export enum UserSuggestionsType {
 export class ExploreComponent implements OnDestroy {
     
     @Input() type: UserSuggestionsType = UserSuggestionsType.GENERAL;
-    suggestedActivitiesStream: Observable<Activity[]>;
+    suggestedActivityStream: Observable<Activity[]>;
 
     constructor(
-        private listService: ListService
+        private activityService: ActivityService
     ) {
-        this.suggestedActivitiesStream = /*Observable.empty();//*/this.listService.activities("176887");//TODO
+        this.suggestedActivityStream = this.activityService.suggestActivities();
     }
     
     ngOnDestroy(): void {
-        
+    
     }
     
     markActivityAs(activity: Activity, markedAs: 'like' | 'dislike') {
