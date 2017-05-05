@@ -14,6 +14,6 @@
 </div>
 
 <div class="cta">
-	<styled-button class="dislike" [fa]="'thumbs-o-down'" (click)="markAs('dislike')"></styled-button>
-	<styled-button class="like" [fa]="'thumbs-o-up'" (click)="markAs('like')"></styled-button>
+	<styled-button class="dislike" [fa]="'thumbs-o-down'" [style]="dislikeButtonStyle" (click)="markAs('dislike')"></styled-button>
+	<styled-button class="like" [fa]="'thumbs-o-up'" [style]="likeButtonStyle" (click)="markAs('like')"></styled-button>
 </div>

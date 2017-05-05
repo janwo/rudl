@@ -4,14 +4,15 @@ $swipe-activity-frame-ratio: 100 / 66; // width / height
 $swipe-activity-swipe-area-ratio: 100 / 75; // total width|height / stack width|height
 
 :host {
-  display: block;
+  display: flex;
   max-width: 40rem;
   margin-left: auto;
   margin-right: auto;
+  flex-direction: column;
 
   .stack {
+    flex: 1 1 auto;
     cursor: grab;
-    display: block;
     position: relative;
     padding-bottom: 100% / $swipe-activity-frame-ratio;
 
@@ -153,7 +154,9 @@ $swipe-activity-swipe-area-ratio: 100 / 75; // total width|height / stack width|
   }
 
   .cta {
+    flex: 0 0 auto;
     display: flex;
+    width: 100%;
     flex-direction: row;
     justify-content: space-around;
     margin-top: map_get($base-padding, 'small');
@@ -166,20 +169,7 @@ $swipe-activity-swipe-area-ratio: 100 / 75; // total width|height / stack width|
 
     styled-button {
       flex: 0 0 auto;
-
-      /deep/ button {
-        transform: scale(1.5);
-      }
-
-      &.like /deep/ button {
-        border-color: map_get($base-colors, 'swipe-like');
-        color: map_get($base-colors, 'swipe-like');
-      }
-
-      &.dislike /deep/ button {
-        border-color: map_get($base-colors, 'swipe-dislike');
-        color: map_get($base-colors, 'swipe-dislike');
-      }
+      transform: scale(1.5);
     }
   }
 }

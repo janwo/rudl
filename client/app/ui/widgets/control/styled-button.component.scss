@@ -157,5 +157,13 @@ $button-default-scale-text: 1;
         background-color: inactive($google-color);
       }
     }
+
+    &.like {
+      color: map_get($base-colors, 'swipe-like');
+    }
+
+    &.dislike {
+      color: map_get($base-colors, 'swipe-dislike');
+    }
   }
 }

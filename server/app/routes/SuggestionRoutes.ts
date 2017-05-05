@@ -16,13 +16,25 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/suggestions/username',
-		method: 'POST',
+		path: '/api/suggestions/activities',
+		method: 'GET',
+		handler: SuggestionController.RouteHandlers.getActivitySuggestions,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			}
+		}
+	},
+	{
+		path: '/api/suggestions/{username}',
+		method: 'GET',
 		handler: SuggestionController.RouteHandlers.checkUsername,
 		config: {
 			auth: false,
 			validate: {
-				payload: {
+				params: {
 					username: UserValidation.username
 				}
 			}

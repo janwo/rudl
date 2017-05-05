@@ -44,6 +44,8 @@ export class StyledButtonComponent {
 	        case ButtonStyles.outlinedShadowed: return 'outlined shadowed';
 	        case ButtonStyles.outlinedInverse: return 'outlined-inverse';
 	        case ButtonStyles.outlinedInverseShadowed: return 'outlined-inverse shadowed';
+	        case ButtonStyles.like: return 'filled-inverse shadowed like';
+	        case ButtonStyles.dislike: return 'filled-inverse shadowed dislike';
         }
     }
 }
