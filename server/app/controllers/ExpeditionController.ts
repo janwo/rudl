@@ -24,7 +24,6 @@ export module ExpeditionController {
 	
 	export function getPublicExpedition(expedition: Expedition | Expedition[], relatedUser: User) : Promise<any> {
 		let createPublicExpedition = (expedition: Expedition) : Promise<any> => {
-			debugger
 			let expeditionOwnerPromise = ExpeditionController.getOwner(expedition);
 			let publicExpeditionOwnerPromise = expeditionOwnerPromise.then((owner: User) => {
 				return UserController.getPublicUser(owner, relatedUser);
@@ -323,6 +322,8 @@ export module ExpeditionController {
 					return ExpeditionController.setOwner(expedition, request.auth.credentials);
 				}).then((expedition: Expedition) => {
 					return ExpeditionController.approveUser(expedition, request.auth.credentials).then(() => expedition);
+				}).then((expedition: Expedition) => {
+					return ExpeditionController.setActivity(expedition, activity);
 				}).then((expedition: Expedition) => {
 					return ExpeditionController.getPublicExpedition(expedition, request.auth.credentials);
 				});
