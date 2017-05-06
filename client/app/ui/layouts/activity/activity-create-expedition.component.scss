@@ -1,4 +1,5 @@
 @import '../../variables';
+@import "../../mixins";
 
 :host {
   display: block;
@@ -26,6 +27,7 @@
 
   .map {
     margin: 0 map_get($base-padding, 'smaller') map_get($base-padding, 'smaller');
+    min-height: 15rem;
 
     form-control-wrapper {
       margin: 0;

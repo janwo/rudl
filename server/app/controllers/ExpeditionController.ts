@@ -24,11 +24,12 @@ export module ExpeditionController {
 	
 	export function getPublicExpedition(expedition: Expedition | Expedition[], relatedUser: User) : Promise<any> {
 		let createPublicExpedition = (expedition: Expedition) : Promise<any> => {
+			debugger
 			let expeditionOwnerPromise = ExpeditionController.getOwner(expedition);
 			let publicExpeditionOwnerPromise = expeditionOwnerPromise.then((owner: User) => {
 				return UserController.getPublicUser(owner, relatedUser);
 			});
-			let expeditionStatisticsPromise = ExpeditionController.getExpeditionStatistics(expedition, relatedUser);
+			let expeditionStatisticsPromise = ExpeditionController.getStatistics(expedition, relatedUser);
 			let activityPromise = ExpeditionController.getActivity(expedition).then((activity: Activity) => {
 				return ActivityController.getPublicActivity(activity, relatedUser);
 			});
@@ -108,7 +109,7 @@ export module ExpeditionController {
 		isAwaiting: boolean;
 	}
 	
-	export function getExpeditionStatistics(expedition: Expedition, relatedUser: User) : Promise<ExpeditionStatistics> {
+	export function getStatistics(expedition: Expedition, relatedUser: User) : Promise<ExpeditionStatistics> {
 	/*	let aqlQuery = `LET expeditionApproved = (FOR approved IN INBOUND @expeditionId @@edgesUserFollowsActivity RETURN follower._id) LET lists = (FOR list IN INBOUND @activityId @@edgesListIsItem RETURN list._id) RETURN {isFollowed: LENGTH(INTERSECTION(activityFollowers, [@userId])) > 0, followers: LENGTH(activityFollowers), lists: LENGTH(lists)}`;
 		let aqlParams = {
 			'@edgesUserFollowsActivity': DatabaseManager.arangoCollections.userFollowsActivity.name,
@@ -159,7 +160,6 @@ export module ExpeditionController {
 		}).then((cursor: Cursor) => cursor.next() as any as UserJoinsExpedition).then((userJoinsExpedition: UserJoinsExpedition) => {
 			// Try to edit any existing connection.
 			if(userJoinsExpedition) {
-				
 				return userJoinsExpedition;
 			}
 			
@@ -171,7 +171,7 @@ export module ExpeditionController {
 				updatedAt: null
 			};
 			
-			return DatabaseManager.arangoFunctions.saveOrUpdate(edge, DatabaseManager.arangoCollections.userJoinsExpedition.name);
+			return DatabaseManager.arangoFunctions.updateOrCreate(edge, DatabaseManager.arangoCollections.userJoinsExpedition.name);
 		});
 	}
 	
@@ -196,7 +196,7 @@ export module ExpeditionController {
 		return graph.vertexCollection(DatabaseManager.arangoCollections.expeditions.name).remove(expedition._id);
 	}
 	
-	export function createExpedition(recipe: ExpeditionRecipe) : Promise<Expedition> {
+	export function create(recipe: ExpeditionRecipe) : Promise<Expedition> {
 		let expedition: Expedition = {
 			title: recipe.title,
 			description: recipe.description,
@@ -300,6 +300,7 @@ export module ExpeditionController {
 		/**
 		 * Handles [POST] /api/expeditions/create
 		 * @param request Request-Object
+		 *
 		 * @param request.payload.expedition.title title
 		 * @param request.payload.expedition.description description
 		 * @param request.payload.expedition.needsApproval needsApproval
@@ -311,12 +312,20 @@ export module ExpeditionController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function createExpedition(request: any, reply: any): void {
+		export function create(request: any, reply: any): void {
 			// Create promise.
 			let promise: Promise<any> = ActivityController.findByKey(request.payload.activity).then((activity: Activity) => {
 				if(!activity) return Promise.reject(Boom.badRequest('Activity does not exist!'));
 				
-				return ExpeditionController.createExpedition(request.payload.expedition).then((expedition: Expedition) => ExpeditionController.getPublicExpedition(expedition, request.auth.credentials));
+				return ExpeditionController.create(request.payload.expedition).then((expedition: Expedition) => {
+					return ExpeditionController.save(expedition);
+				}).then((expedition: Expedition) => {
+					return ExpeditionController.setOwner(expedition, request.auth.credentials);
+				}).then((expedition: Expedition) => {
+					return ExpeditionController.approveUser(expedition, request.auth.credentials).then(() => expedition);
+				}).then((expedition: Expedition) => {
+					return ExpeditionController.getPublicExpedition(expedition, request.auth.credentials);
+				});
 			});
 			
 			reply.api(promise);
@@ -329,7 +338,7 @@ export module ExpeditionController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getExpedition(request: any, reply: any): void {
+		export function get(request: any, reply: any): void {
 			// Create promise.
 			let promise : Promise<Expedition> = ExpeditionController.findByKey(request.params.key).then((expedition: Expedition) => {
 				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
@@ -347,7 +356,7 @@ export module ExpeditionController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getExpeditionsLike(request: any, reply: any): void {
+		export function like(request: any, reply: any): void {
 			// Create promise.
 			//TODO slice
 			let promise : Promise<Expedition[]> = ExpeditionController.findByFulltext(request.params.query).then((expeditions: Expedition[]) => ExpeditionController.getPublicExpedition(expeditions.slice(request.params.offset, request.params.offset + 30), request.auth.credentials));
@@ -362,7 +371,7 @@ export module ExpeditionController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getExpeditionBy(request: any, reply: any): void {
+		export function by(request: any, reply: any): void {
 			// Create promise.
 			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
 				if(!user) return Promise.reject(Boom.notFound('User not found!'));
@@ -399,7 +408,7 @@ export module ExpeditionController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getExpeditionsNearby(request: any, reply: any): void {
+		export function nearby(request: any, reply: any): void {
 			// Create promise.
 			let promise : Promise<any> = ExpeditionController.getNearbyExpeditions(request.auth.credentials).then((expeditions: Expedition[]) => {
 				return getPublicExpedition(expeditions, request.auth.credentials);

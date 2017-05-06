@@ -2,6 +2,7 @@ import * as Webpack from "webpack";
 import * as ExtractTextPlugin from "extract-text-webpack-plugin";
 import * as HtmlWebpackPlugin from "html-webpack-plugin";
 import {root} from "../config";
+let CleanObsoleteChunks = require('webpack-clean-obsolete-chunks');
 
 export default {
 	env: process.env.ENV,
@@ -135,7 +136,8 @@ export default {
 								name: [
 									'static/app', 'static/vendor', 'static/polyfill'
 								]
-							} )
+							} ),
+							new CleanObsoleteChunks()
 						],
 					}
 				}

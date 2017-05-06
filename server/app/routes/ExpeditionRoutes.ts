@@ -10,7 +10,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/expeditions/like/{query}/{offset?}',
 		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.getExpeditionsLike,
+		handler: ExpeditionController.RouteHandlers.like,
 		config: {
 			auth: {
 				scope: [
@@ -28,7 +28,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/expeditions/by/{username}',
 		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.getExpeditionBy,
+		handler: ExpeditionController.RouteHandlers.by,
 		config: {
 			auth: {
 				scope: [
@@ -63,7 +63,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/expeditions/nearby',
 		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.getExpeditionsNearby,
+		handler: ExpeditionController.RouteHandlers.nearby,
 		config: {
 			auth: {
 				scope: [
@@ -98,7 +98,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/expeditions/=/{key}',
 		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.getExpedition,
+		handler: ExpeditionController.RouteHandlers.get,
 		config: {
 			auth: {
 				scope: [
@@ -115,7 +115,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/expeditions/create',
 		method: 'POST',
-		handler: ExpeditionController.RouteHandlers.createExpedition,
+		handler: ExpeditionController.RouteHandlers.create,
 		config: {
 			auth: {
 				scope: [

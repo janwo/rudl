@@ -52,7 +52,6 @@ export module SuggestionController {
 		 */
 		export function getActivitySuggestions(request: any, reply: any): void {
 			let promise = SuggestionController.getActivitySuggestions(request.auth.credentials).then((activities: Activity[]) => {
-				console.log(activities);
 				return ActivityController.getPublicActivity(activities, request.auth.credentials)
 			});
 			reply.api(promise);

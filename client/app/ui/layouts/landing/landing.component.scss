@@ -1,4 +1,5 @@
 @import '../../variables';
+@import "../../mixins";
 
 $landing-page-sidebar-width: 20rem;
 $landing-page-sidebar-dark-background-color: map_get($base-colors, 'background-inverse');
