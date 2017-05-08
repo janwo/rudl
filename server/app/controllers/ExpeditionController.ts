@@ -195,7 +195,7 @@ export module ExpeditionController {
 		return graph.vertexCollection(DatabaseManager.arangoCollections.expeditions.name).remove(expedition._id);
 	}
 	
-	export function create(recipe: ExpeditionRecipe) : Promise<Expedition> {
+	export function create(recipe: ExpeditionRecipe, activity: Activity, user: User) : Promise<Expedition> {
 		let expedition: Expedition = {
 			title: recipe.title,
 			description: recipe.description,
@@ -207,10 +207,58 @@ export module ExpeditionController {
 			createdAt: null,
 			updatedAt: null
 		};
-		return Promise.resolve(expedition);
+		
+		// Trim values.
+		expedition.description = expedition.description.trim();
+		expedition.title = expedition.title.trim();
+		
+		return DatabaseManager.arangoClient.transaction({
+			write: [
+				DatabaseManager.arangoCollections.expeditions.name,
+				DatabaseManager.arangoCollections.expeditionIsItem.name,
+				DatabaseManager.arangoCollections.userJoinsExpedition.name,
+				DatabaseManager.arangoCollections.userOwnsExpedition.name,
+			]
+		}, String((params: any) => {
+			let graph = require("@arangodb/general-graph")._graph(params.graph);
+			let expedition: Expedition = graph[params.expeditionCollection].save(params.expedition);
+			
+			graph[params.expeditionIsItemCollection].save({
+				_from: expedition._id,
+				_to: params.activity._id,
+				createdAt: params.now,
+				updatedAt: params.now
+			});
+			
+			graph[params.userFollowsExpedition].save({
+				_from: params.user._id,
+				_to: expedition._id,
+				createdAt: params.now,
+				updatedAt: params.now
+			});
+			
+			graph[params.userOwnsExpedition].save({
+				_from: params.user._id,
+				_to: expedition._id,
+				createdAt: params.now,
+				updatedAt: params.now
+			});
+			
+			return Object.assign(params.expedition, expedition);
+		}), {
+			graph: DatabaseManager.arangoGraphs.mainGraph.name,
+			expeditionCollection: DatabaseManager.arangoCollections.expeditions.name,
+			expeditionIsItemCollection: DatabaseManager.arangoCollections.expeditionIsItem.name,
+			userFollowsExpedition: DatabaseManager.arangoCollections.userJoinsExpedition.name,
+			userOwnsExpedition: DatabaseManager.arangoCollections.userOwnsExpedition.name,
+			expedition: expedition,
+			activity: activity,
+			user: user,
+			now: new Date().toISOString(),
+		})
 	}
 	
-	export function save(expedition: Expedition): Promise<Expedition> {
+	export function update(expedition: Expedition): Promise<Expedition> {
 		expedition.description = expedition.description.trim();
 		expedition.title = expedition.title.trim();
 		
@@ -248,34 +296,6 @@ export module ExpeditionController {
 	
 	export function getOwner(expedition: Expedition) : Promise<User> {
 		return DatabaseManager.arangoFunctions.inbound(expedition._id, DatabaseManager.arangoCollections.userOwnsExpedition.name);
-	}
-	
-	/**
-	 * Changes the activity of the expedition.
-	 * @param expedition
-	 * @param activity
-	 * @returns {Promise<any>|Promise<TResult|any>|Promise<TResult>|Promise<TResult2|TResult1>}
-	 */
-	export function setActivity(expedition: Expedition, activity: Activity): Promise<Expedition> {
-		let graph = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name);
-		let owns = graph.edgeCollection(DatabaseManager.arangoCollections.expeditionIsItem.name);
-		
-		// Exists owner edge?
-		return owns.byExample({
-			_from: expedition._id
-		}, {
-			limit: 1
-		}).then(cursor => cursor.next() as any as ExpeditionIsItem).then((edge: ExpeditionIsItem) => {
-			// Create new edge?
-			if(!edge) edge = {
-				_from: expedition._id,
-				_to: activity._id
-			};
-			
-			// Update edge.
-			edge._to = activity._id;
-			return DatabaseManager.arangoFunctions.updateOrCreate(edge, DatabaseManager.arangoCollections.expeditionIsItem.name);
-		}).then(() => expedition);
 	}
 	
 	export function getActivity(expedition: Expedition): Promise<Activity> {
@@ -316,15 +336,7 @@ export module ExpeditionController {
 			let promise: Promise<any> = ActivityController.findByKey(request.payload.activity).then((activity: Activity) => {
 				if(!activity) return Promise.reject(Boom.badRequest('Activity does not exist!'));
 				
-				return ExpeditionController.create(request.payload.expedition).then((expedition: Expedition) => {
-					return ExpeditionController.save(expedition);
-				}).then((expedition: Expedition) => {
-					return ExpeditionController.setOwner(expedition, request.auth.credentials);
-				}).then((expedition: Expedition) => {
-					return ExpeditionController.approveUser(expedition, request.auth.credentials).then(() => expedition);
-				}).then((expedition: Expedition) => {
-					return ExpeditionController.setActivity(expedition, activity);
-				}).then((expedition: Expedition) => {
+				return ExpeditionController.create(request.payload.expedition, activity, request.auth.credentials).then((expedition: Expedition) => {
 					return ExpeditionController.getPublicExpedition(expedition, request.auth.credentials);
 				});
 			});
