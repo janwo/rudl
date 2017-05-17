@@ -12,28 +12,28 @@ import {BoardingComponent} from "./ui/layouts/boarding/boarding.component";
 import {BoardingGuard} from "./guards/boarding";
 import {UserComponent} from "./ui/layouts/user/user.component";
 import {UserListsComponent} from "./ui/layouts/user/user-lists.component";
-import {UserActivitiesComponent} from "./ui/layouts/user/user-activities.component";
+import {UserRudelComponent} from "./ui/layouts/user/user-rudel.component";
 import {UserFolloweesComponent} from "./ui/layouts/user/user-followees.component";
 import {UserFollowersComponent} from "./ui/layouts/user/user-followers.component";
-import {ActivityComponent} from "./ui/layouts/activity/activity.component";
+import {RudelComponent} from "./ui/layouts/rudel/rudel.component";
 import {LandingComponent} from "./ui/layouts/landing/landing.component";
-import {ActivityResolver} from "./resolver/activity";
+import {RudelResolver} from "./resolver/rudel";
 import {ListResolver} from "./resolver/list";
 import {UserResolver} from "./resolver/user";
 import {ExpeditionResolver} from "./resolver/expedition";
 import {ExpeditionComponent} from "./ui/layouts/expedition/expedition.component";
-import {ActivityCreateExpeditionComponent} from "./ui/layouts/activity/activity-create-expedition.component";
-import {ActivityFollowersComponent} from "./ui/layouts/activity/activity-followers.component";
-import {ActivityExpeditionsComponent} from "./ui/layouts/activity/activity-expeditions.component";
-import {ActivityEditComponent} from "./ui/layouts/activity/activity-edit.component";
-import {ActivityAddToListComponent} from "./ui/layouts/activity/activity-add-to-list.component";
-import {ListActivitiesComponent} from "./ui/layouts/list/list-activities.component";
+import {RudelCreateExpeditionComponent} from "./ui/layouts/rudel/rudel-create-expedition.component";
+import {RudelFollowersComponent} from "./ui/layouts/rudel/rudel-followers.component";
+import {RudelExpeditionsComponent} from "./ui/layouts/rudel/rudel-expeditions.component";
+import {RudelEditComponent} from "./ui/layouts/rudel/rudel-edit.component";
+import {RudelAddToListComponent} from "./ui/layouts/rudel/rudel-add-to-list.component";
+import {ListRudelComponent} from "./ui/layouts/list/list-rudel.component";
 import {ListFollowersComponent} from "./ui/layouts/list/list-followers.component";
 import {NotFoundComponent} from "./ui/layouts/404/404.component";
 import {ExpeditionMapComponent} from "./ui/layouts/expedition/expedition-map.component";
 import {ExpeditionAttendeesComponent} from "./ui/layouts/expedition/expedition-attendees.component";
 import {ExpeditionCommentsComponent} from "./ui/layouts/expedition/expedition-comments.component";
-import {ActivityPastExpeditionsComponent} from './ui/layouts/activity/activity-past-expeditions.component';
+import {RudelPastExpeditionsComponent} from './ui/layouts/rudel/rudel-past-expeditions.component';
 
 const appRoutes: Routes = [
     {
@@ -78,7 +78,7 @@ const appRoutes: Routes = [
 	            user: UserResolver
             }, component: UserComponent, canActivate: [BoardingGuard ], children: [
 	            { path: '', redirectTo: 'rudel', pathMatch: 'full' },
-	            { path: 'rudel', component: UserActivitiesComponent },
+	            { path: 'rudel', component: UserRudelComponent },
 	            { path: 'lists', component: UserListsComponent },
 	            { path: 'followers', component: UserFollowersComponent },
 	            { path: 'followees', component: UserFolloweesComponent }
@@ -98,7 +98,7 @@ const appRoutes: Routes = [
 	            list: ListResolver
             }, canActivate: [ BoardingGuard ], children: [
 	            { path: '', redirectTo: 'rudel', pathMatch: 'full' },
-	            { path: 'rudel', component: ListActivitiesComponent },
+	            { path: 'rudel', component: ListRudelComponent },
 	            { path: 'followers', component: ListFollowersComponent }
             ] },
 
@@ -115,16 +115,16 @@ const appRoutes: Routes = [
 		        image: require('../assets/boarding/radar.png'),
 		        description: 'We deleted the rudel as no followers remained.'
 	        }},
-	        { path: 'rudel/:activity', component: ActivityComponent, resolve: {
-		        activity: ActivityResolver
+	        { path: 'rudel/:rudel', component: RudelComponent, resolve: {
+		        rudel: RudelResolver
 	        }, canActivate: [ BoardingGuard ], children: [
 				{ path: '', redirectTo: 'expeditions', pathMatch: 'full' },
-		        { path: 'expeditions', component: ActivityExpeditionsComponent },
-		        { path: 'past-expeditions', component: ActivityPastExpeditionsComponent },
-		        { path: 'edit', component: ActivityEditComponent },
-		        { path: 'add-to-list', component: ActivityAddToListComponent },
-				{ path: 'followers', component: ActivityFollowersComponent },
-				{ path: 'create-expedition', component: ActivityCreateExpeditionComponent }
+		        { path: 'expeditions', component: RudelExpeditionsComponent },
+		        { path: 'past-expeditions', component: RudelPastExpeditionsComponent },
+		        { path: 'edit', component: RudelEditComponent },
+		        { path: 'add-to-list', component: RudelAddToListComponent },
+				{ path: 'followers', component: RudelFollowersComponent },
+				{ path: 'create-expedition', component: RudelCreateExpeditionComponent }
 			] },
 	        { path: 'expeditions/not-found', component: NotFoundComponent, data: {
 		        title: 'Invalid expedition id!',

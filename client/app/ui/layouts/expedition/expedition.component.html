@@ -1,8 +1,8 @@
 <div class="card">
-	<aside [routerLink]="['rudel', expedition.activity.id]">
+	<aside [routerLink]="['rudel', expedition.rudel.id]">
 		<span i18n>Streifzug von</span>
-		<emoji [emoji]="expedition.activity.links.icon"></emoji>
-		<span class="name">{{expedition.activity.name}}</span>
+		<emoji [emoji]="expedition.rudel.links.icon"></emoji>
+		<span class="name">{{expedition.rudel.name}}</span>
 	</aside>
 	<header>
 		<div class="title">

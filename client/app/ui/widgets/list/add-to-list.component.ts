@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
-import {Activity} from "../../../models/activity";
+import {Rudel} from "../../../models/rudel";
 import {Subscription} from "rxjs";
 import {ListService} from "../../../services/list.service";
-import {ActivityService} from "../../../services/activity.service";
+import {RudelService} from "../../../services/rudel.service";
 import {List} from "../../../models/list";
 import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 
@@ -14,7 +14,7 @@ import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 export class AddToListComponent implements OnInit, OnDestroy {
 	
 	@Output() onToggled: EventEmitter<ListItem> = new EventEmitter();
-	@Input() activity: Activity;
+	@Input() rudel: Rudel;
 	form: FormGroup;
 	
 	listSubscription: Subscription;
@@ -22,7 +22,7 @@ export class AddToListComponent implements OnInit, OnDestroy {
 	
 	constructor(
 		private listService: ListService,
-	    private activityService: ActivityService,
+	    private rudelService: RudelService,
 	    private fb: FormBuilder
 	){}
 	
@@ -33,7 +33,7 @@ export class AddToListComponent implements OnInit, OnDestroy {
 		});
 		
 		// Retrieve lists.
-		this.listSubscription = this.listService.by(null, true).combineLatest(this.activityService.lists(this.activity.id, 'owned')).subscribe((combination: [List[], List[]]) => {
+		this.listSubscription = this.listService.by(null, true).combineLatest(this.rudelService.lists(this.rudel.id)).subscribe((combination: [List[], List[]]) => {
 			let selectedIds = combination[1].map(list => list.id);
 			combination[0].forEach(list => {
 				let form = this.fb.group({
@@ -64,9 +64,9 @@ export class AddToListComponent implements OnInit, OnDestroy {
 		// Set pending state.
 		this.pendingToggleRequest = true;
 		
-		// Delete activity from list, if selected.
+		// Delete rudel from list, if selected.
 		if(targetList.selected) {
-			this.listService.deleteActivity(this.activity.id, targetList.list.id).subscribe(() => {
+			this.listService.deleteRudel(this.rudel.id, targetList.list.id).subscribe(() => {
 				targetList.selected = false;
 				this.onToggled.emit(targetList);
 				this.pendingToggleRequest = false;
@@ -74,8 +74,8 @@ export class AddToListComponent implements OnInit, OnDestroy {
 			return;
 		}
 		
-		// Add activity to list, if unselected.
-		this.listService.addActivity(this.activity.id, targetList.list.id).subscribe(() => {
+		// Add rudel to list, if unselected.
+		this.listService.addRudel(this.rudel.id, targetList.list.id).subscribe(() => {
 			targetList.selected = true;
 			this.onToggled.emit(targetList);
 			this.pendingToggleRequest = false;

@@ -5,7 +5,7 @@ import {Locale} from "../models/locale";
 import {UserService} from "./user.service";
 import {Expedition, ExpeditionRecipe} from "../models/expedition";
 import Translations = Locale.Translations;
-import {Activity} from '../models/activity';
+import {Rudel} from '../models/rudel';
 
 @Injectable()
 export class ExpeditionService {
@@ -15,9 +15,9 @@ export class ExpeditionService {
         private dataService: DataService
     ) {}
     
-    create(recipe: ExpeditionRecipe, activity: Activity): Observable<Expedition> {
+    create(recipe: ExpeditionRecipe, rudel: Rudel): Observable<Expedition> {
         return this.dataService.post(`/api/expeditions/create`, JSON.stringify({
-            activity: activity.id,
+            rudel: rudel.id,
             expedition: recipe
         }), true).map((json: JsonResponse) => json.data as Expedition);
     }
@@ -34,14 +34,14 @@ export class ExpeditionService {
         return this.dataService.post(`/api/expeditions/leave/${expedition}`, null, true).map((json: JsonResponse) => json.data as Expedition).share();
     }
     
-    nearby(activity: string | boolean = false): Observable<Expedition[]> {
-        return this.dataService.get(activity === false ? `/api/expeditions/nearby` : `/api/expeditions/nearby/${activity}`, true).map((json: JsonResponse) => {
+    nearby(rudel: string | boolean = false): Observable<Expedition[]> {
+        return this.dataService.get(rudel === false ? `/api/expeditions/nearby` : `/api/expeditions/nearby/${rudel}`, true).map((json: JsonResponse) => {
             return json.data;
         }).share();
     }
     
-    by(username: string = 'me', activity: string | boolean = false): Observable<Expedition[]> {
-        return this.dataService.get(activity ? `/api/expeditions/by/${username}/in/${activity}`: `/api/expeditions/by/${username}`, true).map((json: JsonResponse) => {
+    by(username: string = 'me', rudel: string | boolean = false): Observable<Expedition[]> {
+        return this.dataService.get(rudel ? `/api/expeditions/by/${username}/in/${rudel}`: `/api/expeditions/by/${username}`, true).map((json: JsonResponse) => {
             return json.data;
         }).share();
     }

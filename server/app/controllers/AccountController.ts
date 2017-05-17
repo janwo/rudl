@@ -1,18 +1,18 @@
-
 import * as Boom from "boom";
 import * as Path from 'path';
-import * as CryptoJS from "crypto-js";
-import * as Joi from "joi";
 import {Config} from "../../../run/config";
-import {User, UserProvider, UserValidation, UserRoles} from "../models/user/User";
-import {DatabaseManager} from "../Database";
-import {Cursor} from "arangojs";
+import {User, UserRoles} from "../models/user/User";
+import {DatabaseManager, TransactionSession} from "../Database";
 import {UserController} from "./UserController";
 import * as sharp from "sharp";
+import Transaction from "neo4j-driver/lib/v1/transaction";
+import {AuthController} from './AuthController';
+import Result from 'neo4j-driver/lib/v1/result';
 
 export module AccountController {
 	
 	interface UserRecipe {
+		id: string;
 		username: string;
 		mail: string;
 		password?: string;
@@ -20,165 +20,80 @@ export module AccountController {
 		lastName: string;
 	}
 	
-	//TODO ERROR HANDLING FOR USERNAME OR MAIL COLLISION
-	export function createUser(recipe: UserRecipe): Promise<User> {
-		return new Promise<User>(resolve => {
-			// Does user already exist?
-			let promise = Promise.all([
-				UserController.findByUsername(recipe.username),
-				UserController.findByMail(recipe.mail)
-			]).then((values: User[]) => {
-				if(values[0] || values[1]) return Promise.reject<User>('Cannot create user as the username or mail is already in use.');
-			
-				// Create user.
-				return {
-					firstName: recipe.firstName ,
-					lastName: recipe.lastName,
-					username: recipe.username,
-					mails: [
-						{
-							mail: recipe.mail,
-							verified: false
-						}
-					],
-					scope: [UserRoles.user],
-					location: null,
-					languages: [
-						//TODO: dynamic language
-						'de',
-						'en'
-					],
-					meta: {
-						hasAvatar: false,
-						profileText: null,
-						fulltextSearchData: null,
-						onBoard: false
-					},
-					auth: {
-						password: recipe.password,
-						providers: []
-					},
-					createdAt: null,
-					updatedAt: null
-				};
+	export function create(transaction: Transaction, recipe: UserRecipe): Promise<User> {
+		return Promise.all([
+			UserController.findByUsername(transaction, recipe.username),
+			UserController.findByMail(transaction, recipe.mail)
+		]).then((values: User[]) => {
+			if(values[0] || values[1]) return transaction.rollback().then(() => {
+				return Promise.reject<User>('Cannot create user as the username or mail is already in use.');
 			});
-			
+		
 			// Create user.
-			promise.then((user: User) => setPassword(user, user.auth.password)).then(resolve);
-		});
-		
-	}
-	
-	interface CheckUsernameResult {
-		username: string;
-		available: boolean;
-		recommendations?: Array<string>
-	}
-	
-	//TODO GET RID OF BOOM HERE
-	export function checkUsername(username: string): Promise<CheckUsernameResult> {
-		//TODO The recommendation array does return strings greater than 16 chars.
-		// Check validity.
-		if (!Joi.validate(username, UserValidation.username)) return Promise.reject<CheckUsernameResult>(Boom.badRequest('Username has an invalid length or unexpected characters.'));
-		
-		let aqlQuery = `FOR u in @@collection FILTER REGEX_TEST(u.username, "^${username}[0-9]*$") RETURN u`;//TODO Bind Parameter?
-		let aqlParams = {
-			'@collection': DatabaseManager.arangoCollections.users.name
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.map((user: User) => user.username)).then((takenUsernames: Array<string>) => {
-			let usernameCheckResult: any = {
-				username: username,
-				available: takenUsernames.length == 0 || takenUsernames.indexOf(username) < 0
-			};
-			
-			if (!usernameCheckResult.available) {
-				// Add recommendations.
-				usernameCheckResult.recommendations = [];
-				
-				let pad = (num: number) => {
-					let padNum: string = num.toString();
-					while (padNum.length < 2) padNum = "0" + padNum;
-					return padNum;
-				};
-				
-				/*
-				 Method 1 - Append a number.
-				 Method 2 - Append a number with pad.
-				 */
-				let methods = [
-					`${username}#`,
-					`${username}##`
-				];
-				methods.forEach(method => {
-					let counter: number = 2;
-					while (true) {
-						let suggestion = method.replace('##', pad(counter)).replace('#', counter.toString());
-						if (takenUsernames.indexOf(suggestion) < 0) {
-							usernameCheckResult.recommendations.push(suggestion);
-							break;
-						}
-						counter++;
+			let user: User = {
+				firstName: recipe.firstName ,
+				lastName: recipe.lastName,
+				username: recipe.username,
+				id: recipe.id,
+				scope: [UserRoles.user],
+				location: {
+					lng: null,
+					lat: null
+				},
+				languages: [
+					//TODO: dynamic language
+					'de',
+					'en'
+				],
+				hasAvatar: false,
+				profileText: null,
+				onBoard: false,
+				mails: {
+					primary: {
+						mail: recipe.mail,
+						verified: false
+					},
+					secondary: {
+						mail: recipe.mail,
+						verified: false
 					}
-				});
-			}
-			
-			return usernameCheckResult;
+				},
+				password: AuthController.hashPassword(recipe.password),
+				createdAt: null,
+				updatedAt: null
+			};
+			return this.save(transaction, user).then(() => user);
 		});
 	}
 	
-	export function setPassword(user: User, password: string): Promise<User> {
-		return new Promise<User>(resolve => {
-			user.auth.password = CryptoJS.AES.encrypt(password, Config.backend.salts.password).toString();
-			resolve(user);
-		});
-	}
-	
-	// TODO GET RID OF BOOM HERE
-	export function checkPassword(user: User, password: string): Promise<User> {
-		return new Promise<User>((resolve, reject) => {
-			let decrypted = CryptoJS.AES.decrypt(user.auth.password, Config.backend.salts.password).toString(CryptoJS.enc.Utf8);
-			if(password !== decrypted) {
-				reject(Boom.badRequest('Combination of username and password does not match.'));
-				return;
-			}
-			
-			resolve(user);
-		});
-	}
-	
-	export function addProvider(user: User, provider: UserProvider, save: boolean = false): Promise<User> {
-		return new Promise<User>(resolve => {
-			let existingProviderIndex: number = user.auth.providers.findIndex(elem => elem.provider === provider.provider && elem.userIdentifier === provider.userIdentifier);
-			if (existingProviderIndex >= 0)
-				user.auth.providers[existingProviderIndex] = provider;
-			else
-				user.auth.providers.push(provider);
-			return resolve(save ? AccountController.save(user) : user);
-		});
-	}
-	
-	export function removeProvider(user: User, provider: UserProvider, save: boolean = false): Promise<User> {
-		return new Promise<User>(resolve => {
-			let existingProviderIndex: number = user.auth.providers.findIndex(elem => elem.provider === provider.provider && elem.userIdentifier === provider.userIdentifier);
-			if (existingProviderIndex >= 0) user.auth.providers.splice(existingProviderIndex, 1);
-			return resolve(save ? AccountController.save(user) : user);
-		});
-	}
-	
-	export function updateFulltextSearchData(user: User) {
-		user.meta.fulltextSearchData = [
-			user.username,
-			user.firstName,
-			user.lastName
-		].join(' ');
-	}
-	
-	export function save(user: User): Promise<User> {
-		// Redefine search data.
-		updateFulltextSearchData(user);
+	export function availableUsername(transaction: Transaction, username: string): Promise<string> {
+		let pad = (num: number) => {
+			let padNum: string = num.toString();
+			while (padNum.length < 2) padNum = "0" + padNum;
+			return padNum;
+		};
 		
-		// Create.
-		return DatabaseManager.arangoFunctions.updateOrCreate(user, DatabaseManager.arangoCollections.users.name);
+		let nextAvailableUsername = (username: string, suffix: number = 0): Promise<string> => {
+			let fullUsername = suffix > 0 ? username + pad(suffix) : username;
+			return UserController.findByUsername(transaction, fullUsername).then((user: User) => {
+				return user ? nextAvailableUsername(username, suffix + 1) : fullUsername;
+			});
+		};
+		
+		return nextAvailableUsername(username);
+	}
+	
+	export function save(transaction: Transaction, user: User): Promise<void> {
+		// Set timestamps.
+		let now = new Date().toISOString();
+		if(!user.createdAt) user.createdAt = now;
+		user.updatedAt = now;
+		
+		// Save.
+		return transaction.run("MERGE (u:User { username: $user.username }) ON CREATE SET u = $flattenUser ON MATCH SET u = $flattenUser", {
+			user: user,
+			flattenUser: DatabaseManager.neo4jFunctions.flatten(user)
+		}).then(() => {});
 	}
 	
 	export namespace RouteHandlers {
@@ -192,6 +107,8 @@ export module AccountController {
 		 */
 		export function uploadAvatar(request: any, reply: any): void {
 			let user = request.auth.credentials;
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
 			let promise = new Promise((resolve, reject) => {
 				if (!request.payload.filename) {
 					reject(Boom.badData('Missing file payload.'));
@@ -215,17 +132,19 @@ export module AccountController {
 				// Execute transformations, update and return user profile.
 				let promise = Promise.all(transformations).then(() => {
 					user.meta.hasAvatar = true;
-					return AccountController.save(user);
-				}).then((user: User) => UserController.getPublicUser(user, user));
+					return AccountController.save(transaction, user).then(() => {
+						return UserController.getPublicUser(transaction, user, user);
+					});
+				}).catch((err: any) => {
+					// Log + forward error.
+					request.log(err);
+					return Promise.reject(Boom.badImplementation('An server error occurred! Please try again.'));
+				});
 				
 				resolve(promise);
-			}).catch(err => {
-				// Log + forward error.
-				request.log(err);
-				return Promise.reject(Boom.badImplementation('An server error occurred! Please try again.'))
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
@@ -238,17 +157,21 @@ export module AccountController {
 		 */
 		export function updateLocation(request: any, reply: any): void {
 			// Update location.
-			request.auth.credentials.location = [
-				request.payload.latitude,
-				request.payload.longitude
-			];
+			let user = request.auth.credentials;
+			
+			user.location = {
+				lat: request.payload.latitude,
+				lng: request.payload.longitude
+			};
 			
 			// Save user.
-			let promise = AccountController.save(request.auth.credentials).then((user: User) => {
-				return UserController.getPublicUser(user, user);
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise = AccountController.save(transaction, user).then(() => {
+				return UserController.getPublicUser(transaction, user, user);
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
@@ -260,14 +183,37 @@ export module AccountController {
 		 */
 		export function updateBoarding(request: any, reply: any): void {
 			// Update location.
-			request.auth.credentials.meta.onBoard = request.payload.boarded;
+			let user = request.auth.credentials;
+			user.onBoard = request.payload.boarded;
 			
 			// Save user.
-			let promise = AccountController.save(request.auth.credentials).then((user: User) => {
-				return UserController.getPublicUser(user, user);
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise = AccountController.save(transaction, user).then(() => {
+				return UserController.getPublicUser(transaction, user, user);
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [POST] /api/account/check-username/{username}
+		 * @param request Request-Object
+		 * @param request.params.username username
+		 * @param reply Reply-Object
+		 */
+		export function checkUsername(request: any, reply: any): void {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = AccountController.availableUsername(transaction, request.params.username).then((username: string) => {
+				let obj: any = {
+					available: request.params.username == username,
+				};
+				if(!obj.available) obj.suggestion = username;
+				return obj;
+			});
+			
+			reply.api(promise, transactionSession);
 		}
 	}
 }

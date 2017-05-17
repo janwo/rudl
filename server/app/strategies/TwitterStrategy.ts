@@ -1,11 +1,13 @@
 import {Config} from "../../../run/config";
-import {UserProvider, User} from "../models/user/User";
+import {User} from "../models/user/User";
 import {StrategyConfiguration} from "../binders/StrategiesBinder";
-import {UserController} from "../controllers/UserController";
 import {AuthController} from "../controllers/AuthController";
 import {AccountController} from "../controllers/AccountController";
 import * as Boom from "boom";
 import * as faker from "faker";
+import {DatabaseManager, TransactionSession} from '../Database';
+import {UserAuthProvider} from '../models/user/UserAuthProvider';
+import * as Uuid from "uuid";
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -29,50 +31,48 @@ export function handleTwitter(request: any, reply: any): void {
 	// Authenticated successful?
 	if (!request.auth.isAuthenticated) reply(Boom.badRequest('Authentication failed: ' + request.auth.error.message));
 	
-	let profile = request.auth.credentials.profile;
+	let profile: any = request.auth.credentials.profile;
+	let iSpace: number = profile.displayName.indexOf(' ');
+	profile.firstName = iSpace !== -1 ? profile.displayName.substring(0, iSpace) : profile.displayName;
+	profile.lastName = iSpace !== -1 ? profile.displayName.substring(iSpace + 1) : '';
 	
 	// Create provider.
-	let provider: UserProvider = {
+	let provider: UserAuthProvider = {
 		provider: StrategyConfig.strategyConfig.provider,
-		userIdentifier: profile.id,
+		identifier: profile.id,
 		accessToken: request.auth.credentials.token,
 		refreshBefore: request.auth.credentials.expiresIn ? Math.trunc(request.auth.credentials.expiresIn + Date.now() / 1000) : null,
 		refreshToken: request.auth.credentials.refreshToken || undefined
 	};
 	
-	UserController.findByProvider(provider).then((user: User) => {
-		// Create user?
-		if(!user) {
-			let displayName = profile.displayName.trim();
-			let iSpace = displayName.indexOf(' '); // index of the whitespace following the firstName
-			let firstName = iSpace !== -1 ? displayName.substring(0, iSpace) : displayName;
-			let lastName = iSpace !== -1 ? displayName.substring(iSpace + 1) : '';
-			
-			// Create User.
-			return AccountController.checkUsername(profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then(checkResults => {
-				if (checkResults.available) return checkResults.username;
-				return checkResults.recommendations[Math.trunc(Math.random() * checkResults.recommendations.length)];
-			}).then(username => {
-				return AccountController.createUser({
-					firstName: firstName,
-					lastName: lastName,
-					password: faker.internet.password(10),
-					username: username,
-					mail: null /* default, Twitter does not return mails in those requests */
-				});
+	// Start transaction.
+	let transactionSession = new TransactionSession();
+	let transaction = transactionSession.beginTransaction();
+	let promise = AuthController.authByProvider(provider).then((user: User) => {
+		// Create User?
+		return user ? user : AccountController.availableUsername(transaction, profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then((username: string) => {
+			return AccountController.create(transaction, {
+				id: Uuid.v4(),
+				firstName: profile.firstName,
+				lastName: profile.lastName,
+				username: username,
+				password: AuthController.hashPassword(faker.internet.password(10)),
+				mail: profile.email // Does not exist for twitter
 			});
-		}
-		
-		return user;
-	}).then((user: User) => AccountController.addProvider(user, provider)).then(user => AccountController.save(user)).then(user => AuthController.signToken(user)).then(token => {
+		});
+	}).then((user: User) => Promise.all([
+		AuthController.addAuthProvider(transaction, user.username, provider),
+		AuthController.signToken(user)
+	]));
+	
+	transactionSession.finishTransaction(promise).then((values: [void, string]) => {
 		reply.view('message', {
 			title: 'Authentication',
 			domain: Config.backend.domain,
-			type: Config.frontend.messageTypes.oauth,
-			token: token,
-			message: token
-		}).header("Authorization", token);
-	}).catch(err => {
+			token: values[1],
+			type: Config.frontend.messageTypes.oauth
+		}).header("Authorization", values[1]);
+	}).catch((err: any) => {
 		reply(Boom.badRequest(err));
 	});
 }

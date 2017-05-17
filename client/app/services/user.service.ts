@@ -36,7 +36,7 @@ export class UserService {
                 console.log(`authenticatedProfile was set to: username = ${authenticatedUser.user.username}, language = ${authenticatedUser.user.languages ? authenticatedUser.user.languages[0] : 'none'}.`);
                 
                 // Request position updates immediately if user is boarded.
-                if(authenticatedUser.user.meta.onBoard && this.watchPositionCallerId === false) {
+                if(authenticatedUser.user.onBoard && this.watchPositionCallerId === false) {
 	                console.log('Resume position updates.');
 	            	this.resumePositionUpdates();
                 }

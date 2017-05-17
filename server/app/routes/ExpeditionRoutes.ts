@@ -43,7 +43,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/expeditions/by/{username}/in/{activity}',
+		path: '/api/expeditions/by/{username}/in/{rudel}',
 		method: 'GET',
 		handler: ExpeditionController.RouteHandlers.getActivityExpeditionsBy,
 		config: {
@@ -54,7 +54,7 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					activity: Joi.string(),
+					rudel: Joi.string(),
 					username: UsernameValidation
 				}
 			}
@@ -78,7 +78,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/expeditions/nearby/{activity}',
+		path: '/api/expeditions/nearby/{rudel}',
 		method: 'GET',
 		handler: ExpeditionController.RouteHandlers.getActivityExpeditionsNearby,
 		config: {
@@ -89,14 +89,14 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					activity: Joi.string(),
+					rudel: Joi.string(),
 					radius: Joi.number().min(0)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/expeditions/=/{key}',
+		path: '/api/expeditions/=/{id}',
 		method: 'GET',
 		handler: ExpeditionController.RouteHandlers.get,
 		config: {
@@ -107,7 +107,7 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					key: Joi.string()
+					id: Joi.string()
 				}
 			}
 		}
@@ -124,7 +124,7 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				payload: {
-					activity: Joi.string(),
+					rudel: Joi.string(),
 					expedition: ExpeditionValidation
 				}
 			}

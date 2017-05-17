@@ -1,4 +1,3 @@
-import {Cursor} from "arangojs";
 import * as _ from "lodash";
 import {Config} from "../../../run/config";
 

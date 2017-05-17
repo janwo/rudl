@@ -6,7 +6,9 @@ export interface User extends Document {
 	lastName: string;
 	username: string;
 	location: number[];
-	meta: UserMeta;
+	profileText: string;
+	hasAvatar: boolean;
+	onBoard: boolean;
 	relations: UserRelations;
 	statistics: UserStatistics;
 	links: UserLinks;
@@ -21,12 +23,6 @@ export interface UserLinks {
 	};
 }
 
-export interface UserMeta {
-	hasAvatar: boolean;
-	profileText: string;
-	onBoard: boolean;
-}
-
 export interface UserRelations {
 	isFollowee: boolean;
 	isFollower: boolean;
@@ -38,5 +34,5 @@ export interface UserStatistics {
 	followers: number;
 	followees: number;
 	lists: number;
-	activities: number;
+	rudel: number;
 }

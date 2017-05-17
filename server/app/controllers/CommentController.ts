@@ -1,48 +1,68 @@
 import * as Boom from "boom";
 import * as dot from "dot-object";
-import {DatabaseManager} from "../Database";
-import {Cursor} from "arangojs";
+import {DatabaseManager, TransactionSession} from "../Database";
 import {User} from "../models/user/User";
 import {UserController} from "./UserController";
 import {Comment} from "../models/comment/Comment";
-import {Document} from "../models/Document";
+import {Node} from "../models/Node";
 import {List} from "../models/list/List";
+import * as Uuid from 'uuid';
 import {ExpeditionController} from "./ExpeditionController";
 import {CommentRecipe} from '../../../client/app/models/comment';
 import {Expedition} from '../models/expedition/Expedition';
+import Transaction from 'neo4j-driver/lib/v1/transaction';
 
 export module CommentController {
 	
-	export function create(document: Document, user: User, recipe: CommentRecipe) : Promise<Comment>{
+	export function create(transaction: Transaction, recipe: CommentRecipe) : Promise<Comment>{
 		let comment: Comment = {
-			_from: user._id,
-			_to: document._id,
+			id: Uuid.v4(),
 			message: recipe.message,
 			pinned: recipe.pin,
 			createdAt: null,
 			updatedAt: null
 		};
-		return Promise.resolve(comment);
+		return this.save(transaction, comment).then(() => comment);
 	}
 	
-	export function save(comment: Comment): Promise<Comment> {
-		// Trim message.
-		comment.message = comment.message.trim();
+	export function save(transaction: Transaction, comment: Comment): Promise<void> {
+		// Set timestamps.
+		let now = new Date().toISOString();
+		if(!comment.createdAt) comment.createdAt = now;
+		comment.updatedAt = now;
 		
 		// Save.
-		return DatabaseManager.arangoFunctions.updateOrCreate(comment, DatabaseManager.arangoCollections.userComment.name);
+		return transaction.run("MERGE (c:Comment {id: $comment.id}) ON CREATE SET c = $flattenComment ON MATCH SET c = $flattenComment", {
+			comment: comment,
+			flattenComment: DatabaseManager.neo4jFunctions.flatten(comment)
+		}).then(() => {});
 	}
 	
-	export function remove(comment: Comment): Promise<any> {
-		let graph = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name);
-		return graph.vertexCollection(DatabaseManager.arangoCollections.userComment.name).remove(comment._id);
+	export function assign<T extends Node>(transaction: Transaction, comment: Comment, user: User, node: T): Promise<void> {
+		return transaction.run(`MATCH(c:Comment {id: $commentId}), (u:User {id: $userId}), (n {id: $nodeId}) OPTIONAL MATCH (c)-[r]-() DETACH DELETE r WITH c, u, n CREATE UNIQUE (u)-[:OWNS_COMMENT]->(c)-[:BELONGS_TO_NODE]->(n)`, {
+			nodeId: node.id,
+			userId: user.id,
+			commentId: comment.id
+		}).then(() => {});
 	}
 	
-	export function getPublicComment(comment: Comment | Comment[], relatedUser: User) : Promise<any> {
+	export function remove(transaction: Transaction, comment: Comment): Promise<any> {
+		return transaction.run(`MATCH(c:Comment {id: $commentId}) DETACH DELETE c`, {
+			commentId: comment.id
+		}).then(() => {});
+	}
+	
+	export function get(transaction: Transaction, commentId: string): Promise<any> {
+		return transaction.run(`MATCH(c:Comment {id: $commentId}) RETURN properties(c) as c LIMIT 1`, {
+			commentId: commentId
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'c').pop());
+	}
+	
+	export function getPublicComment(transaction: Transaction, comment: Comment | Comment[], relatedUser: User) : Promise<any | any[]> {
 		let createPublicComment = (comment: Comment) : Promise<any> => {
-			let commentOwnerPromise = CommentController.getOwner(comment);
+			let commentOwnerPromise = CommentController.getOwner(transaction, comment);
 			let publicCommentOwnerPromise = commentOwnerPromise.then((owner: User) => {
-				return UserController.getPublicUser(owner, relatedUser);
+				return UserController.getPublicUser(transaction, owner, relatedUser);
 			});
 			return Promise.all([
 				commentOwnerPromise,
@@ -50,7 +70,7 @@ export module CommentController {
 			]).then((values: [User, any]) => {
 				// Build profile.
 				return Promise.resolve(dot.transform({
-					'comment._key': 'id',
+					'comment.id': 'id',
 					'comment.message': 'message',
 					'comment.pinned': 'pinned',
 					'owner': 'owner',
@@ -58,7 +78,7 @@ export module CommentController {
 				}, {
 					comment: comment,
 					owner: values[1],
-					isOwner: values[0]._key == relatedUser._key
+					isOwner: values[0].id == relatedUser.id
 				}));
 			});
 		};
@@ -71,29 +91,26 @@ export module CommentController {
 		});
 	}
 	
-	export function getOwner(comment: Comment): Promise<User> {
-		return DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.users.name).document(comment._from).then((cursor: Cursor) => cursor.next()) as any as Promise<User>;
+	export function getOwner(transaction: Transaction, comment: Comment): Promise<User> {
+		return transaction.run<User, any>(`MATCH(c:Comment {id: $commentId})<-[:OWNS_COMMENT]-(u:User) RETURN properties(u) as u LIMIT 1`, {
+			commentId: comment.id
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
 	}
 	
-	export function get(document: Document): Promise<Comment[]> {
-		return DatabaseManager.arangoFunctions.inbounds(document._id, DatabaseManager.arangoCollections.userComment.name).then((cursor: Cursor) => cursor.all()) as Promise<Comment[]>;
-	}
-	
-	export function findByKey(key: string | string[]): Promise<Comment | Comment[]> {
-		let collection = DatabaseManager.arangoClient.edgeCollection(DatabaseManager.arangoCollections.userComment.name);
-		return key instanceof Array ? collection.lookupByKeys(key) as Promise<Comment[]> : collection.byExample({
-			_key: key
-		}, {
-			limit: 1
-		}).then(cursor => cursor.next()) as any as Promise<Comment | Comment[]>;
+	export function ofNode<T extends Node>(transaction: Transaction, node: T, skip = 0, limit = 25): Promise<Comment[]> {
+		return transaction.run<Comment, any>(`MATCH(n {id: $nodeId})<-[:BELONGS_TO_NODE]-(c:Comment) ORDER BY c.createdAt RETURN properties(c) as c SKIP $skip LIMIT $limit`, {
+			nodeId: node.id,
+			limit: limit,
+			skip: skip
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'c'));
 	}
 	
 	export namespace RouteHandlers {
 		
 		/**
-		 * Handles [POST] /api/expeditions/{key}/create-comment
+		 * Handles [POST] /api/expeditions/{id}/create-comment
 		 * @param request Request-Object
-		 * @param request.params.key key
+		 * @param request.params.id id
 		 * @param request.payload.message message
 		 * @param request.payload.pin pin
 		 * @param request.auth.credentials
@@ -101,24 +118,28 @@ export module CommentController {
 		 */
 		export function createForExpedition(request: any, reply: any): void {
 			// Create promise.
-			let promise: Promise<any> = ExpeditionController.findByKey(request.params.key).then((expedition: Expedition) => {
-				if(!expedition) return Promise.reject<Comment>(Boom.badRequest('Expedition does not exist!'));
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
+				if (!expedition) return Promise.reject(Boom.badRequest('Expedition does not exist!'));
 				//TODO ONLY IF ACCEPTED
-				return CommentController.create(expedition, request.auth.credentials, {
+				return CommentController.create(transaction, {
 					pin: request.payload.pin,
 					message: request.payload.message
-				}).then((comment: Comment) => CommentController.save(comment)).then((comment: Comment) => {
-					return CommentController.getPublicComment(comment, request.auth.credentials);
+				}).then((comment: Comment) => {
+					return CommentController.assign(transaction, comment, request.auth.credentials, expedition).then(() => {
+						return CommentController.getPublicComment(transaction, comment, request.auth.credentials);
+					});
 				});
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [POST] /api/comments/=/{key}/update
+		 * Handles [POST] /api/comments/=/{id}/update
 		 * @param request Request-Object
-		 * @param request.params.key comment
+		 * @param request.params.id id
 		 * @param request.payload.recipe.message message
 		 * @param request.payload.recipe.pinned pinned
 		 * @param request.auth.credentials
@@ -126,46 +147,50 @@ export module CommentController {
 		 */
 		export function update(request: any, reply: any): void {
 			// Create promise.
-			let promise: Promise<Comment> = CommentController.findByKey(request.params.key).then((comment: Comment) => {
-				if(!comment) return Promise.reject<Comment>(Boom.badRequest('Comment does not exist!'));
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = CommentController.get(transaction, request.params.id).then((comment: Comment) => {
+				if (!comment) return Promise.reject(Boom.badRequest('Comment does not exist!'));
 				
-				return CommentController.getOwner(comment).then(owner => {
-					if (owner._key != request.auth.credentials._key) return Promise.reject<Comment>(Boom.forbidden('You do not have enough privileges to update comment.'));
+				return CommentController.getOwner(transaction, comment).then(owner => {
+					if (owner.id != request.auth.credentials.id) return Promise.reject(Boom.forbidden('You do not have enough privileges to update comment.'));
 					
 					// Update comment.
 					if (request.payload.pinned) comment.pinned = request.payload.pinned;
 					if (request.payload.message) comment.message = request.payload.message;
-					return CommentController.save(comment);
-				}).then(comment => CommentController.getPublicComment(comment, request.auth.credentials));
+					return CommentController.save(transaction, comment);
+				}).then(() => CommentController.getPublicComment(transaction, comment, request.auth.credentials));
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [DELETE] /api/comments/=/{key}
+		 * Handles [DELETE] /api/comments/=/{id}
 		 * @param request Request-Object
-		 * @param request.params.key key
+		 * @param request.params.id id
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
 		export function remove(request: any, reply: any): void {
 			// Create promise.
-			let promise : Promise<any> = CommentController.findByKey(request.params.key).then((comment: Comment) => {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = CommentController.get(transaction, request.params.id).then((comment: Comment) => {
 				if (!comment) return Promise.reject(Boom.notFound('Comment not found.'));
-				return CommentController.getOwner(comment).then((owner: User) => {
-					if (owner._key != request.auth.credentials._key) return Promise.reject(Boom.forbidden('You do not have enough privileges to update comment.'));
-					return CommentController.remove(comment).then(() => {});
+				return CommentController.getOwner(transaction, comment).then((owner: User) => {
+					if (owner.id != request.auth.credentials.id) return Promise.reject(Boom.forbidden('You do not have enough privileges to update comment.'));
+					return CommentController.remove(transaction, comment).then(() => {});
 				});
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [GET] /api/comments/expeditions/{key}/{offset}/{limit}
+		 * Handles [GET] /api/comments/expeditions/{id}/{offset}/{limit}
 		 * @param request Request-Object
-		 * @param request.params.key key
+		 * @param request.params.id id
 		 * @param request.params.limit limit
 		 * @param request.params.offset offset
 		 * @param request.auth.credentials
@@ -173,15 +198,15 @@ export module CommentController {
 		 */
 		export function getForExpedition(request: any, reply: any): void {
 			// Create promise.
-			let promise : Promise<any> = ExpeditionController.findByKey(request.params.key).then((expedition: Expedition) => {
-				if(!expedition) return Promise.reject<Comment[]>(Boom.badRequest('Expedition does not exist!'));
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
+				if (!expedition) return Promise.reject<Comment[]>(Boom.badRequest('Expedition does not exist!'));
 				//TODO ONLY IF ACCEPTED
-				return CommentController.get(expedition);
-			}).then((comments: Comment[]) => {
-				return comments.slice(request.params.interval[0], request.params.interval[1] > 0 ? request.params.interval[0] + request.params.interval[1] : comments.length);
-			}).then((comments: Comment[]) => CommentController.getPublicComment(comments, request.auth.credentials));
+				return CommentController.ofNode(transaction, expedition, request.params.offset, request.params.limit);
+			}).then((comments: Comment[]) => CommentController.getPublicComment(transaction, comments, request.auth.credentials));
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 	}
 }

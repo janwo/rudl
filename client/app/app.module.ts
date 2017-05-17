@@ -10,21 +10,21 @@ import {LoginGuard} from "./guards/login";
 import {DataService} from "./services/data.service";
 import {appRoutingProviders, routing} from "./app.routes";
 import {ReactiveFormsModule} from "@angular/forms";
-import {ActivityResolver} from "./resolver/activity";
+import {RudelResolver} from "./resolver/rudel";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {UserService} from "./services/user.service";
 import {IndicatorComponent} from "./ui/widgets/state/indicator.component";
 import {DropdownMenuComponent} from "./ui/widgets/menu/dropdown-menu.component";
 import {MenuComponent} from "./ui/widgets/menu/menu.component";
 import {PeopleComponent} from "./ui/layouts/people/people.component";
-import {ActivityComponent} from "./ui/layouts/activity/activity.component";
+import {RudelComponent} from "./ui/layouts/rudel/rudel.component";
 import {SettingsComponent} from "./ui/layouts/settings/settings.component";
 import {ExpanderComponent} from "./ui/widgets/control/expander.component";
 import {StatisticsComponent} from "./ui/widgets/statistics.component";
 import {RedirectComponent} from "./redirect.component";
 import {ListItemComponent} from "./ui/widgets/list/list-item.component";
 import {ListComponent} from "./ui/layouts/list/list.component";
-import {ActivityItemComponent} from "./ui/widgets/activity/activity-item.component";
+import {RudelItemComponent} from "./ui/widgets/rudel/rudel-item.component";
 import {ItemWrapperComponent} from "./ui/widgets/wrapper/item-wrapper.component";
 import {StackCardComponent, StackComponent} from "./ui/widgets/stack/stack.component";
 import {ModalComponent} from "./ui/widgets/modal/modal.component";
@@ -35,12 +35,12 @@ import {FormatPipe} from "./pipes/format.pipe";
 import {QuestionComponent} from "./ui/widgets/modal/question.component";
 import {SearchBarComponent} from "./ui/widgets/search/search-bar.component";
 import {SearchService} from "./services/search.service";
-import {CreateActivityComponent} from "./ui/widgets/activity/create-activity.component";
+import {CreateRudelComponent} from "./ui/widgets/rudel/create-rudel.component";
 import {CreateListComponent} from "./ui/widgets/list/create-list.component";
 import {CheckboxComponent} from "./ui/widgets/control/form/checkbox.component";
 import {LegalComponent} from "./ui/layouts/legal/legal.component";
 import {TranslationListComponent} from "./ui/widgets/translation/translation-list.component";
-import {ActivityService} from "./services/activity.service";
+import {RudelService} from "./services/rudel.service";
 import {ListService} from "./services/list.service";
 import {AddToListComponent} from "./ui/widgets/list/add-to-list.component";
 import {LogoComponent} from "./ui/widgets/logo.component";
@@ -53,7 +53,7 @@ import {EmptyComponent} from "./ui/widgets/state/empty.component";
 import {MenuItemComponent} from "./ui/widgets/menu/menu-item.component";
 import {LandingComponent} from "./ui/layouts/landing/landing.component";
 import {UserComponent} from "./ui/layouts/user/user.component";
-import {UserActivitiesComponent} from "./ui/layouts/user/user-activities.component";
+import {UserRudelComponent} from "./ui/layouts/user/user-rudel.component";
 import {UserFolloweesComponent} from "./ui/layouts/user/user-followees.component";
 import {UserFollowersComponent} from "./ui/layouts/user/user-followers.component";
 import {UserListsComponent} from "./ui/layouts/user/user-lists.component";
@@ -77,14 +77,14 @@ import {EmojiPickerComponent} from "./ui/widgets/control/form/emoji-picker.compo
 import {UtilService} from "./services/util.service";
 import {KeysPipe} from "./pipes/keys.pipe";
 import {SafePipe} from "./pipes/safe.pipe";
-import {ActivityEditComponent} from "./ui/layouts/activity/activity-edit.component";
-import {ActivityExpeditionsComponent} from "./ui/layouts/activity/activity-expeditions.component";
-import {ActivityPastExpeditionsComponent} from "./ui/layouts/activity/activity-past-expeditions.component";
-import {ActivityCreateExpeditionComponent} from "./ui/layouts/activity/activity-create-expedition.component";
-import {ActivityAddToListComponent} from "./ui/layouts/activity/activity-add-to-list.component";
-import {ActivityFollowersComponent} from "./ui/layouts/activity/activity-followers.component";
+import {RudelEditComponent} from "./ui/layouts/rudel/rudel-edit.component";
+import {RudelExpeditionsComponent} from "./ui/layouts/rudel/rudel-expeditions.component";
+import {RudelPastExpeditionsComponent} from "./ui/layouts/rudel/rudel-past-expeditions.component";
+import {RudelCreateExpeditionComponent} from "./ui/layouts/rudel/rudel-create-expedition.component";
+import {RudelAddToListComponent} from "./ui/layouts/rudel/rudel-add-to-list.component";
+import {RudelFollowersComponent} from "./ui/layouts/rudel/rudel-followers.component";
 import {ListFollowersComponent} from "./ui/layouts/list/list-followers.component";
-import {ListActivitiesComponent} from "./ui/layouts/list/list-activities.component";
+import {ListRudelComponent} from "./ui/layouts/list/list-rudel.component";
 import {CarouselComponent} from "./ui/widgets/wrapper/carousel.component";
 import {NotFoundComponent} from "./ui/layouts/404/404.component";
 import {ExpeditionCommentsComponent} from './ui/layouts/expedition/expedition-comments.component';
@@ -100,11 +100,11 @@ import {LegalFooterComponent} from './ui/widgets/legal-footer/legal-footer.compo
 	    StyledButtonComponent,
 	    CarouselComponent,
 	    DropdownMenuComponent,
-	    ActivityPastExpeditionsComponent,
-	    ActivityItemComponent,
+	    RudelPastExpeditionsComponent,
+	    RudelItemComponent,
 	    ItemWrapperComponent,
 	    ListComponent,
-	    ActivityComponent,
+	    RudelComponent,
 	    StatisticsComponent,
 	    SlotsComponent,
 	    ModalComponent,
@@ -122,11 +122,11 @@ import {LegalFooterComponent} from './ui/widgets/legal-footer/legal-footer.compo
 	    EmptyComponent,
 	    LoadingComponent,
 	    DashboardComponent,
-	    ActivityEditComponent,
-	    ActivityCreateExpeditionComponent,
-	    ActivityExpeditionsComponent,
-	    ActivityFollowersComponent,
-	    ActivityAddToListComponent,
+	    RudelEditComponent,
+	    RudelCreateExpeditionComponent,
+	    RudelExpeditionsComponent,
+	    RudelFollowersComponent,
+	    RudelAddToListComponent,
 	    UserAvatarComponent,
 	    ExpeditionCommentsComponent,
 	    ExpeditionAttendeesComponent,
@@ -141,11 +141,11 @@ import {LegalFooterComponent} from './ui/widgets/legal-footer/legal-footer.compo
 	    ExpanderComponent,
 	    HighlightPipe,
 	    FormatPipe,
-	    ActivityComponent,
+	    RudelComponent,
 	    SettingsComponent,
 	    ListItemComponent,
 	    StackCardComponent,
-	    CreateActivityComponent,
+	    CreateRudelComponent,
 	    CreateListComponent,
 	    CheckboxComponent,
 	    InviteComponent,
@@ -156,7 +156,7 @@ import {LegalFooterComponent} from './ui/widgets/legal-footer/legal-footer.compo
 	    LegalComponent,
 	    FormControlWrapper,
 	    UserComponent,
-	    UserActivitiesComponent,
+	    UserRudelComponent,
 	    UserFolloweesComponent,
 	    KeysPipe,
 	    UserFollowersComponent,
@@ -164,7 +164,7 @@ import {LegalFooterComponent} from './ui/widgets/legal-footer/legal-footer.compo
 	    BoardingComponent,
 	    LegalFooterComponent,
 	    ListFollowersComponent,
-	    ListActivitiesComponent,
+	    ListRudelComponent,
 	    FanComponent,
 	    LocationSearchComponent,
 	    SafePipe,
@@ -174,13 +174,13 @@ import {LegalFooterComponent} from './ui/widgets/legal-footer/legal-footer.compo
     providers: [
 	    UserService,
 	    SearchService,
-	    ActivityService,
+	    RudelService,
 	    ListService,
 	    DataService,
 	    BoardingGuard,
 	    GeocodeService,
 	    UtilService,
-	    ActivityResolver,
+	    RudelResolver,
 	    LoginGuard,
 	    UserResolver,
 	    ExpeditionResolver,

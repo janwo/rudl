@@ -36,7 +36,7 @@ export class DashboardComponent implements OnInit {
             this.dropDownMenuItems = [];
             
 	        // Add menu items for boarded user.
-	        if(userStatus.loggedIn && userStatus.user.meta.onBoard) {
+	        if(userStatus.loggedIn && userStatus.user.onBoard) {
 		        this.dropDownMenuItems.push({
 			        icon: 'paw',
 			        title: 'Deine Rudel',//TODO TRANSLATE

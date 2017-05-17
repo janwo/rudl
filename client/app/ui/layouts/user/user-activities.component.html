@@ -1,5 +1,0 @@
-<loading *ngIf="activities == null"></loading>
-<empty [emptyState]="emptyState" *ngIf="activities && activities.length == 0"></empty>
-<item-wrapper>
-	<activity-item *ngFor="let activity of activities" [activity]="activity"></activity-item>
-</item-wrapper>

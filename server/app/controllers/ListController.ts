@@ -1,25 +1,25 @@
 import * as Boom from "boom";
 import * as dot from "dot-object";
 import {User} from "../models/user/User";
-import {DatabaseManager} from "../Database";
-import {Cursor} from "arangojs";
+import {DatabaseManager, TransactionSession} from "../Database";
 import {List} from "../models/list/List";
 import {UserController} from "./UserController";
-import {Activity} from "../models/activity/Activity";
-import {ActivityController} from "./ActivityController";
-import {ListIsItem} from "../models/list/ListIsItem";
-import {Translations} from "../models/Translations";
-import {UserOwnsList} from "../models/list/UserOwnsList";
-import {UserFollowsList} from "../models/list/UserFollowsList";
+import * as Uuid from 'uuid';
+import {Rudel} from "../models/rudel/Rudel";
 import {ListRecipe} from "../../../client/app/models/list";
+import Transaction from 'neo4j-driver/lib/v1/transaction';
+import Result from 'neo4j-driver/lib/v1/result';
+import {RudelController} from './RudelController';
+import {TranslationsKeys} from '../models/Translations';
+import {Translations} from '../models/Translations';
 
 export module ListController {
 	
-	export function getPublicList(list: List | List[], relatedUser: User) : Promise<any> {
+	export function getPublicList(transaction: Transaction, list: List | List[], relatedUser: User) : Promise<any | any[]> {
 		let createPublicList = (list: List) : Promise<any> => {
-			let listOwnerPromise = ListController.getOwner(list);
-			let publicListOwnerPromise = listOwnerPromise.then((owner: User) => UserController.getPublicUser(owner, relatedUser));
-			let listStatisticsPromise = ListController.getStatistics(list, relatedUser);
+			let listOwnerPromise = ListController.getOwner(transaction, list);
+			let publicListOwnerPromise = listOwnerPromise.then((owner: User) => UserController.getPublicUser(transaction, owner, relatedUser));
+			let listStatisticsPromise = ListController.getStatistics(transaction, list, relatedUser);
 			
 			return Promise.all([
 				listOwnerPromise,
@@ -31,20 +31,20 @@ export module ListController {
 				
 				// Build profile.
 				return dot.transform({
-					'list._key': 'id',
+					'list.id': 'id',
 					'list.translations': 'translations',
 					'owner': 'owner',
 					'links': 'links',
 					'isOwner': 'relations.isOwned',
 					'statistics.isFollowed': 'relations.isFollowed',
-					'statistics.activities': 'statistics.activities',
+					'statistics.rudel': 'statistics.rudel',
 					'statistics.followers': 'statistics.followers'
 				}, {
 					list: list,
 					statistics: values[2],
 					links: links,
 					owner: values[1],
-					isOwner: values[0]._key == relatedUser._key
+					isOwner: values[0].id == relatedUser.id
 				});
 			});
 		};
@@ -58,187 +58,159 @@ export module ListController {
 	}
 	
 	export interface ListStatistics {
-		activities: number;
+		rudel: number;
 		followers: number;
 		isFollowed: boolean;
 	}
 	
-	export function getStatistics(list: List, relatedUser: User) : Promise<ListStatistics> {
-		let aqlQuery = `LET listFollowers = (FOR follower IN INBOUND @listId @@edgesUserFollowsList RETURN follower._id) LET listActivities = (FOR activity IN OUTBOUND @listId @@edgesListIsItem RETURN activity._id) RETURN {isFollowed: LENGTH(INTERSECTION(listFollowers, [@userId])) > 0, followers: LENGTH(listFollowers), activities: LENGTH(listActivities)}`;
-		let aqlParams = {
-			'@edgesUserFollowsList': DatabaseManager.arangoCollections.userFollowsList.name,
-			'@edgesListIsItem': DatabaseManager.arangoCollections.listIsItem.name,
-			listId: list._id,
-			userId: relatedUser._id
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<ListStatistics>;
+	export function getStatistics(transaction: Transaction, list: List, relatedUser: User) : Promise<ListStatistics> {
+		let queries: string[] = [
+			"MATCH (list:List {id: $listId})<-[fl:FOLLOWS_LIST]-() WITH COUNT(fl) as followersCount, list",
+			"MATCH (list)<-[btl:BELONGS_TO_LIST]-() WITH listsCount, COUNT(btl) as rudelCount, followersCount",
+			"MATCH (list)<-[fl:FOLLOWS_LIST]-(:User {id: $relatedUserId}) WITH followersCount, rudelCount, COUNT(fl) > 0 as isFollowed",
+		];
+		
+		let transformations: string[] = [
+			"rudel: rudelCount",
+			"isFollowed: isFollowed",
+			"followers: followersCount"
+		];
+		
+		// Add final query.
+		queries.push(`RETURN {${transformations.join(',')}`);
+		
+		// Run query.
+		return transaction.run<any, any>(queries.join(' '), {
+			listId: list.id,
+			relatedUserId: relatedUser.id
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 0).pop());
 	}
 	
-	export function findByUser(user: User, ownsOnly = false) : Promise<List[]>{
-		return DatabaseManager.arangoFunctions.outbounds(user._id, ownsOnly ? DatabaseManager.arangoCollections.userOwnsList.name : DatabaseManager.arangoCollections.userFollowsList.name);
+	export function findByUser(transaction: Transaction, user: User, ownsOnly = false, skip = 0, limit = 25) : Promise<List[]>{
+		return transaction.run<List, any>(`MATCH(:User {id: $userId})-[:${ownsOnly ? 'OWNS_LIST' : 'FOLLOWS_LIST'}]->(l:List) RETURN properties(l) as l SKIP $skip LIMIT $limit`, {
+			userId: user.id,
+			limit: limit,
+			skip: skip
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'l'));
 	}
 	
-	export function create(recipe: ListRecipe): Promise<List>{
-		let list : List = {
+	export function create(transaction: Transaction, recipe: ListRecipe): Promise<List>{
+		let list: List = {
+			id: Uuid.v4(),
 			createdAt: null,
 			updatedAt: null,
 			translations: recipe.translations
 		};
-		return Promise.resolve(list);
+		return ListController.save(transaction, list).then(() => list);
 	}
 	
-	export function save(list: List): Promise<List> {
-		// Trim translations.
-		let translationKeys: string[] = Object.keys(list.translations);
-		translationKeys.forEach((translationKey: string) => list.translations[translationKey] = list.translations[translationKey].trim());
+	export function save(transaction: Transaction, list: List): Promise<void> {
+		// Set timestamps.
+		let now = new Date().toISOString();
+		if(!list.createdAt) list.createdAt = now;
+		list.updatedAt = now;
 		
 		// Save.
-		return DatabaseManager.arangoFunctions.updateOrCreate(list, DatabaseManager.arangoCollections.lists.name);
+		return transaction.run("MERGE (l:List {id: $list.id}) ON CREATE SET l = $flattenList ON MATCH SET l = $flattenList", {
+			list: list,
+			flattenList: DatabaseManager.neo4jFunctions.flatten(list)
+		}).then(() => {});
 	}
 	
-	/**
-	 * Changes the ownership of the list to a user.
-	 * @param list
-	 * @returns {Promise<any>|Promise<TResult|any>|Promise<TResult>|Promise<TResult2|TResult1>}
-	 */
-	export function setOwner(list: List, owner: User): Promise<List> {
-		let graph = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name);
-		let owns = graph.edgeCollection(DatabaseManager.arangoCollections.userOwnsList.name);
+	export function getOwner(transaction: Transaction, list: List) : Promise<User> {
+		return transaction.run<User, any>(`MATCH(:List {id: $listId})<-[:OWNS_LIST]-(owner:User) RETURN properties(owner) as owner LIMIT 1`, {
+			listId: list.id
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'owner').pop());
+	}
+	
+	export function get(transaction: Transaction, listId: string) : Promise<List>{
+		return transaction.run<List, any>(`MATCH(l:List {id: $listId}) RETURN properties(l) as l LIMIT 1`, {
+			listId: listId,
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'l').pop());
+	}
+	
+	export function findByFulltext(transaction: Transaction, query: string, skip = 0, limit = 25) : Promise<List[]>{
+		return transaction.run<List, any>('CALL apoc.index.search("List", $query) YIELD node as l RETURN properties(l) as l SKIP $skip LIMIT $limit', {
+			query: `${query}~`,
+			skip: skip,
+			limit: limit
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'l'));
+	}
+	
+	export function getRudel(transaction: Transaction, list: List, skip = 0, limit = 25) : Promise<Rudel[]>{
+		return transaction.run<Rudel, any>("MATCH(:List {id : $listId })-[:BELONGS_TO_LIST]->(r:Rudel) RETURN properties(r) as r SKIP $skip LIMIT $limit", {
+			listId: list.id,
+			limit: limit,
+			skip: skip
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r'));
+	}
+	
+	export function addRudel(transaction: Transaction, list: List, rudel: Rudel) : Promise<void>{
+		return transaction.run("MATCH(l:List {id : $listId }), (r:Rudel {id: $rudelId}) CREATE UNIQUE (l)<-[:BELONGS_TO_LIST]-(r)", {
+			listId: list.id,
+			rudelId: rudel.id
+		}).then(() => {});
+	}
+	
+	export function removeRudel(transaction: Transaction, list: List, rudel: Rudel) : Promise<void>{
+		return transaction.run("MATCH(l:List {id : $listId })<-[btl:BELONGS_TO_LIST]-(r:Rudel {id: $rudelId}) DETACH DELETE btl", {
+			listId: list.id,
+			rudelId: rudel.id
+		}).then(() => {});
+	}
+	
+	export function followers(transaction: Transaction, list: List, skip = 0, limit = 25) : Promise<User[]> {
+		return transaction.run<User, any>(`MATCH(:List {id: $listId})<-[:FOLLOWS_LIST]-(followers:User) RETURN properties(followers) as followers SKIP $skip LIMIT $limit`, {
+			listId: list.id,
+			skip: skip,
+			limit: limit
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'followers'));
+	}
+	
+	export function follow(transaction: Transaction, list: List, user: User) : Promise<void> {
+		// Set FOLLOWS_LIST.
+		transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) MERGE (u)-[:FOLLOWS_LIST {createdAt: $now}]->(l)", {
+			userId: user.id,
+			listId: list.id,
+			now: new Date().toISOString()
+		}).then(() => {});
 		
-		// Exists owner edge?
-		return owns.byExample({
-			_to: list._id
-		}, {
-			limit: 1
-		}).then(cursor => cursor.next() as any as UserOwnsList).then((edge: UserOwnsList) => {
-			// Create new edge?
-			if(!edge) edge = {
-				_to: list._id,
-				_from: owner._id
-			};
-			
-			// Update edge.
-			edge._from = owner._id;
-			return DatabaseManager.arangoFunctions.updateOrCreate(edge, DatabaseManager.arangoCollections.userOwnsList.name);
-		}).then(() => list);
+		// Set OWNS_LIST optionally.
+		return transaction.run("MATCH(l:List {id: $listId}), (u:User {id: $userId}) OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, l, u WHERE count = 0 CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
+			userId: user.id,
+			listId: list.id,
+			now: new Date().toISOString()
+		}).then(() => {});
 	}
 	
-	export function getOwner(list: List) : Promise<User> {
-		return DatabaseManager.arangoFunctions.inbound(list._id, DatabaseManager.arangoCollections.userOwnsList.name);
-	}
-	
-	export function remove(list: List): Promise<any> {
-		let graph = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name);
-		return graph.vertexCollection(DatabaseManager.arangoCollections.lists.name).remove(list._id);
-	}
-	
-	export function findByKey(key: string | string[]) : Promise<List | List[]>{
-		let collection = DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.lists.name);
-		return key instanceof Array ? collection.lookupByKeys(key) as Promise<List[]> : collection.byExample({
-			_key: key
-		}, {
-			limit: 1
-		}).then(cursor => cursor.next()) as any as Promise<List|List[]>;
-	}
-	
-	export function findByFulltext(query: string) : Promise<List[]>{
-		//TODO use languages of user
-		let aqlQuery = `FOR list IN FULLTEXT(@@collection, "translations.de", @query) RETURN list`;
-		let aqlParams = {
-			'@collection': DatabaseManager.arangoCollections.lists.name,
-			query: query.split(' ').map(word => '+prefix:' + word).join()
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<List[]>;
-	}
-	
-	export function getActivities(list: List, follower: User = null, ownsOnly: boolean = false) : Promise<Activity[]>{
-		let aqlQuery: string = `FOR activity IN OUTBOUND @listId @@listIsItem RETURN activity`;
-		let aqlParams: {[key: string]: string} = {
-			'@listIsItem': DatabaseManager.arangoCollections.listIsItem.name,
-			listId: list._id
-		};
+	export function unfollow(transaction: Transaction, list: List, user: User): Promise<void> {
+		transaction.run("MATCH(:User {id: $userId})-[flol:FOLLOWS_LIST:OWNS_LIST]->(:List {id: $listId}) DETACH DELETE flol", {
+			userId: user.id,
+			listId: list.id
+		}).then(() => {});
 		
-		if(follower) {
-			aqlQuery = `FOR activity IN INTERSECTION((FOR activity IN OUTBOUND @userId @@followerEdge RETURN activity), (FOR activity IN OUTBOUND @listId @@listIsItem RETURN activity)) SORT activity._id DESC RETURN activity`;
-			aqlParams['userId'] = follower._id;
-			aqlParams['@followerEdge'] = ownsOnly ? DatabaseManager.arangoCollections.userOwnsActivity.name : DatabaseManager.arangoCollections.userFollowsActivity.name;
-		}
-		
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Activity[]>;
+		// Delete, if orphan node.
+		return transaction.run("MATCH(l:List {id: $listId}) OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, l WHERE count = 0 DETACH DELETE l", {
+			listId: list.id
+		}).then(() => {});
 	}
 	
-	export function addActivity(list: List, activity: Activity) : Promise<ListIsItem>{
-		let collection = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.listIsItem.name);
-		return collection.byExample({
-			_from: list._id,
-			_to: activity._id
-		}, {
-			limit: 1
-		}).then(cursor => cursor.next() as any as ListIsItem).then((listIsItem : ListIsItem) => {
-			// Try to return any existing connection.
-			if(listIsItem) return listIsItem;
-			
-			// Add connection.
-			let edge : ListIsItem = {
-				_from: list._id,
-				_to: activity._id
-			};
-			
-			return DatabaseManager.arangoFunctions.updateOrCreate(edge, DatabaseManager.arangoCollections.listIsItem.name);
-		});
-	}
-	
-	export function removeActivity(list: List, activity: Activity) : Promise<List>{
-		let collection = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).vertexCollection(DatabaseManager.arangoCollections.listIsItem.name);
-		return collection.removeByExample({
-			_from: list._id,
-			_to: activity._id
-		}).then(() => list);
-	}
-	
-	export function followers(list: List) : Promise<User[]> {
-		return DatabaseManager.arangoFunctions.inbounds(list._id, DatabaseManager.arangoCollections.userFollowsList.name);
-	}
-	
-	export function follow(list: List, user: User) : Promise<UserFollowsList> {
-		let collection = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsList.name);
-		return collection.byExample({
-			_from: user._id,
-			_to: list._id
-		}, {
-			limit: 1
-		}).then((cursor: Cursor) => cursor.next() as any as UserFollowsList).then((userFollowsList: UserFollowsList) => {
-			// Try to return any existing connection.
-			if(userFollowsList) return userFollowsList;
-			
-			// Add connection.
-			let edge: UserFollowsList = {
-				_from: user._id,
-				_to: list._id
-			};
-			
-			return DatabaseManager.arangoFunctions.updateOrCreate(edge, DatabaseManager.arangoCollections.userFollowsList.name);
-		});
-	}
-	
-	export function unfollow(list: List, user: User): Promise<void> {
-		let graph = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name);
-		let follows = graph.edgeCollection(DatabaseManager.arangoCollections.userFollowsList.name);
-		return follows.removeByExample({
-			_from: user._id,
-			_to: list._id
-		}).then(() => {
-			return ListController.getOwner(list).then(owner => {
-				// Change owner ship?
-				if(owner._id == user._id) {
-					// Get a remaining follower.
-					return DatabaseManager.arangoFunctions.inbound(list._id, DatabaseManager.arangoCollections.userFollowsList.name).then((follower: User) => {
-						// Change ownership, if follower exists or delete list.
-						if(follower) return ListController.setOwner(list, follower).then(() => {});
-						return ListController.remove(list);
-					});
-				}
-			})
+	export function getRudelMap(transaction: Transaction, rudel: Rudel, user: User, skip = 0, limit = 25) : Promise<{
+		list: List,
+		hasRudel: boolean
+	}[]>{
+		return transaction.run<any[], any>("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) MATCH (u)-[:OWNS_LIST]->(l:List) SKIP $skip LIMIT $limit WITH l, r OPTIONAL MATCH (l)<-[btl:BELONGS_TO_LIST]-(r) RETURN {list: properties(l), hasRudel: COUNT(btl) > 0} as map", {
+			userId: user.id,
+			rudelId: rudel.id,
+			limit: limit,
+			skip: skip
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'map')).then((map: any[]) => {
+			return map.map(map => {
+				return {
+					list: DatabaseManager.neo4jFunctions.unflatten(map.list),
+					hasRudel: map.hasRudel
+				};
+			});
 		});
 	}
 	
@@ -249,159 +221,147 @@ export module ListController {
 		 * @param request Request-Object
 		 * @param request.payload.icon icon
 		 * @param request.payload.translations translations
-		 * @param request.payload.activities activities (optional)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
 		export function create(request: any, reply: any): void {
 				// Create promise.
-			let promise: Promise<List> = ListController.create({
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = ListController.create(transaction, {
 					translations: request.payload.translations
-			}).then(list => ListController.save(list)).then(list => {
-				let jobs: any[] = [
-					ListController.follow(list, request.auth.credentials),
-					ListController.setOwner(list, request.auth.credentials),
-					ActivityController.findByKey(request.payload.activities || []).then((activities: Activity[]) => {
-						return Promise.all(activities.map(activity => ListController.addActivity(list, activity)));
-					})
-				];
-				
-				return Promise.all(jobs).then(() => list);
-			}).then(list => ListController.getPublicList(list, request.auth.credentials));
+			}).then((list: List) => {
+				return ListController.follow(transaction, list, request.auth.credentials).then(() => {
+					return ListController.getPublicList(transaction, list, request.auth.credentials)
+				});
+			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [POST] /api/lists/=/{key}
+		 * Handles [POST] /api/lists/=/{id}
 		 * @param request Request-Object
-		 * @param request.params.key list
+		 * @param request.params.id list
 		 * @param request.payload.translations translations
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
 		export function update(request: any, reply: any): void {
 			// Create promise.
-			let promise: Promise<List> = ListController.findByKey(request.params.key).then((list: List) => {
-				if(!list) return Promise.reject<List>(Boom.badRequest('List does not exist!'));
-				
-				return ListController.getOwner(list).then(owner => {
-					if (owner._key != request.auth.credentials._key) return Promise.reject<List>(Boom.forbidden('You do not have enough privileges to perform this operation'));
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = ListController.get(transaction, request.params.id).then((list: List) => {
+				if(!list) return Promise.reject(Boom.badRequest('List does not exist!'));
+				return ListController.getOwner(transaction, list).then((owner: User) => {
+					if (owner.id != request.auth.credentials.id) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation'));
 					
 					// Update list.
 					if (request.payload.translations) list.translations = request.payload.translations;
-					return ListController.save(list);
-				}).then(list => ListController.getPublicList(list, request.auth.credentials));
+					return ListController.save(transaction, list);
+				}).then(() => ListController.getPublicList(transaction, list, request.auth.credentials));
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [GET] /api/lists/=/{key}
+		 * Handles [GET] /api/lists/=/{id}
 		 * @param request Request-Object
-		 * @param request.params.key key
+		 * @param request.params.id list
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
 		export function getList(request: any, reply: any): void {
 			// Create promise.
-			let promise: Promise<List> = ListController.findByKey(request.params.key).then(list => {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = ListController.get(transaction, request.params.id).then((list: List) => {
 				if (!list) return Promise.reject(Boom.notFound('List not found!'));
-				return getPublicList(list, request.auth.credentials);
+				return ListController.getPublicList(transaction, list, request.auth.credentials);
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [GET] /api/lists/=/{key}/activities/{filter?}/{offset?}/{limit?}'
+		 * Handles [GET] /api/lists/=/{id}/rudel/{offset?}
 		 * @param request Request-Object
-		 * @param request.params.key list
-		 * @param request.params.filter all, followed, owned
-		 * @param request.params.interval? array of [offset, limit?] (optional, default=[0])
+		 * @param request.params.id list
+		 * @param request.params.offset offset
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getActivities(request: any, reply: any): void {
+		export function getRudel(request: any, reply: any): void {
 			// Create promise.
-			let promise : Promise<any> = ListController.findByKey(request.params.key).then((list: List) => {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = ListController.get(transaction, request.params.id).then((list: List) => {
 				if(!list) return Promise.reject(Boom.badRequest('List does not exist!'));
-				
-				switch (request.params.filter) {
-					default:
-					case 'all':
-						return ListController.getActivities(list);
-						
-					case 'followed':
-						return ListController.getActivities(list, request.auth.credentials);
-						
-					case 'owned':
-						return ListController.getActivities(list, request.auth.credentials, true);
-				}
-			}).then((activities: Activity[]) => {
-				return activities.slice(request.params.interval[0], request.params.interval[1] > 0 ? request.params.interval[0] + request.params.interval[1] : activities.length);
-			}).then((activities: Activity[]) => {
-				return ActivityController.getPublicActivity(activities, request.auth.credentials);
+				return ListController.getRudel(transaction, list, request.params.offset).then((rudel: Rudel[]) => {
+					return RudelController.getPublicRudel(transaction, rudel, request.auth.credentials);
+				});
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [POST] /api/lists/add-activity
+		 * Handles [POST] /api/lists/add-rudel
 		 * @param request Request-Object
 		 * @param request.payload.list list
-		 * @param request.payload.activity activity
+		 * @param request.payload.rudel rudel
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function addActivity(request: any, reply: any): void {
+		export function addRudel(request: any, reply: any): void {
 			// Create promise.
-			let promise = Promise.all([
-				ListController.findByKey(request.payload.list).then((list: List) => {
-					if(list) return ListController.getOwner(list).then(user => user && user._key == request.auth.credentials._key ? list : null);
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = Promise.all([
+				ListController.get(transaction, request.payload.list).then((list: List) => {
+					if(list) return ListController.getOwner(transaction, list).then(user => user && user.id == request.auth.credentials.id ? list : null);
 					return null;
 				}),
-				ActivityController.findByKey(request.payload.activity)
-			]).then((values: [List, Activity]) => {
+				RudelController.get(transaction, request.payload.rudel)
+			]).then((values: [List, Rudel]) => {
 				let list = values[0];
-				let activity = values[1];
+				let rudel = values[1];
 				
-				if(!list || !activity) return Promise.reject(Boom.badData('List or activity does not exist or is not owned by authenticated user!'));
-				
-				return ListController.addActivity(list, activity);
+				if(!list || !rudel) return Promise.reject(Boom.badData('List or rudel does not exist or is not owned by authenticated user!'));
+				return ListController.addRudel(transaction, list, rudel);
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [POST] /api/lists/delete-activity
+		 * Handles [POST] /api/lists/delete-rudel
 		 * @param request Request-Object
 		 * @param request.payload.list list
-		 * @param request.payload.activity activity
+		 * @param request.payload.rudel rudel
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function deleteActivity(request: any, reply: any): void {
+		export function deleteRudel(request: any, reply: any): void {
 			// Create promise.
-			let promise = Promise.all([
-				ListController.findByKey(request.payload.list).then((list: List) => {
-					if(list) return ListController.getOwner(list).then(user => user && user._key == request.auth.credentials._key ? list : null);
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = Promise.all([
+				ListController.get(transaction, request.payload.list).then((list: List) => {
+					if(list) return ListController.getOwner(transaction, list).then(user => user && user.id == request.auth.credentials.id ? list : null);
 					return null;
 				}),
-				ActivityController.findByKey(request.payload.activity)
-			]).then((values: [List, Activity]) => {
+				RudelController.get(transaction, request.payload.rudel)
+			]).then((values: [List, Rudel]) => {
 				let list = values[0];
-				let activity = values[1];
+				let rudel = values[1];
 				
-				if(!list || !activity) return Promise.reject(Boom.badData('List or activity does not exist or is not owned by authenticated user!'));
-				
-				return ListController.removeActivity(list, activity);
+				if(!list || !rudel) return Promise.reject(Boom.badData('List or rudel does not exist or is not owned by authenticated user!'));
+				return ListController.removeRudel(transaction, list, rudel);
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
@@ -413,12 +373,14 @@ export module ListController {
 		 */
 		export function getListsBy(request: any, reply: any): void {
 			// Create promise.
-			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then(user => {
 				if(!user) return Promise.reject(Boom.notFound('User not found!'));
-				return ListController.findByUser(user);
-			}).then((lists: List[]) => getPublicList(lists, request.auth.credentials));
+				return ListController.findByUser(transaction, user);
+			}).then((lists: List[]) => ListController.getPublicList(transaction, lists, request.auth.credentials));
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
@@ -431,29 +393,33 @@ export module ListController {
 		 */
 		export function getListsLike(request: any, reply: any): void {
 			// Create promise.
-			//TODO offset
-			let promise : Promise<List[]> = ListController.findByFulltext(request.params.query).then((lists: List[]) => {
-				return ListController.getPublicList(lists.slice(request.params.offset, request.params.offset + 30), request.auth.credentials);
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = ListController.findByFulltext(transaction, request.params.query, request.params.offset).then((lists: List[]) => {
+				return ListController.getPublicList(transaction, lists, request.auth.credentials);
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [GET] /api/lists/=/{key}/followers/{offset?}/{limit?}
+		 * Handles [GET] /api/lists/=/{id}/followers/{offset?}
 		 * @param request Request-Object
-		 * @param request.params.key key
+		 * @param request.params.id id
+		 * @param request.params.offset offset
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
 		export function followers(request: any, reply: any): void {
 			// Create promise.
-			let promise : Promise<any> = ListController.findByKey(request.params.key).then((list: List) => {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = ListController.get(transaction, request.params.id).then((list: List) => {
 				if (!list) return Promise.reject<User[]>(Boom.badRequest('List does not exist!'));
-				return ListController.followers(list);
-			}).then((users: User[]) => UserController.getPublicUser(users, request.auth.credentials));
+				return ListController.followers(transaction, list, request.params.offset);
+			}).then((users: User[]) => UserController.getPublicUser(transaction, users, request.auth.credentials));
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
@@ -464,12 +430,14 @@ export module ListController {
 		 * @param reply Reply-Object
 		 */
 		export function follow(request: any, reply: any): void {
-			let promise = ListController.findByKey(request.params.list).then((list: List) => {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = ListController.get(transaction, request.params.list).then((list: List) => {
 				if (!list) return Promise.reject(Boom.badRequest('List does not exist!'));
-				return ListController.follow(list, request.auth.credentials).then(() => ListController.getPublicList(list, request.auth.credentials));
+				return ListController.follow(transaction, list, request.auth.credentials).then(() => ListController.getPublicList(transaction, list, request.auth.credentials));
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
@@ -480,14 +448,47 @@ export module ListController {
 		 * @param reply Reply-Object
 		 */
 		export function unfollow(request: any, reply: any): void {
-			let promise = ListController.findByKey(request.params.list).then((list: List) => {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = ListController.get(transaction, request.params.list).then((list: List) => {
 				if (!list) return Promise.reject(Boom.badRequest('List does not exist!'));
-				return ListController.unfollow(list, request.auth.credentials).then(() => {
-					return ListController.findByKey(list._key).then(list => list ? ListController.getPublicList(list, request.auth.credentials) : null);
+				return ListController.unfollow(transaction, list, request.auth.credentials).then(() => {
+					return ListController.get(transaction, list.id).then(list => {
+						return list ? ListController.getPublicList(transaction, list, request.auth.credentials) : null;
+					});
 				});
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [GET] /api/lists/map-of-rudel/{id}/{offset?}
+		 * @param request Request-Object
+		 * @param request.params.id id
+		 * @param request.params.offset? (default=[0])
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function getRudelMap(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = RudelController.get(transaction, request.params.id).then((rudel: Rudel) => {
+				if(!rudel) return Promise.reject(Boom.badRequest('Rudel does not exist!'));
+				return ListController.getRudelMap(transaction, rudel, request.auth.credentials, request.params.offset);
+			}).then((pairs: any) => {
+				return ListController.getPublicList(transaction, pairs.map((pair: any) => pair.list), request.auth.credentials).then((lists: any[]) => {
+					return lists.map((list: any, i: number) => {
+						return {
+							list: list,
+							hasRudel: pairs[i].hasRudel
+						};
+					});
+				});
+			});
+			
+			reply.api(promise, transactionSession);
 		}
 	}
 }

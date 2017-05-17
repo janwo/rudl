@@ -172,12 +172,12 @@ export default {
 				host: process.env.REDIS_HOST || 'redis',
 				port: process.env.REDIS_PORT || 6379
 			},
-			arango: {
-				host: process.env.ARANGO_HOST || 'arango',
-				port: process.env.ARANGO_PORT || 8529,
-				database: process.env.ARANGO_DB || 'rudl',
-				user: process.env.ARANGO_USER || 'rudl',
-				password: process.env.ARANGO_PASSWORD || 'sgZ$LGKJhs_df872_3f$dxvhGR$REDsfd'
+			neo4j: {
+				host: process.env.NEO4J_HOST || 'neo4j',
+				port: process.env.NEO4J_PORT || 7687,
+				database: process.env.NEO4J_DB || 'rudl',
+				user: process.env.NEO4J_USER || 'rudl',
+				password: process.env.NEO4J_PASSWORD || 'sgZ$LGKJhs_df872_3f$dxvhGR$REDsfd'
 			}
 		},
 		maxUploadBytes: {
@@ -197,7 +197,7 @@ export default {
 				redis: {
 					enabled: false
 				},
-				arango: {
+				neo4j: {
 					enabled: false
 				}
 			}

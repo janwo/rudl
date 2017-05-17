@@ -13,7 +13,7 @@ export interface List extends Document {
 	};
 	statistics: {
 		followers: number;
-		activities: number;
+		rudel: number;
 	};
 	translations: Locale.Translations;
 }
@@ -24,5 +24,5 @@ export interface ListLinks {
 
 export interface ListRecipe {
 	translations: Locale.Translations;
-	activities?: string[];
+	rudel?: string[];
 }

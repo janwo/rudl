@@ -112,12 +112,13 @@ export function hapiServer(): Promise<Server>{
 			path: Path.resolve(__dirname, './templates/views')
 		});
 		
+		// Close database on exit.
+		server.on('stop', () => DatabaseManager.disconnect());
+		
 		// Connect to database + create collections.
-		return DatabaseManager.connect().then(() => DatabaseManager.createArangoData());
+		return DatabaseManager.connect().then(() => DatabaseManager.createNeo4jData());
 	}).then(() => server.start()).then(() => {
 		console.log(`Server is running...`);
 		return server;
 	});
 }
-
-hapiServer().catch(err => console.error(err));

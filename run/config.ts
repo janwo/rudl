@@ -103,7 +103,7 @@ export const Config: {
 				redis: {
 					enabled: boolean
 				},
-				arango: {
+				neo4j: {
 					enabled: boolean
 				}
 			}
@@ -113,7 +113,7 @@ export const Config: {
 				host: string,
 				port: number
 			},
-			arango: {
+			neo4j: {
 				host: string,
 				port: number,
 				database: string,

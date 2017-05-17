@@ -5,10 +5,10 @@
 			<div class="title" (click)="expandedActivityCreation = true">
 				<span i18n>Bilde ein neues Rudel</span> <span #highlightedActivity class="highlight">{{searchValue}}</span>
 			</div>
-			<create-activity *ngIf="expandedActivityCreation" [@container]="expandedActivityCreation" (@container.start)="$event.toState && highlightedActivity.style.display = 'none'" (@container.done)="$event.toState == 'void' && highlightedActivity.style.display = 'inline'" [defaultName]="searchValue" (onCanceled)="expandedActivityCreation = false"></create-activity>
+			<create-rudel *ngIf="expandedActivityCreation" [@container]="expandedActivityCreation" (@container.start)="$event.toState && highlightedActivity.style.display = 'none'" (@container.done)="$event.toState == 'void' && highlightedActivity.style.display = 'inline'" [defaultName]="searchValue" (onCanceled)="expandedActivityCreation = false"></create-rudel>
 		</li>
-		<li *ngFor="let activity of activities">
-			<activity-item [highlight]="searchValue" [activity]="activity"></activity-item>
+		<li *ngFor="let rudel of rudel">
+			<rudel-item [highlight]="searchValue" [rudel]="rudel"></rudel-item>
 		</li>
 	</item-wrapper>
 </section>

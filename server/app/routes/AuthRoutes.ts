@@ -17,7 +17,7 @@ export const RoutesConfig: RoutesConfiguration = [
 			validate: {
 				payload: UserValidation
 			}
-		}
+		}//TODO VALIDATE
 	},
 	{
 		path: '/api/sign_in',
@@ -26,7 +26,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		config: {
 			auth: {
 				strategies: ['basic']
-			}
+			}//TODO VALIDATE
 		}
 	},
 	{

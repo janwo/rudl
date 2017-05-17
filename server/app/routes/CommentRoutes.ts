@@ -6,7 +6,7 @@ import {CommentValidation} from '../models/comment/Comment';
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
-		path: '/api/comments/expeditions/{key}/create',
+		path: '/api/comments/expeditions/{id}/create',
 		method: 'POST',
 		handler: CommentController.RouteHandlers.createForExpedition,
 		config: {
@@ -17,14 +17,14 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					key: Joi.string()
+					id: Joi.string()
 				},
 				payload: CommentValidation
 			}
 		}
 	},
 	{
-		path: '/api/comments/=/${key}/update',
+		path: '/api/comments/=/${id}/update',
 		method: 'POST',
 		handler: CommentController.RouteHandlers.update,
 		config: {
@@ -35,14 +35,14 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					key: Joi.string()
+					id: Joi.string()
 				},
 				payload: CommentValidation
 			}
 		}
 	},
 	{
-		path: '/api/comments/=/{key}',
+		path: '/api/comments/=/{id}',
 		method: 'DELETE',
 		handler: CommentController.RouteHandlers.remove,
 		config: {
@@ -53,13 +53,13 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					key: Joi.string()
+					id: Joi.string()
 				}
 			}
 		}
 	},
 	{
-		path: '/api/comments/expeditions/{key}/{offset}/{limit}',
+		path: '/api/comments/expeditions/{id}/{offset?}',
 		method: 'GET',
 		handler: CommentController.RouteHandlers.getForExpedition,
 		config: {
@@ -70,8 +70,8 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					offset: Joi.number(),
-					limit: Joi.number()
+					id: Joi.string(),
+					offset: Joi.number().min(0).default(0)
 				}
 			}
 		}

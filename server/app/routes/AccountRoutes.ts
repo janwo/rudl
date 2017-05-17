@@ -1,4 +1,4 @@
-import {UserRoles} from "../models/user/User";
+import {UserRoles, UserValidation} from "../models/user/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {Config} from "../../../run/config";
 import {AccountController} from "../controllers/AccountController";
@@ -54,6 +54,19 @@ export const RoutesConfig: RoutesConfiguration = [
 			validate: {
 				payload: {
 					boarded: Joi.boolean()
+				}
+			}
+		}
+	},
+	{
+		path: '/api/account/check-username/{username}',
+		method: 'GET',
+		handler: AccountController.RouteHandlers.checkUsername,
+		config: {
+			auth: false,
+			validate: {
+				params: {
+					username: UserValidation.username
 				}
 			}
 		}

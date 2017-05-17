@@ -1,12 +1,11 @@
 import {Translations, TranslationsValidation} from "../Translations";
-import {Document} from "../Document";
+import {Node} from "../Node";
 import * as Joi from "joi";
 
-export interface List extends Document {
+export interface List extends Node {
 	translations: Translations;
 }
 
 export const ListValidation = {
-	translations: TranslationsValidation.required(),
-	activities: Joi.array().items(Joi.string()).optional()
-}
+	translations: TranslationsValidation.required()
+};

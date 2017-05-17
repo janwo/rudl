@@ -1,10 +1,10 @@
 export interface DecodedToken {
 	tokenId: string;
-	userId: string | number;
+	userId: string;
 }
 
 export interface UserDataCache {
-	userId: string | number;
+	userId: string;
 	tokens: Array<TokenData>
 }
 

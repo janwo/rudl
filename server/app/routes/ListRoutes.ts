@@ -26,7 +26,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/lists/like/{query}',
+		path: '/api/lists/like/{query}/{offset?}',
 		method: 'GET',
 		handler: ListController.RouteHandlers.getListsLike,
 		config: {
@@ -44,7 +44,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/lists/=/{key}',
+		path: '/api/lists/=/{id}',
 		method: 'GET',
 		handler: ListController.RouteHandlers.getList,
 		config: {
@@ -55,15 +55,15 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					key: Joi.string()
+					id: Joi.string()
 				}
 			}
 		}
 	},
 	{
-		path: '/api/lists/=/{key}/activities/{filter}/{interval?}',
+		path: '/api/lists/=/{id}/rudel/{offset?}',
 		method: 'GET',
-		handler: ListController.RouteHandlers.getActivities,
+		handler: ListController.RouteHandlers.getRudel,
 		config: {
 			auth: {
 				scope: [
@@ -72,17 +72,34 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					key: Joi.string(),
-					interval: Joi.array().min(1).max(2).items(Joi.number().min(0)).default([0]),
-					filter: Joi.string().allow('all', 'owned', 'followed')
+					id: Joi.string(),
+					offset: Joi.number().min(0).default(0)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/lists/add-activity',
+		path: '/api/lists/map-of-rudel/{id}/{offset?}',
+		method: 'GET',
+		handler: ListController.RouteHandlers.getRudelMap,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					id: Joi.string(),
+					offset: Joi.number().min(0).default(0)
+				}
+			}
+		}
+	},
+	{
+		path: '/api/lists/add-rudel',
 		method: 'POST',
-		handler: ListController.RouteHandlers.addActivity,
+		handler: ListController.RouteHandlers.addRudel,
 		config: {
 			auth: {
 				scope: [
@@ -92,15 +109,15 @@ export const RoutesConfig: RoutesConfiguration = [
 			validate: {
 				payload: {
 					list: Joi.string(),
-					activity: Joi.string()
+					rudel: Joi.string()
 				}
 			}
 		}
 	},
 	{
-		path: '/api/lists/delete-activity',
+		path: '/api/lists/delete-rudel',
 		method: 'POST',
-		handler: ListController.RouteHandlers.deleteActivity,
+		handler: ListController.RouteHandlers.deleteRudel,
 		config: {
 			auth: {
 				scope: [
@@ -110,7 +127,7 @@ export const RoutesConfig: RoutesConfiguration = [
 			validate: {
 				payload: {
 					list: Joi.string(),
-					activity: Joi.string()
+					rudel: Joi.string()
 				}
 			}
 		}
@@ -131,7 +148,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/lists/=/{key}',
+		path: '/api/lists/=/{id}',
 		method: 'POST',
 		handler: ListController.RouteHandlers.update,
 		config: {
@@ -142,7 +159,7 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					key: Joi.string()
+					id: Joi.string()
 				},
 				payload: {
 					translations: ListValidation.translations.optional()
@@ -185,7 +202,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/lists/=/{key}/followers',
+		path: '/api/lists/=/{id}/followers/{offset?}',
 		method: 'GET',
 		handler: ListController.RouteHandlers.followers,
 		config: {
@@ -196,7 +213,8 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					key: Joi.string()
+					id: Joi.string(),
+					offset: Joi.number().min(0).default(0)
 				}
 			}
 		}

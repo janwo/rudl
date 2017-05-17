@@ -1,33 +1,37 @@
 import {DecoratorsConfiguration} from "../binders/DecoratorsBinder";
 import * as Boom from "boom";
+import {TransactionSession} from '../Database';
 
 export const DecoratorsConfig: DecoratorsConfiguration = [
 	{
 		type: 'reply',
 		property: 'api',
-		method: function (input: Promise<any> | any) {
+		method: function (input: Promise<any> | any, transactionSession: TransactionSession) {
+			let respondWithError = (err: any) => {
+				// Convert to Boom for proper api handling.
+				if (err instanceof Error === false) err = Boom.badImplementation(err);
+				if (!err.isBoom) err = Boom.badImplementation(err);
+				console.log(err);
+				this.response(err);
+			};
+			
 			let respondWithSuccess = (data: any) => {
+				console.log(this.response);
 				let response: any = {};
 				response['statusCode'] = 200;
 				if(data) response['data'] = data;
-				return this.response(response);
+				this.response(response);
 			};
 			
-			let respondWithError = (err: any) => {
-				if (err instanceof Error === false) err = Boom.badImplementation(err);
-				
-				// Log.
-				console.log(err.stack);
-				
-				// Convert to Boom for proper api handling.
-				if (!err.isBoom) err = Boom.badImplementation(err);
-				return this.response(err);
-			};
+			// Response via transaction completion.
+			if(transactionSession) return transactionSession.finishTransaction(input).then(data => {
+				return respondWithSuccess(data);
+			}, err => {
+				return respondWithError(err);
+			});
 			
-			if (input instanceof Promise)
-				return input.then(respondWithSuccess, respondWithError);
-			else
-				return input instanceof Error ? respondWithError(input) : respondWithSuccess(input);
+			// Response directly.
+			return input.then(respondWithSuccess, respondWithError);
 		}
 	}
 ];

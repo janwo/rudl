@@ -2,7 +2,7 @@ import {DataService, JsonResponse} from "./data.service";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
 import {List, ListRecipe} from "../models/list";
-import {Activity} from "../models/activity";
+import {Rudel} from "../models/rudel";
 import {Locale} from "../models/locale";
 import {UserService} from "./user.service";
 import {User} from "../models/user";
@@ -23,16 +23,16 @@ export class ListService {
         }).share();
     }
     
-    addActivity(activity: string, list: string): Observable<void> {
-        return this.dataService.post(`/api/lists/add-activity`, `${JSON.stringify({
-            activity: activity,
+    addRudel(rudel: string, list: string): Observable<void> {
+        return this.dataService.post(`/api/lists/add-rudel`, `${JSON.stringify({
+            rudel: rudel,
             list: list
         })}`, true).map((json: JsonResponse) => {});
     }
     
-    deleteActivity(activity: string, list: string): Observable<void> {
-        return this.dataService.post(`/api/lists/delete-activity`, `${JSON.stringify({
-            activity: activity,
+    deleteRudel(rudel: string, list: string): Observable<void> {
+        return this.dataService.post(`/api/lists/delete-rudel`, `${JSON.stringify({
+            rudel: rudel,
             list: list
         })}`, true).map((json: JsonResponse) => {});
     }
@@ -64,11 +64,11 @@ export class ListService {
         }).share();
     }
     
-    activities(list: string, filter: 'all' | 'owned' | 'followed' = 'all', offset: number = 0, limit: number = 0): Observable<Activity[]> {
-        return this.dataService.get(`/api/lists/=/${list}/activities/${filter}/[${offset},${limit}]`, true).map((json: JsonResponse) => {
-            return json.data.map((activity: Activity) => {
-                activity.name = Locale.getBestTranslation(activity.translations, this.userService.getAuthenticatedUser().user.languages);
-                return activity;
+    rudel(list: string, offset: number = 0): Observable<Rudel[]> {
+        return this.dataService.get(`/api/lists/=/${list}/rudel/${offset}`, true).map((json: JsonResponse) => {
+            return json.data.map((rudel: Rudel) => {
+                rudel.name = Locale.getBestTranslation(rudel.translations, this.userService.getAuthenticatedUser().user.languages);
+                return rudel;
             });
         }).share();
     }

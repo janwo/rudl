@@ -1,7 +1,7 @@
 @import '../../variables';
 
-$swipe-activity-frame-ratio: 100 / 66; // width / height
-$swipe-activity-swipe-area-ratio: 100 / 75; // total width|height / stack width|height
+$swipe-rudel-frame-ratio: 100 / 66; // width / height
+$swipe-rudel-swipe-area-ratio: 100 / 75; // total width|height / stack width|height
 
 :host {
   display: flex;
@@ -14,7 +14,7 @@ $swipe-activity-swipe-area-ratio: 100 / 75; // total width|height / stack width|
     flex: 1 1 auto;
     cursor: grab;
     position: relative;
-    padding-bottom: 100% / $swipe-activity-frame-ratio;
+    padding-bottom: 100% / $swipe-rudel-frame-ratio;
 
     &.dragging {
       cursor: grabbing;
@@ -34,10 +34,10 @@ $swipe-activity-swipe-area-ratio: 100 / 75; // total width|height / stack width|
 
     stack-card {
       position: absolute;
-      width: 100% / $swipe-activity-swipe-area-ratio;
-      height: 100% / $swipe-activity-swipe-area-ratio;
-      top: 50% - 50% / $swipe-activity-swipe-area-ratio;
-      left: 50% - 50% / $swipe-activity-swipe-area-ratio;
+      width: 100% / $swipe-rudel-swipe-area-ratio;
+      height: 100% / $swipe-rudel-swipe-area-ratio;
+      top: 50% - 50% / $swipe-rudel-swipe-area-ratio;
+      left: 50% - 50% / $swipe-rudel-swipe-area-ratio;
       transition: transform 0.5s cubic-bezier(1,0,.46,1), opacity .5s ease-in-out;
       opacity: 1;
 

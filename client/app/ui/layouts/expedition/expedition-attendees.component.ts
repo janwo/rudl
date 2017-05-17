@@ -1,8 +1,8 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
 import {Subscription} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
-import {Activity} from "../../../models/activity";
-import {ActivityService} from "../../../services/activity.service";
+import {Rudel} from "../../../models/rudel";
+import {RudelService} from "../../../services/rudel.service";
 import {User} from "../../../models/user";
 import {Expedition} from '../../../models/expedition';
 import {EmptyState} from '../../widgets/state/empty.component';

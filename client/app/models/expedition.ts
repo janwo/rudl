@@ -1,6 +1,6 @@
 import {Document} from "./document";
 import {User} from "./user";
-import {Activity} from './activity';
+import {Rudel} from './rudel';
 
 export interface Expedition extends Document {
 	title: string;
@@ -16,7 +16,7 @@ export interface Expedition extends Document {
 	needsApproval: boolean;
 	owner: User;
 	links: ExpeditionLinks;
-	activity: Activity;
+	rudel: Rudel;
 	icon: string;
 	relations: {
 		isAwaiting: boolean;
@@ -40,5 +40,8 @@ export interface ExpeditionRecipe {
 	fuzzyTime: boolean,
 	date: string,
 	icon: string,
-	location: number[]
+	location: {
+		lat: number,
+		lng: number
+	}
 }

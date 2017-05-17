@@ -77,7 +77,7 @@ export default {
 				redis: {
 					enabled: true
 				},
-				arango: {
+				neo4j: {
 					enabled: true
 				}
 			}

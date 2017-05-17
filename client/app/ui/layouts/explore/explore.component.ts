@@ -1,10 +1,10 @@
 import {Component, Input, OnDestroy} from "@angular/core";
-import {Activity} from "../../../models/activity";
+import {Rudel} from "../../../models/rudel";
 import {Observable} from "rxjs";
 import {ListService} from "../../../services/list.service";
 import {ExpeditionService} from '../../../services/expedition.service';
 import {Expedition} from '../../../models/expedition';
-import {ActivityService} from '../../../services/activity.service';
+import {RudelService} from '../../../services/rudel.service';
 
 export enum UserSuggestionsType {
     GENERAL, NEARBY
@@ -17,19 +17,19 @@ export enum UserSuggestionsType {
 export class ExploreComponent implements OnDestroy {
     
     @Input() type: UserSuggestionsType = UserSuggestionsType.GENERAL;
-    suggestedActivityStream: Observable<Activity[]>;
+    suggestedActivityStream: Observable<Rudel[]>;
 
     constructor(
-        private activityService: ActivityService
+        private rudelService: RudelService
     ) {
-        this.suggestedActivityStream = this.activityService.suggestActivities();
+        this.suggestedActivityStream = this.rudelService.suggestActivities();
     }
     
     ngOnDestroy(): void {
     
     }
     
-    markActivityAs(activity: Activity, markedAs: 'like' | 'dislike') {
-       console.log(activity.name + ' was marked as ' + markedAs);
+    markActivityAs(rudel: Rudel, markedAs: 'like' | 'dislike') {
+       console.log(rudel.name + ' was marked as ' + markedAs);
     }
 }
