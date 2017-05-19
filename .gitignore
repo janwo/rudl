@@ -31,6 +31,9 @@ db/*
 !db/files/
 db/files/*
 !db/files/icons/
+!db/neo4j/
+db/neo4j/*
+!db/neo4j/conf/
 
 # Let's Encrypt
 letsencrypt/
