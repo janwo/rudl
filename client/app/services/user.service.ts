@@ -3,6 +3,7 @@ import {Router} from "@angular/router";
 import {Injectable} from "@angular/core";
 import {BehaviorSubject, Observable, ReplaySubject} from "rxjs";
 import {User} from "../models/user";
+import {Location} from '../models/location';
 
 export interface UserStatus {
     loggedIn: boolean;
@@ -15,13 +16,18 @@ export class UserService {
     private authenticatedProfile: BehaviorSubject<UserStatus> = new BehaviorSubject<UserStatus>(null);
     private authenticatedProfileObservable: Observable<UserStatus>= this.authenticatedProfile.asObservable().filter(user => !!user);
     private currentLocation: ReplaySubject<Position> = new ReplaySubject(1);
-    private locationUpdates: Observable<[number, number]> = this.currentLocation.asObservable().flatMap((position: Position) => {
-        let userStatus = this.getAuthenticatedUser();
-    
+    private locationUpdates: Observable<Location> = this.currentLocation.asObservable().flatMap((position: Position) => {
+        let location: Location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+        };
+        
         // Just return current location, if new location is less than 100 meters away.
-        if(userStatus.user.location && this.getUsersDistance(userStatus.user.location) <= 100) return Observable.of(userStatus.user.location);
-    
-        return this.updateLocation(position.coords.latitude, position.coords.longitude).map(user => user.location);
+	    let distance = this.getUsersDistance(location);
+        if(distance <= 100) return Observable.of(this.getAuthenticatedUser().user.location);
+	
+	    console.log(`Updating user location (Δ: ${distance} meters)...`);
+        return this.updateLocation(location).map(user => user.location);
     }).share();
     
     private watchPositionCallerId: number | false = false;
@@ -58,18 +64,15 @@ export class UserService {
 	    this.locationUpdates.subscribe();
     }
     
-    getUsersDistance(location: number[]): number {
+    getUsersDistance(location: Location): number {
         let userStatus = this.getAuthenticatedUser();
         if(!userStatus.user || !userStatus.user.location) return NaN;
-        
-        let usersLat = userStatus.user.location[0];
-        let usersLon = userStatus.user.location[1];
     
         // Calculate distance.
         let pi = Math.PI / 180;
         let R = 6378137; // Earth’s radius
-        let a = 0.5 - Math.cos((usersLat - location[0]) * pi) / 2 + Math.cos(location[1] * pi)
-            * Math.cos(usersLat * pi) * (1 - Math.cos((usersLon - location[1]) * pi)) / 2;
+        let a = 0.5 - Math.cos((userStatus.user.location.lat - location.lat) * pi) / 2 + Math.cos(location.lng * pi)
+            * Math.cos(userStatus.user.location.lat * pi) * (1 - Math.cos((userStatus.user.location.lng - location.lng) * pi)) / 2;
         return Math.floor(R * Math.asin(Math.sqrt(a)) * 2);
     }
     
@@ -101,7 +104,7 @@ export class UserService {
         }
     }
     
-    getCurrentPosition(): Observable<[number, number]> {
+    getCurrentPosition(): Observable<Location> {
         return this.locationUpdates;
     }
     
@@ -147,11 +150,8 @@ export class UserService {
         return this.dataService.get(`/api/users/like/${query}`, true).map((json: JsonResponse) => json.data).share();
     }
     
-    updateLocation(latitude: number, longitude: number): Observable<User> {
-        return this.dataService.post(`/api/account/location`, `${JSON.stringify({
-            longitude: longitude,
-            latitude: latitude
-        })}`, true).map((json: JsonResponse) => json.data).do(user => this.authenticatedProfile.next({
+    updateLocation(location: Location): Observable<User> {
+        return this.dataService.post(`/api/account/location`, `${JSON.stringify(location)}`, true).map((json: JsonResponse) => json.data).do(user => this.authenticatedProfile.next({
             loggedIn: !!user,
             user: user
         })).share();

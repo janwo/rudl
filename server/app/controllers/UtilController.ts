@@ -23,6 +23,5 @@ export module UtilController {
 			let promise: Promise<any> = Promise.resolve(iconDictionary);
 			reply.api(promise);
 		}
-		
 	}
 }

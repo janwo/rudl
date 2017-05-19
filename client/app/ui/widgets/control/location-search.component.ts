@@ -1,6 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from "@angular/core";
 import {GeocodeLocation, GeocodeService} from "../../../services/geocode.service";
 import {ReplaySubject, Subject, Subscription} from "rxjs";
+import {Location} from "../../../models/location";
 
 @Component({
 	templateUrl: 'location-search.component.html',
@@ -10,8 +11,11 @@ import {ReplaySubject, Subject, Subscription} from "rxjs";
 export class LocationSearchComponent implements OnInit, OnDestroy {
 	
 	@ViewChild('searchElement') searchElement: ElementRef;
-	@Input() locationFocus: number[] = [0, 0];
-	@Output() locationSelected: EventEmitter<number[]> = new EventEmitter();
+	@Input() locationFocus: Location = {
+		lat: 0,
+		lng: 0
+	};
+	@Output() locationSelected: EventEmitter<Location> = new EventEmitter();
 	
 	locations: GeocodeLocation[] = [];
 	searchResultsObservable: Subscription;
@@ -32,13 +36,12 @@ export class LocationSearchComponent implements OnInit, OnDestroy {
 		this.searchResultsObservable.unsubscribe();
 	}
 	
-	
 	onKey(event: any): void {
 		this.searchEvent.next(this.searchElement.nativeElement.value);
 		if(event.keyCode == 13) this.searchElement.nativeElement.blur();
 	}
 	
-	onClick(event: any, location: number[]): void {
+	onClick(event: any, location: Location): void {
 		this.searchElement.nativeElement.value = null;
 		this.locations = [];
 		this.locationSelected.emit(location);

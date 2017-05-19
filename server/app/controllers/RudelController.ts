@@ -6,11 +6,11 @@ import {User} from "../models/user/User";
 import {UserController} from "./UserController";
 import {Translations} from "../models/Translations";
 import {List} from "../models/list/List";
-import * as Uuid from 'uuid';
 import {ListController} from "./ListController";
 import {UtilController} from "./UtilController";
 import {ExpeditionController} from "./ExpeditionController";
 import Transaction from 'neo4j-driver/lib/v1/transaction';
+import * as shortid from 'shortid';
 
 export module RudelController {
 	
@@ -19,7 +19,7 @@ export module RudelController {
 		icon: string
 	}) : Promise<Rudel>{
 		let rudel: Rudel = {
-			id: Uuid.v4(),
+			id: shortid.generate(),
 			icon: recipe.icon,
 			translations: recipe.translations,
 			defaultLocation: null,
@@ -69,9 +69,9 @@ export module RudelController {
 				
 				// Build profile.
 				return Promise.resolve(dot.transform({
-					'activity.id': 'id',
-					'activity.translations': 'translations',
-					'activity.icon': 'icon',
+					'rudel.id': 'id',
+					'rudel.translations': 'translations',
+					'rudel.icon': 'icon',
 					'defaultLocation': 'defaultLocation',
 					'owner': 'owner',
 					'links': 'links',
@@ -82,7 +82,7 @@ export module RudelController {
 					'statistics.lists': 'statistics.lists',
 					'statistics.expeditions': 'statistics.expeditions'
 				}, {
-					activity: rudel,
+					rudel: rudel,
 					defaultLocation: rudel.defaultLocation || relatedUser.location,
 					links: links,
 					statistics: values[2],
@@ -101,7 +101,7 @@ export module RudelController {
 	}
 	
 	export function findByUser(transaction: Transaction, user: User, ownsOnly = false, skip = 0, limit = 25) : Promise<Rudel[]>{
-		return transaction.run<Rudel, any>(`MATCH(:User {id : $userId })-[:${ownsOnly ? 'OWNS_RUDEL' : 'FOLLOWS_RUDEL'}]->(r:Rudel) RETURN properties(r) as r SKIP $skip LIMIT $limit`, {
+		return transaction.run<Rudel, any>(`MATCH(:User {id : $userId })-[:${ownsOnly ? 'OWNS_RUDEL' : 'FOLLOWS_RUDEL'}]->(r:Rudel) RETURN COALESCE(properties(r), []) as r SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			skip: skip,
 			limit: limit
@@ -109,13 +109,13 @@ export module RudelController {
 	}
 	
 	export function get(transaction: Transaction, rudelId: string): Promise<Rudel> {
-		return transaction.run("MATCH(r:Rudel {id: $rudelId}) RETURN properties(r) as r LIMIT 1", {
+		return transaction.run("MATCH(r:Rudel {id: $rudelId}) RETURN COALESCE(properties(r), []) as r LIMIT 1", {
 			rudelId: rudelId
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r').pop());
 	}
 	
 	export function findByFulltext(transaction: Transaction, query: string, skip = 0, limit = 25) : Promise<Rudel[]>{
-		return transaction.run<Rudel, any>('CALL apoc.index.search("Rudel", $query) YIELD node as r RETURN properties(r) as r SKIP $skip LIMIT $limit', {
+		return transaction.run<Rudel, any>('CALL apoc.index.search("Rudel", $query) YIELD node as r COALESCE(properties(r), []) as r SKIP $skip LIMIT $limit', {
 			query: `${query}~`,
 			skip: skip,
 			limit: limit
@@ -131,10 +131,11 @@ export module RudelController {
 	
 	export function getStatistics(transaction: Transaction, rudel: Rudel, relatedUser: User) : Promise<RudelStatistics> {
 		let queries: string[] = [
-			"MATCH (rudel:Rudel {id: $rudelId})<-[fr:FOLLOWS_RUDEL]-() WITH COUNT(fr) as followersCount, rudel",
-			"MATCH (rudel)-[btl:BELONGS_TO_LIST]->() WITH COUNT(btl) as listsCount, followersCount, rudel",
-			"MATCH (rudel)<-[btr:BELONGS_TO_RUDEL]-() WITH COUNT(btr) as expeditionsCount, followersCount, rudel, listsCount",
-			"MATCH (rudel)<-[fr:FOLLOWS_RUDEL]-(:User {id: $relatedUserId}) WITH followersCount, listsCount, COUNT(fr) > 0 as isFollowed, expeditionsCount",
+			"MATCH (rudel:Rudel {id: $rudelId})",
+			"OPTIONAL MATCH (rudel)<-[fr:FOLLOWS_RUDEL]-() WITH COUNT(fr) as followersCount, rudel",
+			"OPTIONAL MATCH (rudel)-[btl:BELONGS_TO_LIST]->() WITH COUNT(btl) as listsCount, followersCount, rudel",
+			"OPTIONAL MATCH (rudel)<-[btr:BELONGS_TO_RUDEL]-() WITH COUNT(btr) as expeditionsCount, followersCount, rudel, listsCount",
+			"OPTIONAL MATCH (rudel)<-[fr:FOLLOWS_RUDEL]-(:User {id: $relatedUserId}) WITH followersCount, listsCount, COUNT(fr) > 0 as isFollowed, expeditionsCount",
 		];
 		
 		let transformations: string[] = [
@@ -145,7 +146,7 @@ export module RudelController {
 		];
 		
 		// Add final query.
-		queries.push(`RETURN {${transformations.join(',')}`);
+		queries.push(`RETURN {${transformations.join(',')}}`);
 		
 		// Run query.
 		return transaction.run<any, any>(queries.join(' '), {
@@ -155,7 +156,7 @@ export module RudelController {
 	}
 	
 	export function getOwner(transaction: Transaction, rudel: Rudel) : Promise<User> {
-		return transaction.run<User, any>(`MATCH(:Rudel {id: $rudelId})<-[:OWNS_RUDEL]-(owner:User) RETURN properties(owner) as owner LIMIT 1`, {
+		return transaction.run<User, any>(`MATCH(:Rudel {id: $rudelId})<-[:OWNS_RUDEL]-(owner:User) RETURN COALESCE(properties(owner), []) as owner LIMIT 1`, {
 			rudelId: rudel.id
 		}).then(result => DatabaseManager.neo4jFunctions.unflatten(result.records, 'owner').pop());
 	}
@@ -189,7 +190,7 @@ export module RudelController {
 	}
 	
 	export function followers(transaction: Transaction, rudel: Rudel, skip = 0, limit = 25) : Promise<User[]> {
-		return transaction.run<User, any>(`MATCH(:Rudel {id: $rudelId})<-[:FOLLOWS_RUDEL]-(followers:User) RETURN properties(followers) as followers SKIP $skip LIMIT $limit`, {
+		return transaction.run<User, any>(`MATCH(:Rudel {id: $rudelId})<-[:FOLLOWS_RUDEL]-(followers:User) RETURN COALESCE(properties(followers), []) as followers SKIP $skip LIMIT $limit`, {
 			rudelId: rudel.id,
 			skip: skip,
 			limit: limit
@@ -258,7 +259,7 @@ export module RudelController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getActivity(request: any, reply: any): void {
+		export function get(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
@@ -278,7 +279,7 @@ export module RudelController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getActivitiesLike(request: any, reply: any): void {
+		export function like(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
@@ -297,7 +298,7 @@ export module RudelController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getActivitiesBy(request: any, reply: any): void {
+		export function by(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();

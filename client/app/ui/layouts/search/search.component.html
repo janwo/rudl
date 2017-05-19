@@ -1,11 +1,11 @@
 <section *ngIf="searchValue">
 	<h1 i18n>Rudel</h1>
-	<item-wrapper class="results" [ngClass]="{expanded: !collapsedActivities}">
-		<li class="card create" [ngClass]="{expanded: expandedActivityCreation}">
-			<div class="title" (click)="expandedActivityCreation = true">
-				<span i18n>Bilde ein neues Rudel</span> <span #highlightedActivity class="highlight">{{searchValue}}</span>
+	<item-wrapper class="results" [ngClass]="{expanded: !collapsedRudel}">
+		<li class="card create" [ngClass]="{expanded: expandedRudelCreation}">
+			<div class="title" (click)="expandedRudelCreation = true">
+				<span i18n>Bilde ein neues Rudel</span> <span #highlightedRudel class="highlight">{{searchValue}}</span>
 			</div>
-			<create-rudel *ngIf="expandedActivityCreation" [@container]="expandedActivityCreation" (@container.start)="$event.toState && highlightedActivity.style.display = 'none'" (@container.done)="$event.toState == 'void' && highlightedActivity.style.display = 'inline'" [defaultName]="searchValue" (onCanceled)="expandedActivityCreation = false"></create-rudel>
+			<create-rudel *ngIf="expandedRudelCreation" [@container]="expandedRudelCreation" (@container.start)="$event.toState && highlightedRudel.style.display = 'none'" (@container.done)="$event.toState == 'void' && highlightedRudel.style.display = 'inline'" [defaultName]="searchValue" (onCanceled)="expandedRudelCreation = false"></create-rudel>
 		</li>
 		<li *ngFor="let rudel of rudel">
 			<rudel-item [highlight]="searchValue" [rudel]="rudel"></rudel-item>

@@ -7,7 +7,7 @@ import * as Boom from "boom";
 import * as faker from "faker";
 import {DatabaseManager, TransactionSession} from '../Database';
 import {UserAuthProvider} from '../models/user/UserAuthProvider';
-import * as Uuid from "uuid";
+import * as shortid from 'shortid';
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -52,7 +52,7 @@ export function handleTwitter(request: any, reply: any): void {
 		// Create User?
 		return user ? user : AccountController.availableUsername(transaction, profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then((username: string) => {
 			return AccountController.create(transaction, {
-				id: Uuid.v4(),
+				id: shortid.generate(),
 				firstName: profile.firstName,
 				lastName: profile.lastName,
 				username: username,

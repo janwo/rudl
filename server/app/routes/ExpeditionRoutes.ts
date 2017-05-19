@@ -26,7 +26,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/expeditions/by/{username}',
+		path: '/api/expeditions/by/{username}/{offset?}',
 		method: 'GET',
 		handler: ExpeditionController.RouteHandlers.by,
 		config: {
@@ -37,15 +37,16 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					username: UsernameValidation
+					username: UsernameValidation,
+					offset: Joi.number().min(0).default(0)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/expeditions/by/{username}/in/{rudel}',
+		path: '/api/expeditions/by/{username}/in/{rudel}/{offset?}',
 		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.getActivityExpeditionsBy,
+		handler: ExpeditionController.RouteHandlers.getRudelExpeditionsBy,
 		config: {
 			auth: {
 				scope: [
@@ -55,13 +56,14 @@ export const RoutesConfig: RoutesConfiguration = [
 			validate: {
 				params: {
 					rudel: Joi.string(),
-					username: UsernameValidation
+					username: UsernameValidation,
+					offset: Joi.number().min(0).default(0)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/expeditions/nearby',
+		path: '/api/expeditions/nearby/{offset?}',
 		method: 'GET',
 		handler: ExpeditionController.RouteHandlers.nearby,
 		config: {
@@ -72,15 +74,15 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					radius: Joi.number().min(0)
+					offset: Joi.number().min(0).default(0)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/expeditions/nearby/{rudel}',
+		path: '/api/expeditions/near/{rudel}/{offset?}',
 		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.getActivityExpeditionsNearby,
+		handler: ExpeditionController.RouteHandlers.getRudelExpeditionsNearby,
 		config: {
 			auth: {
 				scope: [
@@ -90,7 +92,7 @@ export const RoutesConfig: RoutesConfiguration = [
 			validate: {
 				params: {
 					rudel: Joi.string(),
-					radius: Joi.number().min(0)
+					offset: Joi.number().min(0).default(0)
 				}
 			}
 		}

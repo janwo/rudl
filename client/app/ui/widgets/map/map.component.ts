@@ -10,6 +10,7 @@ import {
 	ViewChild
 } from "@angular/core";
 import * as L from "leaflet";
+import {VagueLocation} from "../../../models/location";
 
 @Component({
     templateUrl: 'map.component.html',
@@ -28,11 +29,14 @@ export class MapComponent implements AfterViewInit, OnChanges {
         divider: () => MapComponent.quotas.red + MapComponent.quotas.green + MapComponent.quotas.blue + MapComponent.quotas.dividerTune
     };
 	
-	@Input() location: L.LatLngTuple = [0,0];
-	@Input() accuracy: number = 0;
+	@Input() location: VagueLocation = {
+		lat: 0,
+		lng: 0,
+		accuracy: 0
+	};
     @Input() zoom: number = 16;
     @ViewChild('map') mapElement: ElementRef;
-    @Output() change: EventEmitter<L.LatLngTuple> = new EventEmitter();
+    @Output() change: EventEmitter<VagueLocation> = new EventEmitter();
     
 	map: L.Map;
 	centerPointLayer: L.Marker;
@@ -80,10 +84,10 @@ export class MapComponent implements AfterViewInit, OnChanges {
 		}).addTo(this.map);
 		
 		// Set location.
-		this.setLocation(this.location, this.accuracy);
+		this.setLocation(this.location);
 	}
 	
-	setLocation(location: L.LatLngTuple, accuracy: number = 0): void {
+	setLocation(location: VagueLocation): void {
 		// Pan map.
 		this.map.panTo(location);
 		
@@ -92,8 +96,8 @@ export class MapComponent implements AfterViewInit, OnChanges {
 		if(this.centerPointLayer) this.map.removeLayer(this.centerPointLayer);
 		
 		// Add inaccurate marker.
-		if(accuracy > 0) {
-			this.accuracyLayer = new L.Circle(location, accuracy, {
+		if(location.accuracy > 0) {
+			this.accuracyLayer = new L.Circle(location, location.accuracy, {
 				stroke: true,
 				weight: 10,
 				color: '#fff',
@@ -118,9 +122,8 @@ export class MapComponent implements AfterViewInit, OnChanges {
 	}
 	
 	ngOnChanges(changes: SimpleChanges): void {
-    	if(!this.map || !(changes.location || changes.accuracy)) return;
+    	if(!this.map || !(changes.location)) return;
 		let location = changes.location.currentValue || this.location;
-	    let accuracy = changes.accuracy.currentValue || this.accuracy;
-	    this.setLocation(location, accuracy);
+	    this.setLocation(location);
 	}
 }

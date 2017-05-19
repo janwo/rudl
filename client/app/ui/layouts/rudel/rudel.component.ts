@@ -49,12 +49,12 @@ export class RudelComponent implements OnInit {
         
         this.pendingFollowRequest = true;
         let obs = this.rudel.relations.isFollowed ? this.rudelService.unfollow(this.rudel.id) : this.rudelService.follow(this.rudel.id);
-        obs.subscribe((updatedActivity: Rudel) => {
+        obs.subscribe((updatedRudel: Rudel) => {
             this.pendingFollowRequest = false;
             
             // Set updated list.
-            if(updatedActivity) {
-                this.rudel = updatedActivity;
+            if(updatedRudel) {
+                this.rudel = updatedRudel;
                 return;
             }
     

@@ -8,7 +8,7 @@ import {Config} from "../../../run/config";
 import {AuthController} from './AuthController';
 import Result from 'neo4j-driver/lib/v1/result';
 import {TranslationsKeys} from '../models/Translations';
-import * as Uuid from "uuid";
+import * as shortid from 'shortid';
 
 export module TestController {
 	
@@ -20,7 +20,7 @@ export module TestController {
 		let firstName = faker.name.firstName();
 		let lastName = faker.name.lastName();
 		let user: User = {
-			id: Uuid.v4(),
+			id: shortid.generate(),
 			firstName: firstName,
 			lastName: lastName,
 			languages: _.sampleSize(TranslationsKeys),
@@ -61,11 +61,11 @@ export module TestController {
 			faker.date.past().toISOString()
 		].sort();
 		let rudel: Rudel = {
-			id: Uuid.v4(),
-			defaultLocation: [
-				Number.parseFloat(faker.address.latitude()),
-				Number.parseFloat(faker.address.longitude())
-			],
+			id: shortid.generate(),
+			defaultLocation: {
+				lat: Number.parseFloat(faker.address.latitude()),
+				lng: Number.parseFloat(faker.address.longitude())
+			},
 			translations: {},
 			icon: faker.random.arrayElement(Object.keys(faker.random.objectElement<any>(Config.backend.icons).icons)),
 			createdAt: date[0],

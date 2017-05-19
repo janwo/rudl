@@ -17,12 +17,12 @@ export enum UserSuggestionsType {
 export class ExploreComponent implements OnDestroy {
     
     @Input() type: UserSuggestionsType = UserSuggestionsType.GENERAL;
-    suggestedActivityStream: Observable<Rudel[]>;
+    suggestedRudelStream: Observable<Rudel[]>;
 
     constructor(
         private rudelService: RudelService
     ) {
-        this.suggestedActivityStream = this.rudelService.suggestActivities();
+        this.suggestedRudelStream = this.rudelService.suggestRudel();
     }
     
     ngOnDestroy(): void {

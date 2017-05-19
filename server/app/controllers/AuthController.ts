@@ -62,7 +62,7 @@ export module AuthController {
 	export function authByToken(token: DecodedToken): Promise<User> {
 		return this.getTokenData(token).then(() => {
 			let session: Session = DatabaseManager.neo4jClient.session();
-			return session.run(`MATCH(u:User {id: $userId}) RETURN properties(u) as u LIMIT 1`, {
+			return session.run(`MATCH(u:User {id: $userId}) RETURN COALESCE(properties(u), []) as u LIMIT 1`, {
 				userId: token.userId
 			}).then((results: any) => {
 				session.close();

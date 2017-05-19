@@ -12,9 +12,9 @@
 		<div class="description">{{expedition.description}}</div>
 		<div class="statistics">
 			<statistics [statistics]="[
-			{value: expedition.statistics.approvedUsers, subject: 'Teilnehmer', link: ['attendees']},
+			{value: expedition.statistics.attendees, subject: 'Teilnehmer', link: ['attendees']},
 			{value: formattedLocation, subject: 'Entfernung', link: ['attendes']},
-			{value: formattedDate, subject: expedition.needsApproval && !expedition.relations.isApproved ? 'Grober Zeitpunkt' : 'Zeitpunkt', link: ['attendes']}
+			{value: formattedDate, subject: expedition.date.accuracy > 0 ? 'Grober Zeitpunkt' : 'Zeitpunkt', link: ['attendes']}
 		]"></statistics>
 			<div class="cta">
 				<styled-button [style]="expedition.relations.isApproved ? buttonStyleActivated : buttonStyleDefault" [disabled]="pendingApprovalRequest" [text]="'Teilnahme anfragen'"></styled-button>

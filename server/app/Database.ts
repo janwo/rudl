@@ -173,7 +173,7 @@ export class DatabaseManager {
 	
 	static neo4jFunctions: any = (() => {
 		return {
-			unflatten: <L extends Node | Relationship | any, T extends {[key: string]: L}, K extends keyof T>(record: Record<T>[], returnVariable: K) : L[] => {
+			unflatten: <L extends Node | Relationship | any, T extends {[key: string]: L}, K extends keyof T>(record: Record<T> | Record<T>[], returnVariable: K) : L | L[] => {
 				if(record instanceof Array) return record.map((record => DatabaseManager.neo4jFunctions.unflatten(record, returnVariable)));
 				
 				let $return = record.get(returnVariable);
@@ -208,7 +208,7 @@ export class DatabaseManager {
 		// Create indices + constraints.
 		let session= DatabaseManager.neo4jClient.session();
 		let promises: Promise<void>[] = Object.keys(DatabaseManager.neo4jCollections).map((collection: any) => {
-;			collection = DatabaseManager.neo4jCollections[collection];
+			collection = DatabaseManager.neo4jCollections[collection];
 			let promises: Promise<any>[] = [];
 			(collection.indices || []).forEach((index: string) => {
 				promises.push(session.run(`CREATE INDEX ON :${collection.name}(${index})`));
@@ -253,7 +253,24 @@ export class DatabaseManager {
 			// Wait for neo4j.
 			let connectNeo4jDriver = () => {
 				DatabaseManager.neo4jClient = driver(`bolt://${Config.backend.db.neo4j.host}:${Config.backend.db.neo4j.port}`, auth.basic(Config.backend.db.neo4j.user, Config.backend.db.neo4j.password));
+				let session: Session = null;
 				DatabaseManager.neo4jClient.onCompleted = () => {
+					session.run(
+						"MATCH (n) RETURN 'Number of Nodes: ' + COUNT(n) as output UNION" +
+						" MATCH ()-[]->() RETURN 'Number of Relationships: ' + COUNT(*) as output UNION" +
+						" CALL db.labels() YIELD label RETURN 'Number of Labels: ' + COUNT(*) AS output UNION" +
+						" CALL db.relationshipTypes() YIELD relationshipType RETURN 'Number of Relationships Types: ' + COUNT(*) AS output UNION" +
+						" CALL db.propertyKeys() YIELD propertyKey RETURN 'Number of Property Keys: ' + COUNT(*) AS output UNION" +
+						" CALL db.constraints() YIELD description RETURN 'Number of Constraints:' + COUNT(*) AS output UNION" +
+						" CALL db.indexes() YIELD description RETURN 'Number of Indexes: ' + COUNT(*) AS output UNION" +
+						" CALL dbms.procedures() YIELD name RETURN 'Number of Procedures: ' + COUNT(*) AS output"
+					).then((result: any) => {
+						DatabaseManager.neo4jFunctions.unflatten(result.records, 'output').forEach((summary: string) => {
+							console.log(summary);
+						});
+						session.close();
+					});
+					
 					console.log('Connected to neo4j successfully...');
 					DatabaseManager.onlineStatus.neo4jClient = true;
 				};
@@ -266,22 +283,7 @@ export class DatabaseManager {
 				};
 				
 				// Create demo session.
-				let session = DatabaseManager.neo4jClient.session();
-				session.run(
-					"MATCH (n) RETURN 'Number of Nodes: ' + COUNT(n) as output UNION" +
-					" MATCH ()-[]->() RETURN 'Number of Relationships: ' + COUNT(*) as output UNION" +
-					" CALL db.labels() YIELD label RETURN 'Number of Labels: ' + COUNT(*) AS output UNION" +
-					" CALL db.relationshipTypes() YIELD relationshipType RETURN 'Number of Relationships Types: ' + COUNT(*) AS output UNION" +
-					" CALL db.propertyKeys() YIELD propertyKey RETURN 'Number of Property Keys: ' + COUNT(*) AS output UNION" +
-					" CALL db.constraints() YIELD description RETURN 'Number of Constraints:' + COUNT(*) AS output UNION" +
-					" CALL db.indexes() YIELD description RETURN 'Number of Indexes: ' + COUNT(*) AS output UNION" +
-					" CALL dbms.procedures() YIELD name RETURN 'Number of Procedures: ' + COUNT(*) AS output"
-				).then((result: any) => {
-					DatabaseManager.neo4jFunctions.unflatten(result.records, 'output').forEach((summary: string) => {
-						console.log(summary);
-					});
-					session.close();
-				});
+				session = DatabaseManager.neo4jClient.session();
 			};
 			connectNeo4jDriver();
 			
@@ -341,6 +343,7 @@ export class TransactionSession {
 				return value;
 			}, (err: any) => {
 				this.session.close();
+				console.log(err);
 				return Promise.reject(err);
 			});
 		}, (err : any) => {
@@ -349,6 +352,7 @@ export class TransactionSession {
 				return err;
 			}, (rollbackError: any) => {
 				this.session.close();
+				console.log(err);
 				console.log(rollbackError);
 				return Promise.reject(err);
 			});

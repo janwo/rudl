@@ -1,11 +1,12 @@
 import {Document} from "./document";
 import {Locale} from "./locale";
+import {Location} from "./location";
 
 export interface User extends Document {
 	firstName: string;
 	lastName: string;
 	username: string;
-	location: number[];
+	location: Location;
 	profileText: string;
 	hasAvatar: boolean;
 	onBoard: boolean;

@@ -14,13 +14,13 @@ export module SuggestionController {
 		return transaction.run<User, any>("MATCH (u1:User)-[:FOLLOWS_RUDEL]->(mutual1:Rudel)<-[:FOLLOWS_RUDEL]-(u2:User)," +
 		"(u2)-[:FOLLOWS_RUDEL]->(mutual2:Rudel)<-[:FOLLOWS_RUDEL]-(u3:User) " +
 		"WHERE u1.id = $userId AND NOT (u1)-[:FOLLOWS_RUDEL]->()<-[:FOLLOWS_RUDEL]-(u3)" +
-		"RETURN properties(u3) as u, count(DISTINCT u3) as frequency ORDER BY frequency DESC LIMIT 5", {
+		"RETURN COALESCE(properties(u3), []) as u, count(DISTINCT u3) as frequency ORDER BY frequency DESC LIMIT 5", {
 			userId: user.id
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));
 	}
 	
 	export function getRudelSuggestions(transaction: Transaction, user: User): Promise<Rudel[]> {
-		return transaction.run<Rudel, any>("MATCH(r:Rudel) RETURN properties(r) as r LIMIT 5", {
+		return transaction.run<Rudel, any>("MATCH(r:Rudel) RETURN COALESCE(properties(r), []) as r LIMIT 5", {
 			userId: user.id
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r'));
 	}

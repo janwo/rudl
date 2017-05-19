@@ -150,8 +150,8 @@ export module AccountController {
 		/**
 		 * Handles [POST] /api/account/location
 		 * @param request Request-Object
-		 * @param request.payload.longitude longitude
-		 * @param request.payload.latitude latitude
+		 * @param request.payload.lng longitude
+		 * @param request.payload.lat latitude
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -160,8 +160,8 @@ export module AccountController {
 			let user = request.auth.credentials;
 			
 			user.location = {
-				lat: request.payload.latitude,
-				lng: request.payload.longitude
+				lat: request.payload.lat,
+				lng: request.payload.lng
 			};
 			
 			// Save user.

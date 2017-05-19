@@ -35,8 +35,8 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				payload: {
-					latitude: Joi.number().min(-90).max(90),
-					longitude: Joi.number().min(-180).max(180)
+					lat: Joi.number().min(-90).max(90),
+					lng: Joi.number().min(-180).max(180)
 				}
 			}
 		}

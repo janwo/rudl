@@ -7,14 +7,14 @@ import {User, UserRoles} from "../app/models/user/User";
 import {Config} from "../../run/config";
 import {AccountController} from "../app/controllers/AccountController";
 import * as faker from 'faker';
-import * as Uuid from "uuid";
+import * as shortid from 'shortid';
 import * as _ from "lodash";
 
 function generateUser(): User {
 	let firstName = faker.name.firstName();
 	let lastName = faker.name.lastName();
 	let user: User = {
-		id: Uuid.v4(),
+		id: shortid.generate(),
 		firstName: firstName,
 		lastName: lastName,
 		username: faker.internet.userName(firstName, lastName),

@@ -9,7 +9,7 @@ import Result from 'neo4j-driver/lib/v1/result';
 export module UserController {
 	
 	export function findByFulltext(transaction: Transaction, query: string, skip = 0, limit = 25) : Promise<User[]>{
-		return transaction.run<User, any>('CALL apoc.index.search("User", $query) YIELD node as u RETURN properties(u) as u SKIP $skip LIMIT $limit', {
+		return transaction.run<User, any>('CALL apoc.index.search("User", $query) YIELD node as u RETURN COALESCE(properties(u), []) as u SKIP $skip LIMIT $limit', {
 			query: `${query}~`,
 			skip: skip,
 			limit: limit
@@ -17,13 +17,13 @@ export module UserController {
 	}
 	
 	export function findByUsername(transaction: Transaction, username: string): Promise<User> {
-		return transaction.run<User, any>('MATCH(u:User {username: $username}) RETURN properties(u) as u LIMIT 1', {
+		return transaction.run<User, any>('MATCH(u:User {username: $username}) RETURN COALESCE(properties(u), []) as u LIMIT 1', {
 			username: username
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
 	}
 	
 	export function findByMail(transaction: Transaction, mail: string): Promise<User> {
-		return transaction.run<User, any>('MATCH(u:User) WHERE (u.mails_primary_mail = $mail AND u.mails_primary_verified) OR (u.mails_secondary_mail = $mail AND u.mails_secondary_verified) RETURN properties(u) as u LIMIT 1', {
+		return transaction.run<User, any>('MATCH(u:User) WHERE (u.mails_primary_mail = $mail AND u.mails_primary_verified) OR (u.mails_secondary_mail = $mail AND u.mails_secondary_verified) RETURN COALESCE(properties(u), []) as u LIMIT 1', {
 			mail: mail
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
 	}
@@ -147,7 +147,7 @@ export module UserController {
 	}
 	
 	export function followers(transaction: Transaction, user: User, skip: number = 0, limit: number = 25) : Promise<User[]> {
-		return transaction.run<User, any>(`MATCH(:User {id: $userId})<-[:FOLLOWS_USER]-(followers:User) RETURN properties(followers) as followers SKIP $skip LIMIT $limit`, {
+		return transaction.run<User, any>(`MATCH(:User {id: $userId})<-[:FOLLOWS_USER]-(followers:User) RETURN COALESCE(properties(followers), []) as followers SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			skip: skip,
 			limit: limit
@@ -155,7 +155,7 @@ export module UserController {
 	}
 	
 	export function followees(transaction: Transaction, user: User, skip: number = 0, limit: number = 25) : Promise<User[]> {
-		return transaction.run<User, any>(`MATCH(:User {id: $userId})-[:FOLLOWS_USER]->(followees:User) RETURN properties(followees) as followees SKIP $skip LIMIT $limit`, {
+		return transaction.run<User, any>(`MATCH(:User {id: $userId})-[:FOLLOWS_USER]->(followees:User) RETURN COALESCE(properties(followees), []) as followees SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			skip: skip,
 			limit: limit

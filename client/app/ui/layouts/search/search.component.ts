@@ -32,8 +32,8 @@ import {RudelService} from "../../../services/rudel.service";
 export class SearchComponent implements OnDestroy, OnInit {
 	
 	rudel: Rudel[] = null;
-	collapsedActivities: boolean = true;
-	expandedActivityCreation: boolean = false;
+	collapsedRudel: boolean = true;
+	expandedRudelCreation: boolean = false;
 	lists: List[] = null;
 	collapsedLists: boolean = true;
 	expandedListCreation: boolean = false;

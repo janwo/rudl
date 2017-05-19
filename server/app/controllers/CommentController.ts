@@ -6,7 +6,7 @@ import {UserController} from "./UserController";
 import {Comment} from "../models/comment/Comment";
 import {Node} from "../models/Node";
 import {List} from "../models/list/List";
-import * as Uuid from 'uuid';
+import * as shortid from 'shortid';
 import {ExpeditionController} from "./ExpeditionController";
 import {CommentRecipe} from '../../../client/app/models/comment';
 import {Expedition} from '../models/expedition/Expedition';
@@ -16,7 +16,7 @@ export module CommentController {
 	
 	export function create(transaction: Transaction, recipe: CommentRecipe) : Promise<Comment>{
 		let comment: Comment = {
-			id: Uuid.v4(),
+			id: shortid.generate(),
 			message: recipe.message,
 			pinned: recipe.pin,
 			createdAt: null,
@@ -53,7 +53,7 @@ export module CommentController {
 	}
 	
 	export function get(transaction: Transaction, commentId: string): Promise<any> {
-		return transaction.run(`MATCH(c:Comment {id: $commentId}) RETURN properties(c) as c LIMIT 1`, {
+		return transaction.run(`MATCH(c:Comment {id: $commentId}) RETURN COALESCE(properties(c), []) as c LIMIT 1`, {
 			commentId: commentId
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'c').pop());
 	}
@@ -92,13 +92,13 @@ export module CommentController {
 	}
 	
 	export function getOwner(transaction: Transaction, comment: Comment): Promise<User> {
-		return transaction.run<User, any>(`MATCH(c:Comment {id: $commentId})<-[:OWNS_COMMENT]-(u:User) RETURN properties(u) as u LIMIT 1`, {
+		return transaction.run<User, any>(`MATCH(c:Comment {id: $commentId})<-[:OWNS_COMMENT]-(u:User) RETURN COALESCE(properties(u), []) as u LIMIT 1`, {
 			commentId: comment.id
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
 	}
 	
 	export function ofNode<T extends Node>(transaction: Transaction, node: T, skip = 0, limit = 25): Promise<Comment[]> {
-		return transaction.run<Comment, any>(`MATCH(n {id: $nodeId})<-[:BELONGS_TO_NODE]-(c:Comment) ORDER BY c.createdAt RETURN properties(c) as c SKIP $skip LIMIT $limit`, {
+		return transaction.run<Comment, any>(`MATCH(n {id: $nodeId})<-[:BELONGS_TO_NODE]-(c:Comment) ORDER BY c.createdAt RETURN COALESCE(properties(c), []) as c SKIP $skip LIMIT $limit`, {
 			nodeId: node.id,
 			limit: limit,
 			skip: skip

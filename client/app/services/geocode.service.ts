@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Http, Response} from "@angular/http";
 import {Observable} from "rxjs/Observable";
+import {Location} from "../models/location";
 
 @Injectable()
 export class GeocodeService {
@@ -16,14 +17,17 @@ export class GeocodeService {
 		return response.json().features.map((feature: any) => {
 			return {
 				label: feature.properties.label,
-				location: feature.geometry.coordinates.reverse()
+				location: {
+					lng: feature.geometry.coordinates[0],
+					lat: feature.geometry.coordinates[1]
+				}
 			};
 		});
 	}
 	
-	private static buildQuery(text: string, location: number[] | false = false, size: number | false = false): string {
+	private static buildQuery(text: string, location: Location | false = false, size: number | false = false): string {
 		let query = `api_key=${GeocodeService.apiKey}&text=${text}`;
-		if(location) query += `&focus.point.lat=${location[0]}&focus.point.lon=${location[1]}`;
+		if(location) query += `&focus.point.lat=${location.lat}&focus.point.lon=${location.lng}`;
 		if(size) query += `&size=${size}`;
 		return query;
 	}
@@ -32,12 +36,12 @@ export class GeocodeService {
 		return this.http.get(url).map(GeocodeService.handleResponse);
 	}
 	
-	search(text: string, location: number[] | false = false) : Observable<GeocodeLocation[]> {
+	search(text: string, location: Location | false = false) : Observable<GeocodeLocation[]> {
 		return this.get(GeocodeService.url + GeocodeService.buildQuery(text, location, 5));
 	}
 }
 
 export interface GeocodeLocation {
 	label: string;
-	location: number[]
+	location: Location
 }

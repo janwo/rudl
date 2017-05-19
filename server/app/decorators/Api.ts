@@ -16,7 +16,6 @@ export const DecoratorsConfig: DecoratorsConfiguration = [
 			};
 			
 			let respondWithSuccess = (data: any) => {
-				console.log(this.response);
 				let response: any = {};
 				response['statusCode'] = 200;
 				if(data) response['data'] = data;

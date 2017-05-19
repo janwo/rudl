@@ -11,7 +11,6 @@ import {Rudel} from '../models/rudel';
 export class ExpeditionService {
     
     constructor(
-        private userService: UserService,
         private dataService: DataService
     ) {}
     

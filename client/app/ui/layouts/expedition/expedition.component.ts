@@ -29,17 +29,14 @@ export class ExpeditionComponent implements OnInit {
         // Define changed params subscription.
         this.route.data.subscribe((data: { expedition: Expedition }) => {
             this.expedition = data.expedition;
-            
+         
 	        let humanizedDate = moment.duration(moment().diff(this.expedition.date.isoString)).humanize();
 	        this.formattedDate = this.expedition.date.accuracy > 0 ? `in about ${humanizedDate}` : `in ${humanizedDate}`;
 	
-	        let distance = this.userService.getUsersDistance(this.expedition.location.latLng);
+	        let distance = this.userService.getUsersDistance(this.expedition.location);
 	        distance = distance <= 10000 ? Math.ceil(distance / 100) / 10 : Math.ceil(distance / 1000);
-	        this.formattedLocation = this.expedition.needsApproval && !this.expedition.relations.isApproved ? `ca. ${distance} km` : `${distance} km`;
+	        this.formattedLocation = this.expedition.location.accuracy > 0 ? `ca. ${distance} km` : `${distance} km`;
         });
     }
-    
-	 // Show delete message.
-	 // this.router.navigate(['/lists/deleted-message']);
 	 
 }

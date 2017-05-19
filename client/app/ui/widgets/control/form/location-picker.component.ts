@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, ElementRef, Input, Optional, ViewChild} from "@angular/core";
 import * as L from "leaflet";
 import {ControlValueAccessor, NgControl} from "@angular/forms";
+import {Location} from "../../../../models/location";
 
 @Component({
     templateUrl: 'location-picker.component.html',
@@ -22,7 +23,10 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 		if (ngControl) ngControl.valueAccessor = this;
 	}
     
-    location: L.LatLngTuple = [0, 0];
+    location: Location = {
+		lat: 0,
+	    lng: 0
+    };
     @Input() zoom: number = 16;
     @ViewChild('map') mapElement: ElementRef;
     
@@ -81,21 +85,20 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 		}).addTo(this.map);
 		
 		this.map.on('click', (e: any) => {
-			let clickedLocation: L.LatLngTuple = [e.latlng.lat, e.latlng.lng];
-			this.setLocation(clickedLocation);
+			this.setLocation(e.latlng);
 			this.onChange(this.location);
 			this.onTouched();
 		});
 	}
 	
-	private setLocation(location: L.LatLngTuple): void {
+	private setLocation(location: Location): void {
 		this.location = location;
 		
 		if(this.marker) this.marker.setLatLng(this.location);
 		if(this.map) this.map.panTo(this.location);
 	}
 	
-	writeValue(value: L.LatLngTuple): void {
+	writeValue(value: Location): void {
 		if(value) this.setLocation(value);
 	}
 	

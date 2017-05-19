@@ -46,7 +46,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/rudel/=/{id}',
 		method: 'GET',
-		handler: RudelController.RouteHandlers.getActivity,
+		handler: RudelController.RouteHandlers.get,
 		config: {
 			auth: {
 				scope: [
@@ -63,7 +63,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/rudel/by/{username}/{offset?}',
 		method: 'GET',
-		handler: RudelController.RouteHandlers.getActivitiesBy,
+		handler: RudelController.RouteHandlers.by,
 		config: {
 			auth: {
 				scope: [
@@ -81,7 +81,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/rudel/like/{query}/{offset?}',
 		method: 'GET',
-		handler: RudelController.RouteHandlers.getActivitiesLike,
+		handler: RudelController.RouteHandlers.like,
 		config: {
 			auth: {
 				scope: [

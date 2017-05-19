@@ -77,7 +77,7 @@ export class RudelService {
         }).share();
     }
     
-    suggestActivities(): Observable<Rudel[]> {
+    suggestRudel(): Observable<Rudel[]> {
         return this.dataService.get(`/api/suggestions/rudel`, true).map((json: JsonResponse) => {
             return json.data.filter((rudel: Rudel) => {
                 rudel.name = Locale.getBestTranslation(rudel.translations, this.userService.getAuthenticatedUser().user.languages);
