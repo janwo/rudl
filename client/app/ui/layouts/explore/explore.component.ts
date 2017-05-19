@@ -29,7 +29,7 @@ export class ExploreComponent implements OnDestroy {
     
     }
     
-    markActivityAs(rudel: Rudel, markedAs: 'like' | 'dislike') {
+    markRudelAs(rudel: Rudel, markedAs: 'like' | 'dislike') {
        console.log(rudel.name + ' was marked as ' + markedAs);
     }
 }
