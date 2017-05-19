@@ -243,8 +243,8 @@ export module ExpeditionController {
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
 	}
 	
-	export function getAttendees(transaction: Transaction, expedition: Expedition): Promise<User[]> {
-	
+	export function getAttendees(transaction: Transaction, expedition: Expedition, offset = 0): Promise<User[]> {
+		return Promise.resolve<User[]>([]);
 	}
 	
 	export function setRudel(transaction: Transaction, expedition: Expedition, rudel: Rudel): Promise<void> {
