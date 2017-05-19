@@ -1,4 +1,5 @@
 @import '../../variables';
+@import "../../mixins";
 
 $boarding-size: 15rem;
 
@@ -8,50 +9,56 @@ $boarding-size: 15rem;
   flex-direction: column;
   @include setup-max-width();
   padding: map_get($base-padding, 'default');
+  justify-content: space-between;
 
-  .item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  carousel {
+    margin-top: auto;
+    margin-bottom: auto;
 
-    .card {
-      width: $boarding-size + 2 * map_get($base-padding, 'default');
-      flex: 1 1 auto;
+    .item {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: map_get($base-padding, 'default');
+      justify-content: center;
 
-      .image {
-        width: 100%;
+      .card {
+        width: $boarding-size + 2 * map_get($base-padding, 'default');
         flex: 1 1 auto;
-        background: no-repeat top center;
-        background-size: contain;
-      }
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: map_get($base-padding, 'default');
 
-      &:nth-child(1) .image,
-      &:nth-child(2) .image,
-      &:nth-child(3) .image,
-      &:nth-child(4) .image,
-      &:nth-child(5) .image {
-        background-image: url(../../../../assets/boarding/radar.png);
-      }
+        .image {
+          width: 100%;
+          flex: 1 1 auto;
+          background: no-repeat top center;
+          background-size: contain;
+        }
 
-      h1 {
-        text-align: center;
-      }
+        &:nth-child(1) .image,
+        &:nth-child(2) .image,
+        &:nth-child(3) .image,
+        &:nth-child(4) .image,
+        &:nth-child(5) .image {
+          background-image: url(../../../../assets/boarding/radar.png);
+        }
 
-      span {
-        text-align: center;
-        display: block;
-        line-height: map_get($base-line-height, 'multiline');
-        width: $boarding-size;
-        color: map_get($base-colors, 'primary-text');
-      }
+        h1 {
+          text-align: center;
+        }
 
-      styled-button {
-        margin-top: map_get($base-padding, 'default');
+        span {
+          text-align: center;
+          display: block;
+          line-height: map_get($base-line-height, 'multiline');
+          width: $boarding-size;
+          color: map_get($base-colors, 'primary-text');
+        }
+
+        styled-button {
+          margin-top: map_get($base-padding, 'default');
+        }
       }
     }
   }

@@ -1,14 +1,12 @@
 import {Document} from "./document";
 import {User} from "./user";
-import {Activity} from './activity';
+import {Rudel} from './rudel';
+import {VagueLocation} from "./location";
 
 export interface Expedition extends Document {
 	title: string;
 	description?: string;
-	location: {
-		accuracy: number,
-		latLng: number[]
-	};
+	location: VagueLocation;
 	date: {
 		accuracy: number,
 		isoString: string;
@@ -16,7 +14,7 @@ export interface Expedition extends Document {
 	needsApproval: boolean;
 	owner: User;
 	links: ExpeditionLinks;
-	activity: Activity;
+	rudel: Rudel;
 	icon: string;
 	relations: {
 		isAwaiting: boolean;
@@ -24,8 +22,12 @@ export interface Expedition extends Document {
 		isOwned: boolean;
 	};
 	statistics: {
-		approvedUsers: number;
-		awaitingUsers: number;
+		attendees: number;
+		applicants: number;
+		invitees: number;
+		isAttendee: boolean;
+		isParticipant: boolean;
+		isInvitee: boolean;
 	};
 }
 
@@ -40,5 +42,8 @@ export interface ExpeditionRecipe {
 	fuzzyTime: boolean,
 	date: string,
 	icon: string,
-	location: number[]
+	location: {
+		lat: number,
+		lng: number
+	}
 }

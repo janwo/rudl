@@ -1,75 +1,35 @@
 import * as Boom from "boom";
 import * as dot from "dot-object";
+import Transaction from "neo4j-driver/lib/v1/transaction";
 import {Config} from "../../../run/config";
-import {User, UserProvider} from "../models/user/User";
-import {DatabaseManager} from "../Database";
-import {DecodedToken} from "../models/Token";
-import {Cursor} from "arangojs";
-import {UserFollowsUser} from "../models/user/UserFollowsUser";
-import {AuthController} from "./AuthController";
+import {User} from "../models/user/User";
+import {DatabaseManager, TransactionSession} from "../Database";
+import Result from 'neo4j-driver/lib/v1/result';
 
 export module UserController {
 	
-	export function findByFulltext(query: string) : Promise<User[]>{
-		let aqlQuery = `FOR user IN FULLTEXT(@@collection, "meta.fulltextSearchData", @query) RETURN user`;
-		let aqlParams = {
-			'@collection': DatabaseManager.arangoCollections.users.name,
-			query: query.split(' ').map(word => '+prefix:' + word).join()
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<User[]>;
+	export function findByFulltext(transaction: Transaction, query: string, skip = 0, limit = 25) : Promise<User[]>{
+		return transaction.run<User, any>('CALL apoc.index.search("User", $query) YIELD node as u RETURN COALESCE(properties(u), []) as u SKIP $skip LIMIT $limit', {
+			query: `${query}~`,
+			skip: skip,
+			limit: limit
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));
 	}
 	
-	export function findByProvider(provider: UserProvider): Promise<User> {
-		let aqlQuery = `FOR u IN @@collection FOR p IN u.auth.providers FILTER p.provider == @provider && p.userIdentifier == @userIdentifier RETURN u`;
-		let aqlParams = {
-			'@collection': DatabaseManager.arangoCollections.users.name,
-			provider: provider.provider,
-			userIdentifier: provider.userIdentifier
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User);
-	}
-	
-	export function findByUsername(username: string): Promise<User> {
-		let aqlQuery = `FOR u IN @@collection FILTER u.username == @username LIMIT 1 RETURN u`;
-		let aqlParams = {
-			'@collection': DatabaseManager.arangoCollections.users.name,
+	export function findByUsername(transaction: Transaction, username: string): Promise<User> {
+		return transaction.run<User, any>('MATCH(u:User {username: $username}) RETURN COALESCE(properties(u), []) as u LIMIT 1', {
 			username: username
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User);
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
 	}
 	
-	export function findByMail(mail: string): Promise<User> {
-		let aqlQuery = `FOR u IN @@collection FOR m IN u.mail FILTER m.mail == @mail && m.verified == true LIMIT 1 RETURN u`;
-		let aqlParams = {
-			'@collection': DatabaseManager.arangoCollections.users.name,
+	export function findByMail(transaction: Transaction, mail: string): Promise<User> {
+		return transaction.run<User, any>('MATCH(u:User) WHERE (u.mails_primary_mail = $mail AND u.mails_primary_verified) OR (u.mails_secondary_mail = $mail AND u.mails_secondary_verified) RETURN COALESCE(properties(u), []) as u LIMIT 1', {
 			mail: mail
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User);
-	}
-	
-	export function findByToken(token: DecodedToken): Promise<User> {
-		return AuthController.getTokenData(token).then(() => {
-			// Search for user.
-			let aqlQuery = `FOR u IN @@collection FILTER u._key == @key LIMIT 1 RETURN u`;
-			let aqlParams = {
-				'@collection': DatabaseManager.arangoCollections.users.name,
-				key: token.userId
-			};
-			return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next() as any as User);
-		});
-	}
-	
-	export function findByKey(key: string | string[]): Promise<User | User[]> {
-		let collection = DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.users.name);
-		return key instanceof Array ? collection.lookupByKeys(key) as Promise<User[]> : collection.byExample({
-			_key: key
-		}, {
-			limit: 1
-		}).then(cursor => cursor.next()) as any as Promise<User|User[]>;
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
 	}
 	
 	export interface UserStatistics {
-		activities: number;
+		rudel: number;
 		followers: number;
 		followees: number;
 		lists: number;
@@ -79,78 +39,68 @@ export module UserController {
 		isFollowee?: boolean;
 	}
 	
-	export function getStatistics(user: User, relatedUser: User) : Promise<UserStatistics> {
-		// Base query.
+	export function getStatistics(transaction: Transaction, user: User, relatedUser: User) : Promise<UserStatistics> {
+		// Set queries.
 		let queries: string[] = [
-			'LET followers = (FOR follower IN INBOUND @userId @@edgesUserFollowsUser RETURN follower._id)',
-			'LET followees = (FOR followee IN OUTBOUND @userId @@edgesUserFollowsUser RETURN followee._id)',
-			'LET activities = (FOR activity IN OUTBOUND @userId @@edgesUserFollowsActivity RETURN activity._id)',
-			'LET lists = (FOR list IN OUTBOUND @userId @@edgesUserFollowsList RETURN list._id)'
+			"MATCH (user:User {id: $userId})",
+			"OPTIONAL MATCH (user)-[fr:FOLLOWS_RUDEL]->() WITH COUNT(fr) as rudelCount, user",
+			"OPTIONAL MATCH (user)-[fl:FOLLOWS_LIST]->() WITH rudelCount, COUNT(fl) as listsCount, user",
+			"OPTIONAL MATCH (user)-[:FOLLOWS_USER]->(fes:User) WITH rudelCount, listsCount, fes as followees, COUNT(fes) as followeesCount, user",
+			"OPTIONAL MATCH (user)<-[:FOLLOWS_USER]-(frs:User) WITH rudelCount, listsCount, followees, followeesCount, frs as followers, COUNT(frs) as followersCount, user"
 		];
 		
-		let returnedParameters: string[] = [
-			'activities: LENGTH(activities)',
-			'lists: LENGTH(lists)',
-			'followers: LENGTH(followers)',
-			'followees: LENGTH(followees)'
+		let transformations: string[] = [
+			"rudel: rudelCount",
+			"lists: listsCount",
+			"followees: followeesCount",
+			"followers: followersCount"
 		];
 		
-		let aqlParams: {[key: string]: string} = {
-			'@edgesUserFollowsUser': DatabaseManager.arangoCollections.userFollowsUser.name,
-			'@edgesUserFollowsActivity': DatabaseManager.arangoCollections.userFollowsActivity.name,
-			'@edgesUserFollowsList': DatabaseManager.arangoCollections.userFollowsList.name,
-			userId: user._id
-		};
-		
-		// Additional queries for relational data.
-		if(user._id != relatedUser._id) {
-			// Add query strings.
-			queries.push(...[
-				'LET mutualFollowees = LENGTH(INTERSECTION(followees, (FOR followee IN OUTBOUND @relatedUserId @@edgesUserFollowsUser RETURN followee._id)))',
-				'LET mutualFollowers = LENGTH(INTERSECTION(followers, (FOR follower IN OUTBOUND @relatedUserId @@edgesUserFollowsUser RETURN follower._id)))',
-				'LET isFollowee = LENGTH(INTERSECTION(followers, [@relatedUserId])) > 0',
-				'LET isFollower = LENGTH(INTERSECTION(followees, [@relatedUserId])) > 0'
+		// Set additional queries for relational data.
+		if(user.id != relatedUser.id) {
+			queries = queries.concat([
+				"OPTIONAL MATCH (relatedUser:User {id: $relatedUserId})-[mfes:FOLLOWS_USER]->(followees) WITH rudelCount, listsCount, followeesCount, followersCount, COUNT(mfes) as mutualFolloweesCount, user, relatedUser",
+				"OPTIONAL MATCH (relatedUser)<-[mfrs:FOLLOWS_USER]-(followers) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, COUNT(mfrs) as mutualFollowersCount, user, relatedUser",
+				"OPTIONAL MATCH (user)<-[fu:FOLLOWS_USER]-(relatedUser) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, mutualFollowersCount, COUNT(fu) > 0 as isFollower, user, relatedUser",
+				"OPTIONAL MATCH (user)-[fu:FOLLOWS_USER]->(relatedUser) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, mutualFollowersCount, isFollower, COUNT(fu) > 0 as isFollowee",
 			]);
 			
-			// Add parameter strings.
-			returnedParameters.push(...[
-				'mutualFollowees: mutualFollowees',
-				'mutualFollowers: mutualFollowers',
-				'isFollowee: isFollowee',
-				'isFollower: isFollower'
-			]);
-			
-			// Add variable.
-			aqlParams['relatedUserId'] = relatedUser._id;
+			transformations = transformations.concat([
+				"mutualFollowers: mutualFolloweesCount",
+				"mutualFollowees: mutualFollowersCount",
+				"isFollower: isFollower",
+				"isFollowee: isFollowee"
+			])
 		}
 		
-		// Add returning query.
-		queries.push(`RETURN {${returnedParameters.join(',')}}`);
+		// Add final query.
+		queries.push(`RETURN {${transformations.join(',')}}`);
 		
-		// Build whole query.
-		let aqlQuery = queries.join(' ');
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<UserStatistics>;
+		// Run query.
+		return transaction.run<any, any>(queries.join(' '), {
+			userId: user.id,
+			relatedUserId: relatedUser.id
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 0).pop());
 	}
 	
-	export function getPublicUser(user: User | User[], relatedUser: User): Promise<any> {
+	export function getPublicUser(transaction: Transaction, user: User | User[], relatedUser: User): Promise<any | any[]> {
 		let createPublicUser = (user: User) => {
 			// Run further promises.
 			return Promise.all([
-				UserController.getStatistics(user, relatedUser)
+				UserController.getStatistics(transaction, user, relatedUser)
 			]).then((results : [UserStatistics]) => {
 				// Define default links.
-				//TODO UPDATE LINKS
 				let links: any = {
 					followers: `${Config.backend.domain}/api/users/${user.username}/followers`,
 					followees: `${Config.backend.domain}/api/users/${user.username}/following`
 				};
 				
 				// Define avatar links?
-				if(user.meta.hasAvatar) {
+				if(user.hasAvatar) {
 					links['avatars'] = {
-						small: `${Config.backend.domain + Config.paths.avatars.publicPath + user._key}-small`,
-						medium: `${Config.backend.domain + Config.paths.avatars.publicPath + user._key}-medium`,
-						large: `${Config.backend.domain + Config.paths.avatars.publicPath + user._key}-large`
+						small: `${Config.backend.domain + Config.paths.avatars.publicPath + user.id}-small`,
+						medium: `${Config.backend.domain + Config.paths.avatars.publicPath + user.id}-medium`,
+						large: `${Config.backend.domain + Config.paths.avatars.publicPath + user.id}-large`
 					};
 				}
 				
@@ -159,13 +109,13 @@ export module UserController {
 					'user.username': 'username',
 					'user.firstName': 'firstName',
 					'user.lastName': 'lastName',
-					'user.meta.hasAvatar': 'meta.hasAvatar',
-					'user.meta.profileText': 'meta.profileText',
-					'user.meta.onBoard': 'meta.onBoard',
+					'user.hasAvatar': 'hasAvatar',
+					'user.profileText': 'profileText',
+					'user.onBoard': 'onBoard',
 					'user.languages': 'languages',
 					'user.createdAt': 'createdAt',
 					'links': 'links',
-					'statistics.activities': 'statistics.activities',
+					'statistics.rudel': 'statistics.rudel',
 					'statistics.followers': 'statistics.followers',
 					'statistics.followees': 'statistics.followees',
 					'statistics.lists': 'statistics.lists',
@@ -176,7 +126,7 @@ export module UserController {
 				};
 				
 				// Emit private information.
-				if(user._key == relatedUser._key) Object.assign(transformationRecipe, {
+				if(user.id == relatedUser.id) Object.assign(transformationRecipe, {
 					'user.location': 'location'
 				});
 				
@@ -196,76 +146,55 @@ export module UserController {
 		});
 	}
 	
-	export function getUserConnections(from: User, to: User, skip: number | boolean = false, limit: number | false = false) : Promise<UserFollowsUser[]> {
-		let example: any = {};
-		if(from) example['_from'] = from._id;
-		if(to) example['_to'] = to._id;
-		
-		let opts: any = {};
-		if(skip) opts['skip'] = skip;
-		if(limit) opts['limit'] = limit;
-		
-		return DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsUser.name).byExample(example, opts).then((cursor: Cursor) => cursor.all());
+	export function followers(transaction: Transaction, user: User, skip: number = 0, limit: number = 25) : Promise<User[]> {
+		return transaction.run<User, any>(`MATCH(:User {id: $userId})<-[:FOLLOWS_USER]-(followers:User) RETURN COALESCE(properties(followers), []) as followers SKIP $skip LIMIT $limit`, {
+			userId: user.id,
+			skip: skip,
+			limit: limit
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records));
 	}
 	
-	export function addUserConnection(user: User, aimedUser: User) : Promise<UserFollowsUser> {
-		if(aimedUser._id === user._id) return Promise.reject('Users cannot follow themselves.');
-		
-		return getUserConnections(user, aimedUser, 0, 1).then((connections: UserFollowsUser[]) => {
-			// Try to return any existing connection.
-			if(connections.length > 0) return connections[0];
-			
-			// Add connection.
-			let now = new Date().toISOString();
-			let edge : UserFollowsUser = {
-				_from: user._id,
-				_to: aimedUser._id,
-				createdAt: now,
-				updatedAt: now
-			};
-			return DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsUser.name).save(edge);
-		});
+	export function followees(transaction: Transaction, user: User, skip: number = 0, limit: number = 25) : Promise<User[]> {
+		return transaction.run<User, any>(`MATCH(:User {id: $userId})-[:FOLLOWS_USER]->(followees:User) RETURN COALESCE(properties(followees), []) as followees SKIP $skip LIMIT $limit`, {
+			userId: user.id,
+			skip: skip,
+			limit: limit
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records));
 	}
 	
-	export function removeUserConnection(user: User, aimedUser: User): Promise<void> {
-		return DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsUser.name).removeByExample({
-			_from: user._id,
-			_to: aimedUser._id
-		}).then((t) => {
-			console.log({
-				_from: user._id,
-				_to: aimedUser._id
-			});
-		});
+	export function follow(transaction: Transaction, user: User, aimedUser: User) : Promise<void> {
+		if (aimedUser.id === user.id) return Promise.reject<void>('Users cannot follow themselves.');
+		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) MERGE (user)-[:FOLLOWS_USER {createdAt: $now}]->(followee)", {
+			userId: user.id,
+			followeeUserId: aimedUser.id,
+			now: new Date().toISOString()
+		}).then(() => {});
 	}
 	
-	export function getMutualConnections(users: User[], inbound = true): Promise<User[]> {
-		if(!users || users.length < 2) return Promise.reject('Invalid arguments: At least choose two users for mutual comparison.');
-		let friendsOfUser = users.map((user: User, index: number) => `(FOR v IN ${inbound ? 'INBOUND' : 'OUTBOUND'} @user_${index} @@edges RETURN v._id)`).join(',');
-		let aqlQuery: string = `FOR u IN INTERSECTION (${friendsOfUser}) RETURN u`;
-		let aqlParam: {[key: string]: string} = {
-			'@edges': DatabaseManager.arangoCollections.userFollowsUser.name
-		};
-		users.forEach((user: User, index: number) => {
-			aqlParam[`user_${index}`] = user._id;
-		});
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParam).then((cursor: Cursor) => cursor.all()) as any as Promise<User[]>;
+	export function unfollow(transaction: Transaction, user: User, aimedUser: User) : Promise<void> {
+		if (aimedUser.id === user.id) return Promise.reject<void>('Users cannot unfollow themselves.');
+		return transaction.run("MATCH(user:User {id: $userId})-[fu:FOLLOWS_USER]->(followee:User {id: $followeeUserId}) DETACH DELETE fu", {
+			userId: user.id,
+			followeeUserId: aimedUser.id
+		}).then(() => {});
 	}
 	
 	export namespace RouteHandlers {
 		
 		/**
-		 * Handles [GET] /api/users/{username}
+		 * Handles [GET] /api/users/=/{username}
 		 * @param request Request-Object
 		 * @param request.params.username username
 		 * @param reply Reply-Object
 		 */
 		export function getUser(request: any, reply: any): void {
-			let promise : Promise<User> = Promise.resolve(request.params.username != 'me' ? findByUsername(request.params.username) : request.auth.credentials).then((user: User) => {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise : Promise<User> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then((user: User) => {
 				if(!user) return Promise.reject(Boom.notFound('User not found!'));
-				return getPublicUser(user, request.auth.credentials);
+				return UserController.getPublicUser(transaction, user, request.auth.credentials);
 			});
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
@@ -278,9 +207,13 @@ export module UserController {
 		 */
 		export function getUsersLike(request: any, reply: any): void {
 			// Create promise.
-			let promise : Promise<User[]> = UserController.findByFulltext(request.params.query).then((users: User[]) => UserController.getPublicUser(users.slice(request.params.offset, request.params.offset + 30), request.auth.credentials));
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise : Promise<User[]> = UserController.findByFulltext(transaction, request.params.query, 0, 25).then((users: User[]) => {
+				return UserController.getPublicUser(transaction, users, request.auth.credentials)
+			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
@@ -291,17 +224,16 @@ export module UserController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getFollowers(request: any, reply: any): void {
+		export function followers(request: any, reply: any): void {
 			// Create user promise.
-			let promise : Promise<User> = Promise.resolve(request.params.username != 'me' ? findByUsername(request.params.username) : request.auth.credentials).then((user: User) => {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise : Promise<User> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then((user: User) => {
 				if(!user) return Promise.reject(Boom.notFound('User not found!'));
-				return getUserConnections(null, user, request.params.offset, request.params.offset + 30).then(connections => {
-					let connectionKeys: string[] = connections.map(connection => connection._from);
-					return findByKey(connectionKeys);
-				});
-			}).then((users: User[]) => getPublicUser(users, request.auth.credentials));
+				return UserController.followers(transaction, user, request.params.offset, 25);
+			}).then((users: User[]) => UserController.getPublicUser(transaction, users, request.auth.credentials));
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
@@ -312,17 +244,16 @@ export module UserController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getFollowees(request: any, reply: any): void {
+		export function followees(request: any, reply: any): void {
 			// Create user promise.
-			let promise : Promise<User> = Promise.resolve(request.params.username != 'me' ? findByUsername(request.params.username) : request.auth.credentials).then((user: User) => {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise : Promise<User> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then((user: User) => {
 				if (!user) return Promise.reject(Boom.badRequest('User does not exist!'));
-				return getUserConnections(user, null, request.params.offset, request.params.offset + 30).then(connections => {
-					let connectionKeys: string[] = connections.map(connection => connection._to);
-					return findByKey(connectionKeys);
-				});
-			}).then((users: User[]) => getPublicUser(users, request.auth.credentials));
+				return UserController.followees(transaction, user, request.params.offset, 25);
+			}).then((users: User[]) => UserController.getPublicUser(transaction, users, request.auth.credentials));
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
@@ -332,14 +263,17 @@ export module UserController {
 		 * @param request.params.followee followee
 		 * @param reply Reply-Object
 		 */
-		export function addFollowee(request: any, reply: any): void {
-			let promise = findByUsername(request.params.followee).then((followee: User) => {
+		export function follow(request: any, reply: any): void {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise = UserController.findByUsername(transaction, request.params.followee).then((followee: User) => {
 				if(!followee) return Promise.reject(Boom.notFound('Followee not found!'));
-				if(request.auth.credentials._id == followee._id) return Promise.reject(Boom.forbidden('Users cannot follow themselves.'));
-				return addUserConnection(request.auth.credentials, followee).then(() => getPublicUser(followee, request.auth.credentials));
+				return UserController.follow(transaction, request.auth.credentials, followee).then(() => {
+					return UserController.getPublicUser(transaction, followee, request.auth.credentials);
+				});
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
@@ -349,13 +283,17 @@ export module UserController {
 		 * @param request.params.followee followee
 		 * @param reply Reply-Object
 		 */
-		export function deleteFollowee(request: any, reply: any): void {
-			let promise = findByUsername(request.params.followee).then((followee: User) => {
+		export function unfollow(request: any, reply: any): void {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise = findByUsername(transaction, request.params.followee).then((followee: User) => {
 				if(!followee) return Promise.reject(Boom.notFound('Followee not found!'));
-				return removeUserConnection(request.auth.credentials, followee).then(() => getPublicUser(followee, request.auth.credentials));
+				return UserController.unfollow(transaction, request.auth.credentials, followee).then(() => {
+					return UserController.getPublicUser(transaction, followee, request.auth.credentials);
+				});
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 	}
 }

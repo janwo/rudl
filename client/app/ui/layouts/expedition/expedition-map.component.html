@@ -1,3 +1,3 @@
-<map class="card" [zoom]="16" [location]="expedition.location.latLng" [accuracy]="expedition.location.accuracy"></map>
+<map class="card" [zoom]="16" [location]="expedition.location"></map>
 <styled-button [link]="externalMapLink" [text]="'In Google Maps öffnen'" *ngIf="!expedition.needsApproval || expedition.relations.isApproved"></styled-button>
 <small class="attribution">Maps provided by © <a target="_blank" href="https://openstreetmap.org/copyright">OpenStreetMap</a> Contributors via <a target="_blank" href="http://leafletjs.com">Leaflet</a></small>

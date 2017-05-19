@@ -3,7 +3,7 @@
 	<h2>{{expedition.title}}</h2>
 	<p>{{expedition.description}}</p>
 	<footer>
-		<slots [users]="[expedition.owner]" [slots]="expedition.statistics.approvedUsers"></slots>
+		<slots [users]="[expedition.owner]" [slots]="expedition.statistics.attendees"></slots>
 		<ul>
 			<li class="owner">
 				<span>{{expedition.owner.firstName + ' ' + expedition.owner.lastName}}</span>

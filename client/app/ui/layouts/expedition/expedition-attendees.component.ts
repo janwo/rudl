@@ -1,8 +1,8 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
 import {Subscription} from "rxjs";
 import {ActivatedRoute} from "@angular/router";
-import {Activity} from "../../../models/activity";
-import {ActivityService} from "../../../services/activity.service";
+import {Rudel} from "../../../models/rudel";
+import {RudelService} from "../../../services/rudel.service";
 import {User} from "../../../models/user";
 import {Expedition} from '../../../models/expedition';
 import {EmptyState} from '../../widgets/state/empty.component';
@@ -30,14 +30,12 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	
 	ngOnInit(){
 		// Define changed params subscription.
-		/*
 		this.expeditionSubscription = this.route.parent.data.flatMap((data: { expedition: Expedition }) => {
 			this.expedition = data.expedition;
-			return this.expeditionService...
+			return this.expeditionService.attendees(this.expedition.id);
 		}).subscribe((attendees: User[]) => {
 			this.attendees = attendees;
 		});
-	    */
 	}
 	
 	ngOnDestroy(): void {

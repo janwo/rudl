@@ -33,14 +33,14 @@ webpack.start();
 // Backend server.
 let backendServerCommands = [
 	'ts-node',
-	`--project ${root('server')}`
+	`--project ${root('server')}`,
+	`--fast`
 ];
-if(Config.debug) backendServerCommands.push(`--inspect=0.0.0.0:${Config.backend.ports.nodeDebug}`);
-if(!Config.debug) backendServerCommands.push(`--fast`);
-let backendServer = new forever.Monitor(root('server/app/Hapi.ts'), {
-	command: backendServerCommands.join(' '),
-	watch: Config.debug,
-	watchDirectory: root('server'),
+let backendServerCommand = backendServerCommands.join(' ');
+if(Config.debug) backendServerCommand = `nodemon --ext ts,json --watch ${root('server')} --inspect=0.0.0.0:${Config.backend.ports.nodeDebug} --exec ${backendServerCommand}`;
+let backendServer = new forever.Monitor(root('run/backend-server.ts'), {
+	command: backendServerCommand,
+	watch: false,
 	max: 3
 });
 backendServer.on('restart', restart);
@@ -48,4 +48,4 @@ backendServer.on('watch:restart', watch);
 backendServer.on('exit:code', exit);
 backendServer.start();
 
-// TODO Add startServer(webpack, backendServer);
+require("forever").startServer(webpack, backendServer);

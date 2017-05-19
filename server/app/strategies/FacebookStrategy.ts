@@ -1,11 +1,13 @@
 import {Config} from "../../../run/config";
-import {User, UserProvider} from "../models/user/User";
+import {User} from "../models/user/User";
 import {StrategyConfiguration} from "../binders/StrategiesBinder";
-import {UserController} from "../controllers/UserController";
 import {AuthController} from "../controllers/AuthController";
 import {AccountController} from "../controllers/AccountController";
 import * as Boom from "boom";
 import * as faker from "faker";
+import {DatabaseManager, TransactionSession} from '../Database';
+import {UserAuthProvider} from '../models/user/UserAuthProvider';
+import * as shortid from 'shortid';
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -29,42 +31,45 @@ export function handleFacebook(request: any, reply: any): void {
 	// Authenticated successful?
 	if (!request.auth.isAuthenticated) reply(Boom.badRequest('Authentication failed: ' + request.auth.error.message));
 	
-	let profile = request.auth.credentials.profile;
+	let profile: any = request.auth.credentials.profile;
 	
 	// Create provider.
-	let provider: UserProvider = {
+	let provider: UserAuthProvider = {
 		provider: StrategyConfig.strategyConfig.provider,
-		userIdentifier: profile.id,
+		identifier: profile.id,
 		accessToken: request.auth.credentials.token,
 		refreshBefore: request.auth.credentials.expiresIn ? Math.trunc(request.auth.credentials.expiresIn + Date.now() / 1000) : null,
 		refreshToken: request.auth.credentials.refreshToken || undefined
 	};
 	
-	UserController.findByProvider(provider).then((user: User) => {
+	// Start transaction.
+	let transactionSession = new TransactionSession();
+	let transaction = transactionSession.beginTransaction();
+	let promise = AuthController.authByProvider(provider).then((user: User) => {
 		// Create User?
-		debugger
-		if(!user) return AccountController.checkUsername(profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then(checkResults => {
-			if (checkResults.available) return checkResults.username;
-			return checkResults.recommendations[Math.trunc(Math.random() * checkResults.recommendations.length)];
-		}).then(username => {
-			return AccountController.createUser({
+		return user ? user : AccountController.availableUsername(transaction, profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then((username: string) => {
+			return AccountController.create(transaction, {
+				id: shortid.generate(),
 				firstName: profile.name.first,
 				lastName: profile.name.last,
 				username: username,
-				password: faker.internet.password(10),
+				password: AuthController.hashPassword(faker.internet.password(10)),
 				mail: profile.email || profile.id + '@facebook.com'
 			});
 		});
-		return user;
-	}).then((user: User) => AccountController.addProvider(user, provider)).then(user => AccountController.save(user)).then(user => AuthController.signToken(user)).then(token => {
+	}).then((user: User) => Promise.all([
+		AuthController.addAuthProvider(transaction, user.username, provider),
+		AuthController.signToken(user)
+	]));
+	
+	transactionSession.finishTransaction(promise).then((values: [void, string]) => {
 		reply.view('message', {
 			title: 'Authentication',
 			domain: Config.backend.domain,
-			token: token,
-			type: Config.frontend.messageTypes.oauth,
-			message: token
-		}).header("Authorization", token);
-	}).catch(err => {
+			token: values[1],
+			type: Config.frontend.messageTypes.oauth
+		}).header("Authorization", values[1]);
+	}).catch((err: any) => {
 		reply(Boom.badRequest(err));
 	});
 }

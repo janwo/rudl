@@ -1,36 +1,28 @@
-import {DatabaseManager} from "../Database";
-import {Cursor} from "arangojs";
+import {DatabaseManager, TransactionSession} from "../Database";
 import {UserController} from "./UserController";
 import {AccountController} from "./AccountController";
 import {User} from "../models/user/User";
-import {Activity} from '../models/activity/Activity';
-import {ActivityController} from './ActivityController';
 import {Expedition} from '../models/expedition/Expedition';
+import {Rudel} from '../models/rudel/Rudel';
+import {RudelController} from './RudelController';
+import Transaction from 'neo4j-driver/lib/v1/transaction';
+import Result from 'neo4j-driver/lib/v1/result';
 
 export module SuggestionController {
 	
-	export function getPeopleSuggestions(user: User): Promise<User[]> {
-		let aqlQuery = `LET notIn = UNION([@user], FOR e IN @@edges FILTER e._from == @user RETURN e._to) FOR u IN @@collection FILTER u._id NOT IN notIn LIMIT 5 RETURN u`;
-		let aqlParams = {
-			'@edges': DatabaseManager.arangoCollections.userFollowsUser.name,
-			'@collection': DatabaseManager.arangoCollections.users.name,
-			user: user._id
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all());
+	export function getPeopleSuggestions(transaction: Transaction, user: User): Promise<User[]> {
+		return transaction.run<User, any>("MATCH (u1:User)-[:FOLLOWS_RUDEL]->(mutual1:Rudel)<-[:FOLLOWS_RUDEL]-(u2:User)," +
+		"(u2)-[:FOLLOWS_RUDEL]->(mutual2:Rudel)<-[:FOLLOWS_RUDEL]-(u3:User) " +
+		"WHERE u1.id = $userId AND NOT (u1)-[:FOLLOWS_RUDEL]->()<-[:FOLLOWS_RUDEL]-(u3)" +
+		"RETURN COALESCE(properties(u3), []) as u, count(DISTINCT u3) as frequency ORDER BY frequency DESC LIMIT 5", {
+			userId: user.id
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));
 	}
 	
-	export function getActivitySuggestions(user: User): Promise<Activity[]> {
-		let aqlQuery = `FOR expedition IN NEAR(@@expeditions, @latitude, @longitude, @limit)
-		FOR edge IN @@expeditionIsItem FILTER edge._from == expedition._id COLLECT activities = edge._to
-		RETURN DOCUMENT(activities)`;
-		let aqlParams = {
-			'@expeditions': DatabaseManager.arangoCollections.expeditions.name,
-			'@expeditionIsItem': DatabaseManager.arangoCollections.expeditionIsItem.name,
-			latitude: user.location[0],
-			longitude: user.location[1],
-			limit: 10
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Activity[]>;
+	export function getRudelSuggestions(transaction: Transaction, user: User): Promise<Rudel[]> {
+		return transaction.run<Rudel, any>("MATCH(r:Rudel) RETURN COALESCE(properties(r), []) as r LIMIT 5", {
+			userId: user.id
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r'));
 	}
 	
 	export namespace RouteHandlers {
@@ -41,36 +33,28 @@ export module SuggestionController {
 		 * @param reply Reply-Object
 		 */
 		export function getPeopleSuggestions(request: any, reply: any): void {
-			let promise = SuggestionController.getPeopleSuggestions(request.auth.credentials).then((users: User[]) => UserController.getPublicUser(users, request.auth.credentials));
-			reply.api(promise);
-		}
-		
-		/**
-		 * Handles [GET] /api/suggestions/activities
-		 * @param request Request-Object
-		 * @param reply Reply-Object
-		 */
-		export function getActivitySuggestions(request: any, reply: any): void {
-			let promise = SuggestionController.getActivitySuggestions(request.auth.credentials).then((activities: Activity[]) => {
-				console.log(activities);
-				return ActivityController.getPublicActivity(activities, request.auth.credentials)
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise = SuggestionController.getPeopleSuggestions(transaction, request.auth.credentials).then((users: User[]) => {
+				return UserController.getPublicUser(transaction, users, request.auth.credentials);
 			});
-			reply.api(promise);
+	
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [POST] /api/suggestions/{username}
+		 * Handles [GET] /api/suggestions/rudel
 		 * @param request Request-Object
-		 * @param request.params.username username
 		 * @param reply Reply-Object
 		 */
-		export function checkUsername(request: any, reply: any): void {
-			let promise = new Promise(resolve => {
-				// Check validity.
-				resolve(AccountController.checkUsername(request.params.username));
+		export function getRudelSuggestions(request: any, reply: any): void {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise = SuggestionController.getRudelSuggestions(transaction, request.auth.credentials).then((rudel: Rudel[]) => {
+				return RudelController.getPublicRudel(transaction, rudel, request.auth.credentials);
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 	}
 }

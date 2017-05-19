@@ -44,7 +44,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/users/=/{username}/followers/{offset?}',
 		method: 'GET',
-		handler: UserController.RouteHandlers.getFollowers,
+		handler: UserController.RouteHandlers.followers,
 		config: {
 			auth: {
 				scope: [
@@ -62,7 +62,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/users/=/{username}/followees/{offset?}',
 		method: 'GET',
-		handler: UserController.RouteHandlers.getFollowees,
+		handler: UserController.RouteHandlers.followees,
 		config: {
 			auth: {
 				scope: [
@@ -80,7 +80,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/users/follow/{followee}',
 		method: 'POST',
-		handler: UserController.RouteHandlers.addFollowee,
+		handler: UserController.RouteHandlers.follow,
 		config: {
 			auth: {
 				scope: [
@@ -97,7 +97,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/users/unfollow/{followee}',
 		method: 'POST',
-		handler: UserController.RouteHandlers.deleteFollowee,
+		handler: UserController.RouteHandlers.unfollow,
 		config: {
 			auth: {
 				scope: [

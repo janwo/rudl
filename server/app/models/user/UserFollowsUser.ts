@@ -1,5 +1,3 @@
-import {Edge} from "../Edge";
+import {TimestampedRelationship} from '../TimestampedRelationship';
 
-export interface UserFollowsUser extends Edge {
-	
-}
+export interface UserFollowsUser extends TimestampedRelationship {}

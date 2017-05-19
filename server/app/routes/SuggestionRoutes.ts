@@ -1,4 +1,4 @@
-import {UserRoles, UserValidation} from "../models/user/User";
+import {UserRoles} from "../models/user/User";
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {SuggestionController} from "../controllers/SuggestionController";
 
@@ -16,9 +16,9 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/suggestions/activities',
+		path: '/api/suggestions/rudel',
 		method: 'GET',
-		handler: SuggestionController.RouteHandlers.getActivitySuggestions,
+		handler: SuggestionController.RouteHandlers.getRudelSuggestions,
 		config: {
 			auth: {
 				scope: [
@@ -26,18 +26,5 @@ export const RoutesConfig: RoutesConfiguration = [
 				]
 			}
 		}
-	},
-	{
-		path: '/api/suggestions/{username}',
-		method: 'GET',
-		handler: SuggestionController.RouteHandlers.checkUsername,
-		config: {
-			auth: false,
-			validate: {
-				params: {
-					username: UserValidation.username
-				}
-			}
-		}
-	},
+	}
 ];

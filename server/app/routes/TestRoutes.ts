@@ -4,22 +4,9 @@ import * as Joi from "joi";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
-		path: '/api/test/truncate/{collection?}',
-		method: 'POST',
-		handler: TestController.truncate,
-		config: {
-			auth: false,
-			validate: {
-				params: {
-					collection: Joi.string()
-				}
-			}
-		}
-	},
-	{
 		path: '/api/test/create-users/{count?}',
 		method: 'POST',
-		handler: TestController.createUsers,
+		handler: TestController.RouteHandlers.createUsers,
 		config: {
 			auth: false,
 			validate: {
@@ -30,9 +17,9 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/test/create-activities/{count?}',
+		path: '/api/test/create-rudel/{count?}',
 		method: 'POST',
-		handler: TestController.createActivities,
+		handler: TestController.RouteHandlers.createRudel,
 		config: {
 			auth: false,
 			validate: {
@@ -45,25 +32,25 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/test/create-user-follows-user/{count?}',
 		method: 'POST',
-		handler: TestController.createUserFollowsUser,
+		handler: TestController.RouteHandlers.createUserFollowsUser,
 		config: {
 			auth: false,
 			validate: {
 				params: {
-					count: Joi.number()
+					count: Joi.number().min(0).max(100)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/test/create-user-follows-activity/{count?}',
+		path: '/api/test/create-user-follows-rudel/{count?}',
 		method: 'POST',
-		handler: TestController.createUserFollowsActivity,
+		handler: TestController.RouteHandlers.createUserFollowsRudel,
 		config: {
 			auth: false,
 			validate: {
 				params: {
-					count: Joi.number()
+					count: Joi.number().min(0).max(100)
 				}
 			}
 		}

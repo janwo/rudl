@@ -1,12 +1,15 @@
 import {Document} from "./document";
 import {Locale} from "./locale";
+import {Location} from "./location";
 
 export interface User extends Document {
 	firstName: string;
 	lastName: string;
 	username: string;
-	location: number[];
-	meta: UserMeta;
+	location: Location;
+	profileText: string;
+	hasAvatar: boolean;
+	onBoard: boolean;
 	relations: UserRelations;
 	statistics: UserStatistics;
 	links: UserLinks;
@@ -21,12 +24,6 @@ export interface UserLinks {
 	};
 }
 
-export interface UserMeta {
-	hasAvatar: boolean;
-	profileText: string;
-	onBoard: boolean;
-}
-
 export interface UserRelations {
 	isFollowee: boolean;
 	isFollower: boolean;
@@ -38,5 +35,5 @@ export interface UserStatistics {
 	followers: number;
 	followees: number;
 	lists: number;
-	activities: number;
+	rudel: number;
 }

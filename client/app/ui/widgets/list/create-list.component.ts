@@ -38,7 +38,7 @@ export class CreateListComponent {
         // Mark as pending.
         this.submitPending = true;
     
-        // Create activity recipe.
+        // Create rudel recipe.
         let listRecipe: ListRecipe = {
 		    translations: {}
 	    };

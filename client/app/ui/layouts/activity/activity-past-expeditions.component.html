@@ -1,7 +1,0 @@
-<item-wrapper [columns]="2">
-	<li *ngFor="let expedition of expeditions">
-		<expedition-item [expedition]="expedition"></expedition-item>
-	</li>
-</item-wrapper>
-<empty [emptyState]="emptyState" *ngIf="expeditions && expeditions.length == 0"></empty>
-<loading *ngIf="expeditions == null"></loading>

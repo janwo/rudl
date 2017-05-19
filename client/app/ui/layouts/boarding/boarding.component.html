@@ -39,8 +39,8 @@
 	</div>
 </carousel>
 <footer>
-	<styled-button class="back" *ngIf="step > 0" [style]="ButtonStyles.filled" [text]="'Go back'" (click)="carousel.back()"></styled-button>
-	<styled-button class="next" *ngIf="step < steps.length - 1" [style]="ButtonStyles.filled" [text]="'Continue'" (click)="carousel.next()"></styled-button>
-	<styled-button class="done" *ngIf="step == steps.length - 1" [disabled]="permissionStatus != 'granted'" [style]="ButtonStyles.filled" [text]="'Finish'" (click)="finishBoarding()"></styled-button>
-	<indicator [indicators]="steps" [selectedIndex]="step" [interactive]="false"></indicator>
+	<styled-button class="back" *ngIf="carousel.index() > 0" [style]="ButtonStyles.filled" [text]="'Go back'" (click)="carousel.back()"></styled-button>
+	<styled-button class="next" *ngIf="carousel.index() < steps.length - 1" [style]="ButtonStyles.filled" [text]="'Continue'" (click)="carousel.next()"></styled-button>
+	<styled-button class="done" *ngIf="carousel.index() == steps.length - 1" [disabled]="permissionStatus != 'granted'" [style]="ButtonStyles.filled" [text]="'Finish'" (click)="finishBoarding()"></styled-button>
+	<indicator [indicators]="steps" [selectedIndex]="carousel.index()" [interactive]="false"></indicator>
 </footer>

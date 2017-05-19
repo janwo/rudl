@@ -1,6 +1,6 @@
 <header>
 	<logo></logo>
-	<div class="stretched" *ngIf="userStatus?.loggedIn && userStatus.user.meta.onBoard">
+	<div class="stretched" *ngIf="userStatus?.loggedIn && userStatus.user.onBoard">
 		<div class="search" [ngClass]="{active: inSearchMode}">
 			<search-bar #searchBar></search-bar>
 			<button class="fa fa-close" [routerLink]="lastUrl"></button>
@@ -15,8 +15,8 @@
 	</div>
 	<user-avatar *ngIf="userStatus?.loggedIn" [user]="userStatus.user" (click)="dropdownMenu.toggle()"></user-avatar>
 	<dropdown-menu #dropdownMenu [arrowAlignment]="'right'">
-		<menu-item *ngIf="userStatus.loggedIn && userStatus.user.meta.onBoard" [icon]="'paw'" [title]="'Deine Rudel'" [link]="['/people', userStatus.user.username, 'rudel']"></menu-item>
-		<menu-item *ngIf="userStatus.loggedIn && userStatus.user.meta.onBoard" [icon]="'list'" [title]="'Deine Listen'" [link]="['/people', userStatus.user.username, 'lists']"></menu-item>
+		<menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'paw'" [title]="'Deine Rudel'" [link]="['/people', userStatus.user.username, 'rudel']"></menu-item>
+		<menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'list'" [title]="'Deine Listen'" [link]="['/people', userStatus.user.username, 'lists']"></menu-item>
 		<menu-item [icon]="'cog'" [title]="'Einstellungen'" [link]="['/settings']"></menu-item>
 		<menu-item [icon]="'sign-out'" [title]="'Abmelden'" (click)="signOut()"></menu-item>
 	</dropdown-menu>

@@ -1,5 +1,5 @@
 import * as Joi from "joi";
-import {Document} from "../Document";
+import {Node} from "../Node";
 
 export class UserRoles {
 	static user = 'user';
@@ -7,44 +7,36 @@ export class UserRoles {
 }
 
 export const UserValidation = {
-	username: Joi.string().min(5).max(16).regex(/^[a-z0-9_]*$/).required(),
-	mail: Joi.string().email().required(),
+	username: Joi.string().min(5).max(16).trim().regex(/^[a-z0-9_]*$/).required(),
+	mail: Joi.string().email().trim().required(),
 	password: Joi.string().min(6).max(32).required(),
-	firstName: Joi.string().min(1).max(24).required(),
-	lastName: Joi.string().min(1).max(24).required()
+	firstName: Joi.string().min(1).trim().max(24).required(),
+	lastName: Joi.string().min(1).trim().max(24).required()
 };
 
-export interface UserProvider {
-	provider: string;
-	userIdentifier: string;
-	accessToken: string;
-	refreshBefore: number;
-	refreshToken: string;
-}
-
-export interface UserMail {
-	mail: string;
-	verified: boolean;
-}
-
-export interface UserMeta {
-	profileText: string;
-	hasAvatar: boolean;
-	fulltextSearchData: string;
-	onBoard: boolean;
-}
-
-export interface User extends Document {
+export interface User extends Node {
 	firstName: string;
 	lastName: string;
 	username: string;
-	mails: Array<UserMail>;
+	profileText: string;
+	hasAvatar: boolean;
+	onBoard: boolean;
+	id: string;
 	scope: Array<string>;
-	location: Array<number>;
-	languages: Array<string>;
-	auth: {
-		password: string;
-		providers: Array<UserProvider>;
+	location: {
+		lng: number,
+		lat: number,
 	};
-	meta: UserMeta;
+	languages: Array<string>;
+	mails: {
+		primary: {
+			verified: boolean;
+			mail: string;
+		},
+		secondary: {
+			verified: boolean;
+			mail: string;
+		}
+	}
+	password: string;
 }

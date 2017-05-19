@@ -1,8 +1,8 @@
 <div class="card">
-	<aside [routerLink]="['rudel', expedition.activity.id]">
+	<aside [routerLink]="['rudel', expedition.rudel.id]">
 		<span i18n>Streifzug von</span>
-		<emoji [emoji]="expedition.activity.links.icon"></emoji>
-		<span class="name">{{expedition.activity.name}}</span>
+		<emoji [emoji]="expedition.rudel.links.icon"></emoji>
+		<span class="name">{{expedition.rudel.name}}</span>
 	</aside>
 	<header>
 		<div class="title">
@@ -12,9 +12,9 @@
 		<div class="description">{{expedition.description}}</div>
 		<div class="statistics">
 			<statistics [statistics]="[
-			{value: expedition.statistics.approvedUsers, subject: 'Teilnehmer', link: ['attendees']},
+			{value: expedition.statistics.attendees, subject: 'Teilnehmer', link: ['attendees']},
 			{value: formattedLocation, subject: 'Entfernung', link: ['attendes']},
-			{value: formattedDate, subject: expedition.needsApproval && !expedition.relations.isApproved ? 'Grober Zeitpunkt' : 'Zeitpunkt', link: ['attendes']}
+			{value: formattedDate, subject: expedition.date.accuracy > 0 ? 'Grober Zeitpunkt' : 'Zeitpunkt', link: ['attendes']}
 		]"></statistics>
 			<div class="cta">
 				<styled-button [style]="expedition.relations.isApproved ? buttonStyleActivated : buttonStyleDefault" [disabled]="pendingApprovalRequest" [text]="'Teilnahme anfragen'"></styled-button>

@@ -21,7 +21,7 @@ export class ExpeditionMapComponent implements OnInit, OnDestroy {
 		// Define changed params subscription.
 		this.expeditionSubscription = this.route.parent.data.subscribe((data: { expedition: Expedition }) => {
 		    this.expedition = data.expedition;
-		    this.externalMapLink = `https://maps.google.com/?q=${data.expedition.location.latLng.join()}`;
+		    this.externalMapLink = `https://maps.google.com/?q=${data.expedition.location.lat},${data.expedition.location.lng}`;
 	    });
 	}
 	

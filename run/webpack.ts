@@ -1,26 +1,9 @@
 import * as Webpack from "webpack";
 import * as WebpackDevServer from "webpack-dev-server";
 import {Config} from "./config";
-import * as rimraf from "rimraf";
 import * as chalk from "chalk";
 
 class WebpackManager {
-	static clean() {
-		return new Promise((resolve, reject) => {
-			// Delete generated files.
-			console.log(chalk.yellow('Delete public files...'));
-			rimraf(Config.paths.public.dir, (err: any) => {
-				if(err) {
-					reject(err);
-					return;
-				}
-				
-				console.log(chalk.bold.green(`Successfully deleted public files...`));
-				resolve();
-			});
-		});
-	}
-	
 	static start(){
 		// Create webpack compiler.
 		const webpackCompiler = Webpack([Config.frontend.webpack.config]);
@@ -76,4 +59,4 @@ class WebpackManager {
 }
 
 // Bring it up.
-WebpackManager.clean().then(() => WebpackManager.start());
+WebpackManager.start();

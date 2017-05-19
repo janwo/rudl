@@ -1,6 +1,7 @@
 @import '../../variables';
+@import "../../mixins";
 
-$header-background-color: #fff;
+$header-background-color: map_get($base-colors, 'background-highlighted');
 $header-content-size: 2rem;
 $header-vertical-padding: map_get($base-padding, 'smaller');
 $header-vertical-padding-mobile: map_get($base-padding, 'smaller');

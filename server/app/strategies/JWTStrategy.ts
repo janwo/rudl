@@ -1,7 +1,7 @@
 import {Config} from "../../../run/config";
 import {DecodedToken} from "../models/Token";
 import {StrategyConfiguration} from "../binders/StrategiesBinder";
-import {UserController} from "../controllers/UserController";
+import {AuthController} from '../controllers/AuthController';
 
 /*
  JWT is used for mobile applications. Actually it can be used in web apps as well, but due to the
@@ -14,10 +14,13 @@ export const StrategyConfig: StrategyConfiguration = {
 	schemeName: 'jwt',
 	strategyConfig: {
 		validateFunc: (decodedToken: DecodedToken, request: any, callback: any) => {
-			UserController.findByToken(decodedToken).then(user => {
+			AuthController.authByToken(decodedToken).then(user => {
 				if(!user) return callback(null, false);
 				return callback(null, true, user);
-			}).catch(err => callback(null, false));
+			}).catch(err => {
+				console.log(err);
+				callback(null, false)
+			});
 		},
 		verifyOptions: {
 			algorithms: ['HS256'],

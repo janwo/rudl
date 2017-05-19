@@ -7,7 +7,7 @@
 
   map {
     padding: 0;
-    height: 100vh;
+    height: calc(100% - #{map_get($base-padding, 'default') * 2});
     align-self: stretch;
     position: relative;
     border-radius: $base-border-radius;

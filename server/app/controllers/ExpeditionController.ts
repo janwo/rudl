@@ -1,95 +1,96 @@
 import * as Boom from "boom";
 import * as dot from "dot-object";
-import {DatabaseManager} from "../Database";
-import {Cursor} from "arangojs";
-import {Activity} from "../models/activity/Activity";
+import {DatabaseManager, TransactionSession} from "../Database";
+import {Rudel} from "../models/rudel/Rudel";
 import {User} from "../models/user/User";
 import {Expedition} from "../models/expedition/Expedition";
 import {UserController} from "./UserController";
-import {UserFollowsActivity} from "../models/activity/UserFollowsActivity";
-import {UserOwnsExpedition} from "../models/expedition/UserOwnsExpedition";
-import {UserJoinsExpedition} from "../models/expedition/UserJoinsExpedition";
-import {ExpeditionIsItem} from "../models/expedition/ExpeditionIsItem";
-import {ActivityController} from "./ActivityController";
+import {UserJoinsExpedition} from "../models/user/UserJoinsExpedition";
 import * as moment from "moment";
 import {UtilController} from "./UtilController";
 import * as Random from 'random-seed';
+import * as shortid from 'shortid';
 import {Config} from '../../../run/config';
 import {ExpeditionRecipe} from '../../../client/app/models/expedition';
+import Transaction from 'neo4j-driver/lib/v1/transaction';
+import Result from 'neo4j-driver/lib/v1/result';
+import {RudelController} from './RudelController';
 
 export module ExpeditionController {
 	
 	export const FUZZY_HOURS = 3;
 	export const FUZZY_METERS = 500;
 	
-	export function getPublicExpedition(expedition: Expedition | Expedition[], relatedUser: User) : Promise<any> {
+	export function getPublicExpedition(transaction: Transaction, expedition: Expedition | Expedition[], relatedUser: User) : Promise<any | any[]> {
 		let createPublicExpedition = (expedition: Expedition) : Promise<any> => {
-			let expeditionOwnerPromise = ExpeditionController.getOwner(expedition);
+			let expeditionOwnerPromise = ExpeditionController.getOwner(transaction, expedition);
 			let publicExpeditionOwnerPromise = expeditionOwnerPromise.then((owner: User) => {
-				return UserController.getPublicUser(owner, relatedUser);
+				return UserController.getPublicUser(transaction, owner, relatedUser);
 			});
-			let expeditionStatisticsPromise = ExpeditionController.getExpeditionStatistics(expedition, relatedUser);
-			let activityPromise = ExpeditionController.getActivity(expedition).then((activity: Activity) => {
-				return ActivityController.getPublicActivity(activity, relatedUser);
+			let expeditionStatisticsPromise = ExpeditionController.getStatistics(transaction, expedition, relatedUser);
+			let rudelPromise = ExpeditionController.getRudel(transaction, expedition).then((rudel: Rudel) => {
+				return RudelController.getPublicRudel(transaction, rudel, relatedUser);
 			});
 			
 			return Promise.all([
 				expeditionOwnerPromise,
 				publicExpeditionOwnerPromise,
 				expeditionStatisticsPromise,
-			    activityPromise
-			]).then((values: [User, any, ExpeditionStatistics, Activity]) => {
+			    rudelPromise
+			]).then((values: [User, any, ExpeditionStatistics, Rudel]) => {
 				// Add default links.
 				let links = {
 					icon: UtilController.getIconUrl(expedition.icon)
 				};
 				
 				// Mask data for unapproved users.
-				if(!values[2].isApproved) {
+				if(expedition.needsApproval && !(values[2].isAttendee || values[2].isInvitee)) {
 					// Seedable randomness to prevent hijacking unmasked data by recalling this function multiple times.
-					let randomSeed: Random.RandomSeed = Random.create(expedition._key + Config.backend.salts.random);
+					let randomSeed: Random.RandomSeed = Random.create(expedition.id + Config.backend.salts.random);
 					
 					// Mask time.
 					if(expedition.fuzzyTime) moment(expedition.date).add(randomSeed.intBetween(-FUZZY_HOURS, FUZZY_HOURS), 'hours').minute(0).second(0).millisecond(0);
 					
 					// Mask location.
-					let distance = [randomSeed.intBetween(-FUZZY_METERS, FUZZY_METERS), randomSeed.intBetween(-FUZZY_METERS, FUZZY_METERS)];
+					let distance = randomSeed.intBetween(-FUZZY_METERS, FUZZY_METERS);
 					let pi = Math.PI;
 					let R = 6378137; // Earth’s radius
-					let dLat = distance[0] / R;
-					let dLng = distance[1] / ( R * Math.cos(pi * expedition.location[1] / 180) );
-					expedition.location[0] = expedition.location[0] + ( dLat * 180 / pi );
-					expedition.location[1] = expedition.location[1] + ( dLng * 180 / pi );
+					let dLat = distance / R;
+					let dLng = distance / ( R * Math.cos(pi * expedition.location.lng / 180) );
+					expedition.location.lat = expedition.location.lat + ( dLat * 180 / pi );
+					expedition.location.lng = expedition.location.lng + ( dLng * 180 / pi );
 				}
 				
 				// Build profile.
 				return Promise.resolve(dot.transform({
-					'expedition._key': 'id',
+					'expedition.id': 'id',
 					'expedition.title': 'title',
 					'expedition.description': 'description',
 					'expedition.date': 'date.isoString',
 					'dateAccuracy': 'date.accuracy',
 					'expedition.icon': 'icon',
 					'expedition.needsApproval': 'needsApproval',
-					'expedition.location': 'location.latLng',
+					'expedition.location': 'location',
 					"locationAccuracy": "location.accuracy",
-					"activity": "activity",
+					"rudel": "rudel",
 					'links': 'links',
 					'owner': 'owner',
 					'isOwner': 'relations.isOwned',
-					'statistics.isApproved': 'relations.isApproved',
-					'statistics.isAwaiting': 'relations.isAwaiting',
-					'statistics.awaitingUsers': 'statistics.awaitingUsers',
-					'statistics.approvedUsers': 'statistics.approvedUsers'
+					'statistics.attendees': 'statistics.attendees',
+					'statistics.invitees': 'statistics.invitees',
+					'statistics.applicants': 'statistics.applicants',
+					'statistics.isAttendee': 'relations.isAttendee',
+					'statistics.isInvitee': 'relations.isInvitee',
+					'statistics.isApplicant': 'relations.isApplicant'
 				}, {
 					locationAccuracy: expedition.needsApproval ? ExpeditionController.FUZZY_METERS : 0,
 					dateAccuracy: expedition.fuzzyTime ? ExpeditionController.FUZZY_HOURS * 3600 : 0,
 					statistics: values[2],
 					expedition: expedition,
-					activity: values[3],
+					rudel: values[3],
 					links: links,
 					owner: values[1],
-					isOwner: values[0]._key == relatedUser._key
+					isOwner: values[0].id == relatedUser.id
 				}));
 			});
 		};
@@ -102,102 +103,107 @@ export module ExpeditionController {
 	}
 	
 	export interface ExpeditionStatistics {
-		approvedUsers: number;
-		awaitingUsers: number;
-		isApproved: boolean;
-		isAwaiting: boolean;
+		attendees: number,
+		invitees: number,
+		applicants: number,
+		isAttendee: boolean,
+		isInvitee: boolean,
+		isApplicant: boolean
 	}
 	
-	export function getExpeditionStatistics(expedition: Expedition, relatedUser: User) : Promise<ExpeditionStatistics> {
-	/*	let aqlQuery = `LET expeditionApproved = (FOR approved IN INBOUND @expeditionId @@edgesUserFollowsActivity RETURN follower._id) LET lists = (FOR list IN INBOUND @activityId @@edgesListIsItem RETURN list._id) RETURN {isFollowed: LENGTH(INTERSECTION(activityFollowers, [@userId])) > 0, followers: LENGTH(activityFollowers), lists: LENGTH(lists)}`;
-		let aqlParams = {
-			'@edgesUserFollowsActivity': DatabaseManager.arangoCollections.userFollowsActivity.name,
-			'@edgesListIsItem': DatabaseManager.arangoCollections.listIsItem.name,
-			activityId: expedition._id,
-			userId: relatedUser._id
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.next()) as any as Promise<ActivityStatistics>;
-		TODO
-		*/
-		return Promise.resolve({
-			approvedUsers: 3,
-			awaitingUsers: 2,
-			isApproved: false,
-			isAwaiting: false
-		});
-	}
-	
-	export function findByUser(user: User, ownsOnly = false) : Promise<Expedition[]>{
-		return DatabaseManager.arangoFunctions.outbounds(user._id, ownsOnly ? DatabaseManager.arangoCollections.userOwnsExpedition.name : DatabaseManager.arangoCollections.userJoinsExpedition.name);
-	}
-	
-	export function findByKey(key: string | string[]): Promise<Expedition | Expedition[]> {
-		let collection = DatabaseManager.arangoClient.collection(DatabaseManager.arangoCollections.expeditions.name);
-		return key instanceof Array ? collection.lookupByKeys(key) as Promise<Expedition[]> : collection.byExample({
-			_key: key
-		}, {
-			limit: 1
-		}).then(cursor => cursor.next()) as any as Promise<Expedition|Expedition[]>;
-	}
-	
-	export function findByFulltext(query: string) : Promise<Expedition[]>{
-		let aqlQuery = `FOR expedition IN FULLTEXT(@@collection, "title", @query) RETURN expedition`;
-		let aqlParams = {
-			'@collection': DatabaseManager.arangoCollections.expeditions.name,
-			query: query.split(' ').map(word => '|prefix:' + word).join()
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Expedition[]>;
-	}
-	
-	export function approveUser(expedition: Expedition, user: User) : Promise<UserJoinsExpedition> {
-		let collection = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsActivity.name);
-		return collection.byExample({
-			_from: user._id,
-			_to: expedition._id
-		}, {
-			limit: 1
-		}).then((cursor: Cursor) => cursor.next() as any as UserJoinsExpedition).then((userJoinsExpedition: UserJoinsExpedition) => {
-			// Try to edit any existing connection.
-			if(userJoinsExpedition) {
-				
-				return userJoinsExpedition;
-			}
-			
-			// Add connection.
-			let edge : UserFollowsActivity = {
-				_from: user._id,
-				_to: expedition._id,
-				createdAt: null,
-				updatedAt: null
-			};
-			
-			return DatabaseManager.arangoFunctions.saveOrUpdate(edge, DatabaseManager.arangoCollections.userJoinsExpedition.name);
-		});
-	}
-	
-	export function rejectUser(activity: User, user: User): Promise<void> {
-		let edge = {
-			_from: user._id,
-			_to: activity._id
-		};
-		return DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name).edgeCollection(DatabaseManager.arangoCollections.userFollowsActivity.name).removeByExample(edge).then(() => {});
-	}
-	
-	export function removeExpeditions(activity: Activity): Promise<Activity> {
-		return DatabaseManager.arangoFunctions.outbounds(activity._id, DatabaseManager.arangoCollections.expeditionIsItem.name).then((expeditions: Expedition[]) => {
-			return Promise.all(expeditions.map(expedition => ExpeditionController.removeExpedition(expedition)));
-		}).then(() => activity);
-	}
-	
-	export function removeExpedition(expedition: Expedition): Promise<any> {
-		let graph = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name);
+	export function getStatistics(transaction: Transaction, expedition: Expedition, relatedUser: User) : Promise<ExpeditionStatistics> {
+		// Set queries.
+		let queries: string[] = [
+			"MATCH (expedition:Expedition {id: $expeditionId})",
+			"OPTIONAL MATCH (expedition)<-[je:JOINS_EXPEDITION]-() WITH COUNT(je) as attendees, expedition",
+			"OPTIONAL MATCH (expedition)-[pje:POSSIBLY_JOINS_EXPEDITION]->() WITH attendees, COUNT(pje) as invitees, expedition",
+			"OPTIONAL MATCH (expedition)<-[pje:POSSIBLY_JOINS_EXPEDITION]-() WITH attendees, invitees, COUNT(pje) as applicants, expedition",
+			"OPTIONAL MATCH (expedition)-[je:JOINS_EXPEDITION]->(relatedUser:User {id: $relatedUserId}) WITH attendees, invitees, applicants, COUNT(je) > 0 as isAttendee, expedition, relatedUser",
+			"OPTIONAL MATCH (expedition)<-[pje:POSSIBLY_JOINS_EXPEDITION]-(relatedUser) WITH attendees, invitees, applicants, isAttendee, COUNT(pje) > 0 as isInvitee, expedition, relatedUser",
+			"OPTIONAL MATCH (expedition)-[pje:POSSIBLY_JOINS_EXPEDITION]->(relatedUser) WITH attendees, invitees, applicants, isAttendee, isInvitee, COUNT(pje) > 0 as isApplicant, expedition, relatedUser"
+		];
 		
-		// Remove expedition.
-		return graph.vertexCollection(DatabaseManager.arangoCollections.expeditions.name).remove(expedition._id);
+		let transformations: string[] = [
+			"attendees: attendees",
+			"invitees: invitees",
+			"applicants: applicants",
+			"isAttendee: isAttendee",
+			"isInvitee: isInvitee",
+			"isApplicant: isApplicant"
+		];
+		
+		// Set additional queries for relational data. TODO
+		if(0 == 0) {
+			queries = queries.concat([
+			]);
+			
+			transformations = transformations.concat([
+			])
+		}
+		
+		// Add final query.
+		queries.push(`RETURN {${transformations.join(',')}}`);
+		
+		// Run query.
+		return transaction.run(queries.join(' '), {
+			expeditionId: expedition.id,
+			relatedUserId: relatedUser ? relatedUser.id: null
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 0).pop());
 	}
 	
-	export function createExpedition(recipe: ExpeditionRecipe) : Promise<Expedition> {
+	export function findByUser(transaction: Transaction, user: User, ownsOnly = false, skip = 0, limit = 25) : Promise<Expedition[]> {
+		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:${ownsOnly ? 'OWNS_EXPEDITION' : 'JOINS_EXPEDITION'}]->(e:Expedition) RETURN COALESCE(properties(e), []) as e SKIP $skip LIMIT $limit`, {
+			userId: user.id,
+			limit: limit,
+			skip: skip
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
+	}
+	
+	export function get(transaction: Transaction, expeditionId: string): Promise<Expedition> {
+		return transaction.run<Expedition, any>(`MATCH(e:Expedition {id: $expeditionId}) RETURN COALESCE(properties(e), []) as e LIMIT 1`, {
+			expeditionId: expeditionId,
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e').pop());
+	}
+	
+	export function findByFulltext(transaction: Transaction, query: string, limit = 0, skip = 25) : Promise<Expedition[]>{
+		return transaction.run<Expedition, any>('WITH split($query, " ") AS words UNWIND words AS word MATCH (e:Expedition) WHERE e.meta.fulltextSearchData CONTAINS word RETURN COALESCE(properties(e), []) as e SKIP $skip LIMIT $limit', {
+			query: query,
+			skip: skip,
+			limit: limit
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
+	}
+	
+	export function approveUser(transaction: Transaction, expedition: Expedition, user: User) : Promise<void> {
+		//TODO
+		return transaction.run("MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) CREATE UNIQUE(e)<-[:JOINS_EXPEDITION]-(u)", {
+			expeditionId: expedition.id,
+			userId: user.id
+		}).then(() => {});
+	}
+	
+	export function rejectUser(transaction: Transaction, expedition: User, user: User): Promise<void> {
+		//TODO
+		return transaction.run("MATCH(e:Expedition {id : $expeditionId })<-[je:JOINS_EXPEDITION]-(u:User {id: $userId}) DELETE je", {
+			expeditionId: expedition.id,
+			userId: user.id
+		}).then(() => {});
+	}
+	
+	export function removeExpeditions(transaction: Transaction, rudel: Rudel): Promise<void> {
+		return transaction.run(`MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition) DETACH DELETE e`, {
+			rudelId: rudel.id,
+		}).then(() => {});
+	}
+	
+	export function removeExpedition(transaction: Transaction, expedition: Expedition): Promise<void> {
+		return transaction.run(`MATCH(:Expedition {id: $expeditionId}) DETACH DELETE e`, {
+			expeditionId: expedition.id,
+		}).then(() => {});
+	}
+	
+	export function create(transaction: Transaction, recipe: ExpeditionRecipe) : Promise<Expedition> {
 		let expedition: Expedition = {
+			id: shortid.generate(),
 			title: recipe.title,
 			description: recipe.description,
 			needsApproval: recipe.needsApproval,
@@ -208,98 +214,67 @@ export module ExpeditionController {
 			createdAt: null,
 			updatedAt: null
 		};
-		return Promise.resolve(expedition);
+		return this.save(transaction, expedition).then(() => expedition);
 	}
 	
-	export function save(expedition: Expedition): Promise<Expedition> {
-		expedition.description = expedition.description.trim();
-		expedition.title = expedition.title.trim();
+	export function save(transaction: Transaction, expedition: Expedition): Promise<void> {
+		// Set timestamps.
+		let now = new Date().toISOString();
+		if(!expedition.createdAt) expedition.createdAt = now;
+		expedition.updatedAt = now;
 		
 		// Save.
-		return DatabaseManager.arangoFunctions.updateOrCreate(expedition, DatabaseManager.arangoCollections.expeditions.name);
+		return transaction.run("MERGE (e:Expedition {id: $expedition.id}) ON CREATE SET e = $flattenExpedition ON MATCH SET e = $flattenExpedition", {
+			expedition: expedition,
+			flattenExpedition: DatabaseManager.neo4jFunctions.flatten(expedition)
+		}).then(() => {});
 	}
 	
-	/**
-	 * Changes the ownership of the expedition to a user.
-	 * @param expedition
-	 * @param owner
-	 * @returns {Promise<any>|Promise<TResult|any>|Promise<TResult>|Promise<TResult2|TResult1>}
-	 */
-	export function setOwner(expedition: Expedition, owner: User): Promise<Expedition> {
-		let graph = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name);
-		let owns = graph.edgeCollection(DatabaseManager.arangoCollections.userOwnsExpedition.name);
-		
-		// Exists owner edge?
-		return owns.byExample({
-			_to: expedition._id
-		}, {
-			limit: 1
-		}).then(cursor => cursor.next() as any as UserOwnsExpedition).then((edge: UserOwnsExpedition) => {
-			// Create new edge?
-			if(!edge) edge = {
-				_to: expedition._id,
-				_from: owner._id
-			};
-			
-			// Update edge.
-			edge._from = owner._id;
-			return DatabaseManager.arangoFunctions.updateOrCreate(edge, DatabaseManager.arangoCollections.userOwnsExpedition.name);
-		}).then(() => expedition);
+	export function setOwner(transaction: Transaction, expedition: Expedition, user: User): Promise<void> {
+		return transaction.run("MATCH(e:Expedition {id : $expeditionId}), (nu: User {id: $userId}) OPTIONAL MATCH (e)<-[ooe:OWNS_EXPEDITION]-(:User) DETACH DELETE ooe WITH e, nu CREATE (e)<-[noe:OWNS_EXPEDITION]-(nu)", {
+			expeditionId: expedition.id,
+			userId: user.id
+		}).then(() => {});
 	}
 	
-	export function getOwner(expedition: Expedition) : Promise<User> {
-		return DatabaseManager.arangoFunctions.inbound(expedition._id, DatabaseManager.arangoCollections.userOwnsExpedition.name);
+	export function getOwner(transaction: Transaction, expedition: Expedition) : Promise<User> {
+		return transaction.run<User, any>("MATCH(:Expedition {id : $expeditionId })<-[:OWNS_EXPEDITION]-(u:User) RETURN COALESCE(properties(u), []) as u LIMIT 1", {
+			expeditionId: expedition.id
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
 	}
 	
-	/**
-	 * Changes the activity of the expedition.
-	 * @param expedition
-	 * @param activity
-	 * @returns {Promise<any>|Promise<TResult|any>|Promise<TResult>|Promise<TResult2|TResult1>}
-	 */
-	export function setActivity(expedition: Expedition, activity: Activity): Promise<Expedition> {
-		let graph = DatabaseManager.arangoClient.graph(DatabaseManager.arangoGraphs.mainGraph.name);
-		let owns = graph.edgeCollection(DatabaseManager.arangoCollections.expeditionIsItem.name);
-		
-		// Exists owner edge?
-		return owns.byExample({
-			_from: expedition._id
-		}, {
-			limit: 1
-		}).then(cursor => cursor.next() as any as ExpeditionIsItem).then((edge: ExpeditionIsItem) => {
-			// Create new edge?
-			if(!edge) edge = {
-				_from: expedition._id,
-				_to: activity._id
-			};
-			
-			// Update edge.
-			edge._to = activity._id;
-			return DatabaseManager.arangoFunctions.updateOrCreate(edge, DatabaseManager.arangoCollections.expeditionIsItem.name);
-		}).then(() => expedition);
+	export function getAttendees(transaction: Transaction, expedition: Expedition): Promise<User[]> {
+	
 	}
 	
-	export function getActivity(expedition: Expedition): Promise<Activity> {
-		return DatabaseManager.arangoFunctions.outbound(expedition._id, DatabaseManager.arangoCollections.expeditionIsItem.name);
+	export function setRudel(transaction: Transaction, expedition: Expedition, rudel: Rudel): Promise<void> {
+		//TODO
+		return transaction.run("MATCH(e:Expedition {id : $expeditionId}), (nr:Rudel {id: $rudelId}) OPTIONAL MATCH (e)-[obtr:BELONGS_TO_RUDEL]->(:Rudel) DETACH DELETE obtr WITH e, nr CREATE (e)-[nbtr:BELONGS_TO_RUDEL]->(nr)", {
+			expeditionId: expedition.id,
+			rudelId: rudel.id
+		}).then(() => {});
 	}
 	
-	export function getNearbyExpeditions(user: User): Promise<Expedition[]> {
-		let aqlQuery = `FOR doc IN NEAR(@@collection, @latitude, @longitude, @limit) RETURN doc`;
-		let aqlParams = {
-			'@collection': DatabaseManager.arangoCollections.expeditions.name,
-			latitude: user.location[0],
-			longitude: user.location[1],
-			limit: 10
-		};
-		return DatabaseManager.arangoClient.query(aqlQuery, aqlParams).then((cursor: Cursor) => cursor.all()) as any as Promise<Expedition[]>;
+	export function getRudel(transaction: Transaction, expedition: Expedition): Promise<Rudel> {
+		return transaction.run<Rudel, any>("MATCH(:Expedition {id : $expeditionId })-[:BELONGS_TO_RUDEL]->(r:Rudel) RETURN COALESCE(properties(r), []) as r LIMIT 1", {
+			expeditionId: expedition.id
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r').pop());
+	}
+	
+	export function getNearbyExpeditions(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
+		return transaction.run<Expedition, any>("MATCH(e:Expedition) ORDER BY distance(point($location), point(e.location)) RETURN COALESCE(properties(e), []) as e SKIP $skip LIMIT $limit", {
+			location: user.location,
+			limit: limit,
+			skip: skip
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
 	}
 	
 	export namespace RouteHandlers {
 		
-		import getPublicExpedition = ExpeditionController.getPublicExpedition;
 		/**
 		 * Handles [POST] /api/expeditions/create
 		 * @param request Request-Object
+		 *
 		 * @param request.payload.expedition.title title
 		 * @param request.payload.expedition.description description
 		 * @param request.payload.expedition.needsApproval needsApproval
@@ -307,36 +282,67 @@ export module ExpeditionController {
 		 * @param request.payload.expedition.icon icon
 		 * @param request.payload.expedition.location location
 		 * @param request.payload.expedition.fuzzyTime fuzzyTime
-		 * @param request.payload.activity activity
+		 * @param request.payload.rudel rudel
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function createExpedition(request: any, reply: any): void {
+		export function create(request: any, reply: any): void {
 			// Create promise.
-			let promise: Promise<any> = ActivityController.findByKey(request.payload.activity).then((activity: Activity) => {
-				if(!activity) return Promise.reject(Boom.badRequest('Activity does not exist!'));
-				
-				return ExpeditionController.createExpedition(request.payload.expedition).then((expedition: Expedition) => ExpeditionController.getPublicExpedition(expedition, request.auth.credentials));
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = RudelController.get(transaction, request.payload.rudel).then((rudel: Rudel) => {
+				if(!rudel) return Promise.reject(Boom.badRequest('Rudel does not exist!'));
+				return ExpeditionController.create(transaction, request.payload.expedition).then((expedition: Expedition) => {
+					return Promise.all([
+						ExpeditionController.setOwner(transaction, expedition, request.auth.credentials),
+						ExpeditionController.approveUser(transaction, expedition, request.auth.credentials),
+						ExpeditionController.setRudel(transaction, expedition, rudel)
+					]).then(() => expedition);
+				}).then((expedition: Expedition) => ExpeditionController.getPublicExpedition(transaction, expedition, request.auth.credentials));
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [GET] /api/expeditions/=/{key}
+		 * Handles [GET] /api/expeditions/=/{id}
 		 * @param request Request-Object
-		 * @param request.params.key key
+		 * @param request.params.id id
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getExpedition(request: any, reply: any): void {
+		export function get(request: any, reply: any): void {
 			// Create promise.
-			let promise : Promise<Expedition> = ExpeditionController.findByKey(request.params.key).then((expedition: Expedition) => {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise : Promise<Expedition> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
 				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
-				return ExpeditionController.getPublicExpedition(expedition, request.auth.credentials);
+				return ExpeditionController.getPublicExpedition(transaction, expedition, request.auth.credentials);
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [GET] /api/expeditions/=/{id}/attendees/{offset?}
+		 * @param request Request-Object
+		 * @param request.params.id id
+		 * @param request.params.offset offset (optional, default=0)
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function getAttendees(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise : Promise<Expedition> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
+				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
+				return ExpeditionController.getAttendees(transaction, expedition, request.params.offset);
+			}).then((users: User[]) => {
+				return UserController.getPublicUser(transaction, users, request.auth.credentials);
+			});
+			
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
@@ -347,83 +353,96 @@ export module ExpeditionController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getExpeditionsLike(request: any, reply: any): void {
+		export function like(request: any, reply: any): void {
 			// Create promise.
-			//TODO slice
-			let promise : Promise<Expedition[]> = ExpeditionController.findByFulltext(request.params.query).then((expeditions: Expedition[]) => ExpeditionController.getPublicExpedition(expeditions.slice(request.params.offset, request.params.offset + 30), request.auth.credentials));
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise : Promise<Expedition[]> = ExpeditionController.findByFulltext(request.params.query, request.params.offset).then((expeditions: Expedition[]) => {
+				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
+			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
 		 * Handles [GET] /api/expeditions/by/{username}
 		 * @param request Request-Object
 		 * @param request.params.username username
+		 * @param request.params.offset offset (default=0)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getExpeditionBy(request: any, reply: any): void {
+		export function by(request: any, reply: any): void {
 			// Create promise.
-			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then(user => {
 				if(!user) return Promise.reject(Boom.notFound('User not found!'));
-				return ExpeditionController.findByUser(user);
-			}).then((expeditions: Expedition[]) => getPublicExpedition(expeditions, request.auth.credentials));
+				return ExpeditionController.findByUser(transaction, user, request.params.offset);
+			}).then((expeditions: Expedition[]) => ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials));
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [GET] /api/expeditions/by/{username}/in/{activity}
+		 * Handles [GET] /api/expeditions/by/{username}/in/{rudel}
 		 * @param request Request-Object
 		 * @param request.params.username username
-		 * @param request.params.activity activity
+		 * @param request.params.rudel rudel
+		 * @param request.params.offset offset (default=0)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
 		
-		export function getActivityExpeditionsBy(request: any, reply: any): void {
+		export function getRudelExpeditionsBy(request: any, reply: any): void {
 			// Create promise.
-			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then(user => {
 				if(!user) return Promise.reject(Boom.notFound('User not found!'));
-				return ExpeditionController.findByUser(user);
-			}).then((expeditions: Expedition[]) => getPublicExpedition(expeditions, request.auth.credentials));
+				return ExpeditionController.findByUser(transaction, user, request.params.offset);
+			}).then((expeditions: Expedition[]) => ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials));
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
 		 * Handles [GET] /api/expeditions/within/{radius}
 		 * @param request Request-Object
 		 * @param request.params.radius number
-		 * @param request.params.activity activity
+		 * @param request.params.rudel rudel
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getExpeditionsNearby(request: any, reply: any): void {
+		export function nearby(request: any, reply: any): void {
 			// Create promise.
-			let promise : Promise<any> = ExpeditionController.getNearbyExpeditions(request.auth.credentials).then((expeditions: Expedition[]) => {
-				return getPublicExpedition(expeditions, request.auth.credentials);
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise : Promise<any> = ExpeditionController.getNearbyExpeditions(transaction, request.auth.credentials).then((expeditions: Expedition[]) => {
+				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
 			});
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [GET] /api/expeditions/within/{radius}/in/{activity}
+		 * Handles [GET] /api/expeditions/within/{radius}/in/{rudel}
 		 * @param request Request-Object
 		 * @param request.params.username username
-		 * @param request.params.activity activity
+		 * @param request.params.rudel rudel
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getActivityExpeditionsNearby(request: any, reply: any): void {
+		export function getRudelExpeditionsNearby(request: any, reply: any): void {
 			// Create promise.
-			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(request.params.username) : request.auth.credentials).then(user => {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then(user => {
 				if(!user) return Promise.reject(Boom.notFound('User not found!'));
-				return ExpeditionController.findByUser(user);
-			}).then((expeditions: Expedition[]) => getPublicExpedition(expeditions, request.auth.credentials));
+				return ExpeditionController.findByUser(transaction, user);
+			}).then((expeditions: Expedition[]) => ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials));
 			
-			reply.api(promise);
+			reply.api(promise, transactionSession);
 		}
 	}
 }

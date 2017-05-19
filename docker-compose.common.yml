@@ -20,17 +20,20 @@ services:
       - ./logs:/root/app/logs
     depends_on:
       - redis
-      - arango
+      - neo4j
   redis:
     image: redis
     volumes:
       - ./db/redis:/data
-  arango:
-    command: arangod --server.authentication-unix-sockets true
-    volumes:
-      - ./db/arango:/var/lib/arangodb3
+  neo4j:
+    image: neo4j
     environment:
-      - ARANGO_RANDOM_ROOT_PASSWORD=1
-    image: arangodb
+      - NEO4J_AUTH=${NEO4J_AUTH}
     ports:
-      - "8529:8529"
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - ./db/neo4j/data:/var/lib/neo4j/data
+      - ./db/neo4j/plugins:/var/lib/neo4j/plugins
+      - ./db/neo4j/conf:/var/lib/neo4j/conf
+      - ./db/neo4j/logs:/var/lib/neo4j/logs

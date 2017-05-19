@@ -2,13 +2,13 @@ import {Component, OnDestroy, OnInit} from "@angular/core";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Observable, Subscription} from "rxjs";
 import {UserService} from "../../../services/user.service";
-import {Activity} from "../../../models/activity";
+import {Rudel} from "../../../models/rudel";
 import {List} from "../../../models/list";
 import {User} from "../../../models/user";
 import {SearchService} from "../../../services/search.service";
 import {ActivatedRoute} from "@angular/router";
 import {ListService} from "../../../services/list.service";
-import {ActivityService} from "../../../services/activity.service";
+import {RudelService} from "../../../services/rudel.service";
 
 @Component({
 	templateUrl: 'search.component.html',
@@ -31,9 +31,9 @@ import {ActivityService} from "../../../services/activity.service";
 })
 export class SearchComponent implements OnDestroy, OnInit {
 	
-	activities: Activity[] = null;
-	collapsedActivities: boolean = true;
-	expandedActivityCreation: boolean = false;
+	rudel: Rudel[] = null;
+	collapsedRudel: boolean = true;
+	expandedRudelCreation: boolean = false;
 	lists: List[] = null;
 	collapsedLists: boolean = true;
 	expandedListCreation: boolean = false;
@@ -45,7 +45,7 @@ export class SearchComponent implements OnDestroy, OnInit {
 	constructor(
 		private listService: ListService,
 		private userService: UserService,
-		private activityService: ActivityService,
+		private rudelService: RudelService,
 	    private searchService: SearchService,
 	    private activatedRoute: ActivatedRoute
 	){}
@@ -54,19 +54,19 @@ export class SearchComponent implements OnDestroy, OnInit {
 		// Register for query changes.
 		this.querySubscription = this.searchService.onQueryChangedDebounced.do(() => {
 			this.searchValue = null;
-			this.activities = null;
+			this.rudel = null;
 			this.lists = null;
 			this.users = null;
 		}).filter(query => query && query.length >= 3).flatMap((query: string) => {
 			return Observable.zip(
-				this.activityService.like(query),
+				this.rudelService.like(query),
 				this.listService.like(query),
 				this.userService.like(query),
 				Observable.from([query])
 			);
-		}).subscribe((values: [Activity[], List[], User[], string]) => {
+		}).subscribe((values: [Rudel[], List[], User[], string]) => {
 			this.searchValue = values[3];
-			this.activities = values[0];
+			this.rudel = values[0];
 			this.lists = values[1];
 			this.users = values[2];
 		});

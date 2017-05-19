@@ -1,4 +1,3 @@
-import {Cursor} from "arangojs";
 import * as _ from "lodash";
 import {Config} from "../../../run/config";
 
@@ -24,6 +23,5 @@ export module UtilController {
 			let promise: Promise<any> = Promise.resolve(iconDictionary);
 			reply.api(promise);
 		}
-		
 	}
 }
