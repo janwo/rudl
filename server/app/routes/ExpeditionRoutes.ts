@@ -98,6 +98,24 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
+		path: '/api/expeditions/=/{id}/attendees/{offset?}',
+		method: 'GET',
+		handler: ExpeditionController.RouteHandlers.getAttendees,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					id: Joi.string(),
+					offset: Joi.number().min(0).default(0)
+				}
+			}
+		}
+	},
+	{
 		path: '/api/expeditions/=/{id}',
 		method: 'GET',
 		handler: ExpeditionController.RouteHandlers.get,

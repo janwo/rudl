@@ -30,14 +30,12 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	
 	ngOnInit(){
 		// Define changed params subscription.
-		/*
 		this.expeditionSubscription = this.route.parent.data.flatMap((data: { expedition: Expedition }) => {
 			this.expedition = data.expedition;
-			return this.expeditionService...
+			return this.expeditionService.attendees(this.expedition.id);
 		}).subscribe((attendees: User[]) => {
 			this.attendees = attendees;
 		});
-	    */
 	}
 	
 	ngOnDestroy(): void {

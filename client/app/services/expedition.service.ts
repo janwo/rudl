@@ -6,6 +6,7 @@ import {UserService} from "./user.service";
 import {Expedition, ExpeditionRecipe} from "../models/expedition";
 import Translations = Locale.Translations;
 import {Rudel} from '../models/rudel';
+import {User} from '../models/user';
 
 @Injectable()
 export class ExpeditionService {
@@ -27,6 +28,10 @@ export class ExpeditionService {
     
     join(expedition: string): Observable<Expedition> {
         return this.dataService.post(`/api/expeditions/join/${expedition}`, null, true).map((json: JsonResponse) => json.data as Expedition).share();
+    }
+    
+    attendees(expedition: string, offset = 0): Observable<User[]> {
+        return this.dataService.post(`/api/expeditions/=/${expedition}/attendees/${offset}`, null, true).map((json: JsonResponse) => json.data as User[]).share();
     }
     
     leave(expedition: string): Observable<Expedition> {

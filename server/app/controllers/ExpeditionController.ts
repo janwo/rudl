@@ -243,6 +243,10 @@ export module ExpeditionController {
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
 	}
 	
+	export function getAttendees(transaction: Transaction, expedition: Expedition): Promise<User[]> {
+	
+	}
+	
 	export function setRudel(transaction: Transaction, expedition: Expedition, rudel: Rudel): Promise<void> {
 		//TODO
 		return transaction.run("MATCH(e:Expedition {id : $expeditionId}), (nr:Rudel {id: $rudelId}) OPTIONAL MATCH (e)-[obtr:BELONGS_TO_RUDEL]->(:Rudel) DETACH DELETE obtr WITH e, nr CREATE (e)-[nbtr:BELONGS_TO_RUDEL]->(nr)", {
@@ -301,7 +305,7 @@ export module ExpeditionController {
 		}
 		
 		/**
-		 * Handles [GET] /api/expeditions/=/{key}
+		 * Handles [GET] /api/expeditions/=/{id}
 		 * @param request Request-Object
 		 * @param request.params.id id
 		 * @param request.auth.credentials
@@ -314,6 +318,28 @@ export module ExpeditionController {
 			let promise : Promise<Expedition> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
 				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
 				return ExpeditionController.getPublicExpedition(transaction, expedition, request.auth.credentials);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [GET] /api/expeditions/=/{id}/attendees/{offset?}
+		 * @param request Request-Object
+		 * @param request.params.id id
+		 * @param request.params.offset offset (optional, default=0)
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function getAttendees(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise : Promise<Expedition> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
+				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
+				return ExpeditionController.getAttendees(transaction, expedition, request.params.offset);
+			}).then((users: User[]) => {
+				return UserController.getPublicUser(transaction, users, request.auth.credentials);
 			});
 			
 			reply.api(promise, transactionSession);
