@@ -30,7 +30,7 @@ export class RudelExpeditionsComponent implements OnInit, OnDestroy {
         // Define changed params subscription.
 	    this.expeditionSubscription = this.route.parent.data.flatMap((data: { rudel: Rudel }) => {
 		    this.rudel = data.rudel;
-		    return this.expeditionService.by('me', data.rudel.id);
+		    return this.expeditionService.nearby(data.rudel.id);
 	    }).subscribe((expeditions: Expedition[]) => {
 		    this.expeditions = expeditions;
 	    });

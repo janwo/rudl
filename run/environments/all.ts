@@ -116,7 +116,7 @@ export default {
 							]
 						},
 						plugins: [
-							new Webpack.ContextReplacementPlugin( /angular(\\|\/)core(\\|\/)src(\\|\/)linker/, root( 'src' ) ),
+							new Webpack.ContextReplacementPlugin(/angular(\\|\/)core(\\|\/)@angular/, root( 'src' ) ),
 							new Webpack.DefinePlugin( {
 								'process.env': {
 									ENV: JSON.stringify( Config.env ),

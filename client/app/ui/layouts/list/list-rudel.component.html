@@ -1,7 +1,10 @@
-<loading *ngIf="rudel == null"></loading>
-<empty [emptyState]="emptyState" *ngIf="rudel && rudel.length == 0"></empty>
-<item-wrapper class="content" [columns]="2">
+<item-wrapper class="content" [columns]="2" *ngIf="rudel && rudel.length > 0; else loading">
 	<li *ngFor="let rudel of rudel">
 		<rudel-item [rudel]="rudel"></rudel-item>
 	</li>
 </item-wrapper>
+
+<ng-template #loading>
+	<empty [emptyState]="emptyState" *ngIf="rudel && rudel.length == 0"></empty>
+	<loading *ngIf="rudel == null" #loading></loading>
+</ng-template>

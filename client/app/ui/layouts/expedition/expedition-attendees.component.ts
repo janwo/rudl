@@ -15,12 +15,12 @@ import {ExpeditionService} from '../../../services/expedition.service';
 export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	
 	expedition: Expedition;
-	expeditionSubscription: Subscription;
+	attendeesSubscription: Subscription;
 	attendees: User[];
-	unapprovedState: EmptyState = {
-		title: 'You are not approved',
+	restrictedState: EmptyState = {
+		title: 'Restricted Area',
 		image: require('../../../../assets/boarding/radar.png'),
-		description: 'We couldn\'t get you in there. You have to get approved!'
+		description: 'We cannot make this public. You have to become an attendee!'
 	};
 	
 	constructor(
@@ -30,7 +30,7 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	
 	ngOnInit(){
 		// Define changed params subscription.
-		this.expeditionSubscription = this.route.parent.data.flatMap((data: { expedition: Expedition }) => {
+		this.attendeesSubscription = this.route.parent.data.flatMap((data: { expedition: Expedition }) => {
 			this.expedition = data.expedition;
 			return this.expeditionService.attendees(this.expedition.id);
 		}).subscribe((attendees: User[]) => {
@@ -39,6 +39,6 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	}
 	
 	ngOnDestroy(): void {
-		//this.expeditionSubscription.unsubscribe();
+		this.attendeesSubscription.unsubscribe();
 	}
 }

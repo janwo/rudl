@@ -92,6 +92,7 @@ import {ExpeditionAttendeesComponent} from './ui/layouts/expedition/expedition-a
 import {ExpeditionMapComponent} from "./ui/layouts/expedition/expedition-map.component";
 import {CommentService} from './services/comment.service';
 import {LegalFooterComponent} from './ui/widgets/legal-footer/legal-footer.component';
+import {CommentItemComponent} from './ui/widgets/comment/comment-item.component';
 
 @NgModule({
     declarations: [
@@ -137,6 +138,7 @@ import {LegalFooterComponent} from './ui/widgets/legal-footer/legal-footer.compo
 	    PeopleComponent,
 	    StackComponent,
 	    UserItemComponent,
+	    CommentItemComponent,
 	    RedirectComponent,
 	    ExpanderComponent,
 	    HighlightPipe,
