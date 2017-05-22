@@ -1,0 +1,6 @@
+<user-avatar [routerLink]="['/people', comment.owner.username]" [user]="comment.owner"></user-avatar>
+<div class="card">
+	<span class="name" [innerHTML]="comment.owner.firstName + ' ' + comment.owner.lastName"></span>
+	<span class="username" [innerHTML]="comment.owner.username"></span>
+	<span class="message">{{comment.message}}</span>
+</div>

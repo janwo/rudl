@@ -80,7 +80,7 @@ export class DatabaseManager {
 				'id'
 			],
 			fulltext: {
-				Expeditions: [
+				Expedition: [
 					'title',
 					'description'
 				]
@@ -162,7 +162,7 @@ export class DatabaseManager {
 			name: 'BELONGS_TO_NODE',
 			isRelationship: true
 		},
-		userComment: {
+		comments: {
 			name: 'Comment',
 			isRelationship: false,
 			uniqueness: [

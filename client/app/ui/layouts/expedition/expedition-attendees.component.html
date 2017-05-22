@@ -1,5 +1,13 @@
-<loading *ngIf="attendees == null"></loading>
-<empty [emptyState]="emptyState" *ngIf="attendees && attendees.length == 0"></empty>
-<item-wrapper [columns]="1">
-	<user-item *ngFor="let attendee of attendees" [user]="attendee"></user-item>
-</item-wrapper>
+<ng-container *ngIf="!expedition.needsApproval || expedition.relations.isAttendee; else restricted">
+	<item-wrapper [columns]="1" *ngIf="attendees && attendees.length > 0; else loading">
+		<user-item *ngFor="let attendee of attendees" [user]="attendee"></user-item>
+	</item-wrapper>
+	
+	<ng-template #loading>
+		<loading></loading>
+	</ng-template>
+</ng-container>
+
+<ng-template #restricted>
+	<empty [emptyState]="restrictedState"></empty>
+</ng-template>

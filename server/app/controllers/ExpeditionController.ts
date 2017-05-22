@@ -44,7 +44,7 @@ export module ExpeditionController {
 				};
 				
 				// Mask data for unapproved users.
-				if(expedition.needsApproval && !(values[2].isAttendee || values[2].isInvitee)) {
+				if(expedition.needsApproval && !values[2].isAttendee) {
 					// Seedable randomness to prevent hijacking unmasked data by recalling this function multiple times.
 					let randomSeed: Random.RandomSeed = Random.create(expedition.id + Config.backend.salts.random);
 					
@@ -118,7 +118,7 @@ export module ExpeditionController {
 			"OPTIONAL MATCH (expedition)<-[je:JOINS_EXPEDITION]-() WITH COUNT(je) as attendees, expedition",
 			"OPTIONAL MATCH (expedition)-[pje:POSSIBLY_JOINS_EXPEDITION]->() WITH attendees, COUNT(pje) as invitees, expedition",
 			"OPTIONAL MATCH (expedition)<-[pje:POSSIBLY_JOINS_EXPEDITION]-() WITH attendees, invitees, COUNT(pje) as applicants, expedition",
-			"OPTIONAL MATCH (expedition)-[je:JOINS_EXPEDITION]->(relatedUser:User {id: $relatedUserId}) WITH attendees, invitees, applicants, COUNT(je) > 0 as isAttendee, expedition, relatedUser",
+			"OPTIONAL MATCH (expedition)<-[je:JOINS_EXPEDITION]-(relatedUser:User {id: $relatedUserId}) WITH attendees, invitees, applicants, COUNT(je) > 0 as isAttendee, expedition, relatedUser",
 			"OPTIONAL MATCH (expedition)<-[pje:POSSIBLY_JOINS_EXPEDITION]-(relatedUser) WITH attendees, invitees, applicants, isAttendee, COUNT(pje) > 0 as isInvitee, expedition, relatedUser",
 			"OPTIONAL MATCH (expedition)-[pje:POSSIBLY_JOINS_EXPEDITION]->(relatedUser) WITH attendees, invitees, applicants, isAttendee, isInvitee, COUNT(pje) > 0 as isApplicant, expedition, relatedUser"
 		];
@@ -131,15 +131,6 @@ export module ExpeditionController {
 			"isInvitee: isInvitee",
 			"isApplicant: isApplicant"
 		];
-		
-		// Set additional queries for relational data. TODO
-		if(0 == 0) {
-			queries = queries.concat([
-			]);
-			
-			transformations = transformations.concat([
-			])
-		}
 		
 		// Add final query.
 		queries.push(`RETURN {${transformations.join(',')}}`);
@@ -166,24 +157,41 @@ export module ExpeditionController {
 	}
 	
 	export function findByFulltext(transaction: Transaction, query: string, limit = 0, skip = 25) : Promise<Expedition[]>{
-		return transaction.run<Expedition, any>('WITH split($query, " ") AS words UNWIND words AS word MATCH (e:Expedition) WHERE e.meta.fulltextSearchData CONTAINS word RETURN COALESCE(properties(e), []) as e SKIP $skip LIMIT $limit', {
-			query: query,
+		return transaction.run<User, any>('CALL apoc.index.search("Expedition", $query) YIELD node WITH properties(node) as e RETURN e SKIP $skip LIMIT $limit', {
+			query: `${query}~`,
 			skip: skip,
 			limit: limit
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
 	}
 	
-	export function approveUser(transaction: Transaction, expedition: Expedition, user: User) : Promise<void> {
-		//TODO
-		return transaction.run("MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) CREATE UNIQUE(e)<-[:JOINS_EXPEDITION]-(u)", {
-			expeditionId: expedition.id,
-			userId: user.id
+	export function approveUser(transaction: Transaction, expedition: Expedition, user: User, relatedUser: User) : Promise<void> {
+		return this.getOwner(transaction, expedition).then((owner: User) => {
+			let relationship = '(e)-[:POSSIBLY_JOINS_EXPEDITION]->(u)';
+			if(user.id == relatedUser.id) relationship = '(e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u)';
+			if(user.id == relatedUser.id && (owner == null || owner.id == relatedUser.id || !expedition.needsApproval)) relationship = '(e)<-[:JOINS_EXPEDITION]-(u)';
+			
+			// Create invitation / request.
+			return transaction.run(`MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) CREATE UNIQUE ${relationship}`, {
+				expeditionId: expedition.id,
+				userId: user.id
+			}).then(() => {
+				// Merge matches.
+				return transaction.run(`MATCH(e:Expedition {id : $expeditionId })<-[pje:POSSIBLY_JOINS_EXPEDITION]->(u:User {id: $userId}) DETACH DELETE pje WITH u, e CREATE UNIQUE (e)<-[:JOINS_EXPEDITION]-(u) WITH e, u MATCH (u)-[pje:POSSIBLY_JOINS_EXPEDITION]-(e) DETACH DELETE pje`, {
+					expeditionId: expedition.id,
+					userId: user.id
+				}).then(() => {});
+			});
 		}).then(() => {});
 	}
 	
-	export function rejectUser(transaction: Transaction, expedition: User, user: User): Promise<void> {
-		//TODO
-		return transaction.run("MATCH(e:Expedition {id : $expeditionId })<-[je:JOINS_EXPEDITION]-(u:User {id: $userId}) DELETE je", {
+	export function approveAllUser(transaction: Transaction, expedition: Expedition) : Promise<void> {
+		return transaction.run(`MATCH (e:Expedition {id: $expeditionId}) OPTIONAL MATCH (e)<-[pje:POSSIBLY_JOINS_EXPEDITION]-() CALL apoc.refactor.setType(pje, 'JOINS_EXPEDITION') YIELD output OPTIONAL MATCH (e)-[pje:POSSIBLY_JOINS_EXPEDITION]-() DETACH DELETE pje`, {
+			expeditionId: expedition.id
+		}).then(() => {});
+	}
+	
+	export function rejectUser(transaction: Transaction, expedition: Expedition, user: User): Promise<void> {
+		return transaction.run(`MATCH (:Expedition {id: $expeditionId})-[pje:POSSIBLY_JOINS_EXPEDITION:JOINS_EXPEDITION]-(:User {id: $userId}) DETACH DELETE pje`, {
 			expeditionId: expedition.id,
 			userId: user.id
 		}).then(() => {});
@@ -224,10 +232,18 @@ export module ExpeditionController {
 		expedition.updatedAt = now;
 		
 		// Save.
-		return transaction.run("MERGE (e:Expedition {id: $expedition.id}) ON CREATE SET e = $flattenExpedition ON MATCH SET e = $flattenExpedition", {
-			expedition: expedition,
-			flattenExpedition: DatabaseManager.neo4jFunctions.flatten(expedition)
-		}).then(() => {});
+		let promises = [
+			transaction.run("MERGE (e:Expedition {id: $expedition.id}) ON CREATE SET e = $flattenExpedition ON MATCH SET e = $flattenExpedition", {
+				expedition: expedition,
+				flattenExpedition: DatabaseManager.neo4jFunctions.flatten(expedition)
+			})
+		];
+		
+		// Is public expedition?
+		if(!expedition.needsApproval) promises.push(this.approveAllUsers(transaction, expedition));
+		
+		// Return nothing.
+		return Promise.all(promises).then(() => {});
 	}
 	
 	export function setOwner(transaction: Transaction, expedition: Expedition, user: User): Promise<void> {
@@ -243,12 +259,15 @@ export module ExpeditionController {
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
 	}
 	
-	export function getAttendees(transaction: Transaction, expedition: Expedition, offset = 0): Promise<User[]> {
-		return Promise.resolve<User[]>([]);
+	export function getAttendees(transaction: Transaction, expedition: Expedition, skip = 0, limit = 25): Promise<User[]> {
+		return transaction.run<User, any>("MATCH(:Expedition {id : $expeditionId })<-[:JOINS_EXPEDITION]-(u:User) RETURN COALESCE(properties(u), []) as u SKIP $skip LIMIT $limit", {
+			expeditionId: expedition.id,
+			skip: skip,
+			limit: limit
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));
 	}
 	
 	export function setRudel(transaction: Transaction, expedition: Expedition, rudel: Rudel): Promise<void> {
-		//TODO
 		return transaction.run("MATCH(e:Expedition {id : $expeditionId}), (nr:Rudel {id: $rudelId}) OPTIONAL MATCH (e)-[obtr:BELONGS_TO_RUDEL]->(:Rudel) DETACH DELETE obtr WITH e, nr CREATE (e)-[nbtr:BELONGS_TO_RUDEL]->(nr)", {
 			expeditionId: expedition.id,
 			rudelId: rudel.id
@@ -262,11 +281,37 @@ export module ExpeditionController {
 	}
 	
 	export function getNearbyExpeditions(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>("MATCH(e:Expedition) ORDER BY distance(point($location), point(e.location)) RETURN COALESCE(properties(e), []) as e SKIP $skip LIMIT $limit", {
-			location: user.location,
+		return transaction.run<Expedition, any>("MATCH(e:Expedition) WITH e ORDER BY distance(point($location), point(e.location)) RETURN properties(e) as e SKIP $skip LIMIT $limit", {
+			location: dot.transform({
+				'lat': 'latitude',
+				'lng': 'longitude'
+			}, user.location),
 			limit: limit,
 			skip: skip
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
+		}).then(results => {
+			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e');
+		});
+	}
+	
+	export function getNearbyExpeditionsWithinRudel(transaction: Transaction, user: User, rudel: Rudel, skip = 0, limit = 25): Promise<Expedition[]> {
+		return transaction.run<Expedition, any>("MATCH(r:Rudel {id: $rudelId}) WITH r MATCH (e:Expedition)-[:BELONGS_TO_RUDEL]->(r) WITH e ORDER BY distance(point($location), point(e.location)) WITH properties(e) as e RETURN e SKIP $skip LIMIT $limit", {
+			location: dot.transform({
+				'lat': 'latitude',
+				'lng': 'longitude'
+			}, user.location),
+			rudelId: rudel.id,
+			limit: limit,
+			skip: skip
+		}).then(results => {
+			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e')
+		});
+	}
+	
+	export function isAttendee(transaction: Transaction, expedition: Expedition, user: User): Promise<boolean> {
+		return transaction.run<Expedition, any>("MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) OPTIONAL MATCH (e)<-[je:JOINS_EXPEDITION]-(u) RETURN COUNT(je) > 0 as je", {
+			expeditionId: expedition.id,
+			userId: user.id
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'je').pop());
 	}
 	
 	export namespace RouteHandlers {
@@ -295,7 +340,7 @@ export module ExpeditionController {
 				return ExpeditionController.create(transaction, request.payload.expedition).then((expedition: Expedition) => {
 					return Promise.all([
 						ExpeditionController.setOwner(transaction, expedition, request.auth.credentials),
-						ExpeditionController.approveUser(transaction, expedition, request.auth.credentials),
+						ExpeditionController.approveUser(transaction, expedition, request.auth.credentials, request.auth.credentials),
 						ExpeditionController.setRudel(transaction, expedition, rudel)
 					]).then(() => expedition);
 				}).then((expedition: Expedition) => ExpeditionController.getPublicExpedition(transaction, expedition, request.auth.credentials));
@@ -315,7 +360,7 @@ export module ExpeditionController {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise : Promise<Expedition> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
+			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
 				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
 				return ExpeditionController.getPublicExpedition(transaction, expedition, request.auth.credentials);
 			});
@@ -335,11 +380,74 @@ export module ExpeditionController {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise : Promise<Expedition> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
+			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
 				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
+				if(!expedition.needsApproval) return expedition;
+			
+				return ExpeditionController.isAttendee(transaction, expedition, request.auth.credentials).then((isAttendee: boolean) => {
+					if(!isAttendee) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
+					return expedition;
+				});
+			}).then((expedition: Expedition) => {
 				return ExpeditionController.getAttendees(transaction, expedition, request.params.offset);
 			}).then((users: User[]) => {
 				return UserController.getPublicUser(transaction, users, request.auth.credentials);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [GET] /api/expeditions/=/{id}/approve/{username}
+		 * @param request Request-Object
+		 * @param request.params.id id
+		 * @param request.params.username username
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function approveUser(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = Promise.all([
+				ExpeditionController.get(transaction, request.params.id),
+				request.params.username == 'me' ? Promise.resolve(request.auth.credentials) : UserController.findByUsername(transaction, request.params.username)
+			]).then((values: [Expedition, User]) => {
+				if (!values[0]) return Promise.reject(Boom.notFound('Expedition not found.'));
+				if (!values[1]) return Promise.reject(Boom.notFound('User not found.'));
+				return ExpeditionController.approveUser(transaction, values[0], values[1], request.auth.credentials).then(() => values[0]);
+			}).then((expedition: Expedition) => {
+				return ExpeditionController.getPublicExpedition(transaction, expedition, request.auth.credentials);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [GET] /api/expeditions/=/{id}/reject/{username}
+		 * @param request Request-Object
+		 * @param request.params.id id
+		 * @param request.params.username username
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function rejectUser(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = Promise.all([
+				ExpeditionController.get(transaction, request.params.id),
+				request.params.username == 'me' ? Promise.resolve(request.auth.credentials) : UserController.findByUsername(transaction, request.params.username)
+			]).then((values: [Expedition, User]) => {
+				if (!values[0]) return Promise.reject(Boom.notFound('Expedition not found.'));
+				if (!values[1]) return Promise.reject(Boom.notFound('User not found.'));
+			
+				return ExpeditionController.getOwner(transaction, values[0]).then((owner: User) => {
+					if(owner.id != request.auth.credentials.id) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
+					return ExpeditionController.rejectUser(transaction, values[0], values[1]).then(() => values[0]);
+				});
+			}).then((expedition: Expedition) => {
+				return ExpeditionController.getPublicExpedition(transaction, expedition, request.auth.credentials);
 			});
 			
 			reply.api(promise, transactionSession);
@@ -357,7 +465,7 @@ export module ExpeditionController {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise : Promise<Expedition[]> = ExpeditionController.findByFulltext(request.params.query, request.params.offset).then((expeditions: Expedition[]) => {
+			let promise: Promise<any[]> = ExpeditionController.findByFulltext(request.params.query, request.params.offset).then((expeditions: Expedition[]) => {
 				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
 			});
 			
@@ -376,7 +484,7 @@ export module ExpeditionController {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then(user => {
+			let promise: Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then(user => {
 				if(!user) return Promise.reject(Boom.notFound('User not found!'));
 				return ExpeditionController.findByUser(transaction, user, request.params.offset);
 			}).then((expeditions: Expedition[]) => ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials));
@@ -385,32 +493,9 @@ export module ExpeditionController {
 		}
 		
 		/**
-		 * Handles [GET] /api/expeditions/by/{username}/in/{rudel}
+		 * Handles [GET] /api/expeditions/nearby/{offset?}
 		 * @param request Request-Object
-		 * @param request.params.username username
-		 * @param request.params.rudel rudel
 		 * @param request.params.offset offset (default=0)
-		 * @param request.auth.credentials
-		 * @param reply Reply-Object
-		 */
-		
-		export function getRudelExpeditionsBy(request: any, reply: any): void {
-			// Create promise.
-			let transactionSession = new TransactionSession();
-			let transaction = transactionSession.beginTransaction();
-			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then(user => {
-				if(!user) return Promise.reject(Boom.notFound('User not found!'));
-				return ExpeditionController.findByUser(transaction, user, request.params.offset);
-			}).then((expeditions: Expedition[]) => ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials));
-			
-			reply.api(promise, transactionSession);
-		}
-		
-		/**
-		 * Handles [GET] /api/expeditions/within/{radius}
-		 * @param request Request-Object
-		 * @param request.params.radius number
-		 * @param request.params.rudel rudel
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -418,7 +503,7 @@ export module ExpeditionController {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise : Promise<any> = ExpeditionController.getNearbyExpeditions(transaction, request.auth.credentials).then((expeditions: Expedition[]) => {
+			let promise: Promise<any> = ExpeditionController.getNearbyExpeditions(transaction, request.auth.credentials, request.params.offset).then((expeditions: Expedition[]) => {
 				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
 			});
 			
@@ -426,21 +511,23 @@ export module ExpeditionController {
 		}
 		
 		/**
-		 * Handles [GET] /api/expeditions/within/{radius}/in/{rudel}
+		 * Handles [GET] /api/expeditions/near/{rudel}/{offset?}
 		 * @param request Request-Object
-		 * @param request.params.username username
+		 * @param request.params.offset offset (default=0)
 		 * @param request.params.rudel rudel
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getRudelExpeditionsNearby(request: any, reply: any): void {
+		export function nearbyWithinRudel(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then(user => {
-				if(!user) return Promise.reject(Boom.notFound('User not found!'));
-				return ExpeditionController.findByUser(transaction, user);
-			}).then((expeditions: Expedition[]) => ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials));
+			let promise: Promise<any> = RudelController.get(transaction, request.params.rudel).then((rudel: Rudel) => {
+				if(!rudel) return Promise.reject(Boom.notFound('Rudel not found!'));
+				return ExpeditionController.getNearbyExpeditionsWithinRudel(transaction, request.auth.credentials, rudel, request.params.offset);
+			}).then((expeditions: Expedition[]) => {
+				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
+			});
 			
 			reply.api(promise, transactionSession);
 		}

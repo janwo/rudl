@@ -18,7 +18,7 @@ export module CommentController {
 		let comment: Comment = {
 			id: shortid.generate(),
 			message: recipe.message,
-			pinned: recipe.pin,
+			pinned: recipe.pinned,
 			createdAt: null,
 			updatedAt: null
 		};
@@ -98,11 +98,13 @@ export module CommentController {
 	}
 	
 	export function ofNode<T extends Node>(transaction: Transaction, node: T, skip = 0, limit = 25): Promise<Comment[]> {
-		return transaction.run<Comment, any>(`MATCH(n {id: $nodeId})<-[:BELONGS_TO_NODE]-(c:Comment) ORDER BY c.createdAt RETURN COALESCE(properties(c), []) as c SKIP $skip LIMIT $limit`, {
+		return transaction.run<Comment, any>(`MATCH(n {id: $nodeId})<-[:BELONGS_TO_NODE]-(c:Comment) WITH properties(c) as c RETURN c ORDER BY c.createdAt SKIP $skip LIMIT $limit`, {
 			nodeId: node.id,
 			limit: limit,
 			skip: skip
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'c'));
+		}).then(results => {
+			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'c');
+		});
 	}
 	
 	export namespace RouteHandlers {
@@ -121,10 +123,16 @@ export module CommentController {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
-				if (!expedition) return Promise.reject(Boom.badRequest('Expedition does not exist!'));
-				//TODO ONLY IF ACCEPTED
+				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
+				if(!expedition.needsApproval) return expedition;
+				
+				return ExpeditionController.isAttendee(transaction, expedition, request.auth.credentials).then((isAttendee: boolean) => {
+					if(!isAttendee) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
+					return expedition;
+				});
+			}).then((expedition: Expedition) => {
 				return CommentController.create(transaction, {
-					pin: request.payload.pin,
+					pinned: request.payload.pinned,
 					message: request.payload.message
 				}).then((comment: Comment) => {
 					return CommentController.assign(transaction, comment, request.auth.credentials, expedition).then(() => {
@@ -188,11 +196,10 @@ export module CommentController {
 		}
 		
 		/**
-		 * Handles [GET] /api/comments/expeditions/{id}/{offset}/{limit}
+		 * Handles [GET] /api/comments/expeditions/{id}/{offset}
 		 * @param request Request-Object
 		 * @param request.params.id id
-		 * @param request.params.limit limit
-		 * @param request.params.offset offset
+		 * @param request.params.offset offset (default=0)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -201,10 +208,18 @@ export module CommentController {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
-				if (!expedition) return Promise.reject<Comment[]>(Boom.badRequest('Expedition does not exist!'));
-				//TODO ONLY IF ACCEPTED
-				return CommentController.ofNode(transaction, expedition, request.params.offset, request.params.limit);
-			}).then((comments: Comment[]) => CommentController.getPublicComment(transaction, comments, request.auth.credentials));
+				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
+				if(!expedition.needsApproval) return expedition;
+				
+				return ExpeditionController.isAttendee(transaction, expedition, request.auth.credentials).then((isAttendee: boolean) => {
+					if(!isAttendee) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
+					return expedition;
+				});
+			}).then((expedition: Expedition) => {
+				return CommentController.ofNode(transaction, expedition, request.params.offset);
+			}).then((comments: Comment[]) => {
+				return CommentController.getPublicComment(transaction, comments, request.auth.credentials);
+			});
 			
 			reply.api(promise, transactionSession);
 		}

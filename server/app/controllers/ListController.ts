@@ -65,9 +65,10 @@ export module ListController {
 	
 	export function getStatistics(transaction: Transaction, list: List, relatedUser: User) : Promise<ListStatistics> {
 		let queries: string[] = [
-			"MATCH (list:List {id: $listId})<-[fl:FOLLOWS_LIST]-() WITH COUNT(fl) as followersCount, list",
-			"MATCH (list)<-[btl:BELONGS_TO_LIST]-() WITH listsCount, COUNT(btl) as rudelCount, followersCount",
-			"MATCH (list)<-[fl:FOLLOWS_LIST]-(:User {id: $relatedUserId}) WITH followersCount, rudelCount, COUNT(fl) > 0 as isFollowed",
+			"MATCH (list:List {id: $listId})",
+			"OPTIONAL MATCH (list)<-[fl:FOLLOWS_LIST]-() WITH COUNT(fl) as followersCount, list",
+			"OPTIONAL MATCH (list)<-[btl:BELONGS_TO_LIST]-() WITH COUNT(btl) as rudelCount, followersCount",
+			"OPTIONAL MATCH (list)<-[fl:FOLLOWS_LIST]-(:User {id: $relatedUserId}) WITH followersCount, rudelCount, COUNT(fl) > 0 as isFollowed",
 		];
 		
 		let transformations: string[] = [
@@ -130,7 +131,7 @@ export module ListController {
 	}
 	
 	export function findByFulltext(transaction: Transaction, query: string, skip = 0, limit = 25) : Promise<List[]>{
-		return transaction.run<List, any>('CALL apoc.index.search("List", $query) YIELD node as l RETURN COALESCE(properties(l), []) as l SKIP $skip LIMIT $limit', {
+		return transaction.run<User, any>('CALL apoc.index.search("List", $query) YIELD node WITH properties(node) as l RETURN l SKIP $skip LIMIT $limit', {
 			query: `${query}~`,
 			skip: skip,
 			limit: limit

@@ -9,7 +9,7 @@ import Result from 'neo4j-driver/lib/v1/result';
 export module UserController {
 	
 	export function findByFulltext(transaction: Transaction, query: string, skip = 0, limit = 25) : Promise<User[]>{
-		return transaction.run<User, any>('CALL apoc.index.search("User", $query) YIELD node as u RETURN COALESCE(properties(u), []) as u SKIP $skip LIMIT $limit', {
+		return transaction.run<User, any>('CALL apoc.index.search("User", $query) YIELD node WITH properties(node) as u RETURN u SKIP $skip LIMIT $limit', {
 			query: `${query}~`,
 			skip: skip,
 			limit: limit

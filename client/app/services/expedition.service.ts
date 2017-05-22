@@ -31,7 +31,7 @@ export class ExpeditionService {
     }
     
     attendees(expedition: string, offset = 0): Observable<User[]> {
-        return this.dataService.post(`/api/expeditions/=/${expedition}/attendees/${offset}`, null, true).map((json: JsonResponse) => json.data as User[]).share();
+        return this.dataService.get(`/api/expeditions/=/${expedition}/attendees/${offset}`, true).map((json: JsonResponse) => json.data as User[]).share();
     }
     
     leave(expedition: string): Observable<Expedition> {
@@ -39,13 +39,13 @@ export class ExpeditionService {
     }
     
     nearby(rudel: string | boolean = false): Observable<Expedition[]> {
-        return this.dataService.get(rudel === false ? `/api/expeditions/nearby` : `/api/expeditions/nearby/${rudel}`, true).map((json: JsonResponse) => {
+        return this.dataService.get(rudel === false ? `/api/expeditions/nearby` : `/api/expeditions/near/${rudel}`, true).map((json: JsonResponse) => {
             return json.data;
         }).share();
     }
     
-    by(username: string = 'me', rudel: string | boolean = false): Observable<Expedition[]> {
-        return this.dataService.get(rudel ? `/api/expeditions/by/${username}/in/${rudel}`: `/api/expeditions/by/${username}`, true).map((json: JsonResponse) => {
+    by(username: string = 'me'): Observable<Expedition[]> {
+        return this.dataService.get(`/api/expeditions/by/${username}`, true).map((json: JsonResponse) => {
             return json.data;
         }).share();
     }

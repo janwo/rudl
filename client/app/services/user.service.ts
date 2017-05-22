@@ -43,7 +43,7 @@ export class UserService {
                 
                 // Request position updates immediately if user is boarded.
                 if(authenticatedUser.user.onBoard && this.watchPositionCallerId === false) {
-	                console.log('Resume position updates.');
+	                console.log('Resume position updates...');
 	            	this.resumePositionUpdates();
                 }
             } else

@@ -6,7 +6,7 @@ import {CommentValidation} from '../models/comment/Comment';
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
-		path: '/api/comments/expeditions/{id}/create',
+		path: '/api/expeditions/=/{id}/create-comment',
 		method: 'POST',
 		handler: CommentController.RouteHandlers.createForExpedition,
 		config: {
@@ -20,6 +20,24 @@ export const RoutesConfig: RoutesConfiguration = [
 					id: Joi.string()
 				},
 				payload: CommentValidation
+			}
+		}
+	},
+	{
+		path: '/api/expeditions/=/{id}/comments/{offset?}',
+		method: 'GET',
+		handler: CommentController.RouteHandlers.getForExpedition,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					id: Joi.string(),
+					offset: Joi.number().min(0).default(0)
+				}
 			}
 		}
 	},
@@ -54,24 +72,6 @@ export const RoutesConfig: RoutesConfiguration = [
 			validate: {
 				params: {
 					id: Joi.string()
-				}
-			}
-		}
-	},
-	{
-		path: '/api/comments/expeditions/{id}/{offset?}',
-		method: 'GET',
-		handler: CommentController.RouteHandlers.getForExpedition,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			},
-			validate: {
-				params: {
-					id: Joi.string(),
-					offset: Joi.number().min(0).default(0)
 				}
 			}
 		}
