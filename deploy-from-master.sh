@@ -5,9 +5,6 @@ set -o errexit
 commits=$(git fetch && git log HEAD..origin/master --oneline)
 
 if [ "$commits" ]; then
-  # Stop server.
-  docker-compose stop
-
   # Pull repository.
   if ! git reset --hard origin/master && git clean -f -d; then
     # Report failure.
