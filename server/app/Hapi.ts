@@ -69,7 +69,7 @@ export function hapiServer(): Promise<Server>{
 			
 			// Create server connection.
 			server.connection({
-				listener: autoSni,
+				listener: autoSni as any, //TODO why needed?
 				tls: true,
 				autoListen: false
 			});

@@ -1,8 +1,7 @@
-<div class="card">
-	<aside [routerLink]="['rudel', expedition.rudel.id]">
-		<span i18n>Streifzug von</span>
+<div class="card" [ngClass]="{applicant: expedition.relations.isAttendee}">
+	<aside [routerLink]="['/rudel', expedition.rudel.id]">
 		<emoji [emoji]="expedition.rudel.links.icon"></emoji>
-		<span class="name">{{expedition.rudel.name}}</span>
+		<span i18n>Streifzug des Rudels "{{expedition.rudel.name}}"</span>
 	</aside>
 	<header>
 		<div class="title">
@@ -17,7 +16,7 @@
 			{value: formattedDate, subject: expedition.date.accuracy > 0 ? 'Grober Zeitpunkt' : 'Zeitpunkt', link: ['attendes']}
 		]"></statistics>
 			<div class="cta">
-				<styled-button [style]="expedition.relations.isApproved ? buttonStyleActivated : buttonStyleDefault" [disabled]="pendingApprovalRequest" [text]="'Teilnahme anfragen'"></styled-button>
+				<styled-button [style]="expedition.relations.isAttendee ? buttonStyleActivated : buttonStyleDefault" [disabled]="pendingApprovalRequest" [text]="'Teilnahme anfragen'"></styled-button>
 				<styled-button [fa]="'pencil'" *ngIf="expedition.relations.isOwned"></styled-button>
 			</div>
 		</div>

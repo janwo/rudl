@@ -86,7 +86,7 @@
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/@types/boom/-/boom-4.3.2.tgz#8f40fb142322958ff1bb520c2d8d20cf1dd3d468"
 
-"@types/catbox@*":
+"@types/catbox@*", "@types/catbox@^7.1.0":
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/@types/catbox/-/catbox-7.1.0.tgz#adb0962f1cd9ba14d15efc0de91503364845e5f6"
   dependencies:
@@ -157,7 +157,26 @@
   version "4.0.32"
   resolved "https://registry.yarnpkg.com/@types/handlebars/-/handlebars-4.0.32.tgz#637e8d945a9354aab47df7125005490fe9f8e592"
 
-"@types/hapi@^16.0.0":
+"@types/hapi-auth-basic@^4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@types/hapi-auth-basic/-/hapi-auth-basic-4.2.0.tgz#328f91d9bce8e92152d65bbeebdc4d61e9e03163"
+  dependencies:
+    "@types/hapi" "*"
+
+"@types/hapi-auth-jwt2@^7.0.3":
+  version "7.0.3"
+  resolved "https://registry.yarnpkg.com/@types/hapi-auth-jwt2/-/hapi-auth-jwt2-7.0.3.tgz#92099dc3e36d2647bbbc8cd8293bc4c0200fd091"
+  dependencies:
+    "@types/hapi" "*"
+
+"@types/hapi-decorators@^0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@types/hapi-decorators/-/hapi-decorators-0.4.4.tgz#ac4014089741e77a92ef4a2847051e182b8996e3"
+  dependencies:
+    "@types/hapi" "*"
+    "@types/joi" "*"
+
+"@types/hapi@*", "@types/hapi@^16.0.0":
   version "16.1.2"
   resolved "https://registry.yarnpkg.com/@types/hapi/-/hapi-16.1.2.tgz#e782b399a11ef8934c3de3ab07aae9fb53cb0968"
   dependencies:
@@ -183,6 +202,12 @@
   dependencies:
     "@types/html-minifier" "*"
     "@types/webpack" "*"
+
+"@types/inert@^4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@types/inert/-/inert-4.2.1.tgz#5be14f66ca016645d0d65dd15062c141a843aac0"
+  dependencies:
+    "@types/hapi" "*"
 
 "@types/joi@*", "@types/joi@^10.0.1":
   version "10.3.2"
@@ -316,6 +341,12 @@
   resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-2.0.29.tgz#939a198ab73567f811ab84f670d2be9c25addd41"
   dependencies:
     "@types/node" "*"
+
+"@types/vision@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@types/vision/-/vision-4.1.0.tgz#776f7d499811898019736fc1534c6bb7e3ad219b"
+  dependencies:
+    "@types/hapi" "*"
 
 "@types/webfontloader@^1.6.28":
   version "1.6.28"
@@ -541,13 +572,9 @@ async-foreach@^0.1.3:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/async-foreach/-/async-foreach-0.1.3.tgz#36121f845c0578172de419a97dbeb1d16ec34542"
 
-async@0.2.9:
+async@0.2.9, async@0.2.x, async@~0.2.9:
   version "0.2.9"
   resolved "https://registry.yarnpkg.com/async/-/async-0.2.9.tgz#df63060fbf3d33286a76aaf6d55a2986d9ff8619"
-
-async@0.2.x, async@~0.2.9:
-  version "0.2.10"
-  resolved "https://registry.yarnpkg.com/async/-/async-0.2.10.tgz#b6bbe0b0674b9d719708ca38de8c237cb526c3d1"
 
 async@^1.4.0, async@^1.5.2:
   version "1.5.2"

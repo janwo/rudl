@@ -7,6 +7,7 @@ import {User} from "../../../models/user";
 import {Expedition} from '../../../models/expedition';
 import {EmptyState} from '../../widgets/state/empty.component';
 import {ExpeditionService} from '../../../services/expedition.service';
+import {ButtonStyles} from '../../widgets/control/styled-button.component';
 
 @Component({
     templateUrl: 'expedition-attendees.component.html',
@@ -17,11 +18,7 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	expedition: Expedition;
 	attendeesSubscription: Subscription;
 	attendees: User[];
-	restrictedState: EmptyState = {
-		title: 'Restricted Area',
-		image: require('../../../../assets/boarding/radar.png'),
-		description: 'We cannot make this public. You have to become an attendee!'
-	};
+	commentButtonStyle: ButtonStyles = ButtonStyles.filledInverseShadowed;
 	
 	constructor(
 		private expeditionService: ExpeditionService,

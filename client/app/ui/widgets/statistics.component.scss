@@ -4,8 +4,6 @@
   display: block;
 
   ul {
-    padding-left: map_get($base-padding, 'small');
-    padding-right: map_get($base-padding, 'small');
     list-style: none;
     align-items: flex-end;
     display: flex;

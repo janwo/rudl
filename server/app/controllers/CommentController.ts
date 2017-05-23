@@ -73,6 +73,8 @@ export module CommentController {
 					'comment.id': 'id',
 					'comment.message': 'message',
 					'comment.pinned': 'pinned',
+					'comment.updatedAt': 'updatedAt',
+					'comment.createdAt': 'createdAt',
 					'owner': 'owner',
 					'isOwner': 'relations.isOwned'
 				}, {
@@ -98,7 +100,7 @@ export module CommentController {
 	}
 	
 	export function ofNode<T extends Node>(transaction: Transaction, node: T, skip = 0, limit = 25): Promise<Comment[]> {
-		return transaction.run<Comment, any>(`MATCH(n {id: $nodeId})<-[:BELONGS_TO_NODE]-(c:Comment) WITH properties(c) as c RETURN c ORDER BY c.createdAt SKIP $skip LIMIT $limit`, {
+		return transaction.run<Comment, any>(`MATCH(n {id: $nodeId})<-[:BELONGS_TO_NODE]-(c:Comment) WITH properties(c) as c RETURN c ORDER BY c.pinned DESC, c.createdAt DESC SKIP $skip LIMIT $limit`, {
 			nodeId: node.id,
 			limit: limit,
 			skip: skip

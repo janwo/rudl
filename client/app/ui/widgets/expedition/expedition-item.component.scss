@@ -62,11 +62,11 @@
       }
     }
 
-    &.approved {
-      border: transparentize(map_get($base-colors, 'primary'), 0.5) solid map_get($base-line-widths, 'default');
+    &.applicant {
+      border: transparentize(map_get($base-colors, 'secondary'), 0.5) solid map_get($base-line-widths, 'default');
 
       .approval-status {
-        color: map_get($base-colors, 'primary');
+        color: map_get($base-colors, 'secondary');
       }
     }
   }

@@ -17,17 +17,15 @@ export interface Expedition extends Document {
 	rudel: Rudel;
 	icon: string;
 	relations: {
-		isAwaiting: boolean;
-		isApproved: boolean;
+		isApplicant: boolean;
+		isInvitee: boolean;
+		isAttendee: boolean;
 		isOwned: boolean;
 	};
 	statistics: {
 		attendees: number;
 		applicants: number;
 		invitees: number;
-		isAttendee: boolean;
-		isParticipant: boolean;
-		isInvitee: boolean;
 	};
 }
 

@@ -10,6 +10,7 @@ $base-font-family: 'Lato';
 $base-border-radius: 0.25rem;
 $base-font-weight-normal: 400;
 $base-font-weight-bold: 700;
+$base-font-weight-light: 300;
 $base-font-size: (
   'large': 1.15rem,
   'default': 1rem,
@@ -36,7 +37,7 @@ $base-heading-font-size: (
 $base-line-widths: (
   'large': 0.5rem,
   'larger': 0.25rem,
-  'default': 0.1rem
+  'default': 0.05rem
 );
 
 $base-colors: (
