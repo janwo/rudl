@@ -130,8 +130,7 @@ export module CommentController {
 				
 				return ExpeditionController.isAttendee(transaction, expedition, request.auth.credentials).then((isAttendee: boolean) => {
 					if(!isAttendee) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
-					return expedition;
-				});
+				}).then(() => expedition);
 			}).then((expedition: Expedition) => {
 				return CommentController.create(transaction, {
 					pinned: request.payload.pinned,
@@ -215,8 +214,7 @@ export module CommentController {
 				
 				return ExpeditionController.isAttendee(transaction, expedition, request.auth.credentials).then((isAttendee: boolean) => {
 					if(!isAttendee) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
-					return expedition;
-				});
+				}).then(() => expedition);
 			}).then((expedition: Expedition) => {
 				return CommentController.ofNode(transaction, expedition, request.params.offset);
 			}).then((comments: Comment[]) => {

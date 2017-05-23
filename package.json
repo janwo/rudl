@@ -32,7 +32,6 @@
     "@types/forever-monitor": "^1.7.1",
     "@types/glob": "^5.0.30",
     "@types/hammerjs": "^2.0.34",
-    "@types/handlebars": "^4.0.32",
     "@types/hapi": "^16.0.0",
     "@types/hapi-auth-basic": "^4.2.0",
     "@types/hapi-auth-jwt2": "^7.0.3",
