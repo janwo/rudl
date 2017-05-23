@@ -75,6 +75,8 @@ export module RudelController {
 					'defaultLocation': 'defaultLocation',
 					'owner': 'owner',
 					'links': 'links',
+					'rudel.createdAt': 'createdAt',
+					'rudel.updatedAt': 'updatedAt',
 					'isOwner': 'relations.isOwned',
 					'statistics.isFollowed': 'relations.isFollowed',
 					'statistics.rudel': 'statistics.rudel',

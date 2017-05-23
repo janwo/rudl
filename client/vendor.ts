@@ -18,7 +18,7 @@ require("../node_modules/leaflet/dist/leaflet.css");
 WebFont.load({
 	google: {
 		families: [
-			'Lato:400,700',
+			'Lato:300,400,700',
 			'Quicksand:700'
 		]
 	}

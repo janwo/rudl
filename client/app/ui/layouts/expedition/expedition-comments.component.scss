@@ -2,4 +2,24 @@
 
 :host {
   display: block;
+
+  item-wrapper {
+    margin-top: map_get($base-padding, 'default');
+    margin-bottom: map_get($base-padding, 'larger');
+  }
+
+  form {
+    margin-top: map_get($base-padding, 'larger');
+    display: flex;
+    flex-direction: row;
+
+    form-control-wrapper {
+      flex: 1 1 auto;
+    }
+
+    styled-button {
+      flex: 0 0 auto;
+      margin-left: map_get($base-padding, 'smaller');
+    }
+  }
 }

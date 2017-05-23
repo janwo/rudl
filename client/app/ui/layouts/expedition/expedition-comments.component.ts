@@ -6,6 +6,7 @@ import {Comment, CommentRecipe} from "../../../models/comment";
 import {EmptyState} from "../../widgets/state/empty.component";
 import {CommentService} from '../../../services/comment.service';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {ButtonStyles} from "../../widgets/control/styled-button.component";
 
 @Component({
     templateUrl: 'expedition-comments.component.html',
@@ -18,6 +19,7 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 	comments: Comment[];
 	form: FormGroup;
 	submitPending: boolean;
+	commentButtonStyle: ButtonStyles = ButtonStyles.filledInverseShadowed;
 	
 	emptyState: EmptyState = {
 		title: 'Start the conversation!',
@@ -27,7 +29,7 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 	restrictedState: EmptyState = {
 		title: 'Restricted Area',
 		image: require('../../../../assets/boarding/radar.png'),
-		description: 'You have to become an attendee in order to access this area!'
+		description: 'You have to become an attendee in order to join the discussion.'
 	};
     
     constructor(

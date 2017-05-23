@@ -1,4 +1,4 @@
-import {Server, IRouteConfiguration} from "hapi";
+import {Server, RouteConfiguration} from "hapi";
 import * as Glob from "glob";
 import * as Path from 'path';
 
@@ -14,5 +14,5 @@ export class RoutesBinder {
 	}
 }
 
-export interface RoutesConfiguration extends Array<IRouteConfiguration> {
+export interface RoutesConfiguration extends Array<RouteConfiguration> {
 }

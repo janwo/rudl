@@ -1,13 +1,10 @@
-<ng-container *ngIf="!expedition.needsApproval || expedition.relations.isAttendee; else restricted">
-	<item-wrapper [columns]="1" *ngIf="attendees && attendees.length > 0; else loading">
-		<user-item *ngFor="let attendee of attendees" [user]="attendee"></user-item>
-	</item-wrapper>
-	
-	<ng-template #loading>
-		<loading></loading>
-	</ng-template>
-</ng-container>
+<invite></invite>
+<styled-button [style]="commentButtonStyle" [text]="'Kommentar abgeben'" (click)="submit()"></styled-button>
 
-<ng-template #restricted>
-	<empty [emptyState]="restrictedState"></empty>
+<item-wrapper [columns]="1" *ngIf="attendees && attendees.length > 0; else loading">
+	<user-item *ngFor="let attendee of attendees" [user]="attendee"></user-item>
+</item-wrapper>
+
+<ng-template #loading>
+	<loading></loading>
 </ng-template>

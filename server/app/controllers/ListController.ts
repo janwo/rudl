@@ -36,6 +36,8 @@ export module ListController {
 					'owner': 'owner',
 					'links': 'links',
 					'isOwner': 'relations.isOwned',
+					'list.updatedAt': 'updatedAt',
+					'list.createdAt': 'createdAt',
 					'statistics.isFollowed': 'relations.isFollowed',
 					'statistics.rudel': 'statistics.rudel',
 					'statistics.followers': 'statistics.followers'

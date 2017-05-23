@@ -71,6 +71,8 @@ export module ExpeditionController {
 					'expedition.icon': 'icon',
 					'expedition.needsApproval': 'needsApproval',
 					'expedition.location': 'location',
+					'expedition.createdAt': 'createdAt',
+					'expedition.updatedAt': 'updatedAt',
 					"locationAccuracy": "location.accuracy",
 					"rudel": "rudel",
 					'links': 'links',
@@ -166,19 +168,21 @@ export module ExpeditionController {
 	
 	export function approveUser(transaction: Transaction, expedition: Expedition, user: User, relatedUser: User) : Promise<void> {
 		return this.getOwner(transaction, expedition).then((owner: User) => {
-			let relationship = '(e)-[:POSSIBLY_JOINS_EXPEDITION]->(u)';
+			let relationship = '(e)-[:POSSIBLY_JOINS_EXPEDITION {creator: $relatedUserId}]->(u)';
 			if(user.id == relatedUser.id) relationship = '(e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u)';
 			if(user.id == relatedUser.id && (owner == null || owner.id == relatedUser.id || !expedition.needsApproval)) relationship = '(e)<-[:JOINS_EXPEDITION]-(u)';
 			
 			// Create invitation / request.
 			return transaction.run(`MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) CREATE UNIQUE ${relationship}`, {
 				expeditionId: expedition.id,
-				userId: user.id
+				userId: user.id,
+				relatedUserId: relatedUser.id
 			}).then(() => {
-				// Merge matches.
-				return transaction.run(`MATCH(e:Expedition {id : $expeditionId })<-[pje:POSSIBLY_JOINS_EXPEDITION]->(u:User {id: $userId}) DETACH DELETE pje WITH u, e CREATE UNIQUE (e)<-[:JOINS_EXPEDITION]-(u) WITH e, u MATCH (u)-[pje:POSSIBLY_JOINS_EXPEDITION]-(e) DETACH DELETE pje`, {
+				// Merge matches, if owner exists.
+				if(owner) return transaction.run(`MATCH(e:Expedition {id : $expeditionId })<-[pje:POSSIBLY_JOINS_EXPEDITION]->(u:User {id: $userId}) WHERE (e)-[:POSSIBLY_JOINS_EXPEDITION {creator: $ownerId}]->(u) DETACH DELETE pje WITH u, e CREATE UNIQUE (e)<-[:JOINS_EXPEDITION]-(u) WITH e, u MATCH (u)-[pje:POSSIBLY_JOINS_EXPEDITION]-(e) DETACH DELETE pje`, {
 					expeditionId: expedition.id,
-					userId: user.id
+					userId: user.id,
+					ownerId: owner.id
 				}).then(() => {});
 			});
 		}).then(() => {});
@@ -382,13 +386,6 @@ export module ExpeditionController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
 				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
-				if(!expedition.needsApproval) return expedition;
-			
-				return ExpeditionController.isAttendee(transaction, expedition, request.auth.credentials).then((isAttendee: boolean) => {
-					if(!isAttendee) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
-					return expedition;
-				});
-			}).then((expedition: Expedition) => {
 				return ExpeditionController.getAttendees(transaction, expedition, request.params.offset);
 			}).then((users: User[]) => {
 				return UserController.getPublicUser(transaction, users, request.auth.credentials);

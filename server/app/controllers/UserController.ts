@@ -114,6 +114,7 @@ export module UserController {
 					'user.onBoard': 'onBoard',
 					'user.languages': 'languages',
 					'user.createdAt': 'createdAt',
+					'user.updatedAt': 'updatedAt',
 					'links': 'links',
 					'statistics.rudel': 'statistics.rudel',
 					'statistics.followers': 'statistics.followers',
