@@ -1,15 +1,15 @@
 <ng-container *ngIf="!expedition.needsApproval || expedition.relations.isAttendee; else restricted">
+	<form [formGroup]="form">
+		<form-control-wrapper [errorMessages]="{
+								minlength: 'Die Nachricht ist zu kurz (mindestens 5 Zeichen).',
+								required: 'Gebe eine Nachricht an.'
+							}" [infoMessage]="formControlCount(form.get('message').value, 300)">
+			<input maxlength="300" formControlName="message" placeholder="Enter your message...">
+		</form-control-wrapper>
+		<styled-button [style]="commentButtonStyle" [text]="'Kommentar abgeben'" (click)="submit()"></styled-button>
+	</form>
+	
 	<ng-container *ngIf="comments && comments.length > 0; else loading">
-		<form [formGroup]="form">
-			<form-control-wrapper [errorMessages]="{
-							minlength: 'Die Nachricht ist zu kurz (mindestens 5 Zeichen).',
-							required: 'Gebe eine Nachricht an.'
-						}" [infoMessage]="formControlCount(form.get('message').value, 300)">
-				<input maxlength="300" formControlName="message" placeholder="Enter your message...">
-			</form-control-wrapper>
-			<styled-button [style]="commentButtonStyle" [text]="'Kommentar abgeben'" (click)="submit()"></styled-button>
-		</form>
-		
 		<item-wrapper [columns]="2">
 			<li *ngFor="let comment of comments">
 				<comment-item [comment]="comment"></comment-item>
