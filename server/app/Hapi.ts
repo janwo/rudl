@@ -1,4 +1,3 @@
-import * as Handlebars from 'handlebars';
 import {Config} from "../../run/config";
 import {RoutesBinder} from "./binders/RoutesBinder";
 import {StrategiesBinder} from "./binders/StrategiesBinder";
@@ -9,6 +8,7 @@ import * as Fs from "fs";
 import * as AutoSNI from "auto-sni";
 import * as Path from 'path';
 import {Server} from 'hapi';
+import 'vision';
 
 export function hapiServer(): Promise<Server>{
 	// Create dirs.
@@ -107,7 +107,7 @@ export function hapiServer(): Promise<Server>{
 		// Register views.
 		server.views({
 			engines: {
-				handlebars: Handlebars
+				handlebars: require('handlebars')
 			},
 			path: Path.resolve(__dirname, './templates/views')
 		});

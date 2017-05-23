@@ -33,9 +33,9 @@ webpack.start();
 // Backend server.
 let backendServerCommands = [
 	'ts-node',
-	`--project ${root('server')}`,
-	`--fast`
+	`--project ${root('server')}`
 ];
+if(!Config.debug) backendServerCommands.push(`--fast`);
 let backendServerCommand = backendServerCommands.join(' ');
 if(Config.debug) backendServerCommand = `nodemon --ext ts,json --watch ${root('server')} --inspect=0.0.0.0:${Config.backend.ports.nodeDebug} --exec ${backendServerCommand}`;
 let backendServer = new forever.Monitor(root('run/backend-server.ts'), {
