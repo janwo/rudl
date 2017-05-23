@@ -38,4 +38,8 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	ngOnDestroy(): void {
 		this.attendeesSubscription.unsubscribe();
 	}
+	
+	submit() {
+	
+	}
 }

@@ -188,8 +188,8 @@ export module ExpeditionController {
 		}).then(() => {});
 	}
 	
-	export function approveAllUser(transaction: Transaction, expedition: Expedition) : Promise<void> {
-		return transaction.run(`MATCH (e:Expedition {id: $expeditionId}) OPTIONAL MATCH (e)<-[pje:POSSIBLY_JOINS_EXPEDITION]-() CALL apoc.refactor.setType(pje, 'JOINS_EXPEDITION') YIELD output OPTIONAL MATCH (e)-[pje:POSSIBLY_JOINS_EXPEDITION]-() DETACH DELETE pje`, {
+	export function approveAllUsers(transaction: Transaction, expedition: Expedition) : Promise<void> {
+		return transaction.run(`MATCH (e:Expedition {id: $expeditionId})<-[pje:POSSIBLY_JOINS_EXPEDITION]-() CALL apoc.refactor.setType(pje, 'JOINS_EXPEDITION') YIELD output RETURN {}`, {
 			expeditionId: expedition.id
 		}).then(() => {});
 	}
@@ -236,7 +236,7 @@ export module ExpeditionController {
 		expedition.updatedAt = now;
 		
 		// Save.
-		let promises = [
+		let promises: Promise<any>[] = [
 			transaction.run("MERGE (e:Expedition {id: $expedition.id}) ON CREATE SET e = $flattenExpedition ON MATCH SET e = $flattenExpedition", {
 				expedition: expedition,
 				flattenExpedition: DatabaseManager.neo4jFunctions.flatten(expedition)
@@ -244,7 +244,7 @@ export module ExpeditionController {
 		];
 		
 		// Is public expedition?
-		if(!expedition.needsApproval) promises.push(this.approveAllUsers(transaction, expedition));
+		if(!expedition.needsApproval) promises.push(ExpeditionController.approveAllUsers(transaction, expedition));
 		
 		// Return nothing.
 		return Promise.all(promises).then(() => {});
