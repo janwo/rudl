@@ -1,10 +1,24 @@
-<invite></invite>
-<styled-button [style]="commentButtonStyle" [text]="'Kommentar abgeben'" (click)="submit()"></styled-button>
+<input class="add-invitee" maxlength="300" placeholder="Enter somebody to invite..." (keyup)="searchUser.next($event.target.value)">
 
-<item-wrapper [columns]="1" *ngIf="attendees && attendees.length > 0; else loading">
-	<user-item *ngFor="let attendee of attendees" [user]="attendee"></user-item>
+<item-wrapper [columns]="2" *ngIf="invitees; else loadingInvitees">
+	<user-item *ngFor="let invitee of invitees" [user]="invitee">
+		<styled-button [fa]="'sign-in'" [style]="overflowButtonStyle" (click)="dropdownMenu.toggle()"></styled-button>
+	</user-item>
 </item-wrapper>
 
-<ng-template #loading>
+<ng-template #loadingInvitees>
+	<loading></loading>
+</ng-template>
+
+<item-wrapper [columns]="2" *ngIf="attendees; else loadingAttendees">
+	<user-item *ngFor="let attendee of attendees" [user]="attendee">
+		<styled-button [fa]="'ellipsis-v'" [style]="overflowButtonStyle" (click)="dropdownMenu.toggle()"></styled-button>
+		<dropdown-menu #dropdownMenu [arrowAlignment]="'right'">
+			<menu-item [icon]="'ban'" [title]="'Rausschmeißen'"></menu-item>
+		</dropdown-menu>
+	</user-item>
+</item-wrapper>
+
+<ng-template #loadingAttendees>
 	<loading></loading>
 </ng-template>

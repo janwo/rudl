@@ -33,11 +33,11 @@ export class GeocodeService {
 	}
 	
 	private get(url: string): Observable<GeocodeLocation[]> {
-		return this.http.get(url).map(GeocodeService.handleResponse);
+		return this.http.get(url).map(response => GeocodeService.handleResponse(response));
 	}
 	
-	search(text: string, location: Location | false = false) : Observable<GeocodeLocation[]> {
-		return this.get(GeocodeService.url + GeocodeService.buildQuery(text, location, 5));
+	search(text: string, location: Location | false = false, limit = 5) : Observable<GeocodeLocation[]> {
+		return this.get(GeocodeService.url + GeocodeService.buildQuery(text, location, limit));
 	}
 }
 

@@ -1,14 +1,14 @@
 <h1 i18n>People like you</h1>
-<ul>
-	<li *ngFor="let suggestedUser of suggestedUsers">
-		<user-item [user]="suggestedUser"></user-item>
+<item-wrapper [columns]="2">
+	<li *ngFor="let suggestion of suggestions">
+		<user-item [user]="suggestion"></user-item>
 	</li>
-</ul>
+</item-wrapper>
 
 
 <h1 i18n>People you are following</h1>
-<ul>
-	<li *ngFor="let followingUser of followingUsers">
-		<user-item [user]="followingUser"></user-item>
+<item-wrapper [columns]="2">
+	<li *ngFor="let followee of followees">
+		<user-item [user]="followee"></user-item>
 	</li>
-</ul>
+</item-wrapper>

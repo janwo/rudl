@@ -1,7 +1,9 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
+import {Component, OnDestroy, OnInit, ViewChild} from "@angular/core";
 import {User} from "../../../models/user";
 import {UserService} from "../../../services/user.service";
 import {Subscription} from "rxjs";
+import {Subject} from 'rxjs/Subject';
+import {ScrollService} from '../../../services/scroll.service';
 
 @Component({
     templateUrl: 'people.component.html',
@@ -9,24 +11,31 @@ import {Subscription} from "rxjs";
 })
 export class PeopleComponent implements OnInit, OnDestroy {
     
-    followingUsersSubscription: Subscription;
-    followingUsers: User[];
-    suggestedUsers: User[];
-    suggestedUsersSubscription: Subscription;
+    followeesSubscription: Subscription;
+    followees: User[] = [];
+    suggestions: User[];
+    suggestionsSubscription: Subscription;
     
     constructor(
-        private userService: UserService
+	    private userService: UserService,
+		private scrollService: ScrollService
     ) {}
-    
+	
     ngOnInit(){
-        this.followingUsersSubscription = this.userService.followees().subscribe((users: User[]) => this.followingUsers = users);
-        this.suggestedUsersSubscription = this.userService.suggestedPeople().subscribe((users: User[]) => {
-            this.suggestedUsers = users;
+    	// Suggestions.
+        this.suggestionsSubscription = this.userService.suggestedPeople().subscribe((users: User[]) => this.suggestions = users);
+	
+	    // Followees.
+        this.followeesSubscription = this.scrollService.hasScrolledToBottom().map(() => this.followees.length).startWith(0).distinct().flatMap((offset: number) => {
+		    return this.userService.followees('me', offset, 25);
+	    }).subscribe((users: User[]) => {
+        	if(users.length < 25) this.followeesSubscription.unsubscribe();
+        	this.followees = this.followees.concat(users);
         });
     }
     
     ngOnDestroy(){
-        this.followingUsersSubscription.unsubscribe();
-        this.suggestedUsersSubscription.unsubscribe();
+        this.suggestionsSubscription.unsubscribe();
+        this.followeesSubscription.unsubscribe();
     }
 }

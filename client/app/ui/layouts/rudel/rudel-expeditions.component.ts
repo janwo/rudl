@@ -5,6 +5,7 @@ import {Rudel} from "../../../models/rudel";
 import {Expedition} from "../../../models/expedition";
 import {ExpeditionService} from "../../../services/expedition.service";
 import {EmptyState} from "../../widgets/state/empty.component";
+import {ScrollService} from '../../../services/scroll.service';
 
 @Component({
     templateUrl: 'rudel-expeditions.component.html',
@@ -13,7 +14,7 @@ import {EmptyState} from "../../widgets/state/empty.component";
 export class RudelExpeditionsComponent implements OnInit, OnDestroy {
 	
     rudel: Rudel;
-	expeditionSubscription: Subscription;
+	expeditionsSubscription: Subscription;
 	expeditions: Expedition[];
 	emptyState: EmptyState = {
 		title: 'That\'s sad',
@@ -23,20 +24,24 @@ export class RudelExpeditionsComponent implements OnInit, OnDestroy {
     
     constructor(
 	    private expeditionService: ExpeditionService,
-	    private route: ActivatedRoute
+	    private route: ActivatedRoute,
+	    private scrollService: ScrollService
     ) {}
     
     ngOnInit(){
         // Define changed params subscription.
-	    this.expeditionSubscription = this.route.parent.data.flatMap((data: { rudel: Rudel }) => {
+	    this.expeditionsSubscription = this.route.parent.data.flatMap((data: { rudel: Rudel }) => {
 		    this.rudel = data.rudel;
-		    return this.expeditionService.nearby(data.rudel.id);
+		    return this.scrollService.hasScrolledToBottom().map(() => this.expeditions ? this.expeditions.length : 0).startWith(0).distinct().flatMap((offset: number) => {
+			    return this.expeditionService.nearby(this.rudel.id, offset, 25);
+		    });
 	    }).subscribe((expeditions: Expedition[]) => {
-		    this.expeditions = expeditions;
-	    });
+			if(expeditions.length < 25) this.expeditionsSubscription.unsubscribe();
+			this.expeditions = this.expeditions ? this.expeditions.concat(expeditions) : expeditions;
+		});
     }
     
 	ngOnDestroy(): void {
-    	this.expeditionSubscription.unsubscribe();
+    	this.expeditionsSubscription.unsubscribe();
 	}
 }

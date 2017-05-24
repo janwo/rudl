@@ -130,12 +130,12 @@ export class UserService {
         return this.dataService.get(`/api/users/=/${username}`, true).map((json: JsonResponse) => json.data).share();
     }
     
-    followers(username: string = 'me'): Observable<User[]> {
-        return this.dataService.get(`/api/users/=/${username}/followers`, true).map((json: JsonResponse) => json.data).share();
+    followers(username: string = 'me', offset = 0, limit = 25): Observable<User[]> {
+        return this.dataService.get(`/api/users/=/${username}/followers?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
     }
     
-    followees(username: string = 'me'): Observable<User[]> {
-        return this.dataService.get(`/api/users/=/${username}/followees`, true).map((json: JsonResponse) => json.data).share();
+    followees(username: string = 'me', offset = 0, limit = 25): Observable<User[]> {
+        return this.dataService.get(`/api/users/=/${username}/followees?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
     }
     
     follow(username: string): Observable<User> {
@@ -146,8 +146,8 @@ export class UserService {
         return this.dataService.post(`/api/users/unfollow/${username}`, null, true).map((json: JsonResponse) => json.data as User).share();
     }
     
-    like(query: string): Observable<User[]> {
-        return this.dataService.get(`/api/users/like/${query}`, true).map((json: JsonResponse) => json.data).share();
+    like(query: string, offset = 0, limit = 25): Observable<User[]> {
+        return this.dataService.get(`/api/users/like/${query}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
     }
     
     updateLocation(location: Location): Observable<User> {
@@ -166,7 +166,7 @@ export class UserService {
         })).share();
     }
     
-    suggestedPeople(): Observable<User[]> {
-        return this.dataService.get(`/api/suggestions/people`, true).map((json: JsonResponse) => json.data).share();
+    suggestedPeople(offset = 0, limit = 25): Observable<User[]> {
+        return this.dataService.get(`/api/suggestions/people?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
     }
 }

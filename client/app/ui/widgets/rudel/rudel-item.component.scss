@@ -58,5 +58,14 @@ $rudel-item-emoji-size: 2.5rem;
         }
       }
     }
+
+    .overflow {
+      position: relative;
+      pointer-events: none;
+
+      & > * {
+        pointer-events: auto;
+      }
+    }
   }
 }

@@ -32,8 +32,8 @@ export class RudelService {
         }).share();
     }
     
-    followers(rudel: string): Observable<User[]> {
-        return this.dataService.get(`/api/rudel/=/${rudel}/followers`, true).map((json: JsonResponse) => json.data as User[]).share();
+    followers(rudel: string, offset = 0, limit = 25): Observable<User[]> {
+        return this.dataService.get(`/api/rudel/=/${rudel}/followers?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data as User[]).share();
     }
     
     follow(rudel: string): Observable<Rudel> {
@@ -50,8 +50,8 @@ export class RudelService {
         }).share();
     }
     
-    like(query: string): Observable<Rudel[]> {
-        return this.dataService.get(`/api/rudel/like/${query}`, true).map((json: JsonResponse) => {
+    like(query: string, offset = 0, limit = 25): Observable<Rudel[]> {
+        return this.dataService.get(`/api/rudel/like/${query}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => {
             return json.data.map((rudel: Rudel) => {
                 rudel.name = Locale.getBestTranslation(rudel.translations, this.userService.getAuthenticatedUser().user.languages);
                 return rudel;
@@ -59,8 +59,8 @@ export class RudelService {
         }).share();
     }
     
-    lists(rudel: string, offset: number = 0): Observable<List[]> {
-        return this.dataService.get(`/api/rudel/=/${rudel}/lists/${offset}`, true).map((json: JsonResponse) => {
+    lists(rudel: string, offset = 0, limit = 25): Observable<List[]> {
+        return this.dataService.get(`/api/rudel/=/${rudel}/lists?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => {
             return json.data.map((list: List) => {
                 list.name = Locale.getBestTranslation(list.translations, this.userService.getAuthenticatedUser().user.languages);
                 return list;
@@ -68,17 +68,17 @@ export class RudelService {
         }).share();
     }
     
-    by(username: string = 'me', ownsOnly: boolean = false): Observable<Rudel[]> {
-        return this.dataService.get(`/api/rudel/by/${username}`, true).map((json: JsonResponse) => {
-            return json.data.filter((rudel: Rudel) => !ownsOnly || rudel.owner.username == username).map((rudel: Rudel) => {
+    by(username: string = 'me', offset = 0, limit = 25): Observable<Rudel[]> {
+        return this.dataService.get(`/api/rudel/by/${username}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => {
+            return json.data.map((rudel: Rudel) => {
                 rudel.name = Locale.getBestTranslation(rudel.translations, this.userService.getAuthenticatedUser().user.languages);
                 return rudel;
             });
         }).share();
     }
     
-    suggestRudel(): Observable<Rudel[]> {
-        return this.dataService.get(`/api/suggestions/rudel`, true).map((json: JsonResponse) => {
+    suggestRudel(offset = 0, limit = 25): Observable<Rudel[]> {
+        return this.dataService.get(`/api/suggestions/rudel?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => {
             return json.data.filter((rudel: Rudel) => {
                 rudel.name = Locale.getBestTranslation(rudel.translations, this.userService.getAuthenticatedUser().user.languages);
                 return rudel;

@@ -63,7 +63,6 @@ import {DateTimeComponent} from "./ui/widgets/control/form/datetime.component";
 import {GeocodeService} from "./services/geocode.service";
 import {LocationSearchComponent} from "./ui/widgets/control/location-search.component";
 import {CoordinatesPipe} from "./pipes/coordinates.pipe";
-import {InviteComponent} from "./ui/widgets/control/form/invite.component";
 import {FormControlWrapper} from "./ui/widgets/control/form/form-control-wrapper.component";
 import {LocationPickerComponent} from "./ui/widgets/control/form/location-picker.component";
 import {UserResolver} from "./resolver/user";
@@ -93,6 +92,8 @@ import {ExpeditionMapComponent} from "./ui/layouts/expedition/expedition-map.com
 import {CommentService} from './services/comment.service';
 import {LegalFooterComponent} from './ui/widgets/legal-footer/legal-footer.component';
 import {CommentItemComponent} from './ui/widgets/comment/comment-item.component';
+import {InfiniteScrollModule} from 'ngx-infinite-scroll';
+import {ScrollService} from './services/scroll.service';
 
 @NgModule({
     declarations: [
@@ -150,7 +151,6 @@ import {CommentItemComponent} from './ui/widgets/comment/comment-item.component'
 	    CreateRudelComponent,
 	    CreateListComponent,
 	    CheckboxComponent,
-	    InviteComponent,
 	    SearchComponent,
 	    CoordinatesPipe,
 	    SearchBarComponent,
@@ -178,6 +178,7 @@ import {CommentItemComponent} from './ui/widgets/comment/comment-item.component'
 	    SearchService,
 	    RudelService,
 	    ListService,
+	    ScrollService,
 	    DataService,
 	    BoardingGuard,
 	    GeocodeService,
@@ -195,6 +196,7 @@ import {CommentItemComponent} from './ui/widgets/comment/comment-item.component'
         ReactiveFormsModule,
         BrowserAnimationsModule,
         HttpModule,
+        InfiniteScrollModule,
         JsonpModule,
         BrowserModule,
         routing

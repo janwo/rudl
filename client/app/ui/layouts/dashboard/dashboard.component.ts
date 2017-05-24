@@ -3,6 +3,7 @@ import {Subscription} from "rxjs";
 import {UserService, UserStatus} from "../../../services/user.service";
 import {SearchService, SearchState} from "../../../services/search.service";
 import {NavigationEnd, Router} from "@angular/router";
+import {ScrollService} from '../../../services/scroll.service';
 
 @Component({
     templateUrl: 'dashboard.component.html',
@@ -27,7 +28,8 @@ export class DashboardComponent implements OnInit {
     constructor(
         private router: Router,
         private userService: UserService,
-        private searchService: SearchService
+        private searchService: SearchService,
+        private scrollService: ScrollService
     ) {}
     
     ngOnInit(): void {

@@ -61,7 +61,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/rudel/by/{username}/{offset?}',
+		path: '/api/rudel/by/{username}',
 		method: 'GET',
 		handler: RudelController.RouteHandlers.by,
 		config: {
@@ -72,14 +72,17 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					username: UsernameValidation,
-					offset: Joi.number().min(0).default(0)
+					username: UsernameValidation
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/rudel/like/{query}/{offset?}',
+		path: '/api/rudel/like/{query}',
 		method: 'GET',
 		handler: RudelController.RouteHandlers.like,
 		config: {
@@ -90,8 +93,11 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					query: Joi.string().min(3),
-					offset: Joi.number().min(0).default(0)
+					query: Joi.string().min(3)
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}
@@ -109,6 +115,10 @@ export const RoutesConfig: RoutesConfiguration = [
 			validate: {
 				params: {
 					id: Joi.string()
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}

@@ -15,9 +15,20 @@
 
     form-control-wrapper {
       flex: 1 1 auto;
+      padding: 0;
+
+      /deep/ div {
+        margin-bottom: 0;
+        border: none;
+      }
+
+      &.card {
+        padding: 0;
+      }
     }
 
     styled-button {
+      margin-bottom: 0;
       flex: 0 0 auto;
       margin-left: map_get($base-padding, 'smaller');
     }

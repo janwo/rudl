@@ -373,10 +373,11 @@ export module ExpeditionController {
 		}
 		
 		/**
-		 * Handles [GET] /api/expeditions/=/{id}/attendees/{offset?}
+		 * Handles [GET] /api/expeditions/=/{id}/attendees
 		 * @param request Request-Object
 		 * @param request.params.id id
-		 * @param request.params.offset offset (optional, default=0)
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -386,7 +387,7 @@ export module ExpeditionController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
 				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
-				return ExpeditionController.getAttendees(transaction, expedition, request.params.offset);
+				return ExpeditionController.getAttendees(transaction, expedition, request.query.offset, request.query.limit);
 			}).then((users: User[]) => {
 				return UserController.getPublicUser(transaction, users, request.auth.credentials);
 			});
@@ -451,10 +452,11 @@ export module ExpeditionController {
 		}
 		
 		/**
-		 * Handles [GET] /api/expeditions/like/{query}/{offset?}
+		 * Handles [GET] /api/expeditions/like/{query}
 		 * @param request Request-Object
 		 * @param request.params.query query
-		 * @param request.params.offset offset (optional, default=0)
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -462,7 +464,7 @@ export module ExpeditionController {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise: Promise<any[]> = ExpeditionController.findByFulltext(request.params.query, request.params.offset).then((expeditions: Expedition[]) => {
+			let promise: Promise<any[]> = ExpeditionController.findByFulltext(request.params.query, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
 				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
 			});
 			
@@ -473,7 +475,8 @@ export module ExpeditionController {
 		 * Handles [GET] /api/expeditions/by/{username}
 		 * @param request Request-Object
 		 * @param request.params.username username
-		 * @param request.params.offset offset (default=0)
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -483,16 +486,17 @@ export module ExpeditionController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then(user => {
 				if(!user) return Promise.reject(Boom.notFound('User not found!'));
-				return ExpeditionController.findByUser(transaction, user, request.params.offset);
+				return ExpeditionController.findByUser(transaction, user, request.query.offset, request.query.limit);
 			}).then((expeditions: Expedition[]) => ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials));
 			
 			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [GET] /api/expeditions/nearby/{offset?}
+		 * Handles [GET] /api/expeditions/nearby
 		 * @param request Request-Object
-		 * @param request.params.offset offset (default=0)
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -500,7 +504,7 @@ export module ExpeditionController {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise: Promise<any> = ExpeditionController.getNearbyExpeditions(transaction, request.auth.credentials, request.params.offset).then((expeditions: Expedition[]) => {
+			let promise: Promise<any> = ExpeditionController.getNearbyExpeditions(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
 				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
 			});
 			
@@ -508,9 +512,10 @@ export module ExpeditionController {
 		}
 		
 		/**
-		 * Handles [GET] /api/expeditions/near/{rudel}/{offset?}
+		 * Handles [GET] /api/expeditions/near/{rudel}
 		 * @param request Request-Object
-		 * @param request.params.offset offset (default=0)
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.params.rudel rudel
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
@@ -521,7 +526,7 @@ export module ExpeditionController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = RudelController.get(transaction, request.params.rudel).then((rudel: Rudel) => {
 				if(!rudel) return Promise.reject(Boom.notFound('Rudel not found!'));
-				return ExpeditionController.getNearbyExpeditionsWithinRudel(transaction, request.auth.credentials, rudel, request.params.offset);
+				return ExpeditionController.getNearbyExpeditionsWithinRudel(transaction, request.auth.credentials, rudel, request.query.offset, request.query.limit);
 			}).then((expeditions: Expedition[]) => {
 				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
 			});

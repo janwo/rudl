@@ -1,4 +1,4 @@
-<item-wrapper [columns]="1" *ngIf="followees && followees.length > 0; else loading">
+<item-wrapper [columns]="2" *ngIf="followees && followees.length > 0; else loading">
 	<user-item *ngFor="let followee of followees" [user]="followee"></user-item>
 </item-wrapper>
 

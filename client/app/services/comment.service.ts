@@ -28,8 +28,8 @@ export class CommentService {
         return this.dataService.post(`/api/expeditions/=/${expedition}/create-comment`, JSON.stringify(recipe), true).map((json: JsonResponse) => json.data as Comment);
     }
     
-    getForExpedition(expedition: string, offset: number = 0): Observable<Comment[]> {
-        return this.dataService.get(`/api/expeditions/=/${expedition}/comments/${offset}`, true).map((json: JsonResponse) => {
+    getForExpedition(expedition: string, offset = 0, limit = 25): Observable<Comment[]> {
+        return this.dataService.get(`/api/expeditions/=/${expedition}/comments?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => {
 		    return json.data as Comment[];
 	    }).share();
     }

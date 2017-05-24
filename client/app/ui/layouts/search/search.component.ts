@@ -59,9 +59,9 @@ export class SearchComponent implements OnDestroy, OnInit {
 			this.users = null;
 		}).filter(query => query && query.length >= 3).flatMap((query: string) => {
 			return Observable.zip(
-				this.rudelService.like(query),
-				this.listService.like(query),
-				this.userService.like(query),
+				this.rudelService.like(query, 0, 5),
+				this.listService.like(query, 0, 5),
+				this.userService.like(query, 0, 5),
 				Observable.from([query])
 			);
 		}).subscribe((values: [Rudel[], List[], User[], string]) => {

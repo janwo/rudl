@@ -14,5 +14,4 @@ export class RoutesBinder {
 	}
 }
 
-export interface RoutesConfiguration extends Array<RouteConfiguration> {
-}
+export interface RoutesConfiguration extends Array<RouteConfiguration> {}

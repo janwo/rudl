@@ -4,6 +4,7 @@ import {ActivatedRoute} from "@angular/router";
 import {RudelService} from "../../../services/rudel.service";
 import {Rudel} from "../../../models/rudel";
 import {EmptyState} from "../../widgets/state/empty.component";
+import {ScrollService} from '../../../services/scroll.service';
 
 @Component({
     templateUrl: 'user-rudel.component.html',
@@ -21,16 +22,20 @@ export class UserRudelComponent implements OnInit, OnDestroy {
 	
 	constructor(
 		private rudelService: RudelService,
-		private route: ActivatedRoute
+		private route: ActivatedRoute,
+		private scrollService: ScrollService
 	) {}
 	
 	ngOnInit() {
 		this.rudelSubscription = this.route.parent.params.map(params => params['username']).do(() => {
 			this.rudel = null;
-		}).flatMap(rudel => {
-			return this.rudelService.by(rudel);
+		}).flatMap(username => {
+			return this.scrollService.hasScrolledToBottom().map(() => this.rudel ? this.rudel.length : 0).startWith(0).distinct().flatMap((offset: number) => {
+				return this.rudelService.by(username, offset, 25);
+			});
 		}).subscribe((rudel: Rudel[]) => {
-			this.rudel = rudel;
+			if(rudel.length < 25) this.rudelSubscription.unsubscribe();
+			this.rudel = this.rudel ? this.rudel.concat(rudel) : rudel;
 		});
 	}
 	

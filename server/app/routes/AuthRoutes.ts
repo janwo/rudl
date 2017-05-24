@@ -7,7 +7,6 @@ import * as FacebookStrategy from "../strategies/FacebookStrategy";
 import * as GoogleStrategy from "../strategies/GoogleStrategy";
 
 export const RoutesConfig: RoutesConfiguration = [
-	
 	{
 		path: '/api/sign_up',
 		method: 'POST',

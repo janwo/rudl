@@ -24,7 +24,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/users/like/{query}/{offset?}',
+		path: '/api/users/like/{query}',
 		method: 'GET',
 		handler: UserController.RouteHandlers.getUsersLike,
 		config: {
@@ -35,14 +35,17 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					query: Joi.string().min(3),
-					offset: Joi.number().min(0).default(0)
+					query: Joi.string().min(3)
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/users/=/{username}/followers/{offset?}',
+		path: '/api/users/=/{username}/followers',
 		method: 'GET',
 		handler: UserController.RouteHandlers.followers,
 		config: {
@@ -53,14 +56,17 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					username: UsernameValidation,
-					offset: Joi.number().min(0).default(0)
+					username: UsernameValidation
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/users/=/{username}/followees/{offset?}',
+		path: '/api/users/=/{username}/followees',
 		method: 'GET',
 		handler: UserController.RouteHandlers.followees,
 		config: {
@@ -71,8 +77,11 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					username: UsernameValidation,
-					offset: Joi.number().min(0).default(0)
+					username: UsernameValidation
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}

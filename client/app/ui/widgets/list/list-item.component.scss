@@ -48,5 +48,14 @@
         }
       }
     }
+
+    .overflow {
+      position: relative;
+      pointer-events: none;
+
+      & > * {
+        pointer-events: auto;
+      }
+    }
   }
 }

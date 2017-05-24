@@ -1,9 +1,9 @@
 @import '../../variables';
 
 $dropdown-menu-arrow-size: 0.5rem;
-$dropdown-menu-border-size: 0.1rem;
+$dropdown-menu-border-size: map_get($base-line-widths, 'default');
 $dropdown-arrow-size-stroke: $dropdown-menu-arrow-size;
-$dropdown-arrow-size-fill: $dropdown-menu-arrow-size - $dropdown-menu-border-size;
+$dropdown-arrow-size-fill: $dropdown-menu-arrow-size - $dropdown-menu-border-size * 2;
 $dropdown-menu-background-color: #fff;
 $dropdown-menu-arrow-center-offset: 1rem;
 

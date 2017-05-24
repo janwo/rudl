@@ -24,7 +24,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/expeditions/=/{id}/comments/{offset?}',
+		path: '/api/expeditions/=/{id}/comments',
 		method: 'GET',
 		handler: CommentController.RouteHandlers.getForExpedition,
 		config: {
@@ -35,8 +35,11 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					id: Joi.string(),
-					offset: Joi.number().min(0).default(0)
+					id: Joi.string()
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}
