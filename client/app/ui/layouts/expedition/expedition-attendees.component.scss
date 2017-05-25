@@ -1,5 +1,31 @@
 @import '../../variables';
+@import '../../mixins';
 
 :host {
   display: block;
+
+  .add-invitee {
+    margin-top: map_get($base-padding, 'larger');
+    @include setup-input(false);
+    width: 100%;
+
+    &.card {
+      padding: 0;
+    }
+  }
+
+  item-wrapper {
+    margin-top: map_get($base-padding, 'default');
+  }
+
+  user-item {
+    dropdown-menu {
+      right: 0;
+      top: 100%;
+    }
+
+    styled-button {
+      margin-bottom: 0;
+    }
+  }
 }

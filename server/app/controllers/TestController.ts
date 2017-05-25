@@ -24,7 +24,7 @@ export module TestController {
 			firstName: firstName,
 			lastName: lastName,
 			languages: _.sampleSize(TranslationsKeys),
-			username: faker.internet.userName(firstName, lastName).toLowerCase().replace(/[^0-9a-z_-]/, '-'),
+			username: faker.internet.userName(firstName, lastName).toLowerCase().replace(/[^0-9a-z_]/, '_'),
 			mails: {
 				primary: {
 					mail: faker.internet.email(firstName, lastName),
@@ -91,10 +91,13 @@ export module TestController {
 			// Prepare users.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise = transaction.run(`FOREACH(x IN {users} | MERGE (u:User {username: x.username }) SET u = x`, {
+			let promise = transaction.run(`FOREACH(x IN $users | MERGE (u:User {username: x.username }) SET u = x)`, {
 				users: (() => {
 					let users = [];
-					for (let i = 0; i < (request.params.count || 100); i++) users.push(TestController.generateUser());
+					for (let i = 0; i < (request.params.count || 100); i++) {
+						let singleUser = DatabaseManager.neo4jFunctions.flatten(TestController.generateUser());
+						users.push(singleUser);
+					}
 					return users;
 				})()
 			}).then(() => `${request.params.count} users had been added!`);
@@ -113,10 +116,13 @@ export module TestController {
 			// Prepare rudel.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise = transaction.run(`FOREACH(x IN {rudel} | MERGE (r:Rudel {id: x.id }) SET r = x`, {
+			let promise = transaction.run(`FOREACH(x IN $rudel | MERGE (r:Rudel {id: x.id }) SET r = x)`, {
 				rudel: (() => {
 					let rudel = [];
-					for (let i = 0; i < (request.params.count || 100); i++) rudel.push(TestController.generateRudel());
+					for (let i = 0; i < (request.params.count || 100); i++) {
+						let singleRudel = DatabaseManager.neo4jFunctions.flatten(TestController.generateRudel());
+						rudel.push(singleRudel);
+					}
 					return rudel;
 				})()
 			}).then(() => `${request.params.count} rudel had been added!`);

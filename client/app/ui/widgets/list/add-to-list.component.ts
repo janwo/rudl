@@ -33,7 +33,7 @@ export class AddToListComponent implements OnInit, OnDestroy {
 		});
 		
 		// Retrieve lists.
-		this.listSubscription = this.listService.by(null, true).combineLatest(this.rudelService.lists(this.rudel.id)).subscribe((combination: [List[], List[]]) => {
+		this.listSubscription = this.listService.by(null).combineLatest(this.rudelService.lists(this.rudel.id)).subscribe((combination: [List[], List[]]) => {
 			let selectedIds = combination[1].map(list => list.id);
 			combination[0].forEach(list => {
 				let form = this.fb.group({

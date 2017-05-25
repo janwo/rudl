@@ -59,10 +59,11 @@ export module UserController {
 		// Set additional queries for relational data.
 		if(user.id != relatedUser.id) {
 			queries = queries.concat([
-				"OPTIONAL MATCH (relatedUser:User {id: $relatedUserId})-[mfes:FOLLOWS_USER]->(followees) WITH rudelCount, listsCount, followeesCount, followersCount, COUNT(mfes) as mutualFolloweesCount, user, relatedUser",
+				"MATCH (relatedUser:User {id: $relatedUserId}) WITH rudelCount, listsCount, followees, followeesCount, followers, followersCount, user, relatedUser",
+				"OPTIONAL MATCH (relatedUser)-[mfes:FOLLOWS_USER]->(followees) WITH rudelCount, listsCount, followeesCount, followersCount, COUNT(mfes) as mutualFolloweesCount, user, relatedUser",
 				"OPTIONAL MATCH (relatedUser)<-[mfrs:FOLLOWS_USER]-(followers) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, COUNT(mfrs) as mutualFollowersCount, user, relatedUser",
-				"OPTIONAL MATCH (user)<-[fu:FOLLOWS_USER]-(relatedUser) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, mutualFollowersCount, COUNT(fu) > 0 as isFollower, user, relatedUser",
-				"OPTIONAL MATCH (user)-[fu:FOLLOWS_USER]->(relatedUser) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, mutualFollowersCount, isFollower, COUNT(fu) > 0 as isFollowee",
+				"OPTIONAL MATCH (user)<-[fu:FOLLOWS_USER]-(relatedUser) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, mutualFollowersCount, COUNT(fu) > 0 as isFollowee, user, relatedUser",
+				"OPTIONAL MATCH (user)-[fu:FOLLOWS_USER]->(relatedUser) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, mutualFollowersCount, isFollowee, COUNT(fu) > 0 as isFollower",
 			]);
 			
 			transformations = transformations.concat([
@@ -89,6 +90,7 @@ export module UserController {
 			return Promise.all([
 				UserController.getStatistics(transaction, user, relatedUser)
 			]).then((results : [UserStatistics]) => {
+				console.log(results);
 				// Define default links.
 				let links: any = {
 					followers: `${Config.backend.domain}/api/users/${user.username}/followers`,
@@ -152,7 +154,7 @@ export module UserController {
 			userId: user.id,
 			skip: skip,
 			limit: limit
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records));
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'followers'));
 	}
 	
 	export function followees(transaction: Transaction, user: User, skip: number = 0, limit: number = 25) : Promise<User[]> {
@@ -160,7 +162,7 @@ export module UserController {
 			userId: user.id,
 			skip: skip,
 			limit: limit
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records));
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'followees'));
 	}
 	
 	export function follow(transaction: Transaction, user: User, aimedUser: User) : Promise<void> {
@@ -199,10 +201,11 @@ export module UserController {
 		}
 		
 		/**
-		 * Handles [GET] /api/users/like/{query}/{offset?}
+		 * Handles [GET] /api/users/like/{query}
 		 * @param request Request-Object
 		 * @param request.params.query query
-		 * @param request.params.offset offset (optional, default=0)
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -210,7 +213,7 @@ export module UserController {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise : Promise<User[]> = UserController.findByFulltext(transaction, request.params.query, 0, 25).then((users: User[]) => {
+			let promise : Promise<User[]> = UserController.findByFulltext(transaction, request.params.query, request.query.offset, request.query.limit).then((users: User[]) => {
 				return UserController.getPublicUser(transaction, users, request.auth.credentials)
 			});
 			
@@ -218,10 +221,11 @@ export module UserController {
 		}
 		
 		/**
-		 * Handles [GET] /api/users/=/{username}/followers/{offset?}
+		 * Handles [GET] /api/users/=/{username}/followers
 		 * @param request Request-Object
 		 * @param request.params.username username
-		 * @param request.params.offset offset (optional, default=0)
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -231,17 +235,18 @@ export module UserController {
 			let transaction = transactionSession.beginTransaction();
 			let promise : Promise<User> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then((user: User) => {
 				if(!user) return Promise.reject(Boom.notFound('User not found!'));
-				return UserController.followers(transaction, user, request.params.offset, 25);
+				return UserController.followers(transaction, user, request.query.offset, request.query.limit);
 			}).then((users: User[]) => UserController.getPublicUser(transaction, users, request.auth.credentials));
 			
 			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [GET] /api/users/=/{username}/followees/{offset?}
+		 * Handles [GET] /api/users/=/{username}/followees
 		 * @param request Request-Object
 		 * @param request.params.username username
-		 * @param request.params.offset offset (optional, default=0)
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -251,7 +256,7 @@ export module UserController {
 			let transaction = transactionSession.beginTransaction();
 			let promise : Promise<User> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then((user: User) => {
 				if (!user) return Promise.reject(Boom.badRequest('User does not exist!'));
-				return UserController.followees(transaction, user, request.params.offset, 25);
+				return UserController.followees(transaction, user, request.query.offset, request.query.limit);
 			}).then((users: User[]) => UserController.getPublicUser(transaction, users, request.auth.credentials));
 			
 			reply.api(promise, transactionSession);

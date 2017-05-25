@@ -288,10 +288,11 @@ export module ListController {
 		}
 		
 		/**
-		 * Handles [GET] /api/lists/=/{id}/rudel/{offset?}
+		 * Handles [GET] /api/lists/=/{id}/rudel
 		 * @param request Request-Object
 		 * @param request.params.id list
-		 * @param request.params.offset offset
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -301,7 +302,7 @@ export module ListController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ListController.get(transaction, request.params.id).then((list: List) => {
 				if(!list) return Promise.reject(Boom.badRequest('List does not exist!'));
-				return ListController.getRudel(transaction, list, request.params.offset).then((rudel: Rudel[]) => {
+				return ListController.getRudel(transaction, list, request.query.offset, request.query.limit).then((rudel: Rudel[]) => {
 					return RudelController.getPublicRudel(transaction, rudel, request.auth.credentials);
 				});
 			});
@@ -370,7 +371,9 @@ export module ListController {
 		/**
 		 * Handles [GET] /api/lists/by/{username}
 		 * @param request Request-Object
-		 * @param request.params.key key
+		 * @param request.params.username username
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -380,17 +383,18 @@ export module ListController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then(user => {
 				if(!user) return Promise.reject(Boom.notFound('User not found!'));
-				return ListController.findByUser(transaction, user);
+				return ListController.findByUser(transaction, user, request.query.offset, request.query.limit);
 			}).then((lists: List[]) => ListController.getPublicList(transaction, lists, request.auth.credentials));
 			
 			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [GET] /api/lists/like/{query}/{offset?}
+		 * Handles [GET] /api/lists/like/{query}
 		 * @param request Request-Object
 		 * @param request.params.query query
-		 * @param request.params.offset offset (optional, default=0)
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -398,7 +402,7 @@ export module ListController {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise: Promise<any> = ListController.findByFulltext(transaction, request.params.query, request.params.offset).then((lists: List[]) => {
+			let promise: Promise<any> = ListController.findByFulltext(transaction, request.params.query, request.query.offset, request.query.limit).then((lists: List[]) => {
 				return ListController.getPublicList(transaction, lists, request.auth.credentials);
 			});
 			
@@ -406,10 +410,11 @@ export module ListController {
 		}
 		
 		/**
-		 * Handles [GET] /api/lists/=/{id}/followers/{offset?}
+		 * Handles [GET] /api/lists/=/{id}/followers
 		 * @param request Request-Object
 		 * @param request.params.id id
-		 * @param request.params.offset offset
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -419,7 +424,7 @@ export module ListController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ListController.get(transaction, request.params.id).then((list: List) => {
 				if (!list) return Promise.reject<User[]>(Boom.badRequest('List does not exist!'));
-				return ListController.followers(transaction, list, request.params.offset);
+				return ListController.followers(transaction, list, request.query.offset, request.query.limit);
 			}).then((users: User[]) => UserController.getPublicUser(transaction, users, request.auth.credentials));
 			
 			reply.api(promise, transactionSession);
@@ -466,10 +471,11 @@ export module ListController {
 		}
 		
 		/**
-		 * Handles [GET] /api/lists/map-of-rudel/{id}/{offset?}
+		 * Handles [GET] /api/lists/map-of-rudel/{id}
 		 * @param request Request-Object
 		 * @param request.params.id id
-		 * @param request.params.offset? (default=[0])
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -479,7 +485,7 @@ export module ListController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = RudelController.get(transaction, request.params.id).then((rudel: Rudel) => {
 				if(!rudel) return Promise.reject(Boom.badRequest('Rudel does not exist!'));
-				return ListController.getRudelMap(transaction, rudel, request.auth.credentials, request.params.offset);
+				return ListController.getRudelMap(transaction, rudel, request.auth.credentials, request.query.offset, request.query.limit);
 			}).then((pairs: any) => {
 				return ListController.getPublicList(transaction, pairs.map((pair: any) => pair.list), request.auth.credentials).then((lists: any[]) => {
 					return lists.map((list: any, i: number) => {

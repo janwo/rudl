@@ -21,12 +21,16 @@ export const RoutesConfig: RoutesConfiguration = [
 			validate: {
 				params: {
 					username: UsernameValidation
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/lists/like/{query}/{offset?}',
+		path: '/api/lists/like/{query}',
 		method: 'GET',
 		handler: ListController.RouteHandlers.getListsLike,
 		config: {
@@ -37,8 +41,11 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					query: Joi.string().min(3),
-					offset: Joi.number().min(0).default(0)
+					query: Joi.string().min(3)
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}
@@ -61,7 +68,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/lists/=/{id}/rudel/{offset?}',
+		path: '/api/lists/=/{id}/rudel',
 		method: 'GET',
 		handler: ListController.RouteHandlers.getRudel,
 		config: {
@@ -72,14 +79,17 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					id: Joi.string(),
-					offset: Joi.number().min(0).default(0)
+					id: Joi.string()
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/lists/map-of-rudel/{id}/{offset?}',
+		path: '/api/lists/map-of-rudel/{id}',
 		method: 'GET',
 		handler: ListController.RouteHandlers.getRudelMap,
 		config: {
@@ -90,8 +100,11 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					id: Joi.string(),
-					offset: Joi.number().min(0).default(0)
+					id: Joi.string()
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}
@@ -202,7 +215,7 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/lists/=/{id}/followers/{offset?}',
+		path: '/api/lists/=/{id}/followers',
 		method: 'GET',
 		handler: ListController.RouteHandlers.followers,
 		config: {
@@ -213,8 +226,11 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					id: Joi.string(),
-					offset: Joi.number().min(0).default(0)
+					id: Joi.string()
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}

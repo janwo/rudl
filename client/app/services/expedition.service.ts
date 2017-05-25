@@ -31,20 +31,20 @@ export class ExpeditionService {
         return this.dataService.post(`/api/expeditions/join/${expedition}`, null, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
     }
     
-    attendees(expedition: string, offset = 0): Observable<User[]> {
-        return this.dataService.get(`/api/expeditions/=/${expedition}/attendees/${offset}`, true).map((json: JsonResponse) => json.data as User[]).share();
+    attendees(expedition: string, offset = 0, limit = 25): Observable<User[]> {
+        return this.dataService.get(`/api/expeditions/=/${expedition}/attendees?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data as User[]).share();
     }
     
     leave(expedition: string): Observable<Expedition> {
         return this.dataService.post(`/api/expeditions/leave/${expedition}`, null, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
     }
     
-    nearby(rudel: string | boolean = false): Observable<Expedition[]> {
-        return this.dataService.get(rudel === false ? `/api/expeditions/nearby` : `/api/expeditions/near/${rudel}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
+    nearby(rudel: string | boolean = false, offset = 0, limit = 25): Observable<Expedition[]> {
+        return this.dataService.get(rudel === false ? `/api/expeditions/nearby?offset=${offset}&limit=${limit}` : `/api/expeditions/near/${rudel}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
     }
     
-    by(username: string = 'me'): Observable<Expedition[]> {
-        return this.dataService.get(`/api/expeditions/by/${username}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
+    by(username: string = 'me', offset = 0, limit = 25): Observable<Expedition[]> {
+        return this.dataService.get(`/api/expeditions/by/${username}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
     }
     
     private handleExpeditionResponse(data: any | any[]): Expedition | Expedition[] {

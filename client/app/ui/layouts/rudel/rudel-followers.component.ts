@@ -4,6 +4,7 @@ import {ActivatedRoute} from "@angular/router";
 import {Rudel} from "../../../models/rudel";
 import {RudelService} from "../../../services/rudel.service";
 import {User} from "../../../models/user";
+import {ScrollService} from '../../../services/scroll.service';
 
 @Component({
     templateUrl: 'rudel-followers.component.html',
@@ -17,16 +18,20 @@ export class RudelFollowersComponent implements OnInit, OnDestroy {
     
     constructor(
 	    private rudelService: RudelService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+	    private scrollService: ScrollService
     ) {}
     
     ngOnInit(){
 	    // Define changed params subscription.
 	    this.followersSubscription = this.route.parent.data.flatMap((data: { rudel: Rudel }) => {
 		    this.rudel = data.rudel;
-		    return this.rudelService.followers(data.rudel.id);
+		    return this.scrollService.hasScrolledToBottom().map(() => this.followers ? this.followers.length : 0).startWith(0).distinct().flatMap((offset: number) => {
+			    return this.rudelService.followers(this.rudel.id, offset, 25);
+		    });
 	    }).subscribe((followers: User[]) => {
-		    this.followers = followers;
+		    if(followers.length < 25) this.followersSubscription.unsubscribe();
+		    this.followers = this.followers ? this.followers.concat(followers) : followers;
 	    });
     }
     

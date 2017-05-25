@@ -126,7 +126,7 @@ export module CommentController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
 				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
-				if(!expedition.needsApproval) return expedition;
+				if(!expedition.needsApproval) return Promise.resolve(expedition);
 				
 				return ExpeditionController.isAttendee(transaction, expedition, request.auth.credentials).then((isAttendee: boolean) => {
 					if(!isAttendee) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
@@ -197,10 +197,11 @@ export module CommentController {
 		}
 		
 		/**
-		 * Handles [GET] /api/comments/expeditions/{id}/{offset}
+		 * Handles [GET] /api/comments/expeditions/{id}
 		 * @param request Request-Object
 		 * @param request.params.id id
-		 * @param request.params.offset offset (default=0)
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -210,13 +211,13 @@ export module CommentController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
 				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
-				if(!expedition.needsApproval) return expedition;
+				if(!expedition.needsApproval) return Promise.resolve(expedition);
 				
 				return ExpeditionController.isAttendee(transaction, expedition, request.auth.credentials).then((isAttendee: boolean) => {
 					if(!isAttendee) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
 				}).then(() => expedition);
 			}).then((expedition: Expedition) => {
-				return CommentController.ofNode(transaction, expedition, request.params.offset);
+				return CommentController.ofNode(transaction, expedition, request.query.offset, request.query.limit);
 			}).then((comments: Comment[]) => {
 				return CommentController.getPublicComment(transaction, comments, request.auth.credentials);
 			});

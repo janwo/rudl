@@ -7,6 +7,7 @@ import {EmptyState} from "../../widgets/state/empty.component";
 import {CommentService} from '../../../services/comment.service';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 import {ButtonStyles} from "../../widgets/control/styled-button.component";
+import {ScrollService} from '../../../services/scroll.service';
 
 @Component({
     templateUrl: 'expedition-comments.component.html',
@@ -19,7 +20,7 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 	comments: Comment[];
 	form: FormGroup;
 	submitPending: boolean;
-	commentButtonStyle: ButtonStyles = ButtonStyles.filledInverseShadowed;
+	commentButtonStyle: ButtonStyles = ButtonStyles.filledShadowed;
 	
 	emptyState: EmptyState = {
 		title: 'Start the conversation!',
@@ -35,16 +36,20 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
     constructor(
 	    private fb: FormBuilder,
 	    private commentService: CommentService,
-	    private route: ActivatedRoute
+	    private route: ActivatedRoute,
+	    private scrollService: ScrollService
     ) {}
     
     ngOnInit(){
         // Define changed params subscription.
 	    this.commentsSubscription = this.route.parent.data.flatMap((data: { expedition: Expedition }) => {
 		    this.expedition = data.expedition;
-		    return this.commentService.getForExpedition(data.expedition.id, 0);
+		    return this.scrollService.hasScrolledToBottom().map(() => this.comments ? this.comments.length : 0).startWith(0).distinct().flatMap((offset: number) => {
+			    return this.commentService.getForExpedition(this.expedition.id, offset, 25);
+		    });
 	    }).subscribe((comments: Comment[]) => {
-		   this.comments = comments;
+		    if(comments.length < 25) this.commentsSubscription.unsubscribe();
+		    this.comments = this.comments ? this.comments.concat(comments) : comments;
 	    });
 	    
 		// Define form.

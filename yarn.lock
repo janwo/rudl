@@ -153,22 +153,6 @@
   version "2.0.34"
   resolved "https://registry.yarnpkg.com/@types/hammerjs/-/hammerjs-2.0.34.tgz#9cbac4f41cb039436141785e1be50b3ab10a04a9"
 
-"@types/handlebars@^4.0.32":
-  version "4.0.32"
-  resolved "https://registry.yarnpkg.com/@types/handlebars/-/handlebars-4.0.32.tgz#637e8d945a9354aab47df7125005490fe9f8e592"
-
-"@types/hapi-auth-basic@^4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@types/hapi-auth-basic/-/hapi-auth-basic-4.2.0.tgz#328f91d9bce8e92152d65bbeebdc4d61e9e03163"
-  dependencies:
-    "@types/hapi" "*"
-
-"@types/hapi-auth-jwt2@^7.0.3":
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/@types/hapi-auth-jwt2/-/hapi-auth-jwt2-7.0.3.tgz#92099dc3e36d2647bbbc8cd8293bc4c0200fd091"
-  dependencies:
-    "@types/hapi" "*"
-
 "@types/hapi-decorators@^0.4.4":
   version "0.4.4"
   resolved "https://registry.yarnpkg.com/@types/hapi-decorators/-/hapi-decorators-0.4.4.tgz#ac4014089741e77a92ef4a2847051e182b8996e3"
@@ -3374,6 +3358,10 @@ negotiator@0.6.1:
   dependencies:
     "@types/node" "^6.0.54"
     babel-runtime "^6.18.0"
+
+ngx-infinite-scroll@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/ngx-infinite-scroll/-/ngx-infinite-scroll-0.5.1.tgz#dd9452c602ff7c3222f0ca168481aa14140286b7"
 
 nigel@2.x.x:
   version "2.0.2"

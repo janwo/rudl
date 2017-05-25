@@ -274,10 +274,11 @@ export module RudelController {
 		}
 		
 		/**
-		 * Handles [GET] /api/rudel/like/{query}/{offset?}
+		 * Handles [GET] /api/rudel/like/{query}
 		 * @param request Request-Object
 		 * @param request.params.query query
-		 * @param request.params.offset offset (optional, default=0)
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -285,7 +286,7 @@ export module RudelController {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise : Promise<any> = RudelController.findByFulltext(transaction, request.params.query, request.params.offset).then((rudel: Rudel[]) => {
+			let promise : Promise<any> = RudelController.findByFulltext(transaction, request.params.query, request.query.offset, request.query.limit).then((rudel: Rudel[]) => {
 				return RudelController.getPublicRudel(transaction, rudel, request.auth.credentials);
 			});
 			
@@ -293,10 +294,11 @@ export module RudelController {
 		}
 		
 		/**
-		 * Handles [GET] /api/rudel/by/{username}/{offset?}
+		 * Handles [GET] /api/rudel/by/{username}
 		 * @param request Request-Object
 		 * @param request.params.username username
-		 * @param request.params.offset offset (default=0)
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -306,7 +308,7 @@ export module RudelController {
 			let transaction = transactionSession.beginTransaction();
 			let promise : Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then(user => {
 				if(!user) return Promise.reject(Boom.notFound('User not found!'));
-				return RudelController.findByUser(transaction, user, false, request.params.offset);
+				return RudelController.findByUser(transaction, user, false, request.query.offset, request.query.limit);
 			}).then((rudel: Rudel[]) => getPublicRudel(transaction, rudel, request.auth.credentials));
 			
 			reply.api(promise, transactionSession);
@@ -355,10 +357,11 @@ export module RudelController {
 		}
 		
 		/**
-		 * Handles [GET] /api/rudel/=/{id}/followers/{offset?}
+		 * Handles [GET] /api/rudel/=/{id}/followers
 		 * @param request Request-Object
 		 * @param request.params.id id
-		 * @param request.params.offset offset (default=0)
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -368,7 +371,7 @@ export module RudelController {
 			let transaction = transactionSession.beginTransaction();
 			let promise : Promise<any> = RudelController.get(transaction, request.params.id).then((rudel: Rudel) => {
 				if (!rudel) return Promise.reject(Boom.badRequest('Rudel does not exist!'));
-				return RudelController.followers(transaction, rudel, request.params.offset);
+				return RudelController.followers(transaction, rudel, request.query.offset, request.query.limit);
 			}).then((users: User[]) => UserController.getPublicUser(transaction, users, request.auth.credentials));
 			
 			reply.api(promise, transactionSession);

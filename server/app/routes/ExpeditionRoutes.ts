@@ -8,7 +8,7 @@ const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.s
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
-		path: '/api/expeditions/like/{query}/{offset?}',
+		path: '/api/expeditions/like/{query}',
 		method: 'GET',
 		handler: ExpeditionController.RouteHandlers.like,
 		config: {
@@ -19,14 +19,17 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					query: Joi.string().min(3),
-					offset: Joi.number().min(0).default(0)
+					query: Joi.string().min(3)
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/expeditions/by/{username}/{offset?}',
+		path: '/api/expeditions/by/{username}',
 		method: 'GET',
 		handler: ExpeditionController.RouteHandlers.by,
 		config: {
@@ -37,14 +40,17 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					username: UsernameValidation,
-					offset: Joi.number().min(0).default(0)
+					username: UsernameValidation
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/expeditions/nearby/{offset?}',
+		path: '/api/expeditions/nearby',
 		method: 'GET',
 		handler: ExpeditionController.RouteHandlers.nearby,
 		config: {
@@ -54,14 +60,15 @@ export const RoutesConfig: RoutesConfiguration = [
 				]
 			},
 			validate: {
-				params: {
-					offset: Joi.number().min(0).default(0).optional()
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/expeditions/near/{rudel}/{offset?}',
+		path: '/api/expeditions/near/{rudel}',
 		method: 'GET',
 		handler: ExpeditionController.RouteHandlers.nearbyWithinRudel,
 		config: {
@@ -72,14 +79,17 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					rudel: Joi.string(),
-					offset: Joi.number().min(0).default(0)
+					rudel: Joi.string()
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}
 	},
 	{
-		path: '/api/expeditions/=/{id}/attendees/{offset?}',
+		path: '/api/expeditions/=/{id}/attendees',
 		method: 'GET',
 		handler: ExpeditionController.RouteHandlers.getAttendees,
 		config: {
@@ -90,8 +100,11 @@ export const RoutesConfig: RoutesConfiguration = [
 			},
 			validate: {
 				params: {
-					id: Joi.string(),
-					offset: Joi.number().min(0).default(0)
+					id: Joi.string()
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
 				}
 			}
 		}

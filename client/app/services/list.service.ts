@@ -53,19 +53,19 @@ export class ListService {
         }).share();
     }
     
-    followers(list: string): Observable<User[]> {
-        return this.dataService.get(`/api/lists/=/${list}/followers`, true).map((json: JsonResponse) => json.data as User[]).share();
-    }
-    
     unfollow(list: string): Observable<List> {
         return this.dataService.post(`/api/lists/unfollow/${list}`, null, true).map((json: JsonResponse) => json.data as List).map((list: List) => {
-	        if(list) list.name = Locale.getBestTranslation(list.translations, this.userService.getAuthenticatedUser().user.languages);
-	        return list;
+            if(list) list.name = Locale.getBestTranslation(list.translations, this.userService.getAuthenticatedUser().user.languages);
+            return list;
         }).share();
     }
     
-    rudel(list: string, offset: number = 0): Observable<Rudel[]> {
-        return this.dataService.get(`/api/lists/=/${list}/rudel/${offset}`, true).map((json: JsonResponse) => {
+    followers(list: string, offset = 0, limit = 25): Observable<User[]> {
+        return this.dataService.get(`/api/lists/=/${list}/followers?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data as User[]).share();
+    }
+    
+    rudel(list: string, offset = 0, limit = 25): Observable<Rudel[]> {
+        return this.dataService.get(`/api/lists/=/${list}/rudel?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => {
             return json.data.map((rudel: Rudel) => {
                 rudel.name = Locale.getBestTranslation(rudel.translations, this.userService.getAuthenticatedUser().user.languages);
                 return rudel;
@@ -73,8 +73,8 @@ export class ListService {
         }).share();
     }
     
-    like(query: string): Observable<List[]> {
-        return this.dataService.get(`/api/lists/like/${query}`, true).map((json: JsonResponse) => {
+    like(query: string, offset = 0, limit = 25): Observable<List[]> {
+        return this.dataService.get(`/api/lists/like/${query}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => {
             return json.data.map((list: List) => {
                 list.name = Locale.getBestTranslation(list.translations, this.userService.getAuthenticatedUser().user.languages);
                 return list;
@@ -82,10 +82,10 @@ export class ListService {
         }).share();
     }
     
-    by(username: string = null, ownsOnly: boolean = false): Observable<List[]> {
+    by(username: string = null, offset = 0, limit = 25): Observable<List[]> {
         username = username ? username : this.userService.getAuthenticatedUser().user.username;
-        return this.dataService.get(`/api/lists/by/${username}`, true).map((json: JsonResponse) => {
-            return json.data.filter((list: List) => !ownsOnly || list.owner.username == username).map((list: List) => {
+        return this.dataService.get(`/api/lists/by/${username}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => {
+            return json.data.map((list: List) => {
                 list.name = Locale.getBestTranslation(list.translations, this.userService.getAuthenticatedUser().user.languages);
                 return list;
             });

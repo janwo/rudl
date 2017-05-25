@@ -1,10 +1,11 @@
 import {RoutesConfiguration} from "../binders/RoutesBinder";
 import {Config} from "../../../run/config";
+import "inert";
 
 export const RoutesConfig: RoutesConfiguration = [
 	{
-		method: 'GET',
 		path: `${Config.paths.icons.publicPath}{path*}`,
+		method: 'GET',
 		handler: {
 			directory: {
 				path: Config.paths.icons.dir,
@@ -16,8 +17,8 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		method: 'GET',
 		path: `${Config.paths.avatars.publicPath}{path*}`,
+		method: 'GET',
 		handler: {
 			directory: {
 				path: Config.paths.avatars.dir,
@@ -29,8 +30,8 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		method: 'GET',
 		path: `${Config.paths.public.publicPath}{path*}`,
+		method: 'GET',
 		handler: {
 			directory: {
 				path: Config.paths.public.dir,
@@ -41,5 +42,6 @@ export const RoutesConfig: RoutesConfiguration = [
 		config: {
 			auth: false
 		}
+		
 	}
 ];
