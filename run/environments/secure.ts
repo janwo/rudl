@@ -6,6 +6,9 @@ import {root} from "../config";
 export default {
 	name: 'rudl - Secure Production Environment',
 	frontend: {
+		metadata: {
+			"google-site-verification": process.env.GOOGLE_SITE_VERIFICATION
+		},
 		webpack: {
 			config: [
 				( Config: any ) => {

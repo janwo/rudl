@@ -14,6 +14,7 @@ import {UserService} from '../../../services/user.service';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {ExpeditionComponent} from './expedition.component';
+import {Title} from '@angular/platform-browser';
 
 @Component({
     templateUrl: 'expedition-attendees.component.html',
@@ -30,17 +31,17 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	searchUserSubscription: Subscription;
 	pendingApprovalRequest = false;
 	pendingRejectionRequest = false;
-  parent: ExpeditionComponent;
 
 	constructor(
-		parent: ExpeditionComponent,
+		public parent: ExpeditionComponent,
 		private expeditionService: ExpeditionService,
-		private scrollService: ScrollService
-	) {
-    this.parent = parent;
-  }
+		private scrollService: ScrollService,
+		private title: Title
+	) {}
 
 	ngOnInit(){
+		this.title.setTitle(`rudl.me - Streifzug "${this.parent.expedition.title}" - Rudler`);
+		
 		// Define changed params subscription.
 		let resetObservable = this.resetAttendees.asObservable().map(() => 0);
 		let scrollObservable = this.scrollService.hasScrolledToBottom().map(() => this.attendees ? this.attendees.length : 0).distinctUntilChanged();

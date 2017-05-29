@@ -4,6 +4,7 @@ import {Subscription} from "rxjs";
 import {Router} from "@angular/router";
 import {ButtonStyles} from "../../widgets/control/styled-button.component";
 import {UserService} from "../../../services/user.service";
+import {Meta, Title} from '@angular/platform-browser';
 
 @Component({
     templateUrl: 'boarding.component.html',
@@ -24,11 +25,14 @@ import {UserService} from "../../../services/user.service";
 	]
 })
 export class BoardingComponent implements OnInit, OnDestroy {
-    
-    constructor(
-        private userService: UserService,
-        private router: Router
-    ) {}
+ 
+	constructor(
+		private userService: UserService,
+		private router: Router,
+		title: Title
+	) {
+		title.setTitle('rudl.me - Boarding in Progress');
+	}
     
     step: number = 0;
     steps: string[] = [
