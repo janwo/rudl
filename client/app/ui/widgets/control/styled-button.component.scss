@@ -4,7 +4,7 @@ $button-border-size: 0.1rem;
 $button-border-radius: 0.25rem;
 $button-font-size: map_get($base-font-size, 'default');
 $button-padding: $button-font-size / 1.5; // Golden Ratio <3
-$button-default-scale-icon: 1.25;
+$button-default-scale-icon: $base-icon-scale;
 $button-default-scale-text: 1;
 
 :host {
@@ -33,7 +33,8 @@ $button-default-scale-text: 1;
       border: transparentize(map_get($base-colors, 'secondary'), 0.5) $button-border-size solid;
     }
 
-    .fa {
+    i {
+      font-size: $button-font-size;
       transform: scale($button-default-scale-icon);
 
       &:not(:only-child) {
@@ -57,7 +58,7 @@ $button-default-scale-text: 1;
           transform: scale($button-default-scale-text * 1.025);
         }
 
-        .fa {
+        i {
           transform: scale($button-default-scale-icon * 1.025);
         }
       }
@@ -67,7 +68,7 @@ $button-default-scale-text: 1;
           transform: scale($button-default-scale-text * 0.95);
         }
 
-        .fa {
+        i {
           transform: scale($button-default-scale-icon * 0.95);
         }
       }

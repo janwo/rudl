@@ -1,20 +1,20 @@
-<input class="add-invitee" maxlength="300" placeholder="Enter somebody to invite..." (keyup)="searchUser.next($event.target.value)">
-
-<item-wrapper [columns]="2" *ngIf="invitees; else loadingInvitees">
-	<user-item *ngFor="let invitee of invitees" [user]="invitee">
-		<styled-button [fa]="'sign-in'" [style]="overflowButtonStyle" (click)="dropdownMenu.toggle()"></styled-button>
-	</user-item>
-</item-wrapper>
-
-<ng-template #loadingInvitees>
-	<loading></loading>
-</ng-template>
-
-<item-wrapper [columns]="2" *ngIf="attendees; else loadingAttendees">
+<ng-container *ngIf="parent.expedition.relations.isOwned">
+	<input class="add-invitee" maxlength="300" placeholder="Enter somebody to invite..." (keyup)="searchUser.next($event.target.value)">
+	<item-wrapper class="invitees-like" [columns]="2" *ngIf="inviteesLike; else loadingInviteesLike" [ngClass]="{empty: inviteesLike.length == 0}">
+		<user-item *ngFor="let invitee of inviteesLike" [user]="invitee.user">
+			<styled-button [icon]="'person_add'" [style]="overflowButtonStyle" (click)="approveUser(invitee.user)" [disabled]="pendingApprovalRequest"></styled-button>
+		</user-item>
+	</item-wrapper>
+	
+	<ng-template #loadingInviteesLike>
+		<loading></loading>
+	</ng-template>
+</ng-container>
+<item-wrapper class="attendees" [columns]="2" *ngIf="attendees; else loadingAttendees">
 	<user-item *ngFor="let attendee of attendees" [user]="attendee">
-		<styled-button [fa]="'ellipsis-v'" [style]="overflowButtonStyle" (click)="dropdownMenu.toggle()"></styled-button>
+		<styled-button [icon]="'more_vert'" [style]="overflowButtonStyle" (click)="dropdownMenu.toggle()" *ngIf="attendee.id != parent.expedition.owner.id" [disabled]="pendingRejectionRequest"></styled-button>
 		<dropdown-menu #dropdownMenu [arrowAlignment]="'right'">
-			<menu-item [icon]="'ban'" [title]="'Rausschmeißen'"></menu-item>
+			<menu-item [icon]="'remove_circle_outline'" [title]="'Aus Streifzug entfernen'" (click)="rejectUser(attendee)" *ngIf="!pendingRejectionRequest"></menu-item>
 		</dropdown-menu>
 	</user-item>
 </item-wrapper>

@@ -8,7 +8,7 @@ import {Component, EventEmitter, Input, Output} from "@angular/core";
 export class StyledButtonComponent {
 
     @Input() text: string = null;
-    @Input() fa: string = null;
+    @Input() icon: string = null;
     @Input() link: string = null;
     @Input() flag: string = null;
     @Input() disabled: boolean = false;

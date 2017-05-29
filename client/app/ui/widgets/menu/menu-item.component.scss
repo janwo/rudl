@@ -27,6 +27,6 @@ $tab-menu-font-size: map_get($base-font-size, 'default');
 
   i {
     font-size: $tab-menu-font-size;
-    position: relative;
+    transform: scale($base-icon-scale);
   }
 }

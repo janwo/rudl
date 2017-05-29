@@ -1,6 +1,7 @@
 import {Node} from "../Node";
 import * as Joi from "joi";
 import {Config} from "../../../../run/config";
+import {User} from '../user/User';
 
 export interface Expedition extends Node {
 	title: string;
@@ -13,6 +14,13 @@ export interface Expedition extends Node {
 		lng: number
 	};
 	icon: string;
+}
+
+export interface InviteLikeItem {
+	user: User,
+	isApplicant: boolean,
+	isInvitee: boolean,
+	isAttendee: boolean
 }
 
 export const ExpeditionValidation = {

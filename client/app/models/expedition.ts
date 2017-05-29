@@ -45,3 +45,10 @@ export interface ExpeditionRecipe {
 		lng: number
 	}
 }
+
+export interface InviteLikeItem {
+	user: User,
+	isApplicant: boolean,
+	isInvitee: boolean,
+	isAttendee: boolean
+}

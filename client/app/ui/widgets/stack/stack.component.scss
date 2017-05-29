@@ -80,7 +80,7 @@ $swipe-rudel-swipe-area-ratio: 100 / 75; // total width|height / stack width|hei
             justify-content: center;
             padding: map_get($base-padding, 'default') * 2;
 
-            .fa {
+            i {
               position: absolute;
               display: none;
               flex: 0 0 auto;

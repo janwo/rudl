@@ -1,7 +1,7 @@
 <div class="input-mask">
-	<i (click)="add(-1, 'months')" class="fa fa-chevron-left" *ngIf="state == 'day'"></i>
+	<i (click)="add(-1, 'months')" class="material-icons" *ngIf="state == 'day'">chevron_left</i>
 	<span (click)="toggleExpandState()">{{selectedMoment.format('llll')}}</span>
-	<i (click)="add(1, 'months')" class="fa fa-chevron-right" *ngIf="state == 'day'"></i>
+	<i (click)="add(1, 'months')" class="material-icons" *ngIf="state == 'day'">chevron_right</i>
 </div>
 
 <ul class="day" [@datetime]="state == 'day'" *ngIf="state == 'day'">

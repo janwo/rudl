@@ -43,10 +43,11 @@ export module RudelController {
 	}
 	
 	export function remove(transaction: Transaction, rudel: Rudel): Promise<any> {
-		// Save.TODO REMOVE COMMENTS
-		return transaction.run("MATCH(r:Rudel {id: $rudelId}) DETACH DELETE r", {
-			rudelId: rudel.id
-		}).then(() => {});
+		return ExpeditionController.removeExpeditions(transaction, rudel).then(() => {
+			return transaction.run("MATCH(r:Rudel {id: $rudelId}) DETACH DELETE r", {
+				rudelId: rudel.id
+			}).then(() => {});
+		});
 	}
 	
 	export function getPublicRudel(transaction: Transaction, rudel: Rudel | Rudel[], relatedUser: User) : Promise<any | any[]> {

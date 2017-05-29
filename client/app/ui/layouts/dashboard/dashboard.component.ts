@@ -108,4 +108,8 @@ export class DashboardComponent implements OnInit {
         this.authenticatedUserSubscription.unsubscribe();
         this.onSaveLastLocationSubscription.unsubscribe();
     }
+    
+	scrolledToBottom(event: Event): void {
+		this.scrollService.scrolledToBottom(event);
+	}
 }

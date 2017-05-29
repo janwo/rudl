@@ -134,7 +134,7 @@ const appRoutes: Routes = [
 	        { path: 'expeditions/deleted-message', component: NotFoundComponent, data: {
 		        title: 'Expedition deleted!',
 		        image: require('../assets/boarding/radar.png'),
-		        description: 'We deleted the expedition as no followers remained.'
+		        description: 'We deleted the expedition as you requested.'
 	        }},
 	        { path: 'expeditions/:expedition', component: ExpeditionComponent, resolve: {
 		        expedition: ExpeditionResolver

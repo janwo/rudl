@@ -90,7 +90,6 @@ export module UserController {
 			return Promise.all([
 				UserController.getStatistics(transaction, user, relatedUser)
 			]).then((results : [UserStatistics]) => {
-				console.log(results);
 				// Define default links.
 				let links: any = {
 					followers: `${Config.backend.domain}/api/users/${user.username}/followers`,
@@ -107,7 +106,7 @@ export module UserController {
 				}
 				
 				let transformationRecipe = {
-					'user._key': 'id',
+					'user.id': 'id',
 					'user.username': 'username',
 					'user.firstName': 'firstName',
 					'user.lastName': 'lastName',

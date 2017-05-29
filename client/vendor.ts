@@ -11,7 +11,7 @@ import * as WebFont from "webfontloader";
 
 // CSS dependencies.
 require("../node_modules/normalize.css");
-require("../node_modules/font-awesome/css/font-awesome.css");
+require("../node_modules/material-design-icons/iconfont/material-icons.css");
 require("../node_modules/leaflet/dist/leaflet.css");
 
 // Initialization of selected dependencies.

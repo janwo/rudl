@@ -3,7 +3,7 @@ import * as dot from "dot-object";
 import {DatabaseManager, TransactionSession} from "../Database";
 import {Rudel} from "../models/rudel/Rudel";
 import {User} from "../models/user/User";
-import {Expedition} from "../models/expedition/Expedition";
+import {Expedition, InviteLikeItem} from "../models/expedition/Expedition";
 import {UserController} from "./UserController";
 import {UserJoinsExpedition} from "../models/user/UserJoinsExpedition";
 import * as moment from "moment";
@@ -116,13 +116,13 @@ export module ExpeditionController {
 	export function getStatistics(transaction: Transaction, expedition: Expedition, relatedUser: User) : Promise<ExpeditionStatistics> {
 		// Set queries.
 		let queries: string[] = [
-			"MATCH (expedition:Expedition {id: $expeditionId})",
-			"OPTIONAL MATCH (expedition)<-[je:JOINS_EXPEDITION]-() WITH COUNT(je) as attendees, expedition",
-			"OPTIONAL MATCH (expedition)-[pje:POSSIBLY_JOINS_EXPEDITION]->() WITH attendees, COUNT(pje) as invitees, expedition",
-			"OPTIONAL MATCH (expedition)<-[pje:POSSIBLY_JOINS_EXPEDITION]-() WITH attendees, invitees, COUNT(pje) as applicants, expedition",
-			"OPTIONAL MATCH (expedition)<-[je:JOINS_EXPEDITION]-(relatedUser:User {id: $relatedUserId}) WITH attendees, invitees, applicants, COUNT(je) > 0 as isAttendee, expedition, relatedUser",
-			"OPTIONAL MATCH (expedition)<-[pje:POSSIBLY_JOINS_EXPEDITION]-(relatedUser) WITH attendees, invitees, applicants, isAttendee, COUNT(pje) > 0 as isInvitee, expedition, relatedUser",
-			"OPTIONAL MATCH (expedition)-[pje:POSSIBLY_JOINS_EXPEDITION]->(relatedUser) WITH attendees, invitees, applicants, isAttendee, isInvitee, COUNT(pje) > 0 as isApplicant, expedition, relatedUser"
+			"MATCH (expedition:Expedition {id: $expeditionId}), (relatedUser:User {id: $relatedUserId})",
+			"OPTIONAL MATCH (expedition)<-[je:JOINS_EXPEDITION]-() WITH COUNT(je) as attendees, expedition, relatedUser",
+			"OPTIONAL MATCH (expedition)-[pje:POSSIBLY_JOINS_EXPEDITION]->() WITH attendees, COUNT(pje) as invitees, expedition, relatedUser",
+			"OPTIONAL MATCH (expedition)<-[pje:POSSIBLY_JOINS_EXPEDITION]-() WITH attendees, invitees, COUNT(pje) as applicants, expedition, relatedUser",
+			"OPTIONAL MATCH (expedition)<-[je:JOINS_EXPEDITION]-(relatedUser) WITH attendees, invitees, applicants, COUNT(je) > 0 as isAttendee, expedition, relatedUser",
+			"OPTIONAL MATCH (expedition)-[pje:POSSIBLY_JOINS_EXPEDITION]->(relatedUser) WITH attendees, invitees, applicants, isAttendee, COUNT(pje) > 0 as isInvitee, expedition, relatedUser",
+			"OPTIONAL MATCH (expedition)<-[pje:POSSIBLY_JOINS_EXPEDITION]-(relatedUser) WITH attendees, invitees, applicants, isAttendee, isInvitee, COUNT(pje) > 0 as isApplicant, expedition, relatedUser"
 		];
 		
 		let transformations: string[] = [
@@ -168,22 +168,17 @@ export module ExpeditionController {
 	
 	export function approveUser(transaction: Transaction, expedition: Expedition, user: User, relatedUser: User) : Promise<void> {
 		return this.getOwner(transaction, expedition).then((owner: User) => {
-			let relationship = '(e)-[:POSSIBLY_JOINS_EXPEDITION {creator: $relatedUserId}]->(u)';
-			if(user.id == relatedUser.id) relationship = '(e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u)';
-			if(user.id == relatedUser.id && (owner == null || owner.id == relatedUser.id || !expedition.needsApproval)) relationship = '(e)<-[:JOINS_EXPEDITION]-(u)';
+			let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) CREATE UNIQUE (e)<-[:JOINS_EXPEDITION]-(u) WITH e, u MATCH (u)-[pje:POSSIBLY_JOINS_EXPEDITION]-(e) DETACH DELETE pje`;
+			if(owner != null && expedition.needsApproval) {
+				let relationship = relatedUser.id == owner.id ? '(e)-[:POSSIBLY_JOINS_EXPEDITION]->(u)' : '(e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u)';
+				query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) OR NOT ${relationship} CREATE UNIQUE ${relationship}` +
+					` WITH e, u MATCH (e)-[pje:POSSIBLY_JOINS_EXPEDITION]-(u) WHERE (e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u) AND (e)-[:POSSIBLY_JOINS_EXPEDITION]->(u) DETACH DELETE pje WITH u, e CREATE UNIQUE (e)<-[:JOINS_EXPEDITION]-(u)`;
+			}
 			
-			// Create invitation / request.
-			return transaction.run(`MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) CREATE UNIQUE ${relationship}`, {
+			// Make invitation / request.
+			return transaction.run(query, {
 				expeditionId: expedition.id,
-				userId: user.id,
-				relatedUserId: relatedUser.id
-			}).then(() => {
-				// Merge matches, if owner exists.
-				if(owner) return transaction.run(`MATCH(e:Expedition {id : $expeditionId })<-[pje:POSSIBLY_JOINS_EXPEDITION]->(u:User {id: $userId}) WHERE (e)-[:POSSIBLY_JOINS_EXPEDITION {creator: $ownerId}]->(u) DETACH DELETE pje WITH u, e CREATE UNIQUE (e)<-[:JOINS_EXPEDITION]-(u) WITH e, u MATCH (u)-[pje:POSSIBLY_JOINS_EXPEDITION]-(e) DETACH DELETE pje`, {
-					expeditionId: expedition.id,
-					userId: user.id,
-					ownerId: owner.id
-				}).then(() => {});
+				userId: user.id
 			});
 		}).then(() => {});
 	}
@@ -195,20 +190,20 @@ export module ExpeditionController {
 	}
 	
 	export function rejectUser(transaction: Transaction, expedition: Expedition, user: User): Promise<void> {
-		return transaction.run(`MATCH (:Expedition {id: $expeditionId})-[pje:POSSIBLY_JOINS_EXPEDITION:JOINS_EXPEDITION]-(:User {id: $userId}) DETACH DELETE pje`, {
+		return transaction.run(`MATCH (e:Expedition {id: $expeditionId}), (u:User {id: $userId}) WITH u, e OPTIONAL MATCH (e)-[pje:POSSIBLY_JOINS_EXPEDITION]-(u) WITH pje, u, e OPTIONAL MATCH (e)-[je:JOINS_EXPEDITION]-(u) DETACH DELETE pje, je`, {
 			expeditionId: expedition.id,
 			userId: user.id
 		}).then(() => {});
 	}
 	
 	export function removeExpeditions(transaction: Transaction, rudel: Rudel): Promise<void> {
-		return transaction.run(`MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition) DETACH DELETE e`, {
+		return transaction.run(`MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition) OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment) DETACH DELETE e, c`, {
 			rudelId: rudel.id,
 		}).then(() => {});
 	}
 	
 	export function removeExpedition(transaction: Transaction, expedition: Expedition): Promise<void> {
-		return transaction.run(`MATCH(:Expedition {id: $expeditionId}) DETACH DELETE e`, {
+		return transaction.run(`MATCH(e:Expedition {id: $expeditionId}) OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment) DETACH DELETE e, c`, {
 			expeditionId: expedition.id,
 		}).then(() => {});
 	}
@@ -266,6 +261,15 @@ export module ExpeditionController {
 	export function getAttendees(transaction: Transaction, expedition: Expedition, skip = 0, limit = 25): Promise<User[]> {
 		return transaction.run<User, any>("MATCH(:Expedition {id : $expeditionId })<-[:JOINS_EXPEDITION]-(u:User) RETURN COALESCE(properties(u), []) as u SKIP $skip LIMIT $limit", {
 			expeditionId: expedition.id,
+			skip: skip,
+			limit: limit
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));
+	}
+	
+	export function inviteLike(transaction: Transaction, expedition: Expedition, query: string, skip = 0, limit = 25): Promise<InviteLikeItem[]> {
+		return transaction.run<User, any>("MATCH(e:Expedition {id : $expeditionId}) WITH e CALL apoc.index.search('User', $query) YIELD node WITH node as u, e WHERE NOT (u)-[:JOINS_EXPEDITION]->(e) WITH u, e OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) RETURN {user: properties(u), isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0} as u SKIP $skip LIMIT $limit", {
+			expeditionId: expedition.id,
+			query: `${query}~`,
 			skip: skip,
 			limit: limit
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));
@@ -373,6 +377,39 @@ export module ExpeditionController {
 		}
 		
 		/**
+		 * Handles [GET] /api/expeditions/=/{id}/invite-like/{query}
+		 * @param request Request-Object
+		 * @param request.params.id id
+		 * @param request.params.query query
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function inviteLike(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
+				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
+				return ExpeditionController.inviteLike(transaction, expedition, request.params.query, request.query.offset, request.query.limit);
+			}).then((inviteLikeItems: InviteLikeItem[]) => {
+				return UserController.getPublicUser(transaction, inviteLikeItems.map(inviteLikeItem => inviteLikeItem.user), request.auth.credentials).then(user => {
+					return inviteLikeItems.map((inviteLikeItem: any, index: number) => {
+						return {
+							user: user[index],
+							isAttendee: inviteLikeItem.isAttendee,
+							isApplicant: inviteLikeItem.isApplicant,
+							isInvitee: inviteLikeItem.isInvitee
+						};
+					});
+				});
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
 		 * Handles [GET] /api/expeditions/=/{id}/attendees
 		 * @param request Request-Object
 		 * @param request.params.id id
@@ -439,13 +476,13 @@ export module ExpeditionController {
 			]).then((values: [Expedition, User]) => {
 				if (!values[0]) return Promise.reject(Boom.notFound('Expedition not found.'));
 				if (!values[1]) return Promise.reject(Boom.notFound('User not found.'));
-			
 				return ExpeditionController.getOwner(transaction, values[0]).then((owner: User) => {
-					if(owner.id != request.auth.credentials.id) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
-					return ExpeditionController.rejectUser(transaction, values[0], values[1]).then(() => values[0]);
+					if(owner.id == request.auth.credentials.id && values[1].id == owner.id) return ExpeditionController.removeExpedition(transaction, values[0]).then(() => {});
+					if(owner.id == request.auth.credentials.id || values[1].id == request.auth.credentials.id) return ExpeditionController.rejectUser(transaction, values[0], values[1]).then(() => {
+						return ExpeditionController.getPublicExpedition(transaction, values[0], request.auth.credentials);
+					});
+					return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
 				});
-			}).then((expedition: Expedition) => {
-				return ExpeditionController.getPublicExpedition(transaction, expedition, request.auth.credentials);
 			});
 			
 			reply.api(promise, transactionSession);
