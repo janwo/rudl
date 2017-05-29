@@ -8,6 +8,8 @@ import {CommentService} from '../../../services/comment.service';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 import {ButtonStyles} from "../../widgets/control/styled-button.component";
 import {ScrollService} from '../../../services/scroll.service';
+import {ExpeditionComponent} from './expedition.component';
+import {Title} from '@angular/platform-browser';
 
 @Component({
     templateUrl: 'expedition-comments.component.html',
@@ -15,7 +17,6 @@ import {ScrollService} from '../../../services/scroll.service';
 })
 export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 	
-    expedition: Expedition;
 	commentsSubscription: Subscription;
 	comments: Comment[];
 	form: FormGroup;
@@ -36,17 +37,17 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
     constructor(
 	    private fb: FormBuilder,
 	    private commentService: CommentService,
-	    private route: ActivatedRoute,
-	    private scrollService: ScrollService
+	    private scrollService: ScrollService,
+        public parent: ExpeditionComponent,
+        private title: Title
     ) {}
     
     ngOnInit(){
+	    this.title.setTitle(`rudl.me - Streifzug "${this.parent.expedition.title}" - Diskussion`);
+	    
         // Define changed params subscription.
-	    this.commentsSubscription = this.route.parent.data.flatMap((data: { expedition: Expedition }) => {
-		    this.expedition = data.expedition;
-		    return this.scrollService.hasScrolledToBottom().map(() => this.comments ? this.comments.length : 0).startWith(0).distinct().flatMap((offset: number) => {
-			    return this.commentService.getForExpedition(this.expedition.id, offset, 25);
-		    });
+	    this.commentsSubscription = this.scrollService.hasScrolledToBottom().map(() => this.comments ? this.comments.length : 0).startWith(0).distinct().flatMap((offset: number) => {
+		    return this.commentService.getForExpedition(this.parent.expedition.id, offset, 25);
 	    }).subscribe((comments: Comment[]) => {
 		    if(comments.length < 25) this.commentsSubscription.unsubscribe();
 		    this.comments = this.comments ? this.comments.concat(comments) : comments;
@@ -87,7 +88,7 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 		};
 		
 		// Fire and remove pending state when done.
-		this.commentService.createForExpedition(this.expedition.id, recipe).subscribe(comment => {
+		this.commentService.createForExpedition(this.parent.expedition.id, recipe).subscribe(comment => {
 			this.submitPending = false;
 			this.form.get('pinned').reset(false);
 			this.form.get('message').reset(null);

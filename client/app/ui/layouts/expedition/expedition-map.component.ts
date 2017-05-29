@@ -1,31 +1,26 @@
 import {Component, OnDestroy, OnInit} from "@angular/core";
-import {Expedition} from '../../../models/expedition';
-import {Subscription} from "rxjs/Subscription";
 import {ActivatedRoute} from '@angular/router';
+import {ExpeditionComponent} from './expedition.component';
+import {Title} from '@angular/platform-browser';
 
 @Component({
     templateUrl: 'expedition-map.component.html',
     styleUrls: ['expedition-map.component.scss']
 })
-export class ExpeditionMapComponent implements OnInit, OnDestroy {
+export class ExpeditionMapComponent implements OnInit {
 	
-	expedition: Expedition;
 	externalMapLink: string;
-	expeditionSubscription: Subscription;
 	
 	constructor(
-		private route: ActivatedRoute
+		private route: ActivatedRoute,
+	    private title: Title,
+	    public parent: ExpeditionComponent
 	) {}
 	
 	ngOnInit(){
+		this.title.setTitle(`rudl.me - Streifzug "${this.parent.expedition.title}" - Karte`);
+		
 		// Define changed params subscription.
-		this.expeditionSubscription = this.route.parent.data.subscribe((data: { expedition: Expedition }) => {
-		    this.expedition = data.expedition;
-		    this.externalMapLink = `https://maps.google.com/?q=${data.expedition.location.lat},${data.expedition.location.lng}`;
-	    });
-	}
-	
-	ngOnDestroy(): void {
-		this.expeditionSubscription.unsubscribe();
+		this.externalMapLink = `https://maps.google.com/?q=${this.parent.expedition.location.lat},${this.parent.expedition.location.lng}`;
 	}
 }

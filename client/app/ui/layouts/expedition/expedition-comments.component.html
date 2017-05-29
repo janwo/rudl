@@ -1,4 +1,4 @@
-<ng-container *ngIf="!expedition.needsApproval || expedition.relations.isAttendee; else restricted">
+<ng-container *ngIf="!parent.expedition.needsApproval || parent.expedition.relations.isAttendee; else restricted">
 	<form [formGroup]="form">
 		<form-control-wrapper class="card" [errorMessages]="{
 								minlength: 'Die Nachricht ist zu kurz (mindestens 5 Zeichen).',
