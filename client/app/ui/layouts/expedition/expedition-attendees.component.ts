@@ -20,7 +20,7 @@ import {ExpeditionComponent} from './expedition.component';
     styleUrls: ['expedition-attendees.component.scss']
 })
 export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
-	
+
 	attendeesSubscription: Subscription;
 	attendees: User[] = [];
 	overflowButtonStyle: ButtonStyles = ButtonStyles.filledInverse;
@@ -30,13 +30,16 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	searchUserSubscription: Subscription;
 	pendingApprovalRequest = false;
 	pendingRejectionRequest = false;
-	
+  parent: ExpeditionComponent;
+
 	constructor(
-		protected parent: ExpeditionComponent,
+		parent: ExpeditionComponent,
 		private expeditionService: ExpeditionService,
 		private scrollService: ScrollService
-	) {}
-	
+	) {
+    this.parent = parent;
+  }
+
 	ngOnInit(){
 		// Define changed params subscription.
 		let resetObservable = this.resetAttendees.asObservable().map(() => 0);
@@ -46,7 +49,7 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 		}).subscribe((attendees: User[]) => {
 			this.attendees = this.attendees ? this.attendees.concat(attendees) : attendees;
 		});
-		
+
 		// Define invitee subscription.
 		this.searchUserSubscription = this.searchUser.asObservable().do(() => {
 			this.inviteesLike = [];
@@ -58,7 +61,7 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 			this.inviteesLike = inviteesLike;
 		});
 	}
-	
+
 	approveUser(user: User): void {
 		this.pendingApprovalRequest = true;
 		this.expeditionService.approve(this.parent.expedition.id, user.username).subscribe((expedition: Expedition) => {
@@ -72,7 +75,7 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 			}
 		});
 	}
-	
+
 	rejectUser(user: User): void {
 		this.pendingRejectionRequest = true;
 		this.expeditionService.reject(this.parent.expedition.id, user.username).subscribe((expedition: Expedition) => {
@@ -85,7 +88,7 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 			}
 		});
 	}
-	
+
 	ngOnDestroy(): void {
 		this.attendeesSubscription.unsubscribe();
 		this.attendeesSubscription.unsubscribe();
