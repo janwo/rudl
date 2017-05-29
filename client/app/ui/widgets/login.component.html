@@ -1,6 +1,6 @@
 <div class="social-login">
-	<styled-button [style]="facebookButtonStyle" [fa]="'facebook'" [link]="'/oauth/facebook'" [text]="'Authenticate with Facebook'"></styled-button>
-	<styled-button [style]="googleButtonStyle" [link]="'/oauth/google'" [fa]="'google'" [text]="'Authenticate with Google'"></styled-button>
+	<styled-button [style]="facebookButtonStyle" [link]="'/oauth/facebook'" [text]="'Authenticate with Facebook'"></styled-button>
+	<styled-button [style]="googleButtonStyle" [link]="'/oauth/google'" [text]="'Authenticate with Google'"></styled-button>
 </div>
 
 <!--
@@ -44,7 +44,7 @@
 	</div>
 	<indicator [ngClass]="{hide: signInOnly}" [indicators]="['Basic Information', 'Personal Information']"></indicator>
 </form>
-<styled-button class="auth-button-mail" (click)="onClickMailButton()" [fa]="'envelope'" [text]="(signInOnly ? 'Sign In with Mail' : ( isCollapsed || indicatorComponent.selectedIndex == 1 ? 'Sign Up with Mail' : 'Continue'))"></styled-button>
+<styled-button class="auth-button-mail" (click)="onClickMailButton()" [icon]="'mail'" [text]="(signInOnly ? 'Sign In with Mail' : ( isCollapsed || indicatorComponent.selectedIndex == 1 ? 'Sign Up with Mail' : 'Continue'))"></styled-button>
 
 <small>
 	<span>{{ signInOnly ? 'You want to sign up?' : 'Have an account already?' }}</span>

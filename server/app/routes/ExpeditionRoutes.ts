@@ -110,8 +110,30 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/expeditions/=/{id}/approve/{username}',
+		path: '/api/expeditions/=/{id}/invite-like/{query}',
 		method: 'GET',
+		handler: ExpeditionController.RouteHandlers.inviteLike,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				params: {
+					id: Joi.string(),
+					query: Joi.string().min(3)
+				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
+				}
+			}
+		}
+	},
+	{
+		path: '/api/expeditions/=/{id}/approve/{username}',
+		method: 'POST',
 		handler: ExpeditionController.RouteHandlers.approveUser,
 		config: {
 			auth: {
@@ -129,7 +151,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	},
 	{
 		path: '/api/expeditions/=/{id}/reject/{username}',
-		method: 'GET',
+		method: 'POST',
 		handler: ExpeditionController.RouteHandlers.rejectUser,
 		config: {
 			auth: {

@@ -6,7 +6,7 @@
 							}" [infoMessage]="formControlCount(form.get('message').value, 300)">
 			<input maxlength="300" formControlName="message" placeholder="Enter your message...">
 		</form-control-wrapper>
-		<styled-button [style]="commentButtonStyle" [text]="'Kommentar abgeben'" (click)="submit()"></styled-button>
+		<styled-button [style]="commentButtonStyle" [disabled]="submitPending" [text]="'Kommentar abgeben'" (click)="submit()"></styled-button>
 	</form>
 	
 	<ng-container *ngIf="comments && comments.length > 0; else loading">

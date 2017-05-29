@@ -1,5 +1,5 @@
 <button type="button" [ngClass]="{disabled: disabled}" class="{{getStyleClass()}}" (click)="onClick($event)">
-	<i class="fa fa-{{fa}}" *ngIf="fa"></i>
+	<i class="material-icons" *ngIf="icon">{{icon}}</i>
 	<ng-container *ngIf="flag">
 		<img class="flag" *ngIf="flag == 'de'" src="../../../../assets/flags/de.svg">
 		<img class="flag" *ngIf="flag == 'es'" src="../../../../assets/flags/es.svg">

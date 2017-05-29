@@ -21,6 +21,10 @@ $list-margin: map_get($base-padding, 'smaller');
       }
     }
 
+    &.reversed-order {
+      flex-direction: row-reverse;
+    }
+
     @include breakpoint('small') {
       &.two-columns-layout > /deep/ * {
         flex: 0 0 100% / 2;

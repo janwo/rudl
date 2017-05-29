@@ -79,5 +79,9 @@
         color: map_get($base-colors, 'secondary');
       }
     }
+
+    .material-icons {
+      font-size: map_get($base-font-size, 'default');
+    }
   }
 }

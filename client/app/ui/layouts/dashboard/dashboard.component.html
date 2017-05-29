@@ -7,21 +7,21 @@
 		</div>
 		<div class="menu" [ngClass]="{active: !inSearchMode}">
 			<menu>
-				<menu-item [makeRoomIfSmall]="true" [icon]="'compass'" [title]="'Entdecken'" [link]="['/explore']"></menu-item>
-				<menu-item [makeRoomIfSmall]="true" [icon]="'users'" [title]="'Rudler'" [link]="['/people']"></menu-item>
+				<menu-item [makeRoomIfSmall]="true" [icon]="'timeline'" [title]="'Entecken'" [link]="['/explore']"></menu-item>
+				<menu-item [makeRoomIfSmall]="true" [icon]="'people_outline'" [title]="'Rudler'" [link]="['/people']"></menu-item>
 				<menu-item class="search-menu-item" [icon]="'search'" [title]="'Suche'" [link]="['/search']"></menu-item>
 			</menu>
 		</div>
 	</div>
 	<user-avatar *ngIf="userStatus?.loggedIn" [user]="userStatus.user" (click)="dropdownMenu.toggle()"></user-avatar>
 	<dropdown-menu #dropdownMenu [arrowAlignment]="'right'">
-		<menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'paw'" [title]="'Deine Rudel'" [link]="['/people', userStatus.user.username, 'rudel']"></menu-item>
-		<menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'list'" [title]="'Deine Listen'" [link]="['/people', userStatus.user.username, 'lists']"></menu-item>
-		<menu-item [icon]="'cog'" [title]="'Einstellungen'" [link]="['/settings']"></menu-item>
-		<menu-item [icon]="'sign-out'" [title]="'Abmelden'" (click)="signOut()"></menu-item>
+		<menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'pets'" [title]="'Deine Rudel'" [link]="['/people', userStatus.user.username, 'rudel']"></menu-item>
+		<menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'format_list_bulleted'" [title]="'Deine Listen'" [link]="['/people', userStatus.user.username, 'lists']"></menu-item>
+		<menu-item [icon]="'settings'" [title]="'Einstellungen'" [link]="['/settings']"></menu-item>
+		<menu-item [icon]="'exit_to_app'" [title]="'Abmelden'" (click)="signOut()"></menu-item>
 	</dropdown-menu>
 </header>
-<section infinite-scroll (scrolled)="scrollService.scrolledToBottom($event)" [scrollWindow]="false">
+<section infinite-scroll (scrolled)="scrolledToBottom($event)" [scrollWindow]="false">
 	<router-outlet></router-outlet>
 	<legal-footer></legal-footer>
 </section>

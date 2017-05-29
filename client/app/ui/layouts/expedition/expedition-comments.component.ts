@@ -89,7 +89,9 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 		// Fire and remove pending state when done.
 		this.commentService.createForExpedition(this.expedition.id, recipe).subscribe(comment => {
 			this.submitPending = false;
-			//TODO Add
+			this.form.get('pinned').reset(false);
+			this.form.get('message').reset(null);
+			this.comments = [comment].concat(this.comments);
 		}, error => {
 			this.submitPending = false;
 			alert(error.message);

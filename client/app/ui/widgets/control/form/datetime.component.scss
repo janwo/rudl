@@ -18,6 +18,7 @@ $datetime-padding: map_get($base-font-size, 'default') / 1.5; // Golden Ratio <3
       cursor: pointer;
       padding: $datetime-padding;
       font-size: map_get($base-font-size, 'default');
+      transform: scale($base-icon-scale);
       width: map_get($base-font-size, 'default') + 2 * $datetime-padding;
       text-align: center;
       color: map_get($base-colors, 'primary-text');

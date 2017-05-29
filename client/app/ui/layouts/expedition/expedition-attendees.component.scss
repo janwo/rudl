@@ -15,7 +15,9 @@
   }
 
   item-wrapper {
-    margin-top: map_get($base-padding, 'default');
+    &:not(.empty) {
+      margin-top: map_get($base-padding, 'default');
+    }
   }
 
   user-item {
