@@ -1,4 +1,6 @@
 <div *ngIf="isVisible" class="background" (click)="toggle()"></div>
-<div *ngIf="isVisible" class="dropdown" [ngClass]="{left: arrowAlignment == 'left', center: arrowAlignment == 'center', right: arrowAlignment == 'right'}" [@openClose] (click)="toggle()">
-	<ng-content></ng-content>
+<div *ngIf="isVisible" class="dropdown"
+        [ngClass]="{left: arrowAlignment == 'left', center: arrowAlignment == 'center', right: arrowAlignment == 'right'}"
+        [@openClose] (click)="toggle()">
+    <ng-content></ng-content>
 </div>

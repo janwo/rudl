@@ -1,6 +1,6 @@
-import {Config} from "../../../run/config";
-import {DecodedToken} from "../models/Token";
-import {StrategyConfiguration} from "../binders/StrategiesBinder";
+import {Config} from '../../../run/config';
+import {DecodedToken} from '../models/Token';
+import {StrategyConfiguration} from '../binders/StrategiesBinder';
 import {AuthController} from '../controllers/AuthController';
 
 /*
@@ -15,11 +15,11 @@ export const StrategyConfig: StrategyConfiguration = {
 	strategyConfig: {
 		validateFunc: (decodedToken: DecodedToken, request: any, callback: any) => {
 			AuthController.authByToken(decodedToken).then(user => {
-				if(!user) return callback(null, false);
+				if (!user) return callback(null, false);
 				return callback(null, true, user);
 			}).catch(err => {
 				console.log(err);
-				callback(null, false)
+				callback(null, false);
 			});
 		},
 		verifyOptions: {

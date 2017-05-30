@@ -1,3 +1,4 @@
 <ul [ngClass]="{interactive: interactive}">
-	<li (click)="onClick(i)" *ngFor="let indicator of indicators; let i = index" title="{{indicator}}" [ngClass]="{active: i == selectedIndex}"></li>
+    <li (click)="onClick(i)" *ngFor="let indicator of indicators; let i = index" title="{{indicator}}"
+            [ngClass]="{active: i == selectedIndex}"></li>
 </ul>

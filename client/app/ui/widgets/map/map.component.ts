@@ -8,40 +8,40 @@ import {
 	Output,
 	SimpleChanges,
 	ViewChild
-} from "@angular/core";
-import * as L from "leaflet";
-import {VagueLocation} from "../../../models/location";
+} from '@angular/core';
+import * as L from 'leaflet';
+import {VagueLocation} from '../../../models/location';
 
 @Component({
-    templateUrl: 'map.component.html',
-    styleUrls: ['map.component.scss'],
-    selector: 'map'
+	templateUrl: 'map.component.html',
+	styleUrls: ['map.component.scss'],
+	selector: 'map'
 })
 export class MapComponent implements AfterViewInit, OnChanges {
- 
+	
 	private static iconUrl = require('../../../../assets/map-marker.png') as string;
-    private static source = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-    private static quotas: any = {
-        red: 21,
-        green: 71,
-        blue: 8,
-        dividerTune: 0,
-        divider: () => MapComponent.quotas.red + MapComponent.quotas.green + MapComponent.quotas.blue + MapComponent.quotas.dividerTune
-    };
+	private static source = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+	private static quotas: any = {
+		red: 21,
+		green: 71,
+		blue: 8,
+		dividerTune: 0,
+		divider: () => MapComponent.quotas.red + MapComponent.quotas.green + MapComponent.quotas.blue + MapComponent.quotas.dividerTune
+	};
 	
 	@Input() location: VagueLocation = {
 		lat: 0,
 		lng: 0,
 		accuracy: 0
 	};
-    @Input() zoom: number = 16;
-    @ViewChild('map') mapElement: ElementRef;
-    @Output() change: EventEmitter<VagueLocation> = new EventEmitter();
-    
+	@Input() zoom: number = 16;
+	@ViewChild('map') mapElement: ElementRef;
+	@Output() change: EventEmitter<VagueLocation> = new EventEmitter();
+	
 	map: L.Map;
 	centerPointLayer: L.Marker;
 	accuracyLayer: L.Circle;
- 
+	
 	ngAfterViewInit(): void {
 		// Create app.
 		this.map = L.map(this.mapElement.nativeElement, {
@@ -65,7 +65,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
 		
 		// Add map layer.
 		new L.TileLayer(MapComponent.source, {
-			crossOrigin: true,
+			crossOrigin: true
 		}).on('tileload', (e: L.TileEvent) => {
 			if (e.tile.getAttribute('data-grayscaled')) return;
 			
@@ -92,11 +92,11 @@ export class MapComponent implements AfterViewInit, OnChanges {
 		this.map.panTo(location);
 		
 		// Remove markers.
-		if(this.accuracyLayer) this.map.removeLayer(this.accuracyLayer);
-		if(this.centerPointLayer) this.map.removeLayer(this.centerPointLayer);
+		if (this.accuracyLayer) this.map.removeLayer(this.accuracyLayer);
+		if (this.centerPointLayer) this.map.removeLayer(this.centerPointLayer);
 		
 		// Add inaccurate marker.
-		if(location.accuracy > 0) {
+		if (location.accuracy > 0) {
 			this.accuracyLayer = new L.Circle(location, location.accuracy, {
 				stroke: true,
 				weight: 10,
@@ -122,8 +122,8 @@ export class MapComponent implements AfterViewInit, OnChanges {
 	}
 	
 	ngOnChanges(changes: SimpleChanges): void {
-    	if(!this.map || !(changes.location)) return;
+		if (!this.map || !(changes.location)) return;
 		let location = changes.location.currentValue || this.location;
-	    this.setLocation(location);
+		this.setLocation(location);
 	}
 }

@@ -1,3 +1,4 @@
 import {TimestampedRelationship} from '../TimestampedRelationship';
 
-export interface UserDislikesRudel extends TimestampedRelationship {}
+export interface UserDislikesRudel extends TimestampedRelationship {
+}

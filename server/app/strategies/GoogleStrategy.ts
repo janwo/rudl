@@ -1,11 +1,11 @@
-import {Config} from "../../../run/config";
-import {User} from "../models/user/User";
-import {StrategyConfiguration} from "../binders/StrategiesBinder";
-import {AuthController} from "../controllers/AuthController";
-import {AccountController} from "../controllers/AccountController";
-import * as Boom from "boom";
-import * as faker from "faker";
-import {DatabaseManager, TransactionSession} from '../Database';
+import {Config} from '../../../run/config';
+import {User} from '../models/user/User';
+import {StrategyConfiguration} from '../binders/StrategiesBinder';
+import {AuthController} from '../controllers/AuthController';
+import {AccountController} from '../controllers/AccountController';
+import * as Boom from 'boom';
+import * as faker from 'faker';
+import {TransactionSession} from '../Database';
 import {UserAuthProvider} from '../models/user/UserAuthProvider';
 import * as shortid from 'shortid';
 

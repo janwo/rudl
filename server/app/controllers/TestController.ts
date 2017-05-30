@@ -1,12 +1,10 @@
-import * as _ from "lodash";
-import {User, UserRoles} from "../models/user/User";
-import {DatabaseManager, TransactionSession} from "../Database";
-import {Rudel} from "../models/rudel/Rudel";
-import {AccountController} from "./AccountController";
+import * as _ from 'lodash';
+import {User, UserRoles} from '../models/user/User';
+import {DatabaseManager, TransactionSession} from '../Database';
+import {Rudel} from '../models/rudel/Rudel';
 import * as faker from 'faker';
-import {Config} from "../../../run/config";
+import {Config} from '../../../run/config';
 import {AuthController} from './AuthController';
-import Result from 'neo4j-driver/lib/v1/result';
 import {TranslationsKeys} from '../models/Translations';
 import * as shortid from 'shortid';
 
@@ -35,7 +33,7 @@ export module TestController {
 					verified: true
 				}
 			},
-			 scope: [
+			scope: [
 				UserRoles.user
 			],
 			location: {
@@ -47,7 +45,7 @@ export module TestController {
 			profileText: faker.lorem.sentences(2),
 			password: AuthController.hashPassword(faker.internet.password()),
 			createdAt: date[0],
-			updatedAt: date[1],
+			updatedAt: date[1]
 		};
 		
 		// Return.

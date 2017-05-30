@@ -1,19 +1,22 @@
 <div class="stack" (pan)="pan($event)" [ngClass]="{dragging: inDragMode}">
-	<stack-card *ngFor="let stackItem of stack.reverse(); let i = index" [ngClass]="{done: i > stack.length - 1 - stackIndex}">
-		<div class="content" [routerLink]="['/rudel', stackItem.id]">
-			<span class="name">{{stackItem.name}}</span>
-		</div>
-		<div class="overlay">
-			<div class="icon">
-				<i class="material-icons like">thumb_up</i>
-				<i class="material-icons dislike">thumb_down</i>
-			</div>
-			<div class="progress"></div>
-		</div>
-	</stack-card>
+    <stack-card *ngFor="let stackItem of stack.reverse(); let i = index"
+            [ngClass]="{done: i > stack.length - 1 - stackIndex}">
+        <div class="content" [routerLink]="['/rudel', stackItem.id]">
+            <span class="name">{{stackItem.name}}</span>
+        </div>
+        <div class="overlay">
+            <div class="icon">
+                <i class="material-icons like">thumb_up</i>
+                <i class="material-icons dislike">thumb_down</i>
+            </div>
+            <div class="progress"></div>
+        </div>
+    </stack-card>
 </div>
 
 <div class="cta">
-	<styled-button class="material-icons dislike" [icon]="'thumb_down'" [style]="dislikeButtonStyle" (click)="markAs('dislike')"></styled-button>
-	<styled-button class="material-icons like" [icon]="'thumb_up'" [style]="likeButtonStyle" (click)="markAs('like')"></styled-button>
+    <styled-button class="material-icons dislike" [icon]="'thumb_down'" [style]="dislikeButtonStyle"
+            (click)="markAs('dislike')"></styled-button>
+    <styled-button class="material-icons like" [icon]="'thumb_up'" [style]="likeButtonStyle"
+            (click)="markAs('like')"></styled-button>
 </div>

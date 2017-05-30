@@ -1,5 +1,5 @@
-import * as Joi from "joi";
-import {Node} from "../Node";
+import * as Joi from 'joi';
+import {Node} from '../Node';
 
 export class UserRoles {
 	static user = 'user';

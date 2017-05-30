@@ -1,6 +1,6 @@
-import {UserRoles, UserValidation} from "../models/user/User";
-import {RoutesConfiguration} from "../binders/RoutesBinder";
-import {UserController} from "../controllers/UserController";
+import {UserRoles, UserValidation} from '../models/user/User';
+import {RoutesConfiguration} from '../binders/RoutesBinder';
+import {UserController} from '../controllers/UserController';
 import * as Joi from 'joi';
 
 const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.string().regex(/^me$/));
@@ -119,5 +119,5 @@ export const RoutesConfig: RoutesConfiguration = [
 				}
 			}
 		}
-	},
+	}
 ];

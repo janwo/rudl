@@ -1,30 +1,31 @@
-<div class="card" [routerLink]="['/expeditions', expedition.id]" [ngClass]="{applicant: expedition.relations.isAttendee}">
-	<emoji [emoji]="expedition.links.icon"></emoji>
-	<h2>{{expedition.title}}</h2>
-	<p>{{expedition.description}}</p>
-	<footer>
-		<slots [users]="[expedition.owner]" [slots]="expedition.statistics.attendees"></slots>
-		<ul>
-			<li class="owner">
-				<span>{{expedition.owner.firstName + ' ' + expedition.owner.lastName}}</span>
-			</li>
-			<li class="approval-status">
-				<span *ngIf="!expedition.relations.isAttendee" i18n>{{formattedAwaitingApproval}}</span>
-				<span *ngIf="expedition.relations.isAttendee" i18n>Du bist Teilnehmer</span>
-			</li>
-		</ul>
-		<ul>
-			<li class="location">
-				<i class="material-icons">place</i>
-				<span>{{formattedLocation}}</span>
-			</li>
-			<li class="date">
-				<i class="material-icons">access_time</i>
-				<span>{{formattedDate}}</span>
-			</li>
-		</ul>
-		<div class="overflow">
-			<ng-content></ng-content>
-		</div>
-	</footer>
+<div class="card" [routerLink]="['/expeditions', expedition.id]"
+        [ngClass]="{applicant: expedition.relations.isAttendee}">
+    <emoji [emoji]="expedition.links.icon"></emoji>
+    <h2>{{expedition.title}}</h2>
+    <p>{{expedition.description}}</p>
+    <footer>
+        <slots [users]="[expedition.owner]" [slots]="expedition.statistics.attendees"></slots>
+        <ul>
+            <li class="owner">
+                <span>{{expedition.owner.firstName + ' ' + expedition.owner.lastName}}</span>
+            </li>
+            <li class="approval-status">
+                <span *ngIf="!expedition.relations.isAttendee" i18n>{{formattedAwaitingApproval}}</span>
+                <span *ngIf="expedition.relations.isAttendee" i18n>Du bist Teilnehmer</span>
+            </li>
+        </ul>
+        <ul>
+            <li class="location">
+                <i class="material-icons">place</i>
+                <span>{{formattedLocation}}</span>
+            </li>
+            <li class="date">
+                <i class="material-icons">access_time</i>
+                <span>{{formattedDate}}</span>
+            </li>
+        </ul>
+        <div class="overflow" (click)="$event.stopPropagation()">
+            <ng-content></ng-content>
+        </div>
+    </footer>
 </div>

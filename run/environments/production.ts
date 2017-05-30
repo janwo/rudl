@@ -1,14 +1,14 @@
-import * as Webpack from "webpack";
-import * as ExtractTextPlugin from "extract-text-webpack-plugin";
-import {AotPlugin} from "@ngtools/webpack";
-import {root} from "../config";
+import * as Webpack from 'webpack';
+import * as ExtractTextPlugin from 'extract-text-webpack-plugin';
+import {AotPlugin} from '@ngtools/webpack';
+import {root} from '../config';
 
 export default {
 	name: 'rudl - Production Environment',
 	frontend: {
 		webpack: {
 			config: [
-				( Config: any ) => {
+				(Config: any) => {
 					return {
 						module: {
 							rules: [
@@ -31,9 +31,9 @@ export default {
 								sourceMap: false
 							}),
 							new Webpack.NoEmitOnErrorsPlugin(),
-							new ExtractTextPlugin( '[name].[hash].css' )
+							new ExtractTextPlugin('[name].[hash].css')
 						]
-					}
+					};
 				}
 			]
 		}
@@ -47,4 +47,4 @@ export default {
 			}
 		}
 	}
-}
+};

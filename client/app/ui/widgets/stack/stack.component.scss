@@ -38,7 +38,7 @@ $swipe-rudel-swipe-area-ratio: 100 / 75; // total width|height / stack width|hei
       height: 100% / $swipe-rudel-swipe-area-ratio;
       top: 50% - 50% / $swipe-rudel-swipe-area-ratio;
       left: 50% - 50% / $swipe-rudel-swipe-area-ratio;
-      transition: transform 0.5s cubic-bezier(1,0,.46,1), opacity .5s ease-in-out;
+      transition: transform 0.5s cubic-bezier(1, 0, .46, 1), opacity .5s ease-in-out;
       opacity: 1;
 
       &.done {

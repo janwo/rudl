@@ -1,8 +1,9 @@
-import {Component} from "@angular/core";
+import {Component} from '@angular/core';
 
 @Component({
 	templateUrl: 'legal-footer.component.html',
-	styleUrls:  ['legal-footer.component.scss'],
+	styleUrls: ['legal-footer.component.scss'],
 	selector: 'legal-footer'
 })
-export class LegalFooterComponent {}
+export class LegalFooterComponent {
+}

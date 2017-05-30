@@ -1,8 +1,8 @@
-import {UserRoles, UserValidation} from "../models/user/User";
-import {RoutesConfiguration} from "../binders/RoutesBinder";
-import {RudelController} from "../controllers/RudelController";
+import {UserRoles, UserValidation} from '../models/user/User';
+import {RoutesConfiguration} from '../binders/RoutesBinder';
+import {RudelController} from '../controllers/RudelController';
 import * as Joi from 'joi';
-import {RudelValidation} from "../models/rudel/Rudel";
+import {RudelValidation} from '../models/rudel/Rudel';
 
 const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.string().regex(/^me$/));
 

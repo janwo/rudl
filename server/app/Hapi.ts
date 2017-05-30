@@ -1,23 +1,23 @@
-import {Config} from "../../run/config";
-import {RoutesBinder} from "./binders/RoutesBinder";
-import {StrategiesBinder} from "./binders/StrategiesBinder";
-import {DecoratorsBinder} from "./binders/DecoratorsBinder";
-import {PluginsBinder} from "./binders/PluginsBinder";
-import {DatabaseManager} from "./Database";
-import * as Fs from "fs";
-import * as AutoSNI from "auto-sni";
+import {Config} from '../../run/config';
+import {RoutesBinder} from './binders/RoutesBinder';
+import {StrategiesBinder} from './binders/StrategiesBinder';
+import {DecoratorsBinder} from './binders/DecoratorsBinder';
+import {PluginsBinder} from './binders/PluginsBinder';
+import {DatabaseManager} from './Database';
+import * as Fs from 'fs';
+import * as AutoSNI from 'auto-sni';
 import * as Path from 'path';
 import {Server} from 'hapi';
 import 'vision';
 
-export function hapiServer(): Promise<Server>{
+export function hapiServer(): Promise<Server> {
 	// Create dirs.
 	let dirs: string[] = [];
 	
 	// Get all dirs of uploads.
 	Object.keys(Config.paths).forEach(key => {
 		let dir = Config.paths[key].dir;
-		if(dir) dirs.push(dir);
+		if (dir) dirs.push(dir);
 	});
 	
 	// Create dirs.

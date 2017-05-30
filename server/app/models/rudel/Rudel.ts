@@ -1,7 +1,7 @@
-import {Translations, TranslationsValidation} from "../Translations";
-import {Node} from "../Node";
-import * as Joi from "joi";
-import {Config} from "../../../../run/config";
+import {Translations, TranslationsValidation} from '../Translations';
+import {Node} from '../Node';
+import * as Joi from 'joi';
+import {Config} from '../../../../run/config';
 
 export interface Rudel extends Node {
 	translations: Translations;

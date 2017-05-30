@@ -1,21 +1,19 @@
-import {Component, OnInit} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
-    template: ''
+	template: ''
 })
 export class RedirectComponent implements OnInit {
-    
-    ngOnInit() {
-        let redirect : Array<string> = this.route.snapshot.data['redirect'];
-        this.router.navigate(redirect, {
-            relativeTo: this.route,
-            replaceUrl: true
-        });
-    }
-    
-    constructor(
-        private router: Router,
-        private route: ActivatedRoute
-    ) {}
+	
+	ngOnInit() {
+		let redirect: Array<string> = this.route.snapshot.data['redirect'];
+		this.router.navigate(redirect, {
+			relativeTo: this.route,
+			replaceUrl: true
+		});
+	}
+	
+	constructor(private router: Router,
+	            private route: ActivatedRoute) {}
 }

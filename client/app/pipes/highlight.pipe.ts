@@ -1,14 +1,12 @@
-import {Pipe, PipeTransform, SecurityContext} from "@angular/core";
-import {DomSanitizer} from "@angular/platform-browser";
+import {Pipe, PipeTransform, SecurityContext} from '@angular/core';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Pipe({
 	name: 'highlight'
 })
 export class HighlightPipe implements PipeTransform {
 	
-	constructor(
-		private sanitized: DomSanitizer
-	) {}
+	constructor(private sanitized: DomSanitizer) {}
 	
 	transform(text: string, highlight: string, className: string = 'highlight') {
 		// Sanitize.

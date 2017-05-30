@@ -1,7 +1,7 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from "@angular/core";
-import {GeocodeLocation, GeocodeService} from "../../../services/geocode.service";
-import {ReplaySubject, Subject, Subscription} from "rxjs";
-import {Location} from "../../../models/location";
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {GeocodeLocation, GeocodeService} from '../../../services/geocode.service';
+import {ReplaySubject, Subject, Subscription} from 'rxjs';
+import {Location} from '../../../models/location';
 
 @Component({
 	templateUrl: 'location-search.component.html',
@@ -21,9 +21,7 @@ export class LocationSearchComponent implements OnInit, OnDestroy {
 	searchResultsObservable: Subscription;
 	searchEvent: Subject<string> = new ReplaySubject(1);
 	
-	constructor(
-		private geocodeService: GeocodeService
-	){}
+	constructor(private geocodeService: GeocodeService) {}
 	
 	ngOnInit(): void {
 		// Set up search observable.
@@ -38,7 +36,7 @@ export class LocationSearchComponent implements OnInit, OnDestroy {
 	
 	onKey(event: any): void {
 		this.searchEvent.next(this.searchElement.nativeElement.value);
-		if(event.keyCode == 13) this.searchElement.nativeElement.blur();
+		if (event.keyCode == 13) this.searchElement.nativeElement.blur();
 	}
 	
 	onClick(event: any, location: Location): void {

@@ -1,7 +1,7 @@
 <item-wrapper [columns]="2" *ngIf="followers; else loading">
-	<user-item *ngFor="let follower of followers" [user]="follower"></user-item>
+    <user-item *ngFor="let follower of followers" [user]="follower"></user-item>
 </item-wrapper>
 
 <ng-template #loading>
-	<loading></loading>
+    <loading></loading>
 </ng-template>

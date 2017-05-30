@@ -1,27 +1,32 @@
 <header>
-	<logo></logo>
-	<div class="stretched" *ngIf="userStatus?.loggedIn && userStatus.user.onBoard">
-		<div class="search" [ngClass]="{active: inSearchMode}">
-			<search-bar #searchBar></search-bar>
-			<button class="fa fa-close" [routerLink]="lastUrl"></button>
-		</div>
-		<div class="menu" [ngClass]="{active: !inSearchMode}">
-			<menu>
-				<menu-item [makeRoomIfSmall]="true" [icon]="'timeline'" [title]="'Entecken'" [link]="['/explore']"></menu-item>
-				<menu-item [makeRoomIfSmall]="true" [icon]="'people_outline'" [title]="'Rudler'" [link]="['/people']"></menu-item>
-				<menu-item class="search-menu-item" [icon]="'search'" [title]="'Suche'" [link]="['/search']"></menu-item>
-			</menu>
-		</div>
-	</div>
-	<user-avatar *ngIf="userStatus?.loggedIn" [user]="userStatus.user" (click)="dropdownMenu.toggle()"></user-avatar>
-	<dropdown-menu #dropdownMenu [arrowAlignment]="'right'">
-		<menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'pets'" [title]="'Deine Rudel'" [link]="['/people', userStatus.user.username, 'rudel']"></menu-item>
-		<menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'format_list_bulleted'" [title]="'Deine Listen'" [link]="['/people', userStatus.user.username, 'lists']"></menu-item>
-		<menu-item [icon]="'settings'" [title]="'Einstellungen'" [link]="['/settings']"></menu-item>
-		<menu-item [icon]="'exit_to_app'" [title]="'Abmelden'" (click)="signOut()"></menu-item>
-	</dropdown-menu>
+    <logo></logo>
+    <div class="stretched" *ngIf="userStatus?.loggedIn && userStatus.user.onBoard">
+        <div class="search" [ngClass]="{active: inSearchMode}">
+            <search-bar #searchBar></search-bar>
+            <button class="fa fa-close" [routerLink]="lastUrl"></button>
+        </div>
+        <div class="menu" [ngClass]="{active: !inSearchMode}">
+            <menu>
+                <menu-item [makeRoomIfSmall]="true" [icon]="'timeline'" [title]="'Entecken'"
+                        [link]="['/explore']"></menu-item>
+                <menu-item [makeRoomIfSmall]="true" [icon]="'people_outline'" [title]="'Rudler'"
+                        [link]="['/people']"></menu-item>
+                <menu-item class="search-menu-item" [icon]="'search'" [title]="'Suche'"
+                        [link]="['/search']"></menu-item>
+            </menu>
+        </div>
+    </div>
+    <user-avatar *ngIf="userStatus?.loggedIn" [user]="userStatus.user" (click)="dropdownMenu.toggle()"></user-avatar>
+    <dropdown-menu #dropdownMenu [arrowAlignment]="'right'">
+        <menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'pets'" [title]="'Deine Rudel'"
+                [link]="['/people', userStatus.user.username, 'rudel']"></menu-item>
+        <menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'format_list_bulleted'"
+                [title]="'Deine Listen'" [link]="['/people', userStatus.user.username, 'lists']"></menu-item>
+        <menu-item [icon]="'settings'" [title]="'Einstellungen'" [link]="['/settings']"></menu-item>
+        <menu-item [icon]="'exit_to_app'" [title]="'Abmelden'" (click)="signOut()"></menu-item>
+    </dropdown-menu>
 </header>
 <section infinite-scroll (scrolled)="scrolledToBottom($event)" [scrollWindow]="false">
-	<router-outlet></router-outlet>
-	<legal-footer></legal-footer>
+    <router-outlet></router-outlet>
+    <legal-footer></legal-footer>
 </section>

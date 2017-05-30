@@ -1,14 +1,14 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import {Subscription} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
-import {List} from "../../../models/list";
-import {ListService} from "../../../services/list.service";
-import {EmptyState} from "../../widgets/state/empty.component";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Subscription} from 'rxjs';
+import {ActivatedRoute} from '@angular/router';
+import {List} from '../../../models/list';
+import {ListService} from '../../../services/list.service';
+import {EmptyState} from '../../widgets/state/empty.component';
 import {ScrollService} from '../../../services/scroll.service';
 
 @Component({
-    templateUrl: 'user-lists.component.html',
-    styleUrls: ['user-lists.component.scss']
+	templateUrl: 'user-lists.component.html',
+	styleUrls: ['user-lists.component.scss']
 })
 export class UserListsComponent implements OnInit, OnDestroy {
 	
@@ -20,11 +20,9 @@ export class UserListsComponent implements OnInit, OnDestroy {
 		description: 'You have no lists created yet. Use them to group your Rudels! Others can follow them.'
 	};
 	
-	constructor(
-		private listService: ListService,
-		private route: ActivatedRoute,
-		private scrollService: ScrollService
-	) {}
+	constructor(private listService: ListService,
+	            private route: ActivatedRoute,
+	            private scrollService: ScrollService) {}
 	
 	ngOnInit() {
 		this.listsSubscription = this.route.parent.params.map(params => params['username']).do(() => {
@@ -34,7 +32,7 @@ export class UserListsComponent implements OnInit, OnDestroy {
 				return this.listService.by(username, offset, 25);
 			});
 		}).subscribe((lists: List[]) => {
-			if(lists.length < 25) this.listsSubscription.unsubscribe();
+			if (lists.length < 25) this.listsSubscription.unsubscribe();
 			this.lists = this.lists ? this.lists.concat(lists) : lists;
 		});
 	}

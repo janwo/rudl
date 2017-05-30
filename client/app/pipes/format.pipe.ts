@@ -1,14 +1,12 @@
-import {Pipe, PipeTransform, SecurityContext} from "@angular/core";
-import {DomSanitizer} from "@angular/platform-browser";
+import {Pipe, PipeTransform, SecurityContext} from '@angular/core';
+import {DomSanitizer} from '@angular/platform-browser';
 
 @Pipe({
 	name: 'format'
 })
 export class FormatPipe implements PipeTransform {
 	
-	constructor(
-		private sanitized: DomSanitizer
-	) {}
+	constructor(private sanitized: DomSanitizer) {}
 	
 	transform(text: string) {
 		// Sanitize.

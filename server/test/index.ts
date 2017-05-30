@@ -3,12 +3,11 @@ process.env.ENV = 'test';
 
 import {TranslationsKeys} from '../app/models/Translations';
 import {AuthController} from '../app/controllers/AuthController';
-import {User, UserRoles} from "../app/models/user/User";
-import {Config} from "../../run/config";
-import {AccountController} from "../app/controllers/AccountController";
+import {User, UserRoles} from '../app/models/user/User';
+import {Config} from '../../run/config';
 import * as faker from 'faker';
 import * as shortid from 'shortid';
-import * as _ from "lodash";
+import * as _ from 'lodash';
 
 function generateUser(): User {
 	let firstName = faker.name.firstName();
@@ -41,7 +40,7 @@ function generateUser(): User {
 		onBoard: true,
 		password: AuthController.hashPassword(faker.internet.password()),
 		createdAt: faker.date.past().toISOString(),
-		updatedAt: faker.date.past().toISOString(),
+		updatedAt: faker.date.past().toISOString()
 	};
 	
 	// Return.

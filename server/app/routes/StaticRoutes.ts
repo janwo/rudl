@@ -1,6 +1,6 @@
-import {RoutesConfiguration} from "../binders/RoutesBinder";
-import {Config} from "../../../run/config";
-import "inert";
+import {RoutesConfiguration} from '../binders/RoutesBinder';
+import {Config} from '../../../run/config';
+import 'inert';
 
 export const RoutesConfig: RoutesConfiguration = [
 	{

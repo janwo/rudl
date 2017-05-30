@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component} from '@angular/core';
 
 @Component({
 	templateUrl: './logo.component.html',
@@ -6,5 +6,5 @@ import {Component} from "@angular/core";
 	selector: 'logo'
 })
 export class LogoComponent {
-	
+
 }

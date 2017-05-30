@@ -17,6 +17,10 @@
   item-wrapper {
     &:not(.empty) {
       margin-top: map_get($base-padding, 'default');
+
+      & ~ item-wrapper {
+        margin-top: map_get($base-padding, 'large');
+      }
     }
   }
 

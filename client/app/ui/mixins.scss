@@ -20,7 +20,7 @@
 
 @mixin setup-max-width() {
   $first-key: nth(map_keys($base-max-width), 1);
-  @if($first-key) {
+  @if ($first-key) {
     max-width: map_get($base-max-width, $first-key);
     margin-left: auto;
     margin-right: auto;
@@ -61,7 +61,7 @@
     color: inactive(map_get($base-colors, 'primary-text'));
   }
 
-  @if($borders) {
+  @if ($borders) {
     @include setup-input-borders();
   }
 }

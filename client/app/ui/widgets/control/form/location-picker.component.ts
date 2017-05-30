@@ -1,38 +1,38 @@
-import {AfterViewInit, Component, ElementRef, Input, Optional, ViewChild} from "@angular/core";
-import * as L from "leaflet";
-import {ControlValueAccessor, NgControl} from "@angular/forms";
-import {Location} from "../../../../models/location";
+import {AfterViewInit, Component, ElementRef, Input, Optional, ViewChild} from '@angular/core';
+import * as L from 'leaflet';
+import {ControlValueAccessor, NgControl} from '@angular/forms';
+import {Location} from '../../../../models/location';
 
 @Component({
-    templateUrl: 'location-picker.component.html',
-    styleUrls: ['location-picker.component.scss'],
-    selector: 'location-picker'
+	templateUrl: 'location-picker.component.html',
+	styleUrls: ['location-picker.component.scss'],
+	selector: 'location-picker'
 })
 export class LocationPickerComponent implements AfterViewInit, ControlValueAccessor {
-    
-    private static source = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-    private static quotas: any = {
-        red: 21,
-        green: 71,
-        blue: 8,
-        dividerTune: 0,
-        divider: () => LocationPickerComponent.quotas.red + LocationPickerComponent.quotas.green + LocationPickerComponent.quotas.blue + LocationPickerComponent.quotas.dividerTune
-    };
-    
+	
+	private static source = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+	private static quotas: any = {
+		red: 21,
+		green: 71,
+		blue: 8,
+		dividerTune: 0,
+		divider: () => LocationPickerComponent.quotas.red + LocationPickerComponent.quotas.green + LocationPickerComponent.quotas.blue + LocationPickerComponent.quotas.dividerTune
+	};
+	
 	constructor(@Optional() ngControl: NgControl) {
 		if (ngControl) ngControl.valueAccessor = this;
 	}
-    
-    location: Location = {
+	
+	location: Location = {
 		lat: 0,
-	    lng: 0
-    };
-    @Input() zoom: number = 16;
-    @ViewChild('map') mapElement: ElementRef;
-    
+		lng: 0
+	};
+	@Input() zoom: number = 16;
+	@ViewChild('map') mapElement: ElementRef;
+	
 	map: L.Map;
 	marker: L.Marker;
- 
+	
 	ngAfterViewInit(): void {
 		// Create app.
 		this.map = L.map(this.mapElement.nativeElement, {
@@ -56,7 +56,7 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 		
 		// Add map layer.
 		new L.TileLayer(LocationPickerComponent.source, {
-			crossOrigin: true,
+			crossOrigin: true
 		}).on('tileload', (e: L.TileEvent) => {
 			if (e.tile.getAttribute('data-grayscaled')) return;
 			
@@ -94,16 +94,18 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 	private setLocation(location: Location): void {
 		this.location = location;
 		
-		if(this.marker) this.marker.setLatLng(this.location);
-		if(this.map) this.map.panTo(this.location);
+		if (this.marker) this.marker.setLatLng(this.location);
+		if (this.map) this.map.panTo(this.location);
 	}
 	
 	writeValue(value: Location): void {
-		if(value) this.setLocation(value);
+		if (value) this.setLocation(value);
 	}
 	
 	onChange = (_: any) => {};
 	onTouched = () => {};
+	
 	registerOnChange(fn: (_: any) => void): void { this.onChange = fn; }
+	
 	registerOnTouched(fn: () => void): void { this.onTouched = fn; }
 }

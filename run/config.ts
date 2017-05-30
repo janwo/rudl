@@ -1,17 +1,17 @@
-import * as _ from "lodash";
-import * as Glob from "glob";
-import * as Path from "path";
-import * as webpackMerge from "webpack-merge";
-import * as util from "util";
-import * as Fs from "fs";
-import * as chalk from "chalk";
+import * as _ from 'lodash';
+import * as Glob from 'glob';
+import * as Path from 'path';
+import * as webpackMerge from 'webpack-merge';
+import * as util from 'util';
+import * as Fs from 'fs';
+import * as chalk from 'chalk';
 
 /**
  * Helper function to resolve the root of the project.
  */
-const _root = Path.resolve( __dirname, '..' );
-export function root( ...args: any[] ): string {
-	return Path.resolve.apply( Path, [ _root ].concat( args ) );
+const _root = Path.resolve(__dirname, '..');
+export function root(...args: any[]): string {
+	return Path.resolve.apply(Path, [_root].concat(args));
 }
 
 /**
@@ -21,12 +21,14 @@ export function root( ...args: any[] ): string {
 export const Config: {
 	env: string,
 	name: string,
-	paths: { [key: string]: {
-		dir?: string,
-		filename?: string,
-		publicPath?: string,
-		ignore404?: boolean
-	} },
+	paths: {
+		[key: string]: {
+			dir?: string,
+			filename?: string,
+			publicPath?: string,
+			ignore404?: boolean
+		}
+	},
 	debug: boolean,
 	frontend: {
 		metadata: { [key: string]: string },
@@ -165,20 +167,20 @@ export const Config: {
 		require(`./environments/${process.env.ENV}`).default,
 		(Fs.existsSync('./environments/local.ts') && require('./environments/local').default) || {},
 		(objValue: any, srcValue: any, key: string) => {
-			if(key == 'config' && _.isArray(objValue)) {
+			if (key == 'config' && _.isArray(objValue)) {
 				return objValue.concat(srcValue);
 			}
 		}
 	);
 	
 	// Post initialization of sub-config file: frontend.webpack.config.
-	if(merged.frontend.webpack.config) {
+	if (merged.frontend.webpack.config) {
 		merged.frontend.webpack.config = merged.frontend.webpack.config.map((configFunction: any) => configFunction(merged));
 		merged.frontend.webpack.config = webpackMerge.smart.apply(webpackMerge.smart, merged.frontend.webpack.config);
 	}
 	
 	// Post initialization of sub-config file: frontend.webpack.devServer.config.
-	if(merged.frontend.webpack.devServer) {
+	if (merged.frontend.webpack.devServer) {
 		merged.frontend.webpack.devServer.config = merged.frontend.webpack.devServer.config.map((configFunction: any) => configFunction(merged));
 		merged.frontend.webpack.devServer.config = _.merge.apply(_.merge, [{}].concat(merged.frontend.webpack.devServer.config));
 	}

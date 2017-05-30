@@ -1,5 +1,5 @@
-import {Component, Input} from "@angular/core";
-import {ButtonStyles} from "./styled-button.component";
+import {Component, Input} from '@angular/core';
+import {ButtonStyles} from './styled-button.component';
 
 @Component({
 	templateUrl: 'expander.component.html',
@@ -11,7 +11,7 @@ export class ExpanderComponent {
 	buttonStyle: ButtonStyles = ButtonStyles.filled;
 	collapsed: boolean = true;
 	
-	onToggleCollapseState(){
+	onToggleCollapseState() {
 		this.collapsed = !this.collapsed;
 	}
 }

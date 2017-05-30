@@ -1,10 +1,10 @@
-import {Component} from "@angular/core";
+import {Component} from '@angular/core';
 
 @Component({
-    templateUrl: 'legal.component.html',
-    styleUrls: ['legal.component.scss']
+	templateUrl: 'legal.component.html',
+	styleUrls: ['legal.component.scss']
 })
 export class LegalComponent {
-    
-    constructor() {}
+	
+	constructor() {}
 }

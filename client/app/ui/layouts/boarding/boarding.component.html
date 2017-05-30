@@ -1,46 +1,52 @@
 <carousel [maxSteps]="steps.length" #carousel>
-	<div class="item">
-		<div class="card" [@fadeIn]="true">
-			<div class="image"></div>
-			<h1>{{steps[0]}}</h1>
-			<span>Some text 1</span>
-		</div>
-	</div>
-	<div class="item">
-		<div class="card">
-			<div class="image"></div>
-			<h1>{{steps[1]}}</h1>
-			<span>Some text 2</span>
-		</div>
-	</div>
-	<div class="item">
-		<div class="card">
-			<div class="image"></div>
-			<h1>{{steps[2]}}</h1>
-			<span>Some text 3</span>
-		</div>
-	</div>
-	<div class="item">
-		<div class="card">
-			<div class="image"></div>
-			<h1>{{steps[3]}}</h1>
-			<span>Some text 4</span>
-		</div>
-	</div>
-	<div class="item">
-		<div class="card">
-			<div class="image"></div>
-			<h1>{{steps[4]}}</h1>
-			<span *ngIf="permissionStatus == 'denied'">Seems like you denied the permission, please check your browser settings to enable location sharing!</span>
-			<span *ngIf="permissionStatus != 'denied'">In order to show you all relevant rudels and events near you, rudl needs to access your location.</span>
-			<styled-button *ngIf="permissionStatus != 'denied'" [style]="ButtonStyles.filled" [text]="permissionStatus == 'granted' ? 'Thank you!' : (permissionStatus == 'granting' ? 'Please wait...' : 'Grant Permission')" [disabled]="permissionStatus != 'ungranted'" (click)="grantPermission()"></styled-button>
-			<styled-button *ngIf="permissionStatus == 'denied'" [style]="ButtonStyles.filledInverse" [text]="'Get help'" (click)="openHelpTopic()"></styled-button>
-		</div>
-	</div>
+    <div class="item">
+        <div class="card" [@fadeIn]="true">
+            <div class="image"></div>
+            <h1>{{steps[0]}}</h1>
+            <span>Some text 1</span>
+        </div>
+    </div>
+    <div class="item">
+        <div class="card">
+            <div class="image"></div>
+            <h1>{{steps[1]}}</h1>
+            <span>Some text 2</span>
+        </div>
+    </div>
+    <div class="item">
+        <div class="card">
+            <div class="image"></div>
+            <h1>{{steps[2]}}</h1>
+            <span>Some text 3</span>
+        </div>
+    </div>
+    <div class="item">
+        <div class="card">
+            <div class="image"></div>
+            <h1>{{steps[3]}}</h1>
+            <span>Some text 4</span>
+        </div>
+    </div>
+    <div class="item">
+        <div class="card">
+            <div class="image"></div>
+            <h1>{{steps[4]}}</h1>
+            <span *ngIf="permissionStatus == 'denied'">Seems like you denied the permission, please check your browser settings to enable location sharing!</span>
+            <span *ngIf="permissionStatus != 'denied'">In order to show you all relevant rudels and events near you, rudl needs to access your location.</span>
+            <styled-button *ngIf="permissionStatus != 'denied'" [style]="ButtonStyles.filled"
+                    [text]="permissionStatus == 'granted' ? 'Thank you!' : (permissionStatus == 'granting' ? 'Please wait...' : 'Grant Permission')"
+                    [disabled]="permissionStatus != 'ungranted'" (click)="grantPermission()"></styled-button>
+            <styled-button *ngIf="permissionStatus == 'denied'" [style]="ButtonStyles.filledInverse" [text]="'Get help'"
+                    (click)="openHelpTopic()"></styled-button>
+        </div>
+    </div>
 </carousel>
 <footer>
-	<styled-button class="back" *ngIf="carousel.index() > 0" [style]="ButtonStyles.filled" [text]="'Go back'" (click)="carousel.back()"></styled-button>
-	<styled-button class="next" *ngIf="carousel.index() < steps.length - 1" [style]="ButtonStyles.filled" [text]="'Continue'" (click)="carousel.next()"></styled-button>
-	<styled-button class="done" *ngIf="carousel.index() == steps.length - 1" [disabled]="permissionStatus != 'granted'" [style]="ButtonStyles.filled" [text]="'Finish'" (click)="finishBoarding()"></styled-button>
-	<indicator [indicators]="steps" [selectedIndex]="carousel.index()" [interactive]="false"></indicator>
+    <styled-button class="back" *ngIf="carousel.index() > 0" [style]="ButtonStyles.filled" [text]="'Go back'"
+            (click)="carousel.back()"></styled-button>
+    <styled-button class="next" *ngIf="carousel.index() < steps.length - 1" [style]="ButtonStyles.filled"
+            [text]="'Continue'" (click)="carousel.next()"></styled-button>
+    <styled-button class="done" *ngIf="carousel.index() == steps.length - 1" [disabled]="permissionStatus != 'granted'"
+            [style]="ButtonStyles.filled" [text]="'Finish'" (click)="finishBoarding()"></styled-button>
+    <indicator [indicators]="steps" [selectedIndex]="carousel.index()" [interactive]="false"></indicator>
 </footer>

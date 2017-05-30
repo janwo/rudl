@@ -1,29 +1,33 @@
 <div class="card">
-	<div class="user" [routerLink]="['/people', list.owner.username]">
-		<user-avatar [user]="list.owner"></user-avatar>
-		<div>
-			<span class="name">{{list.owner.firstName + ' ' + list.owner.lastName}}</span>
-			<span class="username">{{list.owner.username}}</span>
-		</div>
-	</div>
-	<h1>{{list.name}}</h1>
-	<div class="statistics">
-		<statistics [statistics]="[
+    <div class="user" [routerLink]="['/people', list.owner.username]">
+        <user-avatar [user]="list.owner"></user-avatar>
+        <div>
+            <span class="name">{{list.owner.firstName + ' ' + list.owner.lastName}}</span>
+            <span class="username">{{list.owner.username}}</span>
+        </div>
+    </div>
+    <h1>{{list.name}}</h1>
+    <div class="statistics">
+        <statistics [statistics]="[
 			{value: list.statistics.rudel, subject: 'Rudel', link: ['rudel'] },
 			{value: list.statistics.followers, subject: 'Follower', link: ['followers'] }
 		]"></statistics>
-		<div class="cta">
-			<styled-button [style]="list.relations.isFollowed ? buttonStyleFollowing : buttonStyleDefault" (click)="onToggleFollow(true)" [disabled]="pendingFollowRequest" [text]="list.relations.isFollowed ? 'Following' : 'Follow'"></styled-button>
-		</div>
-	</div>
+        <div class="cta">
+            <styled-button [style]="list.relations.isFollowed ? buttonStyleFollowing : buttonStyleDefault"
+                    (click)="onToggleFollow(true)" [disabled]="pendingFollowRequest"
+                    [text]="list.relations.isFollowed ? 'Following' : 'Follow'"></styled-button>
+        </div>
+    </div>
 </div>
 <div class="content">
-	<menu>
-		<menu-item [makeRoomIfSmall]="true" [icon]="'pets'" [title]="'Rudel'" [link]="['rudel']"></menu-item>
-		<menu-item [makeRoomIfSmall]="true" [icon]="'people_outline'" [title]="'Followers'" [link]="['followers']"></menu-item>
-	</menu>
-	<router-outlet></router-outlet>
+    <menu>
+        <menu-item [makeRoomIfSmall]="true" [icon]="'pets'" [title]="'Rudel'" [link]="['rudel']"></menu-item>
+        <menu-item [makeRoomIfSmall]="true" [icon]="'people_outline'" [title]="'Followers'"
+                [link]="['followers']"></menu-item>
+    </menu>
+    <router-outlet></router-outlet>
 </div>
 <modal #modal [title]="'Are you sure to unfollow list?'">
-	<question [choices]="modalChoices" [title]="'Are you sure to unfollow list?'" [description]='"Du bist der Ersteller dieser Liste. Durch das Entfolgen geht die Liste in den Besitz eines anderen Followers über. Listen ohne andere Follower werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."'></question>
+    <question [choices]="modalChoices" [title]="'Are you sure to unfollow list?'"
+            [description]='"Du bist der Ersteller dieser Liste. Durch das Entfolgen geht die Liste in den Besitz eines anderen Followers über. Listen ohne andere Follower werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."'></question>
 </modal>

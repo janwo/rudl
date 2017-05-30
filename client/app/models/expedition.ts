@@ -1,7 +1,7 @@
-import {Document} from "./document";
-import {User} from "./user";
+import {Document} from './document';
+import {User} from './user';
 import {Rudel} from './rudel';
-import {VagueLocation} from "./location";
+import {VagueLocation} from './location';
 
 export interface Expedition extends Document {
 	title: string;
@@ -46,9 +46,15 @@ export interface ExpeditionRecipe {
 	}
 }
 
-export interface InviteLikeItem {
-	user: User,
+
+export interface ExpeditionAttendeeStatus {
 	isApplicant: boolean,
 	isInvitee: boolean,
 	isAttendee: boolean
+}
+
+export interface ExpeditionRequestResponse {
+	user: User,
+	status: ExpeditionAttendeeStatus,
+	expedition: Expedition
 }

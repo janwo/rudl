@@ -65,8 +65,10 @@
         flex: 0 0 auto;
         position: relative;
         pointer-events: none;
+        display: flex;
+        flex-direction: row;
 
-        & > * {
+        & /deep/ > * {
           pointer-events: auto;
         }
       }

@@ -1,1 +1,2 @@
-export interface Relationship {}
+export interface Relationship {
+}

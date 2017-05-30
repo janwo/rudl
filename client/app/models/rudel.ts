@@ -1,7 +1,7 @@
-import {Locale} from "./locale";
-import {Document} from "./document";
-import {User} from "./user";
-import {Location} from "./location";
+import {Locale} from './locale';
+import {Document} from './document';
+import {User} from './user';
+import {Location} from './location';
 
 export interface Rudel extends Document {
 	name: string;

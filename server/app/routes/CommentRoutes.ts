@@ -1,5 +1,5 @@
-import {UserRoles} from "../models/user/User";
-import {RoutesConfiguration} from "../binders/RoutesBinder";
+import {UserRoles} from '../models/user/User';
+import {RoutesConfiguration} from '../binders/RoutesBinder';
 import * as Joi from 'joi';
 import {CommentController} from '../controllers/CommentController';
 import {CommentValidation} from '../models/comment/Comment';

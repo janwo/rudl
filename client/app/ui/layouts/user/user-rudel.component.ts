@@ -1,14 +1,14 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import {Subscription} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
-import {RudelService} from "../../../services/rudel.service";
-import {Rudel} from "../../../models/rudel";
-import {EmptyState} from "../../widgets/state/empty.component";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Subscription} from 'rxjs';
+import {ActivatedRoute} from '@angular/router';
+import {RudelService} from '../../../services/rudel.service';
+import {Rudel} from '../../../models/rudel';
+import {EmptyState} from '../../widgets/state/empty.component';
 import {ScrollService} from '../../../services/scroll.service';
 
 @Component({
-    templateUrl: 'user-rudel.component.html',
-    styleUrls: ['user-rudel.component.scss']
+	templateUrl: 'user-rudel.component.html',
+	styleUrls: ['user-rudel.component.scss']
 })
 export class UserRudelComponent implements OnInit, OnDestroy {
 	
@@ -20,11 +20,9 @@ export class UserRudelComponent implements OnInit, OnDestroy {
 		description: 'Why not search for new Rudels that you like?'
 	};
 	
-	constructor(
-		private rudelService: RudelService,
-		private route: ActivatedRoute,
-		private scrollService: ScrollService
-	) {}
+	constructor(private rudelService: RudelService,
+	            private route: ActivatedRoute,
+	            private scrollService: ScrollService) {}
 	
 	ngOnInit() {
 		this.rudelSubscription = this.route.parent.params.map(params => params['username']).do(() => {
@@ -34,7 +32,7 @@ export class UserRudelComponent implements OnInit, OnDestroy {
 				return this.rudelService.by(username, offset, 25);
 			});
 		}).subscribe((rudel: Rudel[]) => {
-			if(rudel.length < 25) this.rudelSubscription.unsubscribe();
+			if (rudel.length < 25) this.rudelSubscription.unsubscribe();
 			this.rudel = this.rudel ? this.rudel.concat(rudel) : rudel;
 		});
 	}

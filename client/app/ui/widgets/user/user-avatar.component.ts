@@ -1,5 +1,5 @@
-import {Component, Input} from "@angular/core";
-import {User} from "../../../models/user";
+import {Component, Input} from '@angular/core';
+import {User} from '../../../models/user';
 
 @Component({
 	templateUrl: 'user-avatar.component.html',

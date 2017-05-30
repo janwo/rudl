@@ -1,14 +1,14 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import {animate, state, style, transition, trigger} from "@angular/animations";
-import {Observable, Subscription} from "rxjs";
-import {UserService} from "../../../services/user.service";
-import {Rudel} from "../../../models/rudel";
-import {List} from "../../../models/list";
-import {User} from "../../../models/user";
-import {SearchService} from "../../../services/search.service";
-import {ActivatedRoute} from "@angular/router";
-import {ListService} from "../../../services/list.service";
-import {RudelService} from "../../../services/rudel.service";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {Observable, Subscription} from 'rxjs';
+import {UserService} from '../../../services/user.service';
+import {Rudel} from '../../../models/rudel';
+import {List} from '../../../models/list';
+import {User} from '../../../models/user';
+import {SearchService} from '../../../services/search.service';
+import {ActivatedRoute} from '@angular/router';
+import {ListService} from '../../../services/list.service';
+import {RudelService} from '../../../services/rudel.service';
 
 @Component({
 	templateUrl: 'search.component.html',
@@ -42,13 +42,11 @@ export class SearchComponent implements OnDestroy, OnInit {
 	querySubscription: Subscription;
 	searchValue: string = null;
 	
-	constructor(
-		private listService: ListService,
-		private userService: UserService,
-		private rudelService: RudelService,
-	    private searchService: SearchService,
-	    private activatedRoute: ActivatedRoute
-	){}
+	constructor(private listService: ListService,
+	            private userService: UserService,
+	            private rudelService: RudelService,
+	            private searchService: SearchService,
+	            private activatedRoute: ActivatedRoute) {}
 	
 	ngOnInit(): void {
 		// Register for query changes.
@@ -75,9 +73,9 @@ export class SearchComponent implements OnDestroy, OnInit {
 		this.activatedRoute.params.map(params => params['query']).forEach(query => this.searchService.search(query));
 	}
 	
-	log(j:any){
-			console.log(j);
-}
+	log(j: any) {
+		console.log(j);
+	}
 	
 	ngOnDestroy(): void {
 		this.searchService.cancel();

@@ -1,13 +1,12 @@
-import * as Boom from "boom";
+import * as Boom from 'boom';
 import * as Path from 'path';
-import {Config} from "../../../run/config";
-import {User, UserRoles} from "../models/user/User";
-import {DatabaseManager, TransactionSession} from "../Database";
-import {UserController} from "./UserController";
-import * as sharp from "sharp";
-import Transaction from "neo4j-driver/lib/v1/transaction";
+import {Config} from '../../../run/config';
+import {User, UserRoles} from '../models/user/User';
+import {DatabaseManager, TransactionSession} from '../Database';
+import {UserController} from './UserController';
+import * as sharp from 'sharp';
+import Transaction from 'neo4j-driver/lib/v1/transaction';
 import {AuthController} from './AuthController';
-import Result from 'neo4j-driver/lib/v1/result';
 
 export module AccountController {
 	
@@ -25,13 +24,13 @@ export module AccountController {
 			UserController.findByUsername(transaction, recipe.username),
 			UserController.findByMail(transaction, recipe.mail)
 		]).then((values: User[]) => {
-			if(values[0] || values[1]) return transaction.rollback().then(() => {
+			if (values[0] || values[1]) return transaction.rollback().then(() => {
 				return Promise.reject<User>('Cannot create user as the username or mail is already in use.');
 			});
-		
+			
 			// Create user.
 			let user: User = {
-				firstName: recipe.firstName ,
+				firstName: recipe.firstName,
 				lastName: recipe.lastName,
 				username: recipe.username,
 				id: recipe.id,
@@ -86,7 +85,7 @@ export module AccountController {
 	export function save(transaction: Transaction, user: User): Promise<void> {
 		// Set timestamps.
 		let now = new Date().toISOString();
-		if(!user.createdAt) user.createdAt = now;
+		if (!user.createdAt) user.createdAt = now;
 		user.updatedAt = now;
 		
 		// Save.
@@ -207,9 +206,9 @@ export module AccountController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = AccountController.availableUsername(transaction, request.params.username).then((username: string) => {
 				let obj: any = {
-					available: request.params.username == username,
+					available: request.params.username == username
 				};
-				if(!obj.available) obj.suggestion = username;
+				if (!obj.available) obj.suggestion = username;
 				return obj;
 			});
 			

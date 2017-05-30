@@ -1,7 +1,7 @@
-import {Component, Input, Optional} from "@angular/core";
-import * as moment from "moment";
-import {animate, style, transition, trigger} from "@angular/animations";
-import {ControlValueAccessor, NgControl} from "@angular/forms";
+import {Component, Input, Optional} from '@angular/core';
+import * as moment from 'moment';
+import {animate, style, transition, trigger} from '@angular/animations';
+import {ControlValueAccessor, NgControl} from '@angular/forms';
 import Moment = moment.Moment;
 
 @Component({
@@ -40,27 +40,27 @@ export class DateTimeComponent implements ControlValueAccessor {
 	}
 	
 	@Input() set locale(string: string) {
-		if(!string) return;
+		if (!string) return;
 		this.selectedMoment.locale(string);
 		this.invalidate();
 	}
 	
 	@Input() set minDateTime(string: string) {
-		if(!string) return;
+		if (!string) return;
 		this.minMoment = moment.utc(string).second(0).milliseconds(0).local();
 		this.invalidate();
 	}
- 
+	
 	selectedMoment: Moment = moment().add(1, 'days').add(1, 'hours').add(15, 'minutes');
 	minMoment: Moment = moment().add(1, 'hours');
 	state: 'collapsed' | 'day' | 'hour' | 'minute' = 'collapsed';
-	items: {[key: string]: Array<CalendarItem | false>} = {
+	items: { [key: string]: Array<CalendarItem | false> } = {
 		days: [],
 		minutes: [],
-		hours: [],
+		hours: []
 	};
-	legends: {[key: string]: string[]} = {
-		weekdays: [0,1,2,3,4,5,6].map(i => moment.weekdaysShort(true, i))
+	legends: { [key: string]: string[] } = {
+		weekdays: [0, 1, 2, 3, 4, 5, 6].map(i => moment.weekdaysShort(true, i))
 	};
 	
 	invalidate(): void {
@@ -69,11 +69,11 @@ export class DateTimeComponent implements ControlValueAccessor {
 		
 		// Days of previous month.
 		let prefixedDays = this.selectedMoment.clone().startOf('month').isoWeekday();
-		for(let i = 1; i < prefixedDays; i++) this.items.days.push(false);
+		for (let i = 1; i < prefixedDays; i++) this.items.days.push(false);
 		
 		// Days of current month.
 		let days = this.selectedMoment.daysInMonth();
-		for(let i = 1; i <= days; i++) {
+		for (let i = 1; i <= days; i++) {
 			let day = this.selectedMoment.clone().date(i);
 			this.items.days.push({
 				selected: this.selectedMoment.date() == day.date(),
@@ -85,33 +85,33 @@ export class DateTimeComponent implements ControlValueAccessor {
 		
 		// Days of next month.
 		let suffixDays = 7 - this.selectedMoment.clone().endOf('month').isoWeekday();
-		for(let i = 0; i < suffixDays; i++) this.items.days.push(false);
+		for (let i = 0; i < suffixDays; i++) this.items.days.push(false);
 		
 		// Hours.
-		this.items.hours = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23].map(i => {
+		this.items.hours = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23].map(i => {
 			let hour = this.selectedMoment.clone().hour(i).minute(0);
 			return {
 				selected: this.selectedMoment.hour() == hour.hour(),
 				inactive: !this.minMoment.isBefore(hour, 'hour'),
 				value: hour.hour(),
 				formatted: hour.format('LT').replace(/:00/gi, '')
-			}
+			};
 		});
 		
 		// Minutes.
-		this.items.minutes = [0,15,30,45].map(i => {
+		this.items.minutes = [0, 15, 30, 45].map(i => {
 			let minute = this.selectedMoment.clone().minute(i);
 			return {
 				selected: this.selectedMoment.minute() == minute.minute(),
 				inactive: this.minMoment.isAfter(minute, 'minute'),
 				value: minute.minute(),
 				formatted: minute.format(':mm')
-			}
+			};
 		});
 	}
 	
 	toggleExpandState() {
-		if(this.state == 'collapsed')
+		if (this.state == 'collapsed')
 			this.nextState();
 		else
 			this.initialState();
@@ -134,7 +134,7 @@ export class DateTimeComponent implements ControlValueAccessor {
 	
 	nextState(): void {
 		// Change state.
-		switch(this.state) {
+		switch (this.state) {
 			case 'collapsed':
 				this.state = 'day';
 				break;
@@ -155,7 +155,7 @@ export class DateTimeComponent implements ControlValueAccessor {
 	}
 	
 	writeValue(value: string): void {
-		if(value) this.dateTime = value;
+		if (value) this.dateTime = value;
 	}
 	
 	get dateTime(): string {
@@ -163,13 +163,15 @@ export class DateTimeComponent implements ControlValueAccessor {
 	};
 	
 	@Input() set dateTime(value: string) {
-		if(value) this.selectedMoment = moment.utc(value).second(0).milliseconds(0).local();
+		if (value) this.selectedMoment = moment.utc(value).second(0).milliseconds(0).local();
 		this.invalidate();
 	}
 	
 	onChange = (_: any) => {};
 	onTouched = () => {};
+	
 	registerOnChange(fn: (_: any) => void): void { this.onChange = fn; }
+	
 	registerOnTouched(fn: () => void): void { this.onTouched = fn; }
 }
 

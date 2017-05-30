@@ -1,5 +1,5 @@
-import {DecoratorsConfiguration} from "../binders/DecoratorsBinder";
-import * as Boom from "boom";
+import {DecoratorsConfiguration} from '../binders/DecoratorsBinder';
+import * as Boom from 'boom';
 import {TransactionSession} from '../Database';
 
 export const DecoratorsConfig: DecoratorsConfiguration = [
@@ -18,12 +18,12 @@ export const DecoratorsConfig: DecoratorsConfiguration = [
 			let respondWithSuccess = (data: any) => {
 				let response: any = {};
 				response['statusCode'] = 200;
-				if(data) response['data'] = data;
+				if (data) response['data'] = data;
 				this.response(response);
 			};
 			
 			// Response via transaction completion.
-			if(transactionSession) return transactionSession.finishTransaction(input).then(data => {
+			if (transactionSession) return transactionSession.finishTransaction(input).then(data => {
 				return respondWithSuccess(data);
 			}, err => {
 				return respondWithError(err);

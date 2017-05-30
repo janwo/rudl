@@ -1,15 +1,15 @@
 <div class="card" [routerLink]="['/lists', list.id]">
-	<span class="name" [innerHTML]="highlight ? (list.name | highlight: highlight) : list.name"></span>
-	<slots [users]="[list.owner]" [slots]="list.statistics.followers"></slots>
-	<ul>
-		<li class="owner">
-			<span>{{list.owner.firstName + ' ' + list.owner.lastName}}</span>
-		</li>
-		<li class="approval-status">
-			<span>{{list.statistics.followers}} Follower</span>
-		</li>
-	</ul>
-	<div class="overflow">
-		<ng-content></ng-content>
-	</div>
+    <span class="name" [innerHTML]="highlight ? (list.name | highlight: highlight) : list.name"></span>
+    <slots [users]="[list.owner]" [slots]="list.statistics.followers"></slots>
+    <ul>
+        <li class="owner">
+            <span>{{list.owner.firstName + ' ' + list.owner.lastName}}</span>
+        </li>
+        <li class="approval-status">
+            <span>{{list.statistics.followers}} Follower</span>
+        </li>
+    </ul>
+    <div class="overflow" (click)="$event.stopPropagation()">
+        <ng-content></ng-content>
+    </div>
 </div>

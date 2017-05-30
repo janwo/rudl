@@ -1,6 +1,6 @@
-import {RoutesConfiguration} from "../binders/RoutesBinder";
-import {TestController} from "../controllers/TestController";
-import * as Joi from "joi";
+import {RoutesConfiguration} from '../binders/RoutesBinder';
+import {TestController} from '../controllers/TestController';
+import * as Joi from 'joi';
 
 export const RoutesConfig: RoutesConfiguration = [
 	{

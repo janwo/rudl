@@ -1,14 +1,14 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import {UserService} from "../../../services/user.service";
-import {Subscription} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
-import {User} from "../../../models/user";
-import {EmptyState} from "../../widgets/state/empty.component";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {UserService} from '../../../services/user.service';
+import {Subscription} from 'rxjs';
+import {ActivatedRoute} from '@angular/router';
+import {User} from '../../../models/user';
+import {EmptyState} from '../../widgets/state/empty.component';
 import {ScrollService} from '../../../services/scroll.service';
 
 @Component({
-    templateUrl: 'user-followees.component.html',
-    styleUrls: ['user-followees.component.scss']
+	templateUrl: 'user-followees.component.html',
+	styleUrls: ['user-followees.component.scss']
 })
 export class UserFolloweesComponent implements OnInit, OnDestroy {
 	
@@ -20,11 +20,9 @@ export class UserFolloweesComponent implements OnInit, OnDestroy {
 		description: 'You are not following anyone. Why not change that?'
 	};
 	
-	constructor(
-		private userService: UserService,
-		private route: ActivatedRoute,
-		private scrollService: ScrollService
-	) {}
+	constructor(private userService: UserService,
+	            private route: ActivatedRoute,
+	            private scrollService: ScrollService) {}
 	
 	ngOnInit() {
 		this.followeesSubscription = this.route.parent.params.map(params => params['username']).do(() => {
