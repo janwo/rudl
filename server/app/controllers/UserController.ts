@@ -9,7 +9,7 @@ export module UserController {
 	
 	export function findByFulltext(transaction: Transaction, query: string, skip = 0, limit = 25): Promise<User[]> {
 		return transaction.run<User, any>('CALL apoc.index.search("User", $query) YIELD node WITH properties(node) as u RETURN u SKIP $skip LIMIT $limit', {
-			query: `${query}~`,
+			query: `${DatabaseManager.neo4jFunctions.escapeLucene(query)}~`,
 			skip: skip,
 			limit: limit
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));

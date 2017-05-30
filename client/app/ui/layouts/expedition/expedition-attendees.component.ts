@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {User} from '../../../models/user';
-import {Expedition, InviteLikeItem} from '../../../models/expedition';
+import {Expedition, ExpeditionAttendeeStatus, ExpeditionRequestResponse} from '../../../models/expedition';
 import {ExpeditionService} from '../../../services/expedition.service';
 import {ButtonStyles} from '../../widgets/control/styled-button.component';
 import {ScrollService} from '../../../services/scroll.service';
@@ -18,14 +18,21 @@ import {Title} from '@angular/platform-browser';
 export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	
 	attendeesSubscription: Subscription;
-	attendees: User[] = [];
-	overflowButtonStyle: ButtonStyles = ButtonStyles.filledInverse;
-	inviteesLike: InviteLikeItem[] = [];
+	inviteLikeSubscription: Subscription;
+	pendingRequestsSubscription: Subscription;
+	attendees: {
+		user: User,
+		status: ExpeditionAttendeeStatus
+	}[] = [];
+	inviteesLike: {
+		user: User,
+		status: ExpeditionAttendeeStatus
+	}[] = [];
 	searchUser: Subject<string> = new BehaviorSubject(null);
-	resetAttendees: Subject<any> = new Subject();
-	searchUserSubscription: Subscription;
-	pendingApprovalRequest = false;
-	pendingRejectionRequest = false;
+	approveUser: Subject<User> = new Subject();
+	rejectUser: Subject<User> = new Subject();
+	pendingRequest = false;
+	overflowButtonStyle: ButtonStyles = ButtonStyles.filledInverse;
 	
 	constructor(public parent: ExpeditionComponent,
 	            private expeditionService: ExpeditionService,
@@ -33,58 +40,67 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	            private title: Title) {}
 	
 	ngOnInit() {
-		this.title.setTitle(`rudl.me - Streifzug "${this.parent.expedition.title}" - Rudler`);
+		this.title.setTitle(`rudl.me - Streifzug "${this.parent.expedition.getValue().title}" - Rudler`);
 		
-		// Define changed params subscription.
-		let resetObservable = this.resetAttendees.asObservable().map(() => {
-			this.attendees = null;
-			return 0;
+		// Define subscriptions for changed user statuses.
+		let approveObservable = this.approveUser.asObservable().flatMap(user => {
+			this.pendingRequest = true;
+			return this.expeditionService.approve(this.parent.expedition.getValue().id, user.username);
 		});
-		let scrollObservable = this.scrollService.hasScrolledToBottom().map(() => this.attendees ? this.attendees.length : 0).distinctUntilChanged();
-		this.attendeesSubscription = Observable.merge(resetObservable, scrollObservable).startWith(0).flatMap((offset: number) => {
-			return this.expeditionService.attendees(this.parent.expedition.id, offset, 25);
-		}).subscribe((attendees: User[]) => {
+		
+		let rejectObservable = this.rejectUser.asObservable().flatMap(user => {
+			this.pendingRequest = true;
+			return this.expeditionService.reject(this.parent.expedition.getValue().id, user.username);
+		});
+		
+		this.pendingRequestsSubscription = Observable.merge(approveObservable, rejectObservable).subscribe((expeditionRequestResponse: ExpeditionRequestResponse) => {
+			this.pendingRequest = false;
+			this.parent.expedition.next(expeditionRequestResponse.expedition);
+			let item = {
+				user: expeditionRequestResponse.user,
+				status: expeditionRequestResponse.status
+			};
+			
+			if (this.attendees) {
+				let index = this.attendees.findIndex(val => val.user.id == expeditionRequestResponse.user.id);
+				
+				// Exchange item.
+				if (index < 0)
+					this.attendees = [item].concat(this.attendees);
+				else
+					this.attendees.splice(index, 1, item);
+			}
+			
+			if (this.inviteesLike) {
+				let index = this.inviteesLike.findIndex(val => val.user.id == expeditionRequestResponse.user.id);
+				if (index >= 0) this.inviteesLike.splice(index, 1, item);
+			}
+		});
+		
+		// Define scroll subscription.
+		this.attendeesSubscription = this.scrollService.hasScrolledToBottom().map(() => this.attendees ? this.attendees.filter(attendee => attendee.status.isAttendee || attendee.status.isApplicant || attendee.status.isInvitee).length : 0).startWith(0).distinctUntilChanged().flatMap((offset: number) => {
+			return this.expeditionService.attendees(this.parent.expedition.getValue().id, offset, 25);
+		}).subscribe(attendees => {
 			this.attendees = this.attendees ? this.attendees.concat(attendees) : attendees;
 		});
 		
 		// Define invitee subscription.
-		this.searchUserSubscription = this.searchUser.asObservable().do(() => {
+		this.inviteLikeSubscription = this.searchUser.asObservable().do(() => {
 			this.inviteesLike = [];
-		}).filter(query => query && query.length >= 3).do(() => {
+		}).distinctUntilChanged().filter(query => query && query.length >= 3).do(() => {
 			this.inviteesLike = null;
-		}).distinctUntilChanged().debounceTime(1000).flatMap(query => {
-			return this.expeditionService.inviteLike(this.parent.expedition.id, query, 0, 6);
+		}).debounceTime(1000).flatMap(query => {
+			return this.expeditionService.inviteLike(this.parent.expedition.getValue().id, query, 0, 6);
 		}).subscribe(inviteesLike => {
 			this.inviteesLike = inviteesLike;
 		});
 	}
 	
-	approveUser(user: User): void {
-		this.pendingApprovalRequest = true;
-		this.expeditionService.approve(this.parent.expedition.id, user.username).subscribe((expedition: Expedition) => {
-			this.parent.expedition = expedition;
-			this.pendingApprovalRequest = false;
-			this.resetAttendees.next();
-			if (this.inviteesLike) {
-				let index = this.inviteesLike.findIndex(val => val.user.id == user.id);
-				if (index < 0) return;
-				this.inviteesLike.splice(index, 1);
-			}
-		});
-	}
-	
-	rejectUser(user: User): void {
-		console.log('DDDD');
-		this.pendingRejectionRequest = true;
-		this.expeditionService.reject(this.parent.expedition.id, user.username).subscribe((expedition: Expedition) => {
-			this.parent.expedition = expedition;
-			this.pendingRejectionRequest = false;
-			if (this.attendees) {
-				let index = this.attendees.findIndex(val => val.id == user.id);
-				if (index < 0) return;
-				this.attendees.splice(index, 1);
-			}
-		});
+	getUserInfo(status: ExpeditionAttendeeStatus): string {
+		if(status.isAttendee) return 'Nimmt teil';
+		if(status.isInvitee) return 'Ist eingeladen';
+		if(status.isApplicant) return 'Wartet auf Annahme';
+		return null;
 	}
 	
 	ngOnDestroy(): void {

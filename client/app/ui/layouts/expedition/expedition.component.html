@@ -1,26 +1,26 @@
-<div class="card" [ngClass]="{applicant: expedition.relations.isAttendee}">
-    <aside [routerLink]="['/rudel', expedition.rudel.id]">
-        <emoji [emoji]="expedition.rudel.links.icon"></emoji>
-        <span i18n>Streifzug des Rudels "{{expedition.rudel.name}}"</span>
+<div *ngIf="expedition.getValue()" class="card" [ngClass]="{applicant: expedition.getValue().relations.isAttendee}">
+    <aside [routerLink]="['/rudel', expedition.getValue().rudel.id]">
+        <emoji [emoji]="expedition.getValue().rudel.links.icon"></emoji>
+        <span i18n>Streifzug des Rudels "{{expedition.getValue().rudel.name}}"</span>
     </aside>
     <header>
         <div class="title">
-            <emoji [emoji]="expedition.links.icon"></emoji>
-            <h1>{{expedition.title}}</h1>
+            <emoji [emoji]="expedition.getValue().links.icon"></emoji>
+            <h1>{{expedition.getValue().title}}</h1>
         </div>
-        <div class="description">{{expedition.description}}</div>
+        <div class="description">{{expedition.getValue().description}}</div>
         <div class="statistics">
             <statistics [statistics]="[
-			{value: expedition.statistics.attendees, subject: 'Teilnehmer', link: ['attendees']},
+			{value: expedition.getValue().statistics.attendees, subject: 'Teilnehmer', link: ['attendees']},
 			{value: formattedLocation, subject: 'Entfernung', link: ['attendes']},
-			{value: formattedDate, subject: expedition.date.accuracy > 0 ? 'Grober Zeitpunkt' : 'Zeitpunkt', link: ['attendes']}
+			{value: formattedDate, subject: expedition.getValue().date.accuracy > 0 ? 'Grober Zeitpunkt' : 'Zeitpunkt', link: ['attendes']}
 		]"></statistics>
             <div class="cta">
                 <styled-button
-                        [style]="expedition.relations.isAttendee || expedition.relations.isApplicant ? buttonStyleActivated : buttonStyleDefault"
+                        [style]="expedition.getValue().relations.isAttendee || expedition.getValue().relations.isApplicant ? buttonStyleActivated : buttonStyleDefault"
                         [disabled]="pendingAttendanceRequest" (click)="onToggleAttendance(true)"
-                        [text]="getToggleAttendeeText()"></styled-button>
-                <styled-button [icon]="'edit'" *ngIf="expedition.relations.isOwned"></styled-button>
+                        [text]="attendanceStatus"></styled-button>
+                <styled-button [icon]="'edit'" *ngIf="expedition.getValue().relations.isOwned"></styled-button>
             </div>
         </div>
     </header>
@@ -28,8 +28,7 @@
 <menu>
     <menu-item [makeRoomIfSmall]="true" [icon]="'comment'" [title]="'Diskussion'" [link]="['discussion']"></menu-item>
     <menu-item [makeRoomIfSmall]="true" [icon]="'map'" [title]="'Karte'" [link]="['map']"></menu-item>
-    <menu-item [makeRoomIfSmall]="true" [icon]="'people_outline'" [title]="'Teilnehmer'"
-            [link]="['attendees']"></menu-item>
+    <menu-item [makeRoomIfSmall]="true" [icon]="'people_outline'" [title]="'Teilnehmer'" [link]="['attendees']"></menu-item>
 </menu>
 <router-outlet></router-outlet>
 <modal #removeModal [title]="'Are you sure to remove expedition?'">

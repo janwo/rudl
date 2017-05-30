@@ -131,7 +131,7 @@ export module ListController {
 	
 	export function findByFulltext(transaction: Transaction, query: string, skip = 0, limit = 25): Promise<List[]> {
 		return transaction.run<User, any>('CALL apoc.index.search("List", $query) YIELD node WITH properties(node) as l RETURN l SKIP $skip LIMIT $limit', {
-			query: `${query}~`,
+			query: `${DatabaseManager.neo4jFunctions.escapeLucene(query)}~`,
 			skip: skip,
 			limit: limit
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'l'));

@@ -1,13 +1,11 @@
 import {
 	AfterViewChecked,
 	Component,
-	EventEmitter,
 	HostBinding,
 	HostListener,
 	Input,
 	OnDestroy,
-	OnInit,
-	Output
+	OnInit
 } from '@angular/core';
 import {ActivatedRoute, Event, NavigationEnd, Router} from '@angular/router';
 import {Subscription} from 'rxjs/Subscription';
@@ -40,7 +38,6 @@ export class MenuItemComponent implements OnInit, OnDestroy, AfterViewChecked {
 	@Input() icon: string;
 	@Input() title: string;
 	@Input() link: string[];
-	@Output() click = new EventEmitter();
 	routerChanges: Subscription;
 	checkRoom = (mql: MediaQueryList): void => {
 		this.makeRoom = !mql.matches;
@@ -83,8 +80,6 @@ export class MenuItemComponent implements OnInit, OnDestroy, AfterViewChecked {
 	
 	@HostListener('click', ['$event'])
 	onClick(event: Event) {
-		this.click.next(event);
-		
 		// Navigate, if link was set.
 		if (this.link) this.router.navigate(this.link, {
 			relativeTo: this.route

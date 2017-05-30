@@ -3,9 +3,9 @@
     <div class="meta">
         <span class="name"
                 [innerHTML]="highlight ? (user.firstName + ' ' + user.lastName | highlight: highlight) : user.firstName + ' ' + user.lastName"></span>
-        <span class="relation">{{relation}}</span>
+        <span class="relation">{{info}}</span>
     </div>
-    <div class="overflow">
+    <div class="overflow" (click)="$event.stopPropagation()">
         <ng-content></ng-content>
     </div>
 </div>

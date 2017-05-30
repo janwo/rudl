@@ -10,7 +10,7 @@
             <span>{{rudel.statistics.followers}} Follower</span>
         </li>
     </ul>
-    <div class="overflow">
+    <div class="overflow" (click)="$event.stopPropagation()">
         <ng-content></ng-content>
     </div>
 </div>

@@ -62,8 +62,10 @@ $rudel-item-emoji-size: 2.5rem;
     .overflow {
       position: relative;
       pointer-events: none;
+      display: flex;
+      flex-direction: row;
 
-      & > * {
+      & /deep/ > * {
         pointer-events: auto;
       }
     }

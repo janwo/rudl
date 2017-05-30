@@ -16,13 +16,6 @@ export interface Expedition extends Node {
 	icon: string;
 }
 
-export interface InviteLikeItem {
-	user: User,
-	isApplicant: boolean,
-	isInvitee: boolean,
-	isAttendee: boolean
-}
-
 export const ExpeditionValidation = {
 	title: Joi.string().min(5).max(50).trim().required(),
 	description: Joi.string().min(5).max(300).trim().required(),

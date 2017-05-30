@@ -46,9 +46,15 @@ export interface ExpeditionRecipe {
 	}
 }
 
-export interface InviteLikeItem {
-	user: User,
+
+export interface ExpeditionAttendeeStatus {
 	isApplicant: boolean,
 	isInvitee: boolean,
 	isAttendee: boolean
+}
+
+export interface ExpeditionRequestResponse {
+	user: User,
+	status: ExpeditionAttendeeStatus,
+	expedition: Expedition
 }

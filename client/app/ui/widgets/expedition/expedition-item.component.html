@@ -24,7 +24,7 @@
                 <span>{{formattedDate}}</span>
             </li>
         </ul>
-        <div class="overflow">
+        <div class="overflow" (click)="$event.stopPropagation()">
             <ng-content></ng-content>
         </div>
     </footer>

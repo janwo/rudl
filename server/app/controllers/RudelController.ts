@@ -117,7 +117,7 @@ export module RudelController {
 	
 	export function findByFulltext(transaction: Transaction, query: string, skip = 0, limit = 25): Promise<Rudel[]> {
 		return transaction.run<User, any>('CALL apoc.index.search("Rudel", $query) YIELD node WITH properties(node) as r RETURN r SKIP $skip LIMIT $limit', {
-			query: `${query}~`,
+			query: `${DatabaseManager.neo4jFunctions.escapeLucene(query)}~`,
 			skip: skip,
 			limit: limit
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r'));

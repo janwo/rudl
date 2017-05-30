@@ -46,8 +46,10 @@
     .overflow {
       position: relative;
       pointer-events: none;
+      display: flex;
+      flex-direction: row;
 
-      & > * {
+      & /deep/ > * {
         pointer-events: auto;
       }
     }

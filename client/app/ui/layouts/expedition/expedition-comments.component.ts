@@ -39,11 +39,11 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 	            private title: Title) {}
 	
 	ngOnInit() {
-		this.title.setTitle(`rudl.me - Streifzug "${this.parent.expedition.title}" - Diskussion`);
+		this.title.setTitle(`rudl.me - Streifzug "${this.parent.expedition.getValue().title}" - Diskussion`);
 		
 		// Define changed params subscription.
 		this.commentsSubscription = this.scrollService.hasScrolledToBottom().map(() => this.comments ? this.comments.length : 0).startWith(0).distinct().flatMap((offset: number) => {
-			return this.commentService.getForExpedition(this.parent.expedition.id, offset, 25);
+			return this.commentService.getForExpedition(this.parent.expedition.getValue().id, offset, 25);
 		}).subscribe((comments: Comment[]) => {
 			if (comments.length < 25) this.commentsSubscription.unsubscribe();
 			this.comments = this.comments ? this.comments.concat(comments) : comments;
@@ -84,7 +84,7 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 		};
 		
 		// Fire and remove pending state when done.
-		this.commentService.createForExpedition(this.parent.expedition.id, recipe).subscribe(comment => {
+		this.commentService.createForExpedition(this.parent.expedition.getValue().id, recipe).subscribe(comment => {
 			this.submitPending = false;
 			this.form.get('pinned').reset(false);
 			this.form.get('message').reset(null);

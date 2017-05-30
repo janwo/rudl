@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Locale} from '../models/locale';
 import {UserService} from './user.service';
-import {Expedition, ExpeditionRecipe, InviteLikeItem} from '../models/expedition';
+import {Expedition, ExpeditionAttendeeStatus, ExpeditionRecipe, ExpeditionRequestResponse} from '../models/expedition';
 import {Rudel} from '../models/rudel';
 import {User} from '../models/user';
 import Translations = Locale.Translations;
@@ -25,20 +25,26 @@ export class ExpeditionService {
 		return this.dataService.get(`/api/expeditions/=/${key}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
 	}
 	
-	approve(expedition: string, username: string = 'me'): Observable<Expedition> {
-		return this.dataService.post(`/api/expeditions/=/${expedition}/approve/${username}`, null, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
+	approve(expedition: string, username: string = 'me'): Observable<ExpeditionRequestResponse> {
+		return this.dataService.post(`/api/expeditions/=/${expedition}/approve/${username}`, null, true).map((json: JsonResponse) => {
+			if(json.data) json.data.expedition = this.handleExpeditionResponse(json.data.expedition);
+			return json.data;
+		}).share();
 	}
 	
-	attendees(expedition: string, offset = 0, limit = 25): Observable<User[]> {
-		return this.dataService.get(`/api/expeditions/=/${expedition}/attendees?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data as User[]).share();
+	reject(expedition: string, username: string = 'me'): Observable<ExpeditionRequestResponse> {
+		return this.dataService.post(`/api/expeditions/=/${expedition}/reject/${username}`, null, true).map((json: JsonResponse) => {
+			if(json.data) json.data.expedition = this.handleExpeditionResponse(json.data.expedition);
+			return json.data;
+		}).share();
 	}
 	
-	inviteLike(expedition: string, query: string, offset = 0, limit = 25): Observable<InviteLikeItem[]> {
-		return this.dataService.get(`/api/expeditions/=/${expedition}/invite-like/${query}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data as InviteLikeItem[]).share();
+	attendees(expedition: string, offset = 0, limit = 25): Observable<ExpeditionRequestResponse[]> {
+		return this.dataService.get(`/api/expeditions/=/${expedition}/attendees?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data as ExpeditionRequestResponse[]).share();
 	}
 	
-	reject(expedition: string, username: string = 'me'): Observable<Expedition> {
-		return this.dataService.post(`/api/expeditions/=/${expedition}/reject/${username}`, null, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
+	inviteLike(expedition: string, query: string, offset = 0, limit = 25): Observable<ExpeditionRequestResponse[]> {
+		return this.dataService.get(`/api/expeditions/=/${expedition}/invite-like/${query}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data as ExpeditionRequestResponse[]).share();
 	}
 	
 	nearby(rudel: string | boolean = false, offset = 0, limit = 25): Observable<Expedition[]> {
