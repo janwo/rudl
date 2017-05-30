@@ -18,7 +18,7 @@ $landing-page-indicator-size: 2rem;
   align-content: stretch;
   flex: 1 0 auto;
 
-  @include breakpoint('small'){
+  @include breakpoint('small') {
     flex-direction: row;
   }
 
@@ -49,7 +49,7 @@ $landing-page-indicator-size: 2rem;
 
       h2 {
         @include breakpoint('small') {
-        margin-top: map_get($base-padding, 'large');
+          margin-top: map_get($base-padding, 'large');
         }
       }
 
@@ -107,7 +107,7 @@ $landing-page-indicator-size: 2rem;
       margin-top: map_get($base-padding, 'large');
       margin-left: map_get($base-padding, 'large');
 
-      @include breakpoint(null, 'small'){
+      @include breakpoint(null, 'small') {
         margin-bottom: 30%;
         text-align: center;
         margin-left: 0;

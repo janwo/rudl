@@ -1,5 +1,5 @@
-import * as ExtractTextPlugin from "extract-text-webpack-plugin";
-import {root} from "../config";
+import * as ExtractTextPlugin from 'extract-text-webpack-plugin';
+import {root} from '../config';
 
 export default {
 	name: 'rudl - Development Environment',
@@ -10,39 +10,41 @@ export default {
 				host: 'app',
 				port: 80,
 				config: [
-					( Config: any ) => {
+					(Config: any) => {
 						return {
 							inline: true,
 							contentBase: root('client'),
 							historyApiFallback: true,
-							proxy: [{
-								context: [
-									Config.paths.api.publicPath,
-									Config.paths.avatars.publicPath,
-									Config.paths.icons.publicPath,
-									Config.backend.providers.facebook.callbackURL,
-									Config.backend.providers.twitter.callbackURL,
-									Config.backend.providers.google.callbackURL
-								],
-								target: {
-									host: Config.backend.host,
-									port: Config.backend.ports.http
+							proxy: [
+								{
+									context: [
+										Config.paths.api.publicPath,
+										Config.paths.avatars.publicPath,
+										Config.paths.icons.publicPath,
+										Config.backend.providers.facebook.callbackURL,
+										Config.backend.providers.twitter.callbackURL,
+										Config.backend.providers.google.callbackURL
+									],
+									target: {
+										host: Config.backend.host,
+										port: Config.backend.ports.http
+									}
 								}
-							}],
+							],
 							watchOptions: {
 								aggregateTimeout: 300,
 								poll: 1000
 							}
-						}
+						};
 					}
 				]
 			},
 			config: [
-				( Config: any ) => {
+				(Config: any) => {
 					return {
 						devtool: 'inline-source-map',
 						entry: {
-							'webpack-dev-server': `webpack-dev-server/client?http://localhost:${Config.frontend.webpack.devServer.port}/`,
+							'webpack-dev-server': `webpack-dev-server/client?http://localhost:${Config.frontend.webpack.devServer.port}/`
 						},
 						module: {
 							rules: [
@@ -56,16 +58,16 @@ export default {
 							]
 						},
 						plugins: [
-							new ExtractTextPlugin( '[name].[hash].css' )
+							new ExtractTextPlugin('[name].[hash].css')
 						]
-					}
+					};
 				}
 			]
 		}
 	},
 	backend: {
 		ports: {
-			http: 8080,
+			http: 8080
 		},
 		log: {
 			serverLogs: {

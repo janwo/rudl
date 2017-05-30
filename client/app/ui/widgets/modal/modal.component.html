@@ -1,10 +1,12 @@
 <div class="background" [@background] *ngIf="isVisible" (click)="close()"></div>
-<div class="modal-wrapper" [@modal] *ngIf="isVisible" (@modal.done)="$event.toState == 'void' ? onClosed.emit(null): onOpened.emit(null)" (@modal.start)="$event.toState == 'void' ? onClose.emit(null): onOpen.emit(null)">
-	<div class="modal">
-		<button class="close fa fa-close" (click)="close()"></button>
-		<h1 *ngIf="title">{{title}}</h1>
-		<div>
-			<ng-content></ng-content>
-		</div>
-	</div>
+<div class="modal-wrapper" [@modal] *ngIf="isVisible"
+        (@modal.done)="$event.toState == 'void' ? onClosed.emit(null): onOpened.emit(null)"
+        (@modal.start)="$event.toState == 'void' ? onClose.emit(null): onOpen.emit(null)">
+    <div class="modal">
+        <button class="close fa fa-close" (click)="close()"></button>
+        <h1 *ngIf="title">{{title}}</h1>
+        <div>
+            <ng-content></ng-content>
+        </div>
+    </div>
 </div>

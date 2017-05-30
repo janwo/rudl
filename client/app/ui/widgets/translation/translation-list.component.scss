@@ -20,12 +20,12 @@
         flex: 0 1 auto;
       }
 
-    dropdown-menu {
-      flex: 0 1 auto;
-      top: 100%;
-    }
+      dropdown-menu {
+        flex: 0 1 auto;
+        top: 100%;
+      }
 
-    *:not(:last-child){
+      *:not(:last-child) {
         margin-right: map_get($base-padding, 'small');
       }
     }

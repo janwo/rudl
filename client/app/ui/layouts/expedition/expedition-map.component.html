@@ -1,3 +1,5 @@
 <map class="card" [zoom]="16" [location]="parent.expedition.location"></map>
-<styled-button [link]="externalMapLink" [text]="'In Google Maps öffnen'" *ngIf="!parent.expedition.needsApproval || parent.expedition.relations.isAttendee"></styled-button>
-<small class="attribution">Maps provided by © <a target="_blank" href="https://openstreetmap.org/copyright">OpenStreetMap</a> Contributors via <a target="_blank" href="http://leafletjs.com">Leaflet</a></small>
+<styled-button [link]="externalMapLink" [text]="'In Google Maps öffnen'"
+        *ngIf="!parent.expedition.needsApproval || parent.expedition.relations.isAttendee"></styled-button>
+<small class="attribution">Maps provided by © <a target="_blank" href="https://openstreetmap.org/copyright">OpenStreetMap</a>
+    Contributors via <a target="_blank" href="http://leafletjs.com">Leaflet</a></small>

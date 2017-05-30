@@ -1,12 +1,22 @@
-import {AfterViewChecked, Component, HostBinding, HostListener, Input, OnDestroy, OnInit} from "@angular/core";
-import {ActivatedRoute, NavigationEnd, Router, Event} from "@angular/router";
-import {Subscription} from "rxjs/Subscription";
+import {
+	AfterViewChecked,
+	Component,
+	EventEmitter,
+	HostBinding,
+	HostListener,
+	Input,
+	OnDestroy,
+	OnInit,
+	Output
+} from '@angular/core';
+import {ActivatedRoute, Event, NavigationEnd, Router} from '@angular/router';
+import {Subscription} from 'rxjs/Subscription';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 
 @Component({
-    templateUrl: 'menu-item.component.html',
+	templateUrl: 'menu-item.component.html',
 	styleUrls: ['menu-item.component.scss'],
-    selector: 'menu-item',
+	selector: 'menu-item',
 	animations: [
 		trigger('expandHorizontally', [
 			state('expanded', style({
@@ -27,56 +37,57 @@ export class MenuItemComponent implements OnInit, OnDestroy, AfterViewChecked {
 	@Input() makeRoomIfSmall: boolean;
 	makeRoom: boolean = false;
 	static mql: MediaQueryList = window.matchMedia('(min-width: 40rem)');
-    @Input() icon: string;
-    @Input() title: string;
-    @Input() link: string[];
-    routerChanges : Subscription;
+	@Input() icon: string;
+	@Input() title: string;
+	@Input() link: string[];
+	@Output() click = new EventEmitter();
+	routerChanges: Subscription;
 	checkRoom = (mql: MediaQueryList): void => {
 		this.makeRoom = !mql.matches;
 	};
-    
-    constructor(
-        private router: Router,
-        private route: ActivatedRoute
-    ) {}
-    
-    getAnimationState(): string {
-    	if(!this.makeRoomIfSmall) return null;
+	
+	constructor(private router: Router,
+	            private route: ActivatedRoute) {}
+	
+	getAnimationState(): string {
+		if (!this.makeRoomIfSmall) return null;
 		return this.isActive || !this.makeRoom ? 'expanded' : 'collapsed';
-    }
-    
-    ngOnInit() {
-        this.routerChanges = this.router.events.filter((event: Event) => event instanceof NavigationEnd).subscribe(() => {
-            if(!this.link) {
-            	this.isActive = false;
-            	return;
-            }
-            
-            let urlTree = this.router.createUrlTree(this.link, {
-                relativeTo: this.route
-            });
-            
-            this.isActive = this.router.isActive(urlTree, false);
-        });
-    }
-    
-    ngAfterViewChecked() {
-	    if(this.makeRoomIfSmall) {
-		    MenuItemComponent.mql.addListener(this.checkRoom);
-		    this.checkRoom(MenuItemComponent.mql);
-	    }
-    }
-    
-    ngOnDestroy(){
-        this.routerChanges.unsubscribe();
-	    MenuItemComponent.mql.removeListener(this.checkRoom);
-    }
-    
-	@HostListener('click')
-    onClick() {
-    	// Navigate, if link was set.
-        if(this.link) this.router.navigate(this.link, {
-	        relativeTo: this.route
-        });
-    }
+	}
+	
+	ngOnInit() {
+		this.routerChanges = this.router.events.filter((event: Event) => event instanceof NavigationEnd).subscribe(() => {
+			if (!this.link) {
+				this.isActive = false;
+				return;
+			}
+			
+			let urlTree = this.router.createUrlTree(this.link, {
+				relativeTo: this.route
+			});
+			
+			this.isActive = this.router.isActive(urlTree, false);
+		});
+	}
+	
+	ngAfterViewChecked() {
+		if (this.makeRoomIfSmall) {
+			MenuItemComponent.mql.addListener(this.checkRoom);
+			this.checkRoom(MenuItemComponent.mql);
+		}
+	}
+	
+	ngOnDestroy() {
+		this.routerChanges.unsubscribe();
+		MenuItemComponent.mql.removeListener(this.checkRoom);
+	}
+	
+	@HostListener('click', ['$event'])
+	onClick(event: Event) {
+		this.click.next(event);
+		
+		// Navigate, if link was set.
+		if (this.link) this.router.navigate(this.link, {
+			relativeTo: this.route
+		});
+	}
 }

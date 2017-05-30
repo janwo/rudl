@@ -1,20 +1,17 @@
-import * as redis from "redis";
-import {Config} from "../../run/config";
-import {TranslationsKeys} from "./models/Translations";
-import {Node} from "./models/Node";
+import * as redis from 'redis';
 import {RedisClient} from 'redis';
-import * as Dot from "dot-object";
-let dot = new Dot('_');
-import * as _ from "lodash";
+import {Config} from '../../run/config';
+import {TranslationsKeys} from './models/Translations';
+import {Node} from './models/Node';
+import * as Dot from 'dot-object';
+import * as _ from 'lodash';
 import {Relationship} from './models/Relationship';
 import Record from 'neo4j-driver/lib/v1/record';
-import {driver, auth} from 'neo4j-driver/lib/v1';
-import Driver from 'neo4j-driver/lib/v1/driver';
-import ResultType from 'neo4j-driver/lib/v1/result';
-import Result from 'neo4j-driver/lib/v1/result';
+import {auth, driver} from 'neo4j-driver/lib/v1';
 import Session from 'neo4j-driver/lib/v1/session';
 import Transaction from 'neo4j-driver/lib/v1/transaction';
 import Integer from 'neo4j-driver/lib/v1/integer';
+let dot = new Dot('_');
 
 export class DatabaseManager {
 	
@@ -29,7 +26,7 @@ export class DatabaseManager {
 			],
 			uniqueness: [
 				'username',
-			    'id',
+				'id',
 				'mails_primary_mail',
 				'mails_secondary_mail'
 			],
@@ -173,11 +170,11 @@ export class DatabaseManager {
 	
 	static neo4jFunctions: any = (() => {
 		return {
-			unflatten: <L extends Node | Relationship | any, T extends {[key: string]: L}, K extends keyof T>(record: Record<T> | Record<T>[], returnVariable: K) : L | L[] => {
-				if(record instanceof Array) return record.map((record => DatabaseManager.neo4jFunctions.unflatten(record, returnVariable)));
+			unflatten: <L extends Node | Relationship | any, T extends { [key: string]: L }, K extends keyof T>(record: Record<T> | Record<T>[], returnVariable: K): L | L[] => {
+				if (record instanceof Array) return record.map((record => DatabaseManager.neo4jFunctions.unflatten(record, returnVariable)));
 				
 				let $return = record.get(returnVariable);
-				if(typeof $return == 'object') {
+				if (typeof $return == 'object') {
 					$return = _.mapValues($return, (v: any) => {
 						return v instanceof Integer ? Integer.toNumber(v) : v;
 					}) as L;
@@ -185,8 +182,8 @@ export class DatabaseManager {
 				}
 				return $return;
 			},
-			flatten: <T extends Node | Relationship>(document: T) : any | any[] => {
-				if(document instanceof Array) return document.map((document => DatabaseManager.neo4jFunctions.flatten(document)));
+			flatten: <T extends Node | Relationship>(document: T): any | any[] => {
+				if (document instanceof Array) return document.map((document => DatabaseManager.neo4jFunctions.flatten(document)));
 				return (document ? dot.dot(document) : null) as any;
 			},
 			escapeLucene: (str: string) => {
@@ -199,14 +196,14 @@ export class DatabaseManager {
 	
 	public static neo4jClient: any;//TODO Driver
 	public static redisClient: RedisClient;
-	public static onlineStatus: {[key: string]: boolean} = {
+	public static onlineStatus: { [key: string]: boolean } = {
 		redisClient: false,
 		neo4jClient: false
 	};
 	
 	public static createNeo4jData(): Promise<any> {
 		// Create indices + constraints.
-		let session= DatabaseManager.neo4jClient.session();
+		let session = DatabaseManager.neo4jClient.session();
 		let promises: Promise<void>[] = Object.keys(DatabaseManager.neo4jCollections).map((collection: any) => {
 			collection = DatabaseManager.neo4jCollections[collection];
 			let promises: Promise<any>[] = [];
@@ -235,7 +232,7 @@ export class DatabaseManager {
 	
 	public static disconnect(): void {
 		Object.keys(DatabaseManager.onlineStatus).filter((key: string) => DatabaseManager.onlineStatus[key]).forEach(key => {
-			switch(key) {
+			switch (key) {
 				case 'neo4j':
 					DatabaseManager.neo4jClient.close();
 					DatabaseManager.onlineStatus.neo4jClient = false;
@@ -346,7 +343,7 @@ export class TransactionSession {
 				console.log(err);
 				return Promise.reject(err);
 			});
-		}, (err : any) => {
+		}, (err: any) => {
 			return this.transaction.rollback<any>().then(() => {
 				this.session.close();
 				return err;

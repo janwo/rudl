@@ -1,5 +1,5 @@
-import {Document} from "./document";
-import {User} from "./user";
+import {Document} from './document';
+import {User} from './user';
 
 export interface Comment extends Document {
 	message: string;

@@ -1,5 +1,5 @@
-import {Server} from "hapi";
-import * as Glob from "glob";
+import {Server} from 'hapi';
+import * as Glob from 'glob';
 import * as Path from 'path';
 
 export class StrategiesBinder {

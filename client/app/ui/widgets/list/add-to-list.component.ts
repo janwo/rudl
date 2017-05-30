@@ -1,10 +1,10 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
-import {Rudel} from "../../../models/rudel";
-import {Subscription} from "rxjs";
-import {ListService} from "../../../services/list.service";
-import {RudelService} from "../../../services/rudel.service";
-import {List} from "../../../models/list";
-import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Rudel} from '../../../models/rudel';
+import {Subscription} from 'rxjs';
+import {ListService} from '../../../services/list.service';
+import {RudelService} from '../../../services/rudel.service';
+import {List} from '../../../models/list';
+import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 @Component({
 	templateUrl: 'add-to-list.component.html',
@@ -20,11 +20,9 @@ export class AddToListComponent implements OnInit, OnDestroy {
 	listSubscription: Subscription;
 	pendingToggleRequest: boolean = false;
 	
-	constructor(
-		private listService: ListService,
-	    private rudelService: RudelService,
-	    private fb: FormBuilder
-	){}
+	constructor(private listService: ListService,
+	            private rudelService: RudelService,
+	            private fb: FormBuilder) {}
 	
 	ngOnInit(): void {
 		// Create form.
@@ -59,13 +57,13 @@ export class AddToListComponent implements OnInit, OnDestroy {
 		event.preventDefault();
 		
 		// Block event?
-		if(this.pendingToggleRequest) return;
+		if (this.pendingToggleRequest) return;
 		
 		// Set pending state.
 		this.pendingToggleRequest = true;
 		
 		// Delete rudel from list, if selected.
-		if(targetList.selected) {
+		if (targetList.selected) {
 			this.listService.deleteRudel(this.rudel.id, targetList.list.id).subscribe(() => {
 				targetList.selected = false;
 				this.onToggled.emit(targetList);

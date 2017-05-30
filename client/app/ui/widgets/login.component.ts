@@ -1,14 +1,14 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {UserService} from "../../services/user.service";
-import {IndicatorComponent} from "./state/indicator.component";
-import {ButtonStyles} from "./control/styled-button.component";
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import * as faker from "faker";
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {UserService} from '../../services/user.service';
+import {IndicatorComponent} from './state/indicator.component';
+import {ButtonStyles} from './control/styled-button.component';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import * as faker from 'faker';
 
 @Component({
-    templateUrl: './login.component.html',
-    styleUrls: ['./login.component.scss'],
-    selector: 'login'
+	templateUrl: './login.component.html',
+	styleUrls: ['./login.component.scss'],
+	selector: 'login'
 })
 export class LoginComponent implements OnInit {
 	
@@ -23,13 +23,11 @@ export class LoginComponent implements OnInit {
 		password: `Be creative!`,
 		firstName: `Let me guess, ${faker.name.firstName()}?`,
 		lastName: `...${faker.name.lastName()}?`,
-		mail: faker.internet.exampleEmail(),
+		mail: faker.internet.exampleEmail()
 	};
-
-    constructor(
-        private userService: UserService,
-        private fb: FormBuilder
-    ) {}
+	
+	constructor(private userService: UserService,
+	            private fb: FormBuilder) {}
 	
 	ngOnInit() {
 		this.user = this.fb.group({
@@ -39,7 +37,7 @@ export class LoginComponent implements OnInit {
 					Validators.minLength(5),
 					Validators.maxLength(16),
 					Validators.pattern(/^[a-z0-9_]*$/)
-			    ]
+				]
 			],
 			mail: [
 				null, [
@@ -69,25 +67,25 @@ export class LoginComponent implements OnInit {
 		});
 	}
 	
-    onToggleMethod() {
-        // Unfold, if not done already.
-        if (this.isCollapsed) this.isCollapsed = false;
-
-        // Toggle method.
-        this.signInOnly = !this.signInOnly;
-
-        // Reset selected index of the indicator.
-        this.indicatorComponent.selectedIndex = 0;
-    }
-
-    onClickMailButton() {
-        // Increase indicator on click.
-        if (!this.isCollapsed && this.indicatorComponent.selectedIndex == 0) this.indicatorComponent.selectedIndex++;
-
-        // Unfold, if not done already.
-        if (this.isCollapsed) this.isCollapsed = false;
-
-        // Try to register user.
-        this.userService.signUp('user', 'pwd');
-    }
+	onToggleMethod() {
+		// Unfold, if not done already.
+		if (this.isCollapsed) this.isCollapsed = false;
+		
+		// Toggle method.
+		this.signInOnly = !this.signInOnly;
+		
+		// Reset selected index of the indicator.
+		this.indicatorComponent.selectedIndex = 0;
+	}
+	
+	onClickMailButton() {
+		// Increase indicator on click.
+		if (!this.isCollapsed && this.indicatorComponent.selectedIndex == 0) this.indicatorComponent.selectedIndex++;
+		
+		// Unfold, if not done already.
+		if (this.isCollapsed) this.isCollapsed = false;
+		
+		// Try to register user.
+		this.userService.signUp('user', 'pwd');
+	}
 }

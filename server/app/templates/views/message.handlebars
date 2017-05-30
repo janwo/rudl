@@ -1,22 +1,21 @@
 <!doctype>
 <html>
 <head>
-	<title>{{title}}</title>
-	<meta name="message" content="{{token}}">
-	<meta name="domain" content="{{domain}}">
-	<meta name="type" content="{{type}}">
-	<meta charset="UTF-8">
-	<script>
-		// Fire message.
-		window.opener.postMessage({
-			type: document.querySelector('meta[name="type"]').getAttribute('content'),
-			message: document.querySelector('meta[name="message"]').getAttribute('content'),
-		}, document.querySelector('meta[name="domain"]').getAttribute('content'));
-		
-		// Done, hooray!
-		window.close();
-	</script>
+    <title>{{title}}</title>
+    <meta name="message" content="{{token}}">
+    <meta name="domain" content="{{domain}}">
+    <meta name="type" content="{{type}}">
+    <meta charset="UTF-8">
+    <script>
+        // Fire message.
+        window.opener.postMessage( {
+            type: document.querySelector( 'meta[name="type"]' ).getAttribute( 'content' ),
+            message: document.querySelector( 'meta[name="message"]' ).getAttribute( 'content' )
+        }, document.querySelector( 'meta[name="domain"]' ).getAttribute( 'content' ) );
+
+        // Done, hooray!
+        window.close();
+    </script>
 </head>
-<body>
-</body>
+<body></body>
 </html>

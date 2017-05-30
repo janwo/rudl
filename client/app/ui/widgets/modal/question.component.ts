@@ -1,5 +1,5 @@
-import {Component, Input} from "@angular/core";
-import {ButtonStyles} from "../control/styled-button.component";
+import {Component, Input} from '@angular/core';
+import {ButtonStyles} from '../control/styled-button.component';
 
 @Component({
 	templateUrl: 'question.component.html',

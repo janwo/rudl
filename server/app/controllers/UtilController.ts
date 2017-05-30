@@ -1,5 +1,5 @@
-import * as _ from "lodash";
-import {Config} from "../../../run/config";
+import * as _ from 'lodash';
+import {Config} from '../../../run/config';
 
 export module UtilController {
 	const iconDictionary = _.mapValues(Config.backend.icons, val => {

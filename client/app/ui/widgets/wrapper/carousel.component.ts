@@ -1,6 +1,6 @@
-import {Component, Input, OnInit} from "@angular/core";
-import {ActivatedRoute, Params, Router} from "@angular/router";
-import {DomSanitizer, SafeStyle} from "@angular/platform-browser";
+import {Component, Input, OnInit} from '@angular/core';
+import {ActivatedRoute, Params, Router} from '@angular/router';
+import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 
 @Component({
 	templateUrl: 'carousel.component.html',
@@ -13,21 +13,19 @@ export class CarouselComponent implements OnInit {
 	protected step: number = 0;
 	itemTransformation: SafeStyle;
 	
-	constructor(
-		private router: Router,
-		private route: ActivatedRoute,
-		private sanitizer: DomSanitizer
-	) {
+	constructor(private router: Router,
+	            private route: ActivatedRoute,
+	            private sanitizer: DomSanitizer) {
 		// Sanitize style.
 		this.itemTransformation = this.sanitizer.bypassSecurityTrustStyle(`translateX(-${this.step * 100}%)`);
 	}
 	
 	next(): void {
-		if(this.step < this.maxSteps) this.go(this.step + 1);
+		if (this.step < this.maxSteps) this.go(this.step + 1);
 	}
 	
 	back(): void {
-		if(this.step > 0) this.go(this.step - 1);
+		if (this.step > 0) this.go(this.step - 1);
 	}
 	
 	go(index: number): void {

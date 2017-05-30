@@ -1,20 +1,19 @@
-import * as Boom from "boom";
-import * as dot from "dot-object";
-import {DatabaseManager, TransactionSession} from "../Database";
-import {User} from "../models/user/User";
-import {UserController} from "./UserController";
-import {Comment} from "../models/comment/Comment";
-import {Node} from "../models/Node";
-import {List} from "../models/list/List";
+import * as Boom from 'boom';
+import * as dot from 'dot-object';
+import {DatabaseManager, TransactionSession} from '../Database';
+import {User} from '../models/user/User';
+import {UserController} from './UserController';
+import {Comment} from '../models/comment/Comment';
+import {Node} from '../models/Node';
 import * as shortid from 'shortid';
-import {ExpeditionController} from "./ExpeditionController";
+import {ExpeditionController} from './ExpeditionController';
 import {CommentRecipe} from '../../../client/app/models/comment';
 import {Expedition} from '../models/expedition/Expedition';
 import Transaction from 'neo4j-driver/lib/v1/transaction';
 
 export module CommentController {
 	
-	export function create(transaction: Transaction, recipe: CommentRecipe) : Promise<Comment>{
+	export function create(transaction: Transaction, recipe: CommentRecipe): Promise<Comment> {
 		let comment: Comment = {
 			id: shortid.generate(),
 			message: recipe.message,
@@ -28,7 +27,7 @@ export module CommentController {
 	export function save(transaction: Transaction, comment: Comment): Promise<void> {
 		// Set timestamps.
 		let now = new Date().toISOString();
-		if(!comment.createdAt) comment.createdAt = now;
+		if (!comment.createdAt) comment.createdAt = now;
 		comment.updatedAt = now;
 		
 		// Save.
@@ -58,8 +57,8 @@ export module CommentController {
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'c').pop());
 	}
 	
-	export function getPublicComment(transaction: Transaction, comment: Comment | Comment[], relatedUser: User) : Promise<any | any[]> {
-		let createPublicComment = (comment: Comment) : Promise<any> => {
+	export function getPublicComment(transaction: Transaction, comment: Comment | Comment[], relatedUser: User): Promise<any | any[]> {
+		let createPublicComment = (comment: Comment): Promise<any> => {
 			let commentOwnerPromise = CommentController.getOwner(transaction, comment);
 			let publicCommentOwnerPromise = commentOwnerPromise.then((owner: User) => {
 				return UserController.getPublicUser(transaction, owner, relatedUser);
@@ -126,10 +125,10 @@ export module CommentController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
 				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
-				if(!expedition.needsApproval) return Promise.resolve(expedition);
+				if (!expedition.needsApproval) return Promise.resolve(expedition);
 				
 				return ExpeditionController.isAttendee(transaction, expedition, request.auth.credentials).then((isAttendee: boolean) => {
-					if(!isAttendee) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
+					if (!isAttendee) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
 				}).then(() => expedition);
 			}).then((expedition: Expedition) => {
 				return CommentController.create(transaction, {
@@ -211,10 +210,10 @@ export module CommentController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
 				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
-				if(!expedition.needsApproval) return Promise.resolve(expedition);
+				if (!expedition.needsApproval) return Promise.resolve(expedition);
 				
 				return ExpeditionController.isAttendee(transaction, expedition, request.auth.credentials).then((isAttendee: boolean) => {
-					if(!isAttendee) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
+					if (!isAttendee) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
 				}).then(() => expedition);
 			}).then((expedition: Expedition) => {
 				return CommentController.ofNode(transaction, expedition, request.query.offset, request.query.limit);

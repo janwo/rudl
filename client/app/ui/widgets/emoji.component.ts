@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from "@angular/core";
-import {DomSanitizer, SafeStyle} from "@angular/platform-browser";
+import {Component, Input, OnInit} from '@angular/core';
+import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 
 @Component({
 	templateUrl: 'emoji.component.html',
@@ -11,9 +11,7 @@ export class EmojiComponent implements OnInit {
 	@Input() emoji: string;
 	emojiBackgroundSource: SafeStyle;
 	
-	constructor(
-		private sanitizer: DomSanitizer
-	) {}
+	constructor(private sanitizer: DomSanitizer) {}
 	
 	ngOnInit() {
 		// Sanitize style.

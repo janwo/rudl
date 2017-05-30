@@ -1,33 +1,38 @@
 <ul class="categories" *ngIf="categories">
-	<li *ngFor="let category of categories">
-		<div (click)="selectCategory(category)" class="{{category}}" [ngClass]="{active: pages && category == pages[page].category}"></div>
-	</li>
+    <li *ngFor="let category of categories">
+        <div (click)="selectCategory(category)" class="{{category}}"
+                [ngClass]="{active: pages && category == pages[page].category}"></div>
+    </li>
 </ul>
 <div class="pages" *ngIf="pages;else loading" (pan)="pan($event)" [ngClass]="{dragging: dragging}">
-	<div #pagesSlider [ngClass]="{animating: animateTimer.timerId}">
-		<ul class="page">
-			<ng-container *ngIf="pages[page - 1]">
-				<li *ngFor="let icon of pages[page - 1].icons">
-					<div [style.background-image]="'url(' + icon.image + ')' | safe: 'style'" [ngClass]="{active: icon.name == emoji}"></div>
-				</li>
-			</ng-container>
-		</ul>
-		<ul class="page">
-			<ng-container *ngIf="pages[page]">
-				<li *ngFor="let icon of pages[page].icons">
-					<div (click)="selectEmoji(icon.name)" [style.background-image]="'url(' + icon.image + ')' | safe: 'style'" [ngClass]="{active: icon.name == emoji}"></div>
-				</li>
-			</ng-container>
-		</ul>
-		<ul class="page">
-			<ng-container *ngIf="pages[page + 1]">
-				<li *ngFor="let icon of pages[page + 1].icons">
-					<div [style.background-image]="'url(' + icon.image + ')' | safe: 'style'" [ngClass]="{active: icon.name == emoji}"></div>
-				</li>
-			</ng-container>
-		</ul>
-	</div>
+    <div #pagesSlider [ngClass]="{animating: animateTimer.timerId}">
+        <ul class="page">
+            <ng-container *ngIf="pages[page - 1]">
+                <li *ngFor="let icon of pages[page - 1].icons">
+                    <div [style.background-image]="'url(' + icon.image + ')' | safe: 'style'"
+                            [ngClass]="{active: icon.name == emoji}"></div>
+                </li>
+            </ng-container>
+        </ul>
+        <ul class="page">
+            <ng-container *ngIf="pages[page]">
+                <li *ngFor="let icon of pages[page].icons">
+                    <div (click)="selectEmoji(icon.name)"
+                            [style.background-image]="'url(' + icon.image + ')' | safe: 'style'"
+                            [ngClass]="{active: icon.name == emoji}"></div>
+                </li>
+            </ng-container>
+        </ul>
+        <ul class="page">
+            <ng-container *ngIf="pages[page + 1]">
+                <li *ngFor="let icon of pages[page + 1].icons">
+                    <div [style.background-image]="'url(' + icon.image + ')' | safe: 'style'"
+                            [ngClass]="{active: icon.name == emoji}"></div>
+                </li>
+            </ng-container>
+        </ul>
+    </div>
 </div>
 <ng-template #loading>
-	<loading></loading>
+    <loading></loading>
 </ng-template>

@@ -1,5 +1,5 @@
-import {Config} from "../../../run/config";
-import {PluginsConfiguration} from "../binders/PluginsBinder";
+import {Config} from '../../../run/config';
+import {PluginsConfiguration} from '../binders/PluginsBinder';
 
 const whiteOutArgs = [
 	{

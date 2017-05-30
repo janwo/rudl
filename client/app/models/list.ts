@@ -1,6 +1,6 @@
-import {Locale} from "./locale";
-import {Document} from "./document";
-import {User} from "./user";
+import {Locale} from './locale';
+import {Document} from './document';
+import {User} from './user';
 
 export interface List extends Document {
 	name: string;

@@ -1,6 +1,6 @@
-import {Node} from "../Node";
-import * as Joi from "joi";
-import {Config} from "../../../../run/config";
+import {Node} from '../Node';
+import * as Joi from 'joi';
+import {Config} from '../../../../run/config';
 import {User} from '../user/User';
 
 export interface Expedition extends Node {

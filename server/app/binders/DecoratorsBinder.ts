@@ -1,6 +1,6 @@
-import {Server} from "hapi";
-import * as Glob from "glob";
-import * as Path from "path";
+import {Server} from 'hapi';
+import * as Glob from 'glob';
+import * as Path from 'path';
 
 export class DecoratorsBinder {
 	

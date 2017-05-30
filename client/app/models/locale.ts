@@ -1,13 +1,13 @@
 export module Locale {
-	export type Translations = {[key: string]: string}; //TODO Change to language in further ts versions
+	export type Translations = { [key: string]: string }; //TODO Change to language in further ts versions
 	
 	export type Language = 'de' | 'en' | 'es' | 'fr';
 	
 	export const languages: Language[] = [
 		'de',
-	    'en',
-	    'es',
-	    'fr'
+		'en',
+		'es',
+		'fr'
 	];
 	
 	export const languageNames = {

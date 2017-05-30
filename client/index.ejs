@@ -1,48 +1,48 @@
-<%/** @external htmlWebpackPlugin **/ %>
+<% /** @external htmlWebpackPlugin **/ %>
 <!doctype>
 <html>
 <head>
-	<base href="<%= htmlWebpackPlugin.options.baseUrl %>">
-	<title><%= htmlWebpackPlugin.options.title %></title>
-	
-	<style>
-		html,
-		body {
-			height: 100vh;
-			width: 100vw;
-			margin: 0;
-			padding: 0;
-		}
-		
-		html {
-			overflow: hidden;
-		}
-		
-		body {
-			overflow: scroll;
-		}
-	</style>
-	
-	<!-- Metadata -->
-	<meta charset="UTF-8">
-	<% for (let metaName in htmlWebpackPlugin.options.metadata) { %>
-		<%= `<meta name="${metaName}" content="${htmlWebpackPlugin.options.metadata[metaName]}">` %>
-	<% } %>
-	
-	<!-- Manifest -->
-	<link rel="manifest" href="<%= require('./assets/manifest.json') %>">
-	
-	<!-- Icon -->
-	<link rel="icon" sizes="32x32" href="<%= require('./assets/app-icon/32.png') %>" type="image/png">
-	
-	<!-- Apple Icons -->
-	<link rel="apple-touch-icon" sizes="72x72" href="<%= require('./assets/app-icon/72.png') %>">
-	<link rel="apple-touch-icon" sizes="120x120" href="<%= require('./assets/app-icon/120.png') %>">
-	<link rel="apple-touch-icon" sizes="144x144" href="<%= require('./assets/app-icon/144.png') %>">
-	<link rel="apple-touch-icon" sizes="152x152" href="<%= require('./assets/app-icon/152.png') %>">
-	<link rel="apple-touch-icon" sizes="180x180" href="<%= require('./assets/app-icon/180.png') %>">
+    <base href="<%= htmlWebpackPlugin.options.baseUrl %>">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    
+    <style>
+        html,
+        body {
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            overflow: hidden;
+        }
+        
+        body {
+            overflow: scroll;
+        }
+    </style>
+    
+    <!-- Metadata -->
+    <meta charset="UTF-8">
+    <% for (let metaName in htmlWebpackPlugin.options.metadata) { %>
+    <%= `<meta name="${metaName}" content="${htmlWebpackPlugin.options.metadata[ metaName ]}">` %>
+    <% } %>
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="<%= require( './assets/manifest.json' ) %>">
+    
+    <!-- Icon -->
+    <link rel="icon" sizes="32x32" href="<%= require( './assets/app-icon/32.png' ) %>" type="image/png">
+    
+    <!-- Apple Icons -->
+    <link rel="apple-touch-icon" sizes="72x72" href="<%= require( './assets/app-icon/72.png' ) %>">
+    <link rel="apple-touch-icon" sizes="120x120" href="<%= require( './assets/app-icon/120.png' ) %>">
+    <link rel="apple-touch-icon" sizes="144x144" href="<%= require( './assets/app-icon/144.png' ) %>">
+    <link rel="apple-touch-icon" sizes="152x152" href="<%= require( './assets/app-icon/152.png' ) %>">
+    <link rel="apple-touch-icon" sizes="180x180" href="<%= require( './assets/app-icon/180.png' ) %>">
 </head>
 <body>
-	<app></app>
+<app></app>
 </body>
 </html>

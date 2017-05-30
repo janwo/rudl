@@ -1,7 +1,6 @@
-<!--suppress XmlInvalidId -->
-<label *ngIf="description" [innerHTML]="description | format"></label>
+<!--suppress XmlInvalidId --><label *ngIf="description" [innerHTML]="description | format"></label>
 <div>
-	<ng-content></ng-content>
-	<small class="error" *ngIf="errorMessage">{{errorMessage}}</small>
-	<small class="info" *ngIf="!errorMessage && !!infoMessage">{{infoMessage(formControlName.value)}}</small>
+    <ng-content></ng-content>
+    <small class="error" *ngIf="errorMessage">{{errorMessage}}</small>
+    <small class="info" *ngIf="!errorMessage && !!infoMessage">{{infoMessage(formControlName.value)}}</small>
 </div>

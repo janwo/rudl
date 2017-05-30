@@ -1,8 +1,8 @@
 <item-wrapper *ngIf="lists && lists.length > 0; else loading">
-	<list-item *ngFor="let list of lists" [list]="list"></list-item>
+    <list-item *ngFor="let list of lists" [list]="list"></list-item>
 </item-wrapper>
 
 <ng-template #loading>
-	<loading *ngIf="lists == null"></loading>
-	<empty [emptyState]="emptyState" *ngIf="lists && lists.length == 0"></empty>
+    <loading *ngIf="lists == null"></loading>
+    <empty [emptyState]="emptyState" *ngIf="lists && lists.length == 0"></empty>
 </ng-template>

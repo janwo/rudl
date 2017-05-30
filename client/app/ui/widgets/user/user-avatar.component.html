@@ -1,6 +1,7 @@
 <div class="plain" *ngIf="user && !user.hasAvatar">
-	<svg viewBox="0 0 20 20" font-size="10">
-		<text x="10" y="14" font-size="10" text-anchor="middle">{{user.firstName.charAt(0) + user.lastName.charAt(0)}}</text>
-	</svg>
+    <svg viewBox="0 0 20 20" font-size="10">
+        <text x="10" y="14" font-size="10" text-anchor="middle">{{user.firstName.charAt(0) + user.lastName.charAt(0)}}
+        </text>
+    </svg>
 </div>
 <div *ngIf="user && user.hasAvatar" [ngStyle]="{'background-image': 'url(' + user.links.avatars.small + ')'}"></div>

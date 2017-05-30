@@ -1,14 +1,14 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import {UserService} from "../../../services/user.service";
-import {Subscription} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
-import {User} from "../../../models/user";
-import {EmptyState} from "../../widgets/state/empty.component";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {UserService} from '../../../services/user.service';
+import {Subscription} from 'rxjs';
+import {ActivatedRoute} from '@angular/router';
+import {User} from '../../../models/user';
+import {EmptyState} from '../../widgets/state/empty.component';
 import {ScrollService} from '../../../services/scroll.service';
 
 @Component({
-    templateUrl: 'user-followers.component.html',
-    styleUrls: ['user-followers.component.scss']
+	templateUrl: 'user-followers.component.html',
+	styleUrls: ['user-followers.component.scss']
 })
 export class UserFollowersComponent implements OnInit, OnDestroy {
 	
@@ -20,11 +20,9 @@ export class UserFollowersComponent implements OnInit, OnDestroy {
 		description: 'Nobody follows you. Create expeditions to make yourself visible!'
 	};
 	
-	constructor(
-		private userService: UserService,
-		private route: ActivatedRoute,
-		private scrollService: ScrollService
-	) {}
+	constructor(private userService: UserService,
+	            private route: ActivatedRoute,
+	            private scrollService: ScrollService) {}
 	
 	ngOnInit() {
 		this.followersSubscription = this.route.parent.params.map(params => params['username']).do(() => {
@@ -34,7 +32,7 @@ export class UserFollowersComponent implements OnInit, OnDestroy {
 				return this.userService.followers(username, offset, 25);
 			});
 		}).subscribe((followers: User[]) => {
-			if(followers.length < 25) this.followersSubscription.unsubscribe();
+			if (followers.length < 25) this.followersSubscription.unsubscribe();
 			this.followers = this.followers ? this.followers.concat(followers) : followers;
 		});
 	}

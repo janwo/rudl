@@ -1,19 +1,17 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
-import {Subscription} from "rxjs";
-import {ActivatedRoute} from "@angular/router";
-import {Expedition} from "../../../models/expedition";
-import {Comment, CommentRecipe} from "../../../models/comment";
-import {EmptyState} from "../../widgets/state/empty.component";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Subscription} from 'rxjs';
+import {Comment, CommentRecipe} from '../../../models/comment';
+import {EmptyState} from '../../widgets/state/empty.component';
 import {CommentService} from '../../../services/comment.service';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
-import {ButtonStyles} from "../../widgets/control/styled-button.component";
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {ButtonStyles} from '../../widgets/control/styled-button.component';
 import {ScrollService} from '../../../services/scroll.service';
 import {ExpeditionComponent} from './expedition.component';
 import {Title} from '@angular/platform-browser';
 
 @Component({
-    templateUrl: 'expedition-comments.component.html',
-    styleUrls: ['expedition-comments.component.scss']
+	templateUrl: 'expedition-comments.component.html',
+	styleUrls: ['expedition-comments.component.scss']
 })
 export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 	
@@ -33,26 +31,24 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 		image: require('../../../../assets/boarding/radar.png'),
 		description: 'You have to become an attendee in order to join the discussion.'
 	};
-    
-    constructor(
-	    private fb: FormBuilder,
-	    private commentService: CommentService,
-	    private scrollService: ScrollService,
-        public parent: ExpeditionComponent,
-        private title: Title
-    ) {}
-    
-    ngOnInit(){
-	    this.title.setTitle(`rudl.me - Streifzug "${this.parent.expedition.title}" - Diskussion`);
-	    
-        // Define changed params subscription.
-	    this.commentsSubscription = this.scrollService.hasScrolledToBottom().map(() => this.comments ? this.comments.length : 0).startWith(0).distinct().flatMap((offset: number) => {
-		    return this.commentService.getForExpedition(this.parent.expedition.id, offset, 25);
-	    }).subscribe((comments: Comment[]) => {
-		    if(comments.length < 25) this.commentsSubscription.unsubscribe();
-		    this.comments = this.comments ? this.comments.concat(comments) : comments;
-	    });
-	    
+	
+	constructor(private fb: FormBuilder,
+	            private commentService: CommentService,
+	            private scrollService: ScrollService,
+	            public parent: ExpeditionComponent,
+	            private title: Title) {}
+	
+	ngOnInit() {
+		this.title.setTitle(`rudl.me - Streifzug "${this.parent.expedition.title}" - Diskussion`);
+		
+		// Define changed params subscription.
+		this.commentsSubscription = this.scrollService.hasScrolledToBottom().map(() => this.comments ? this.comments.length : 0).startWith(0).distinct().flatMap((offset: number) => {
+			return this.commentService.getForExpedition(this.parent.expedition.id, offset, 25);
+		}).subscribe((comments: Comment[]) => {
+			if (comments.length < 25) this.commentsSubscription.unsubscribe();
+			this.comments = this.comments ? this.comments.concat(comments) : comments;
+		});
+		
 		// Define form.
 		this.form = this.fb.group({
 			message: [
@@ -68,15 +64,15 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 				]
 			]
 		});
-    }
-    
+	}
+	
 	ngOnDestroy(): void {
-    	this.commentsSubscription.unsubscribe();
+		this.commentsSubscription.unsubscribe();
 	}
 	
 	submit() {
-		for(const key in this.form.controls) this.form.controls[key].markAsTouched();
-		if(!this.form.valid) return;
+		for (const key in this.form.controls) this.form.controls[key].markAsTouched();
+		if (!this.form.valid) return;
 		
 		// Mark as pending.
 		this.submitPending = true;

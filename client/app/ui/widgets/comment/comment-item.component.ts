@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from "@angular/core";
-import {Comment} from "../../../models/comment";
+import {Component, Input, OnInit} from '@angular/core';
+import {Comment} from '../../../models/comment';
 import * as moment from 'moment';
 
 @Component({
@@ -7,7 +7,7 @@ import * as moment from 'moment';
 	styleUrls: ['comment-item.component.scss'],
 	selector: 'comment-item'
 })
-export class CommentItemComponent implements OnInit{
+export class CommentItemComponent implements OnInit {
 	
 	@Input() comment: Comment = null;
 	formattedDate: string;

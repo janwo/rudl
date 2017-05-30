@@ -1,6 +1,6 @@
-import {UserRoles} from "../models/user/User";
-import {RoutesConfiguration} from "../binders/RoutesBinder";
-import {UtilController} from "../controllers/UtilController";
+import {UserRoles} from '../models/user/User';
+import {RoutesConfiguration} from '../binders/RoutesBinder';
+import {UtilController} from '../controllers/UtilController';
 
 export const RoutesConfig: RoutesConfiguration = [
 	{

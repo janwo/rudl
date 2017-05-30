@@ -1,7 +1,7 @@
-import {UserRoles, UserValidation} from "../models/user/User";
-import {RoutesConfiguration} from "../binders/RoutesBinder";
-import {Config} from "../../../run/config";
-import {AccountController} from "../controllers/AccountController";
+import {UserRoles, UserValidation} from '../models/user/User';
+import {RoutesConfiguration} from '../binders/RoutesBinder';
+import {Config} from '../../../run/config';
+import {AccountController} from '../controllers/AccountController';
 import * as Joi from 'joi';
 
 export const RoutesConfig: RoutesConfiguration = [

@@ -1,15 +1,13 @@
-import * as Uuid from "uuid";
-import * as jwt from "jsonwebtoken";
-import {Config} from "../../../run/config";
-import {User} from "../models/user/User";
-import {DatabaseManager, TransactionSession} from "../Database";
-import {DecodedToken, UserDataCache, TokenData} from "../models/Token";
-import {AccountController} from "./AccountController";
+import * as Uuid from 'uuid';
+import * as jwt from 'jsonwebtoken';
+import {Config} from '../../../run/config';
+import {User} from '../models/user/User';
+import {DatabaseManager, TransactionSession} from '../Database';
+import {DecodedToken, TokenData, UserDataCache} from '../models/Token';
+import {AccountController} from './AccountController';
 import {UserAuthProvider} from '../models/user/UserAuthProvider';
-import * as CryptoJS from "crypto-js";
+import * as CryptoJS from 'crypto-js';
 import Transaction from 'neo4j-driver/lib/v1/transaction';
-import Record from 'neo4j-driver/lib/v1/record';
-import Result from 'neo4j-driver/lib/v1/result';
 import Session from 'neo4j-driver/lib/v1/session';
 
 export module AuthController {
@@ -126,7 +124,7 @@ export module AuthController {
 			
 			// Save changes.
 			return AuthController.saveUserDataCache(userDataCache).then((userDataCache: UserDataCache) => {
-				if(!foundTokenData) return Promise.reject<TokenData>('Token is invalid!');
+				if (!foundTokenData) return Promise.reject<TokenData>('Token is invalid!');
 				return foundTokenData;
 			});
 		});
@@ -181,7 +179,7 @@ export module AuthController {
 	}
 	
 	export namespace RouteHandlers {
-	
+		
 		/**
 		 * Handles [GET] /api/sign-out
 		 * @param request Request-Object

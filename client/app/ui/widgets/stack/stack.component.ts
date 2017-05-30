@@ -10,8 +10,8 @@ import {
 	QueryList,
 	Renderer2,
 	ViewChildren
-} from "@angular/core";
-import {Observable, Subscription} from "rxjs";
+} from '@angular/core';
+import {Observable, Subscription} from 'rxjs';
 import {ButtonStyles} from '../control/styled-button.component';
 
 export interface StackResult {
@@ -27,10 +27,8 @@ export class StackCardComponent implements AfterViewInit {
 	
 	@Input() amplitude: number = 5;
 	
-	constructor(
-		private renderer: Renderer2,
-		private element: ElementRef
-	) {}
+	constructor(private renderer: Renderer2,
+	            private element: ElementRef) {}
 	
 	ngAfterViewInit(): void {
 		this.setRotation(Math.random() * this.amplitude * 2 - this.amplitude);
@@ -47,12 +45,12 @@ export class StackCardComponent implements AfterViewInit {
 		this.renderer.setStyle(overlay, 'opacity', range.toString());
 		this.renderer.setStyle(overlay.lastElementChild, 'width', `${range * 100}%`);
 		this.renderer.setStyle(overlay.lastElementChild, 'complete', range == 1);
-		switch(markedAs) {
+		switch (markedAs) {
 			case 'like':
 				this.renderer.removeClass(overlay, 'dislike');
 				this.renderer.addClass(overlay, 'like');
 				break;
-				
+			
 			case 'dislike':
 				this.renderer.removeClass(overlay, 'like');
 				this.renderer.addClass(overlay, 'dislike');
@@ -86,17 +84,15 @@ export class StackComponent implements OnDestroy, OnInit {
 	dislikeButtonStyle: ButtonStyles = ButtonStyles.dislike;
 	likeButtonStyle: ButtonStyles = ButtonStyles.like;
 	
-	constructor(
-		private rootElement: ElementRef
-	) {}
+	constructor(private rootElement: ElementRef) {}
 	
 	ngOnInit(): void {
 		this.inboundStreamSubscription = this.inboundStream.subscribe(contents => contents.forEach(content => this.stack.push(content)));
 	}
 	
-	getStackItem(): StackCardComponent{
+	getStackItem(): StackCardComponent {
 		// Stack items are enqueued in the DOM in a reversed order.
-		if(!this.currentStackItem) {
+		if (!this.currentStackItem) {
 			this.currentStackItem = this.stackItems.toArray()[this.stack.length - 1 - this.stackIndex];
 			this.currentStackItem.setRotation(0);
 		}
@@ -107,7 +103,7 @@ export class StackComponent implements OnDestroy, OnInit {
 	
 	nextStackItem(): void {
 		this.stackIndex++;
-		this.currentStackItem = null
+		this.currentStackItem = null;
 	}
 	
 	ngOnDestroy(): void {
@@ -122,7 +118,7 @@ export class StackComponent implements OnDestroy, OnInit {
 		return {
 			y: this.rootElement.nativeElement.offsetHeight / 2 * 0.25,
 			x: this.rootElement.nativeElement.offsetWidth / 2 * 0.25
-		}
+		};
 	}
 	
 	pan(event: {
@@ -140,22 +136,22 @@ export class StackComponent implements OnDestroy, OnInit {
 		let maxOffsets = this.getMaxOffsets();
 		let rangeX = Math.max(Math.min(translateX / maxOffsets.x, 1), -1);
 		let rangeY = Math.max(Math.min(translateY / maxOffsets.y, 1), -1);
-		let rangeXAbsolute =  Math.abs(rangeX);
-		let rangeYAbsolute =  Math.abs(rangeY);
+		let rangeXAbsolute = Math.abs(rangeX);
+		let rangeYAbsolute = Math.abs(rangeY);
 		let rotation = rangeY * stackItem.amplitude;
 		
 		// Manipulate parameters.
 		translateY = rangeY / rangeYAbsolute * maxOffsets.y * rangeYAbsolute * (2 - rangeYAbsolute);
 		
 		// Set markedAs status.
-		let markedAs : 'like' | 'dislike' = rangeX > 0 ? 'like' : 'dislike';
+		let markedAs: 'like' | 'dislike' = rangeX > 0 ? 'like' : 'dislike';
 		
 		// Apply moving transformation.
 		stackItem.setProgress(markedAs, rangeXAbsolute);
 		stackItem.transform(rotation, translateX, translateY);
 		
 		// Done dragging? Determine, whether to mark the item.
-		if(event.isFinal) this.markAs(rangeXAbsolute == 1 ? markedAs : null);
+		if (event.isFinal) this.markAs(rangeXAbsolute == 1 ? markedAs : null);
 	}
 	
 	markAs(markedAs: 'like' | 'dislike' = null) {
@@ -163,11 +159,11 @@ export class StackComponent implements OnDestroy, OnInit {
 		let translateX = markedAs ? this.getMaxOffsets().x * 10 : 0;
 		
 		// Apply final transformation.
-		stackItem.transform(0, markedAs == 'dislike' ? - translateX : translateX, 0);
+		stackItem.transform(0, markedAs == 'dislike' ? -translateX : translateX, 0);
 		stackItem.setProgress(markedAs, markedAs ? 1 : 0);
 		
 		// Successfully marked a stack item?
-		if(markedAs) {
+		if (markedAs) {
 			// Emit result.
 			this.outboundStream.emit({
 				content: this.stack[this.stackIndex],

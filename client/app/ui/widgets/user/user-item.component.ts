@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from "@angular/core";
-import {User} from "../../../models/user";
+import {Component, Input, OnInit} from '@angular/core';
+import {User} from '../../../models/user';
 
 @Component({
 	templateUrl: 'user-item.component.html',
@@ -16,7 +16,7 @@ export class UserItemComponent implements OnInit {
 	
 	ngOnInit(): void {
 		// Set custom message?
-		if(!this.user.relations) {
+		if (!this.user.relations) {
 			this.relation = `This is you!`;
 			return;
 		}

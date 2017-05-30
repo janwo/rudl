@@ -1,5 +1,5 @@
-import {Component, Input} from "@angular/core";
-import {Rudel} from "../../../models/rudel";
+import {Component, Input} from '@angular/core';
+import {Rudel} from '../../../models/rudel';
 
 @Component({
 	templateUrl: 'rudel-item.component.html',

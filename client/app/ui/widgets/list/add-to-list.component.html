@@ -1,7 +1,7 @@
 <form [formGroup]="form">
-	<item-wrapper formArrayName="lists" [noMargins]="true" [ngClass]="{disabled: pendingToggleRequest}">
-		<li [formGroupName]="i" *ngFor="let formGroup of form.get('lists'); let i = index">
-			<checkbox [text]="formGroup.get('list').value.name" formControlName="selected"></checkbox>
-		</li>
-	</item-wrapper>
+    <item-wrapper formArrayName="lists" [noMargins]="true" [ngClass]="{disabled: pendingToggleRequest}">
+        <li [formGroupName]="i" *ngFor="let formGroup of form.get('lists'); let i = index">
+            <checkbox [text]="formGroup.get('list').value.name" formControlName="selected"></checkbox>
+        </li>
+    </item-wrapper>
 </form>

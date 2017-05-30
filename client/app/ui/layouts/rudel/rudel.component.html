@@ -1,30 +1,39 @@
 <div class="card">
-	<div class="about">
-		<emoji [emoji]="rudel.links.icon"></emoji>
-		<h1>{{rudel.name}}</h1>
-	</div>
-	<div class="statistics">
-		<statistics [statistics]="[
+    <div class="about">
+        <emoji [emoji]="rudel.links.icon"></emoji>
+        <h1>{{rudel.name}}</h1>
+    </div>
+    <div class="statistics">
+        <statistics [statistics]="[
 		{value: rudel.statistics.expeditions, subject: 'Expeditions', link: ['expeditions']},
 		{value: rudel.statistics.followers, subject: 'Follower', link: ['followers']}
 	]"></statistics>
-		<div class="cta">
-			<styled-button [style]="rudel.relations.isFollowed ? buttonStyleActivated : buttonStyleDefault" (click)="onToggleFollow(true)" [disabled]="pendingFollowRequest" [text]="'Interested'"></styled-button>
-			<styled-button [icon]="'more_vert'" (click)="dropdownMenu.toggle()"></styled-button>
-			<dropdown-menu #dropdownMenu [arrowAlignment]="'right'">
-				<menu-item [icon]="'edit'" [title]="'Rudel bearbeiten'" [link]="['edit']" *ngIf="rudel.relations.isOwned"></menu-item>
-				<menu-item [icon]="'format_list_bulleted'" [title]="'In Liste speichern'" [link]="['add-to-list']"></menu-item>
-				<menu-item [icon]="'event_note'" [title]="'Streifzug erstellen'" [link]="['create-expedition']"></menu-item>
-			</dropdown-menu>
-		</div>
-	</div>
+        <div class="cta">
+            <styled-button [style]="rudel.relations.isFollowed ? buttonStyleActivated : buttonStyleDefault"
+                    (click)="onToggleFollow(true)" [disabled]="pendingFollowRequest"
+                    [text]="'Interested'"></styled-button>
+            <styled-button [icon]="'more_vert'" (click)="dropdownMenu.toggle()"></styled-button>
+            <dropdown-menu #dropdownMenu [arrowAlignment]="'right'">
+                <menu-item [icon]="'edit'" [title]="'Rudel bearbeiten'" [link]="['edit']"
+                        *ngIf="rudel.relations.isOwned"></menu-item>
+                <menu-item [icon]="'format_list_bulleted'" [title]="'In Liste speichern'"
+                        [link]="['add-to-list']"></menu-item>
+                <menu-item [icon]="'event_note'" [title]="'Streifzug erstellen'"
+                        [link]="['create-expedition']"></menu-item>
+            </dropdown-menu>
+        </div>
+    </div>
 </div>
 <menu>
-	<menu-item [icon]="'event_note'" [makeRoomIfSmall]="true" [title]="'Künftige Streifzüge'" [link]="['expeditions']"></menu-item>
-	<menu-item [icon]="'event_available'" [makeRoomIfSmall]="true" [title]="'Bisherige Streifzüge'" [link]="['past-expeditions']"></menu-item>
-	<menu-item [icon]="'people_outline'" [makeRoomIfSmall]="true" [title]="'Rudelmitglieder'" [link]="['followers']"></menu-item>
+    <menu-item [icon]="'event_note'" [makeRoomIfSmall]="true" [title]="'Künftige Streifzüge'"
+            [link]="['expeditions']"></menu-item>
+    <menu-item [icon]="'event_available'" [makeRoomIfSmall]="true" [title]="'Bisherige Streifzüge'"
+            [link]="['past-expeditions']"></menu-item>
+    <menu-item [icon]="'people_outline'" [makeRoomIfSmall]="true" [title]="'Rudelmitglieder'"
+            [link]="['followers']"></menu-item>
 </menu>
 <router-outlet></router-outlet>
 <modal #unfollowModal [title]="'Are you sure to unfollow rudel?'">
-	<question [choices]="modalChoices" [description]='"Du bist der Ersteller dieser Aktivität. Durch das Entfolgen geht die Aktivität in den Besitz eines anderen Followers über. Aktivitäten ohne andere Follower werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."'></question>
+    <question [choices]="modalChoices"
+            [description]='"Du bist der Ersteller dieser Aktivität. Durch das Entfolgen geht die Aktivität in den Besitz eines anderen Followers über. Aktivitäten ohne andere Follower werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."'></question>
 </modal>

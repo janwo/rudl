@@ -1,9 +1,8 @@
-import {UserRoles, UserValidation} from "../models/user/User";
-import {RoutesConfiguration} from "../binders/RoutesBinder";
-import {ListController} from "../controllers/ListController";
-import {TranslationsValidation} from "../models/Translations";
+import {UserRoles, UserValidation} from '../models/user/User';
+import {RoutesConfiguration} from '../binders/RoutesBinder';
+import {ListController} from '../controllers/ListController';
 import * as Joi from 'joi';
-import {ListValidation} from "../models/list/List";
+import {ListValidation} from '../models/list/List';
 
 const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.string().regex(/^me$/));
 

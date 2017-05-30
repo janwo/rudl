@@ -1,6 +1,6 @@
-import {UserRoles} from "../models/user/User";
-import {RoutesConfiguration} from "../binders/RoutesBinder";
-import {SuggestionController} from "../controllers/SuggestionController";
+import {UserRoles} from '../models/user/User';
+import {RoutesConfiguration} from '../binders/RoutesBinder';
+import {SuggestionController} from '../controllers/SuggestionController';
 import * as Joi from 'joi';
 
 export const RoutesConfig: RoutesConfiguration = [

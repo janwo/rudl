@@ -1,6 +1,6 @@
-import {AfterContentInit, Component, ContentChild, HostBinding, Input, OnDestroy} from "@angular/core";
-import {FormControlName} from "@angular/forms";
-import {Subscription} from "rxjs/Subscription";
+import {AfterContentInit, Component, ContentChild, HostBinding, Input, OnDestroy} from '@angular/core';
+import {FormControlName} from '@angular/forms';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
 	templateUrl: 'form-control-wrapper.component.html',
@@ -12,15 +12,15 @@ export class FormControlWrapper implements AfterContentInit, OnDestroy {
 	changes: Subscription;
 	@ContentChild(FormControlName) formControlName: FormControlName;
 	@Input() description: string;
-	@Input() errorMessages: {[key: string]: string};
+	@Input() errorMessages: { [key: string]: string };
 	@Input() infoMessage: (value: string) => {};
 	errorMessage: string;
 	
-	@HostBinding('class.valid') get valid() : boolean {
+	@HostBinding('class.valid') get valid(): boolean {
 		return this.formControlName.valid;
 	};
 	
-	@HostBinding('class.empty') get empty() : boolean {
+	@HostBinding('class.empty') get empty(): boolean {
 		return !this.formControlName.value;
 	};
 	
@@ -44,11 +44,11 @@ export class FormControlWrapper implements AfterContentInit, OnDestroy {
 	updateValidationMessage(): void {
 		// Reset error message.
 		this.errorMessage = null;
-		if(!this.errorMessages || !this.formControlName.invalid) return;
+		if (!this.errorMessages || !this.formControlName.invalid) return;
 		
 		// Are there any errors having an error message?
-		for(const key in this.formControlName.errors) {
-			if(this.formControlName.errors.hasOwnProperty(key) && this.errorMessages.hasOwnProperty(key)){
+		for (const key in this.formControlName.errors) {
+			if (this.formControlName.errors.hasOwnProperty(key) && this.errorMessages.hasOwnProperty(key)) {
 				this.errorMessage = this.errorMessages[key];
 				break;
 			}
@@ -56,6 +56,6 @@ export class FormControlWrapper implements AfterContentInit, OnDestroy {
 	}
 	
 	ngOnDestroy(): void {
-		if(this.changes) this.changes.unsubscribe();
+		if (this.changes) this.changes.unsubscribe();
 	}
 }

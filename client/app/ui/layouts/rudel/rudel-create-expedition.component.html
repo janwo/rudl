@@ -1,75 +1,81 @@
 <form [formGroup]="form" class="card">
-	<h1>Create your expedition</h1>
-	<carousel [maxSteps]="4" #carousel>
-		<div class="item split" formGroupName="general">
-			<div class="content">
-				<form-control-wrapper [errorMessages]="{
+    <h1>Create your expedition</h1>
+    <carousel [maxSteps]="4" #carousel>
+        <div class="item split" formGroupName="general">
+            <div class="content">
+                <form-control-wrapper [errorMessages]="{
 						minlength: 'Der Titel ist zu kurz (mindestens 5 Zeichen).',
 						required: 'Gebe einen Titel an.'
 					}" [infoMessage]="formControlCount(form.get('general').get('description').value, 50)">
-					<input maxlength="50" formControlName="title" type="text" placeholder="Give your expedition a title...">
-				</form-control-wrapper>
-				<form-control-wrapper [errorMessages]="{
+                    <input maxlength="50" formControlName="title" type="text"
+                            placeholder="Give your expedition a title...">
+                </form-control-wrapper>
+                <form-control-wrapper [errorMessages]="{
 						minlength: 'Die Beschreibung ist zu kurz (mindestens 5 Zeichen).',
 						required: 'Gebe eine Beschreibung an.'
 					}" [infoMessage]="formControlCount(form.get('general').get('description').value, 300)">
-					<textarea maxlength="300" formControlName="description" placeholder="Enter a short public description..."></textarea>
-				</form-control-wrapper>
-				<form-control-wrapper>
-					<checkbox formControlName="needsApproval" [text]="'Zugangsbeschränkung'"></checkbox>
-				</form-control-wrapper>
-			</div>
-			<div class="content">
-				<h2>Did you know?</h2>
-				<p>You can decide, whether you want to approve new members of the expedition!</p>
-			</div>
-		</div>
-		<div class="item split" formGroupName="icon">
-			<div class="content">
-				<form-control-wrapper>
-					<emoji-picker formControlName="icon"></emoji-picker>
-				</form-control-wrapper>
-			</div>
-			<div class="content">
-				<h2>Add an emoji!</h2>
-				<p>Give your expedition an unique icon to increase it's visibility!</p>
-			</div>
-		</div>
-		<div class="item split" formGroupName="location">
-			<form-control-wrapper class="map">
-				<location-picker formControlName="location"></location-picker>
-			</form-control-wrapper>
-			<div class="content">
-				<h2>Where to go?</h2>
-				<p>Please mark the location of the expedition on the map.</p>
-				<location-search [locationFocus]="form.get('location').get('location').value" (locationSelected)="form.get('location').get('location').setValue($event)"></location-search>
-			</div>
-		</div>
-		<div class="item split" formGroupName="time">
-			<div class="content">
-				<form-control-wrapper [errorMessages]="{
+                    <textarea maxlength="300" formControlName="description"
+                            placeholder="Enter a short public description..."></textarea>
+                </form-control-wrapper>
+                <form-control-wrapper>
+                    <checkbox formControlName="needsApproval" [text]="'Zugangsbeschränkung'"></checkbox>
+                </form-control-wrapper>
+            </div>
+            <div class="content">
+                <h2>Did you know?</h2>
+                <p>You can decide, whether you want to approve new members of the expedition!</p>
+            </div>
+        </div>
+        <div class="item split" formGroupName="icon">
+            <div class="content">
+                <form-control-wrapper>
+                    <emoji-picker formControlName="icon"></emoji-picker>
+                </form-control-wrapper>
+            </div>
+            <div class="content">
+                <h2>Add an emoji!</h2>
+                <p>Give your expedition an unique icon to increase it's visibility!</p>
+            </div>
+        </div>
+        <div class="item split" formGroupName="location">
+            <form-control-wrapper class="map">
+                <location-picker formControlName="location"></location-picker>
+            </form-control-wrapper>
+            <div class="content">
+                <h2>Where to go?</h2>
+                <p>Please mark the location of the expedition on the map.</p>
+                <location-search [locationFocus]="form.get('location').get('location').value"
+                        (locationSelected)="form.get('location').get('location').setValue($event)"></location-search>
+            </div>
+        </div>
+        <div class="item split" formGroupName="time">
+            <div class="content">
+                <form-control-wrapper [errorMessages]="{
 					required: 'Gebe ein Datum an.'
 					}">
-					<datetime formControlName="date" [locale]="'de'"></datetime>
-				</form-control-wrapper>
-				<form-control-wrapper>
-					<checkbox formControlName="fuzzyTime" [text]="'Öffentliche Uhrzeit verbergen'"></checkbox>
-				</form-control-wrapper>
-			</div>
-			<div class="content">
-				<h2>Date of the expedition</h2>
-				<p>Last step, when shall it happen?</p>
-			</div>
-		</div>
-	</carousel>
-	<footer>
-		<styled-button class="back" *ngIf="carousel.index() > 0" [disabled]="submitPending" [text]="'Go back'" (click)="carousel.back()"></styled-button>
-		<styled-button class="next" *ngIf="carousel.index() < 3" [disabled]="submitPending" [text]="'Continue'" (click)="carousel.next()"></styled-button>
-		<styled-button class="done" *ngIf="carousel.index() == 3" [disabled]="submitPending" (click)="submit()" [text]="'Create Expedition'"></styled-button>
-		<indicator [indicators]="[
+                    <datetime formControlName="date" [locale]="'de'"></datetime>
+                </form-control-wrapper>
+                <form-control-wrapper>
+                    <checkbox formControlName="fuzzyTime" [text]="'Öffentliche Uhrzeit verbergen'"></checkbox>
+                </form-control-wrapper>
+            </div>
+            <div class="content">
+                <h2>Date of the expedition</h2>
+                <p>Last step, when shall it happen?</p>
+            </div>
+        </div>
+    </carousel>
+    <footer>
+        <styled-button class="back" *ngIf="carousel.index() > 0" [disabled]="submitPending" [text]="'Go back'"
+                (click)="carousel.back()"></styled-button>
+        <styled-button class="next" *ngIf="carousel.index() < 3" [disabled]="submitPending" [text]="'Continue'"
+                (click)="carousel.next()"></styled-button>
+        <styled-button class="done" *ngIf="carousel.index() == 3" [disabled]="submitPending" (click)="submit()"
+                [text]="'Create Expedition'"></styled-button>
+        <indicator [indicators]="[
 	'Basisinformationen',
 	'Icon',
 	'Ort',
 	'Datum']" [selectedIndex]="carousel.index()" [interactive]="false"></indicator>
-	</footer>
+    </footer>
 </form>

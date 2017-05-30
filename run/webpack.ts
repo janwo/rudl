@@ -1,10 +1,10 @@
-import * as Webpack from "webpack";
-import * as WebpackDevServer from "webpack-dev-server";
-import {Config} from "./config";
-import * as chalk from "chalk";
+import * as Webpack from 'webpack';
+import * as WebpackDevServer from 'webpack-dev-server';
+import {Config} from './config';
+import * as chalk from 'chalk';
 
 class WebpackManager {
-	static start(){
+	static start() {
 		// Create webpack compiler.
 		const webpackCompiler = Webpack([Config.frontend.webpack.config]);
 		
@@ -14,7 +14,7 @@ class WebpackManager {
 			console.log(colorize('Webpack is done compiling...'));
 			
 			// Show
-			if(Config.debug && !stats.hasErrors()) {
+			if (Config.debug && !stats.hasErrors()) {
 				console.log(stats.toString({
 					chunks: false,
 					modules: false,
@@ -32,7 +32,7 @@ class WebpackManager {
 					timings: true,
 					version: true
 				}));
-			} else if(stats.hasErrors()) {
+			} else if (stats.hasErrors()) {
 				stats.toJson().errors.forEach((error: string) => console.log(colorize(error)));
 			}
 		});
@@ -44,14 +44,14 @@ class WebpackManager {
 		});
 		
 		// Run as webpack server.
-		if ( Config.frontend.webpack.devServer ) {
+		if (Config.frontend.webpack.devServer) {
 			console.log(chalk.yellow('Starting webpack server...'));
-			new WebpackDevServer( webpackCompiler, Config.frontend.webpack.devServer.config ).listen( Config.frontend.webpack.devServer.port, Config.frontend.webpack.devServer.host );
+			new WebpackDevServer(webpackCompiler, Config.frontend.webpack.devServer.config).listen(Config.frontend.webpack.devServer.port, Config.frontend.webpack.devServer.host);
 			return;
 		}
 		
 		// Run standalone.
-		if ( !Config.frontend.webpack.devServer ) {
+		if (!Config.frontend.webpack.devServer) {
 			console.log(chalk.yellow('Starting webpack...'));
 			webpackCompiler.run((err: any, stats: any) => {});
 		}

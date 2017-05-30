@@ -1,7 +1,7 @@
-import {Component, Input, OnInit} from "@angular/core";
-import {UserService} from "../../../services/user.service";
-import * as moment from "moment";
-import {Expedition} from "../../../models/expedition";
+import {Component, Input, OnInit} from '@angular/core';
+import {UserService} from '../../../services/user.service';
+import * as moment from 'moment';
+import {Expedition} from '../../../models/expedition';
 
 @Component({
 	templateUrl: 'expedition-item.component.html',
@@ -15,9 +15,7 @@ export class ExpeditionItemComponent implements OnInit {
 	formattedLocation: string;
 	formattedAwaitingApproval: string;
 	
-	constructor(
-		private userService: UserService
-	) {}
+	constructor(private userService: UserService) {}
 	
 	ngOnInit(): void {
 		let humanizedDate = moment.duration(moment().diff(this.expedition.date.isoString)).humanize();
@@ -28,7 +26,7 @@ export class ExpeditionItemComponent implements OnInit {
 		this.formattedLocation = this.expedition.location.accuracy > 0 ? `ca. ${distance} km` : `${distance} km`;
 		
 		// Awaiting approval formatting.
-		switch(this.expedition.statistics.applicants) {
+		switch (this.expedition.statistics.applicants) {
 			case 0:
 				this.formattedAwaitingApproval = 'Keine Anfragen';
 				break;

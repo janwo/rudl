@@ -1,5 +1,5 @@
-import {Component, EventEmitter, Input, Output} from "@angular/core";
-import {animate, style, transition, trigger} from "@angular/animations";
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {animate, style, transition, trigger} from '@angular/animations';
 
 @Component({
 	templateUrl: 'modal.component.html',
@@ -57,7 +57,7 @@ export class ModalComponent {
 	@Output() onClosed: EventEmitter<any> = new EventEmitter();
 	isVisible: boolean = false;
 	
-	open(){
+	open() {
 		this.isVisible = true;
 	}
 	

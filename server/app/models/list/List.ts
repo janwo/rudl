@@ -1,6 +1,5 @@
-import {Translations, TranslationsValidation} from "../Translations";
-import {Node} from "../Node";
-import * as Joi from "joi";
+import {Translations, TranslationsValidation} from '../Translations';
+import {Node} from '../Node';
 
 export interface List extends Node {
 	translations: Translations;

@@ -1,11 +1,11 @@
-import * as ExtractTextPlugin from "extract-text-webpack-plugin";
+import * as ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 export default {
 	name: 'rudl - Test Environment',
 	frontend: {
 		webpack: {
 			config: [
-				( Config: any ) => {
+				(Config: any) => {
 					return {
 						devtool: 'inline-source-map',
 						module: {
@@ -20,9 +20,9 @@ export default {
 							]
 						},
 						plugins: [
-							new ExtractTextPlugin( '[name].css' )
+							new ExtractTextPlugin('[name].css')
 						]
-					}
+					};
 				}
 			]
 		}

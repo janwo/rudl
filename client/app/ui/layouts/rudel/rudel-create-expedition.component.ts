@@ -1,32 +1,29 @@
-import {Component, OnInit, ViewChild} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
-import {Rudel} from "../../../models/rudel";
-import {ButtonStyles} from "../../widgets/control/styled-button.component";
-import {ExpeditionService} from "../../../services/expedition.service";
-import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
-import {UserService} from "../../../services/user.service";
-import {Locale} from "../../../models/locale";
-import {ExpeditionRecipe} from "../../../models/expedition";
-import {CarouselComponent} from "../../widgets/wrapper/carousel.component";
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {Rudel} from '../../../models/rudel';
+import {ExpeditionService} from '../../../services/expedition.service';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UserService} from '../../../services/user.service';
+import {Locale} from '../../../models/locale';
+import {ExpeditionRecipe} from '../../../models/expedition';
+import {CarouselComponent} from '../../widgets/wrapper/carousel.component';
 
 @Component({
-    templateUrl: 'rudel-create-expedition.component.html',
-    styleUrls: ['rudel-create-expedition.component.scss']
+	templateUrl: 'rudel-create-expedition.component.html',
+	styleUrls: ['rudel-create-expedition.component.scss']
 })
 export class RudelCreateExpeditionComponent implements OnInit {
 	
-    rudel: Rudel;
+	rudel: Rudel;
 	form: FormGroup;
 	submitPending: boolean;
 	@ViewChild(CarouselComponent) carousel: CarouselComponent;
 	
-	constructor(
-		private router: Router,
-		private route: ActivatedRoute,
-		private userService: UserService,
-		private expeditionService: ExpeditionService,
-		private fb: FormBuilder
-	) {}
+	constructor(private router: Router,
+	            private route: ActivatedRoute,
+	            private userService: UserService,
+	            private expeditionService: ExpeditionService,
+	            private fb: FormBuilder) {}
 	
 	ngOnInit() {
 		// Define changed params subscription.
@@ -83,8 +80,8 @@ export class RudelCreateExpeditionComponent implements OnInit {
 	}
 	
 	submit() {
-		for(const key in this.form.controls) this.form.controls[key].markAsTouched();
-		if(!this.form.valid) {
+		for (const key in this.form.controls) this.form.controls[key].markAsTouched();
+		if (!this.form.valid) {
 			// Go to corresponding page.
 			[
 				this.form.controls.general,
@@ -93,7 +90,7 @@ export class RudelCreateExpeditionComponent implements OnInit {
 				this.form.controls.time
 			].every((control: FormGroup, page: number) => {
 				Object.keys(control.controls).forEach(controlKey => control.get(controlKey).markAsTouched());
-				if(!control.valid) this.carousel.go(page);
+				if (!control.valid) this.carousel.go(page);
 				return control.valid;
 			});
 			return;
@@ -116,7 +113,7 @@ export class RudelCreateExpeditionComponent implements OnInit {
 		// Fire and remove pending state when done.
 		this.expeditionService.create(recipe, this.rudel).subscribe(expedition => {
 			this.submitPending = false;
-			this.router.navigate(['/expeditions', expedition.id])
+			this.router.navigate(['/expeditions', expedition.id]);
 		}, error => {
 			this.submitPending = false;
 			alert(error.message);

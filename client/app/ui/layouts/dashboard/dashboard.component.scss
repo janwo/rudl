@@ -62,7 +62,7 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
       }
 
       .search {
-        transform: translateY( - $header-content-size);
+        transform: translateY(- $header-content-size);
         transition: transform 0.3s, opacity 0.3s;
         opacity: 0;
 
@@ -78,7 +78,7 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
 
       .menu {
         transition: transform 0.3s, opacity 0.3s;
-        transform: translateY( $header-content-size);
+        transform: translateY($header-content-size);
         opacity: 0;
 
         &.active {
@@ -136,7 +136,7 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
     position: relative;
     height: calc(100vh - #{$header-vertical-padding-mobile * 2 + $header-content-size});
 
-    @include breakpoint('small'){
+    @include breakpoint('small') {
       height: calc(100vh - #{$header-vertical-padding * 2 + $header-content-size});
     }
 

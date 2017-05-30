@@ -1,7 +1,7 @@
-import {Document} from "./document";
-import {User} from "./user";
+import {Document} from './document';
+import {User} from './user';
 import {Rudel} from './rudel';
-import {VagueLocation} from "./location";
+import {VagueLocation} from './location';
 
 export interface Expedition extends Document {
 	title: string;

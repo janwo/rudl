@@ -1,8 +1,8 @@
-import {Component, ElementRef, OnDestroy, OnInit, Optional, Renderer2, ViewChild} from "@angular/core";
-import {animate, state, style, transition, trigger} from "@angular/animations";
-import {NgControl} from "@angular/forms";
-import {UtilService} from "../../../../services/util.service";
-import {Subscription} from "rxjs";
+import {Component, ElementRef, OnDestroy, OnInit, Optional, Renderer2, ViewChild} from '@angular/core';
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {NgControl} from '@angular/forms';
+import {UtilService} from '../../../../services/util.service';
+import {Subscription} from 'rxjs';
 
 @Component({
 	templateUrl: 'emoji-picker.component.html',
@@ -45,7 +45,7 @@ export class EmojiPickerComponent implements OnInit, OnDestroy {
 	}[];
 	categories: string[] = [
 		'people',
-	    'activity',
+		'activity',
 		'flags',
 		'food',
 		'nature',
@@ -53,24 +53,24 @@ export class EmojiPickerComponent implements OnInit, OnDestroy {
 		'travel'
 	];
 	
-	constructor(
-		private utilService: UtilService,
-		private renderer: Renderer2,
-		@Optional() ngControl: NgControl
-	) {
+	constructor(private utilService: UtilService,
+	            private renderer: Renderer2,
+	            @Optional() ngControl: NgControl) {
 		if (ngControl) ngControl.valueAccessor = this;
 	}
 	
 	ngOnInit(): void {
 		this.iconsSubscription = this.utilService.icons().subscribe((icons: any) => {
 			// Categorize icons.
-			let categorizedIcons: {[key: string]: {
-				name: string,
-				image: string
-			}[]} = {};
-			for(let key in icons) {
+			let categorizedIcons: {
+				[key: string]: {
+					name: string,
+					image: string
+				}[]
+			} = {};
+			for (let key in icons) {
 				let icon = icons[key];
-				if(!categorizedIcons[icon.category]) categorizedIcons[icon.category] = [];
+				if (!categorizedIcons[icon.category]) categorizedIcons[icon.category] = [];
 				categorizedIcons[icon.category].push({
 					name: key,
 					image: icon.image
@@ -83,9 +83,9 @@ export class EmojiPickerComponent implements OnInit, OnDestroy {
 			let iconsCount = 0;
 			this.categories.forEach(category => {
 				categorizedIcons[category].forEach(icon => {
-					if(currentPage == null || currentPage.category != category || iconsCount >= EmojiPickerComponent.iconsPerPage) {
+					if (currentPage == null || currentPage.category != category || iconsCount >= EmojiPickerComponent.iconsPerPage) {
 						// Save old page.
-						if(currentPage) pages.push(currentPage);
+						if (currentPage) pages.push(currentPage);
 						
 						// Create new page.
 						iconsCount = 0;
@@ -102,10 +102,10 @@ export class EmojiPickerComponent implements OnInit, OnDestroy {
 			});
 			
 			// Save last page.
-			if(currentPage && currentPage.icons.length) pages.push(currentPage);
+			if (currentPage && currentPage.icons.length) pages.push(currentPage);
 			
 			// Assign random icons, if not set yet.
-			if(!this.emoji) {
+			if (!this.emoji) {
 				let randomPage = pages[Math.floor(pages.length * Math.random())];
 				this.emoji = randomPage.icons[Math.floor(randomPage.icons.length * Math.random())].name;
 				this.onChange(this.emoji);
@@ -124,7 +124,7 @@ export class EmojiPickerComponent implements OnInit, OnDestroy {
 	}
 	
 	writeValue(value: string): void {
-		if(value) this.emoji = value;
+		if (value) this.emoji = value;
 		this.page = this.determinePageIndex();
 	}
 	
@@ -133,7 +133,7 @@ export class EmojiPickerComponent implements OnInit, OnDestroy {
 	}
 	
 	selectCategory(category: string) {
-		if(!this.pages) return;
+		if (!this.pages) return;
 		
 		// Get to first icon position with the corresponding category.
 		this.page = this.pages.findIndex(page => page.category == category);
@@ -145,12 +145,12 @@ export class EmojiPickerComponent implements OnInit, OnDestroy {
 	}
 	
 	pan(event: {
-		    deltaX: number,
-		    deltaY: number,
-		    target: any,
-		    preventDefault: () => void,
-		    stopPropagation: () => void,
-		    isFinal: boolean
+		deltaX: number,
+		deltaY: number,
+		target: any,
+		preventDefault: () => void,
+		stopPropagation: () => void,
+		isFinal: boolean
 	}) {
 		event.preventDefault();
 		this.dragging = true;
@@ -160,24 +160,24 @@ export class EmojiPickerComponent implements OnInit, OnDestroy {
 		let canSwipeLeft = this.page > 0;
 		let translateX = event.deltaX;
 		let maxOffsets = this.pagesSlider.nativeElement.offsetWidth;
-		let rangeX = Math.min(Math.max(translateX / maxOffsets, canSwipeRight ? - 1 : 0), canSwipeLeft ? 1 : 0) * 100;
+		let rangeX = Math.min(Math.max(translateX / maxOffsets, canSwipeRight ? -1 : 0), canSwipeLeft ? 1 : 0) * 100;
 		this.transform(rangeX - 100);
 		
 		// Done dragging? Determine, whether to slide the page or allow clicking any children.
-		if(event.isFinal) {
+		if (event.isFinal) {
 			// Change page.
-			if(Math.abs(rangeX) < 25) {
-				this.transform(- 100);
+			if (Math.abs(rangeX) < 25) {
+				this.transform(-100);
 				this.dragging = false;
 				return;
 			}
 			
 			// Finish swipe.
-			let addend = - rangeX > 0 ? 1 : -1;
-			this.transform( - addend * 100 - 100);
+			let addend = -rangeX > 0 ? 1 : -1;
+			this.transform(-addend * 100 - 100);
 			
 			// Clear previous timer, if any.
-			if(this.animateTimer.timerId) {
+			if (this.animateTimer.timerId) {
 				this.page += this.animateTimer.addend;
 				clearTimeout(this.animateTimer.timerId);
 			}
@@ -186,7 +186,7 @@ export class EmojiPickerComponent implements OnInit, OnDestroy {
 			this.animateTimer.addend = addend;
 			this.animateTimer.timerId = setTimeout(() => {
 				this.animateTimer.timerId = null;
-				this.transform(- 100);
+				this.transform(-100);
 				this.page += addend;
 				this.dragging = false;
 			}, 300);
@@ -200,6 +200,8 @@ export class EmojiPickerComponent implements OnInit, OnDestroy {
 	
 	onChange = (_: any) => {};
 	onTouched = () => {};
+	
 	registerOnChange(fn: (_: any) => void): void { this.onChange = fn; }
+	
 	registerOnTouched(fn: () => void): void { this.onTouched = fn; }
 }

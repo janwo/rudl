@@ -1,10 +1,10 @@
-import {Component, Input, OnInit} from "@angular/core";
-import {animate, style, transition, trigger} from "@angular/animations";
-import {DomSanitizer, SafeStyle} from "@angular/platform-browser";
+import {Component, Input, OnInit} from '@angular/core';
+import {animate, style, transition, trigger} from '@angular/animations';
+import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 
 @Component({
-    templateUrl: 'empty.component.html',
-    styleUrls: ['empty.component.scss'],
+	templateUrl: 'empty.component.html',
+	styleUrls: ['empty.component.scss'],
 	selector: 'empty',
 	animations: [
 		trigger('fadeIn', [
@@ -57,12 +57,10 @@ export class EmptyComponent implements OnInit {
 	
 	@Input() emptyState: EmptyState;
 	backgroundImageStyle: SafeStyle;
-    
-    constructor(
-    	private sanitizer: DomSanitizer
-    ) {}
-    
-    ngOnInit(): void {
+	
+	constructor(private sanitizer: DomSanitizer) {}
+	
+	ngOnInit(): void {
 		this.backgroundImageStyle = this.sanitizer.bypassSecurityTrustStyle(`url(${this.emptyState.image})`);
 	}
 }

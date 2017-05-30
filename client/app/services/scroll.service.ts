@@ -1,5 +1,5 @@
-import {Injectable} from "@angular/core";
-import {Observable} from "rxjs/Observable";
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class ScrollService {
 		this.scrolled.next(event);
 	}
 	
-	hasScrolledToBottom() : Observable<Event> {
+	hasScrolledToBottom(): Observable<Event> {
 		return this.scrolled.asObservable();
 	}
 }

@@ -3,15 +3,15 @@ export default {
 	frontend: {
 		webpack: {
 			config: [
-				( Config: any ) => {
+				(Config: any) => {
 					return {
-						devtool: 'cheap-module-source-map',
-					}
+						devtool: 'cheap-module-source-map'
+					};
 				}
 			]
-		},
+		}
 	},
 	backend: {
-		host: 'your host (forces overwriting)',
+		host: 'your host (forces overwriting)'
 	}
 };
