@@ -182,7 +182,7 @@ export module RudelController {
 				
 				// Delete rudel, because it's an orphan node.
 				return ExpeditionController.removeExpeditions(transaction, rudel).then(() => {
-					return transaction.run("MATCH(r:Rudel {id: $rudelId}) DETACH DELETE r", {
+					return transaction.run("MATCH(r:Rudel {id: $rudelId}) CALL apoc.index.removeNodeByName('Rudel', r) DETACH DELETE r ", {
 						rudelId: rudel.id
 					});
 				});

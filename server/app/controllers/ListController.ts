@@ -188,7 +188,7 @@ export module ListController {
 				});
 				
 				// Delete list, because it's an orphan node.
-				return transaction.run("MATCH(l:List {id: $listId}) DETACH DELETE l", {
+				return transaction.run("MATCH(l:List {id: $listId}) CALL apoc.index.removeNodeByName('List', l) DETACH DELETE l", {
 					listId: list.id
 				});
 			}).then(() => {});

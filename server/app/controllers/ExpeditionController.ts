@@ -218,19 +218,19 @@ export module ExpeditionController {
 	
 	export function removeExpeditions(transaction: Transaction, rudel: Rudel, user: User = null): Promise<void> {
 		// Delete all expeditions of an user within an rudel.
-		if(user) return transaction.run(`MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId}) OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment) DETACH DELETE e, c`, {
+		if(user) return transaction.run(`MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId}) OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e, c`, {
 			rudelId: rudel.id,
 			userId: user.id
 		}).then(() => {});
 		
 		// Delete all expeditions of an rudel.
-		return transaction.run(`MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition) OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment) DETACH DELETE e, c`, {
+		return transaction.run(`MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition) OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e, c`, {
 			rudelId: rudel.id
 		}).then(() => {});
 	}
 	
 	export function removeExpedition(transaction: Transaction, expedition: Expedition): Promise<void> {
-		return transaction.run(`MATCH(e:Expedition {id: $expeditionId}) OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment) DETACH DELETE e, c`, {
+		return transaction.run(`MATCH(e:Expedition {id: $expeditionId}) OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e, c`, {
 			expeditionId: expedition.id
 		}).then(() => {});
 	}

@@ -218,7 +218,7 @@ export class DatabaseManager {
 			Object.keys(collection.fulltext || {}).forEach((key: string) => {
 				let properties: any = {};
 				properties[collection.name] = collection.fulltext[key];
-				promises.push(session.run(`CALL apoc.index.addAllNodes($indexName, $indexProperties, { autoUpdate: true })`, {
+				promises.push(session.run(`CALL apoc.index.addAllNodesExtended($indexName, $indexProperties, { autoUpdate: true })`, {
 					indexName: key,
 					indexProperties: properties
 				}));
