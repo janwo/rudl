@@ -125,7 +125,6 @@ export module CommentController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
 				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
-				if (!expedition.needsApproval) return Promise.resolve(expedition);
 				
 				return ExpeditionController.isAttendee(transaction, expedition, request.auth.credentials).then((isAttendee: boolean) => {
 					if (!isAttendee) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
@@ -210,7 +209,6 @@ export module CommentController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
 				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
-				if (!expedition.needsApproval) return Promise.resolve(expedition);
 				
 				return ExpeditionController.isAttendee(transaction, expedition, request.auth.credentials).then((isAttendee: boolean) => {
 					if (!isAttendee) return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));

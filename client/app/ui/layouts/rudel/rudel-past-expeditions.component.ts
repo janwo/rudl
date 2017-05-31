@@ -35,7 +35,7 @@ export class RudelPastExpeditionsComponent implements OnInit, OnDestroy {
 			});
 		}).subscribe((expeditions: Expedition[]) => {
 			if (expeditions.length < 25) this.expeditionsSubscription.unsubscribe();
-			this.expeditions = this.expeditions ? this.expeditions.concat(expeditions) : this.expeditions;
+			this.expeditions = this.expeditions ? this.expeditions.concat(expeditions) : expeditions;
 		});
 	}
 	

@@ -168,15 +168,7 @@ export module ListController {
 	}
 	
 	export function follow(transaction: Transaction, list: List, user: User): Promise<void> {
-		// Set FOLLOWS_LIST.
-		transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) MERGE (u)-[:FOLLOWS_LIST {createdAt: $now}]->(l)", {
-			userId: user.id,
-			listId: list.id,
-			now: new Date().toISOString()
-		}).then(() => {});
-		
-		// Set OWNS_LIST optionally.
-		return transaction.run("MATCH(l:List {id: $listId}), (u:User {id: $userId}) OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, l, u WHERE count = 0 CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
+		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WITH u, l MERGE (u)-[:FOLLOWS_LIST {createdAt: $now}]->(l) WITH u, l OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, r, u WHERE count = 0 CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
 			userId: user.id,
 			listId: list.id,
 			now: new Date().toISOString()
@@ -184,15 +176,23 @@ export module ListController {
 	}
 	
 	export function unfollow(transaction: Transaction, list: List, user: User): Promise<void> {
-		transaction.run("MATCH(:User {id: $userId})-[flol:FOLLOWS_LIST:OWNS_LIST]->(:List {id: $listId}) DETACH DELETE flol", {
+		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) OPTIONAL MATCH (u)-[ol:OWNS_LIST]->(l) OPTIONAL MATCH (u)-[fl:FOLLOWS_LIST]->(l) DETACH DELETE fl, ol", {
 			userId: user.id,
 			listId: list.id
-		}).then(() => {});
-		
-		// Delete, if orphan node.
-		return transaction.run("MATCH(l:List {id: $listId}) OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, l WHERE count = 0 DETACH DELETE l", {
-			listId: list.id
-		}).then(() => {});
+		}).then(() => {
+			return this.followers(transaction, list, 0, 1).then((followers: User[]) => {
+				if(followers.length > 0) return transaction.run("MATCH(l:List {id: $listId}), (u:User {id: $newOwnerId}) CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
+					listId: list.id,
+					now: new Date().toISOString(),
+					newOwnerId: followers.pop().id
+				});
+				
+				// Delete list, because it's an orphan node.
+				return transaction.run("MATCH(l:List {id: $listId}) DETACH DELETE l", {
+					listId: list.id
+				});
+			}).then(() => {});
+		});
 	}
 	
 	export function getRudelMap(transaction: Transaction, rudel: Rudel, user: User, skip = 0, limit = 25): Promise<{

@@ -5,6 +5,6 @@
 </item-wrapper>
 
 <ng-template #loading>
-    <loading *ngIf="expeditions == null"></loading>
     <empty [emptyState]="emptyState" *ngIf="expeditions && expeditions.length == 0"></empty>
+    <loading *ngIf="expeditions == null"></loading>
 </ng-template>

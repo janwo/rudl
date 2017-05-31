@@ -40,14 +40,6 @@ export module RudelController {
 		}).then(() => {});
 	}
 	
-	export function remove(transaction: Transaction, rudel: Rudel): Promise<any> {
-		return ExpeditionController.removeExpeditions(transaction, rudel).then(() => {
-			return transaction.run("MATCH(r:Rudel {id: $rudelId}) DETACH DELETE r", {
-				rudelId: rudel.id
-			}).then(() => {});
-		});
-	}
-	
 	export function getPublicRudel(transaction: Transaction, rudel: Rudel | Rudel[], relatedUser: User): Promise<any | any[]> {
 		let createPublicRudel = (rudel: Rudel): Promise<any> => {
 			let rudelOwnerPromise = RudelController.getOwner(transaction, rudel);
@@ -163,15 +155,7 @@ export module RudelController {
 	}
 	
 	export function follow(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
-		// Set FOLLOWS_RUDEL.
-		transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) MERGE (u)-[:FOLLOWS_RUDEL {createdAt: $now}]->(r)", {
-			userId: user.id,
-			rudelId: rudel.id,
-			now: new Date().toISOString()
-		}).then(() => {});
-		
-		// Set OWNS_RUDEL optionally.
-		return transaction.run("MATCH(r:Rudel {id: $rudelId}), (u:User {id: $userId}) OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
+		return transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WITH u, r MERGE (u)-[:FOLLOWS_RUDEL {createdAt: $now}]->(r) WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
 			userId: user.id,
 			rudelId: rudel.id,
 			now: new Date().toISOString()
@@ -179,15 +163,31 @@ export module RudelController {
 	}
 	
 	export function unfollow(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
-		transaction.run("MATCH(:User {id: $userId})-[fror:FOLLOWS_RUDEL:OWNS_RUDEL]->(:Rudel {id: $rudelId}) DETACH DELETE fror", {
+		let deleteExpeditions = ExpeditionController.removeExpeditions(transaction, rudel, user);
+		let deleteRelationships = transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) OPTIONAL MATCH (u)-[or:OWNS_RUDEL]->(r) OPTIONAL MATCH (u)-[fr:FOLLOWS_RUDEL]->(r) DETACH DELETE fr, or", {
 			userId: user.id,
 			rudelId: rudel.id
-		}).then(() => {});
+		});
 		
-		// Delete, if orphan node.
-		return transaction.run("MATCH(l:Rudel {id: $rudelId}) OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r WHERE count = 0 DETACH DELETE r", {
-			rudelId: rudel.id
-		}).then(() => {});
+		return Promise.all([
+			deleteExpeditions,
+			deleteRelationships
+		]).then(() => {
+			return this.followers(transaction, rudel, 0, 1).then((followers: User[]) => {
+				if(followers.length > 0) return transaction.run("MATCH(r:Rudel {id: $rudelId}), (u:User {id: $newOwnerId}) CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
+					rudelId: rudel.id,
+					now: new Date().toISOString(),
+					newOwnerId: followers.pop().id
+				});
+				
+				// Delete rudel, because it's an orphan node.
+				return ExpeditionController.removeExpeditions(transaction, rudel).then(() => {
+					return transaction.run("MATCH(r:Rudel {id: $rudelId}) DETACH DELETE r", {
+						rudelId: rudel.id
+					});
+				});
+			}).then(() => {});
+		});
 	}
 	
 	export function followers(transaction: Transaction, rudel: Rudel, skip = 0, limit = 25): Promise<User[]> {
