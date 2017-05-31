@@ -6,7 +6,7 @@
   align-items: center;
   padding: map_get($base-padding, 'default');
 
-  .fa {
+  .material-icons {
     margin: 0 0.25rem;
     color: map_get($base-colors, 'secondary-text');
   }

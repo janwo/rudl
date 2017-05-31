@@ -78,6 +78,11 @@
   box-shadow: map_get($base-shadow, 'default');
 }
 
+/deep/ .material-icons {
+  font-size: inherit;
+  line-height: inherit;
+}
+
 // App component.
 :host {
   display: flex;

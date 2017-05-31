@@ -24,6 +24,18 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
+		path: '/api/account/delete-avatar',
+		method: 'POST',
+		handler: AccountController.RouteHandlers.deleteAvatar,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			}
+		}
+	},
+	{
 		path: '/api/account/location',
 		method: 'POST',
 		handler: AccountController.RouteHandlers.updateLocation,

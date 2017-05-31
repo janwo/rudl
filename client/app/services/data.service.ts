@@ -75,7 +75,7 @@ export class DataService {
 		return this.http.post(DataService.domain + url, body, requestOptions).map(this.preHandler).catch(err => this.errorHandler(err));
 	}
 	
-	public put(url: string, body: string, useAuthentication: boolean = false): Observable<JsonResponse> {
+	put(url: string, body: string, useAuthentication: boolean = false): Observable<JsonResponse> {
 		let requestOptions: RequestOptionsArgs = {};
 		if (useAuthentication) {
 			if (!this.getToken()) Observable.throw('Cannot use authentication without having a token set.');
@@ -84,13 +84,26 @@ export class DataService {
 		return this.http.put(DataService.domain + url, body, requestOptions).map(this.preHandler).catch(err => this.errorHandler(err));
 	}
 	
-	public delete(url: string, useAuthentication: boolean = false): Observable<JsonResponse> {
+	delete(url: string, useAuthentication: boolean = false): Observable<JsonResponse> {
 		let requestOptions: RequestOptionsArgs = {};
 		if (useAuthentication) {
 			if (!this.getToken()) Observable.throw('Cannot use authentication without having a token set.');
 			requestOptions.headers = this.createAuthorizationHeader(this.getToken());
 		}
 		return this.http.delete(DataService.domain + url, requestOptions).map(this.preHandler).catch(err => this.errorHandler(err));
+	}
+	
+	multipart(url: string, file: File, useAuthentication: boolean = false ): Observable<JsonResponse> {
+		let requestOptions: RequestOptionsArgs = {};
+		
+		if (useAuthentication) {
+			if (!this.getToken()) Observable.throw('Cannot use authentication without having a token set.');
+			requestOptions.headers = this.createAuthorizationHeader(this.getToken());
+		}
+		
+		let body = new FormData();
+		body.append('file', file, file.name);
+		return this.http.post(url, body, requestOptions).map(this.preHandler).catch(err => this.errorHandler(err));
 	}
 	
 	private createAuthorizationHeader(token: string): Headers {

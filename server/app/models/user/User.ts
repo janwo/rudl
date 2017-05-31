@@ -10,6 +10,7 @@ export const UserValidation = {
 	username: Joi.string().min(5).max(16).trim().regex(/^[a-z0-9_]*$/).required(),
 	mail: Joi.string().email().trim().required(),
 	password: Joi.string().min(6).max(32).required(),
+	profileText: Joi.string().max(60).optional(),
 	firstName: Joi.string().min(1).trim().max(24).required(),
 	lastName: Joi.string().min(1).trim().max(24).required()
 };
@@ -19,7 +20,7 @@ export interface User extends Node {
 	lastName: string;
 	username: string;
 	profileText: string;
-	hasAvatar: boolean;
+	avatarId: string;
 	onBoard: boolean;
 	id: string;
 	scope: Array<string>;

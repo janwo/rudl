@@ -3,7 +3,7 @@
     <div class="about">
         <h1>{{user.firstName + ' ' + user.lastName}}</h1>
         <span class="username">{{user.username}}</span>
-        <span class="description">{{user.profileText || 'This is ' + user.firstName + '!'}}</span>
+        <span class="description">{{user.profileText}}</span>
     </div>
     <div class="statistics">
         <statistics [statistics]="[
