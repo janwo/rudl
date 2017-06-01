@@ -111,7 +111,7 @@ export module AccountController {
 				targetSize = 'large';
 				break;
 		}
-		return Path.resolve(Config.paths.avatars.dir, `${user.id}-${targetSize}-${salt ? salt : user.avatarId}`);
+		return Path.resolve(Config.paths.avatars.dir, `${user.id}-${targetSize}-${salt ? salt : user.avatarId}.png`);
 	}
 	
 	export function getAvatarLink(user: User, size: AvatarSizes = AvatarSizes.small, salt: string = null): string {
@@ -124,7 +124,7 @@ export module AccountController {
 				targetSize = 'large';
 				break;
 		}
-		return `${Config.backend.domain + Config.paths.avatars.publicPath + user.id}-${targetSize}-${salt ? salt : user.avatarId}`;
+		return `${Config.backend.domain + Config.paths.avatars.publicPath + user.id}-${targetSize}-${salt ? salt : user.avatarId}.png`;
 	}
 	
 	export namespace RouteHandlers {
