@@ -21,7 +21,7 @@
 <div class="content avatar-content">
     <user-avatar [user]="user"></user-avatar>
     <input #uploadAvatar type="file" class="hide" accept="image/*" (change)="onChangedAvatar($event.target)">
-    <styled-button [style]="avatarButtonStyle" [text]="'Profilbild setzen'" (click)="uploadAvatar.click()"></styled-button>
-    <styled-button [style]="avatarButtonStyle" *ngIf="user.hasAvatar" (click)="onDeleteAvatar()" [text]="'Profilbild löschen'"></styled-button>
+    <styled-button [disabled]="pendingAvatarUpload" [style]="avatarButtonStyle" [text]="'Profilbild setzen'" (click)="uploadAvatar.click()"></styled-button>
+    <styled-button [disabled]="pendingAvatarUpload" [style]="avatarButtonStyle" *ngIf="user.hasAvatar" (click)="onDeleteAvatar()" [text]="'Profilbild löschen'"></styled-button>
 </div>
 

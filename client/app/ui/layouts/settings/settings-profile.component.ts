@@ -37,9 +37,6 @@ export class SettingsProfileComponent implements OnInit, OnDestroy {
 		});
 	}
 	
-	ngOnDestroy(): void {
-	}
-	
 	ngOnInit() {
 		this.authenticatedUserSubscription = this.userService.getAuthenticatedUserObservable().subscribe((userStatus: UserStatus) => {
 			this.user = userStatus.user;
@@ -66,6 +63,10 @@ export class SettingsProfileComponent implements OnInit, OnDestroy {
 				]
 			]
 		});
+	}
+	
+	ngOnDestroy(): void {
+		this.authenticatedUserSubscription.unsubscribe();
 	}
 	
 	formControlCount(value: string, maxChars: number = 0): (value: string) => {} {
