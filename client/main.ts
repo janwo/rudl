@@ -3,5 +3,4 @@ import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {AppModule} from './app/app.module';
 
 if (process.env.ENV === 'secure' || process.env.ENV === 'production') enableProdMode();
-
 platformBrowserDynamic().bootstrapModule(AppModule);

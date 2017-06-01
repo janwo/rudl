@@ -6,19 +6,16 @@
   @include setup-max-width();
   padding: map_get($base-padding, 'default');
 
-  .tab-content {
-    border-radius: 0 $base-border-radius $base-border-radius $base-border-radius;
-    box-shadow: map_get($base-shadow, 'default');
-    background-color: map_get($base-colors, 'background-highlighted');
-    padding: map_get($base-padding, 'default');
+  section {
+    padding-top: 0;
 
-    & > div {
-      & > expander {
-        border-bottom: 0.1rem solid map_get($base-colors, 'secondary-text');
+    menu {
+      padding-top: map_get($base-padding, 'smaller');
+      padding-bottom: map_get($base-padding, 'smaller');
+      margin-bottom: map_get($base-padding, 'small');
 
-        &:last-child {
-          border-bottom: none;
-        }
+      .coming-soon {
+        opacity: 0.25;
       }
     }
   }

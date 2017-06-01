@@ -174,7 +174,7 @@ export module RudelController {
 			deleteRelationships
 		]).then(() => {
 			return this.followers(transaction, rudel, 0, 1).then((followers: User[]) => {
-				if(followers.length > 0) return transaction.run("MATCH(r:Rudel {id: $rudelId}), (u:User {id: $newOwnerId}) CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
+				if(followers.length > 0) return transaction.run("MATCH(r:Rudel {id: $rudelId}), (u:User {id: $newOwnerId}) WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
 					rudelId: rudel.id,
 					now: new Date().toISOString(),
 					newOwnerId: followers.pop().id
@@ -182,7 +182,7 @@ export module RudelController {
 				
 				// Delete rudel, because it's an orphan node.
 				return ExpeditionController.removeExpeditions(transaction, rudel).then(() => {
-					return transaction.run("MATCH(r:Rudel {id: $rudelId}) DETACH DELETE r", {
+					return transaction.run("MATCH(r:Rudel {id: $rudelId}) CALL apoc.index.removeNodeByName('Rudel', r) DETACH DELETE r ", {
 						rudelId: rudel.id
 					});
 				});

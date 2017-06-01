@@ -131,6 +131,6 @@ export class TranslationListComponent implements OnInit {
 	}
 	
 	formControlCount(value: string, maxChars: number = 0): (value: string) => {} {
-		return (value: string) => `${value.length} of ${maxChars} characters used`;
+		return (value: string) => `${value ? value.length : 0} of ${maxChars} characters used`;
 	}
 }

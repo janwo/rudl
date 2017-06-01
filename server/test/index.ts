@@ -35,7 +35,7 @@ function generateUser(): User {
 			lat: Number.parseFloat(faker.address.latitude()),
 			lng: Number.parseFloat(faker.address.longitude())
 		},
-		hasAvatar: false,
+		avatarId: null,
 		profileText: faker.lorem.sentences(2),
 		onBoard: true,
 		password: AuthController.hashPassword(faker.internet.password()),

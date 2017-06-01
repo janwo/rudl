@@ -4,6 +4,7 @@ import Transaction from 'neo4j-driver/lib/v1/transaction';
 import {Config} from '../../../run/config';
 import {User} from '../models/user/User';
 import {DatabaseManager, TransactionSession} from '../Database';
+import {AccountController} from './AccountController';
 
 export module UserController {
 	
@@ -96,11 +97,11 @@ export module UserController {
 				};
 				
 				// Define avatar links?
-				if (user.hasAvatar) {
+				if (user.avatarId) {
 					links['avatars'] = {
-						small: `${Config.backend.domain + Config.paths.avatars.publicPath + user.id}-small`,
-						medium: `${Config.backend.domain + Config.paths.avatars.publicPath + user.id}-medium`,
-						large: `${Config.backend.domain + Config.paths.avatars.publicPath + user.id}-large`
+						small: AccountController.getAvatarLink(user, AccountController.AvatarSizes.small),
+						medium: AccountController.getAvatarLink(user, AccountController.AvatarSizes.medium),
+						large: AccountController.getAvatarLink(user, AccountController.AvatarSizes.large),
 					};
 				}
 				
@@ -109,7 +110,7 @@ export module UserController {
 					'user.username': 'username',
 					'user.firstName': 'firstName',
 					'user.lastName': 'lastName',
-					'user.hasAvatar': 'hasAvatar',
+					'hasAvatar': 'hasAvatar',
 					'user.profileText': 'profileText',
 					'user.onBoard': 'onBoard',
 					'user.languages': 'languages',
@@ -133,6 +134,7 @@ export module UserController {
 				
 				return dot.transform(transformationRecipe, {
 					user: user,
+					hasAvatar: !!user.avatarId,
 					statistics: results[0],
 					links: links
 				}) as any;

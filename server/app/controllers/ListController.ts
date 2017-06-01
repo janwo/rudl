@@ -168,7 +168,7 @@ export module ListController {
 	}
 	
 	export function follow(transaction: Transaction, list: List, user: User): Promise<void> {
-		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WITH u, l MERGE (u)-[:FOLLOWS_LIST {createdAt: $now}]->(l) WITH u, l OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, r, u WHERE count = 0 CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
+		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WITH u, l MERGE (u)-[:FOLLOWS_LIST {createdAt: $now}]->(l) WITH u, l OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, l, u WHERE count = 0 CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
 			userId: user.id,
 			listId: list.id,
 			now: new Date().toISOString()
@@ -188,7 +188,7 @@ export module ListController {
 				});
 				
 				// Delete list, because it's an orphan node.
-				return transaction.run("MATCH(l:List {id: $listId}) DETACH DELETE l", {
+				return transaction.run("MATCH(l:List {id: $listId}) CALL apoc.index.removeNodeByName('List', l) DETACH DELETE l", {
 					listId: list.id
 				});
 			}).then(() => {});

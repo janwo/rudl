@@ -7,6 +7,8 @@ import {UserController} from './UserController';
 import * as sharp from 'sharp';
 import Transaction from 'neo4j-driver/lib/v1/transaction';
 import {AuthController} from './AuthController';
+import * as shortid from 'shortid';
+import * as fs from 'fs';
 
 export module AccountController {
 	
@@ -44,7 +46,7 @@ export module AccountController {
 					'de',
 					'en'
 				],
-				hasAvatar: false,
+				avatarId: null,
 				profileText: null,
 				onBoard: false,
 				mails: {
@@ -95,7 +97,76 @@ export module AccountController {
 		}).then(() => {});
 	}
 	
+	export enum AvatarSizes {
+		small, medium, large
+	}
+	
+	export function getAvatarPath(user: User, size: AvatarSizes, salt: string = null): string {
+		let targetSize = 'small';
+		switch(size) {
+			case AvatarSizes.medium:
+				targetSize = 'medium';
+				break;
+			case AvatarSizes.large:
+				targetSize = 'large';
+				break;
+		}
+		return Path.resolve(Config.paths.avatars.dir, `${user.id}-${targetSize}-${salt ? salt : user.avatarId}`);
+	}
+	
+	export function getAvatarLink(user: User, size: AvatarSizes = AvatarSizes.small, salt: string = null): string {
+		let targetSize = 'small';
+		switch(size) {
+			case AvatarSizes.medium:
+				targetSize = 'medium';
+				break;
+			case AvatarSizes.large:
+				targetSize = 'large';
+				break;
+		}
+		return `${Config.backend.domain + Config.paths.avatars.publicPath + user.id}-${targetSize}-${salt ? salt : user.avatarId}`;
+	}
+	
 	export namespace RouteHandlers {
+		/**
+		 * Handles [POST] /api/account/delete-avatar
+		 * @param request Request-Object
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function deleteAvatar(request: any, reply: any): void {
+			let user: User = request.auth.credentials;
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise = new Promise(resolve => {
+				// Has no avatar? Done!
+				if(!user.avatarId) return resolve();
+				
+				let unlinkOldAvatars = [
+					AvatarSizes.small,
+					AvatarSizes.medium,
+					AvatarSizes.large
+				].map(size => new Promise((resolve, reject) => {
+					let path = AccountController.getAvatarPath(user, size);
+					fs.exists(path, exists => {
+						if(!exists) resolve();
+						fs.unlink(path, err => {
+							if(err) reject(err);
+							resolve();
+						});
+					});
+				}));
+				let promise = Promise.all(unlinkOldAvatars).then(() => {
+					user.avatarId = null;
+					return AccountController.save(transaction, user).then(() => {
+						return UserController.getPublicUser(transaction, user, user);
+					});
+				});
+				resolve(promise);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
 		
 		/**
 		 * Handles [POST] /api/account/avatar
@@ -109,35 +180,58 @@ export module AccountController {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise = new Promise((resolve, reject) => {
-				if (!request.payload.filename) {
+				if (!request.payload.file) {
 					reject(Boom.badData('Missing file payload.'));
 					return;
 				}
 				
 				// Create sharp instance.
 				let transformer = sharp().png();
-				request.payload.filename.pipe(transformer);
+				request.payload.file.pipe(transformer);
 				
 				// Make paths retrievable.
-				let getAvatarPath = (size: string) => Path.resolve(Config.paths.avatars.dir, `${user._key}-${size}`);
-				
-				// Set transformation streams.
-				let transformations = [
-					transformer.clone().resize(100, 100).max().crop(sharp.strategy.entropy).toFile(getAvatarPath('small')),
-					transformer.clone().resize(450, 450).max().crop(sharp.strategy.entropy).toFile(getAvatarPath('medium')),
-					transformer.clone().resize(800, 800).max().crop(sharp.strategy.entropy).toFile(getAvatarPath('large'))
+				let newSalt = shortid.generate();
+				let oldSalt = user.avatarId;
+				let sizes = [
+					{
+						name: AvatarSizes.small,
+						size: 100
+					},
+					{
+						name: AvatarSizes.medium,
+						size: 450
+					},
+					{
+						name: AvatarSizes.large,
+						size: 800
+					}
 				];
 				
+				// Set transformation streams.
+				let createNewAvatars = sizes.map(size => {
+					return transformer.clone().resize(size.size, size.size).max().crop(sharp.strategy.entropy).toFile(AccountController.getAvatarPath(user, size.name, newSalt))
+				});
+				
 				// Execute transformations, update and return user profile.
-				let promise = Promise.all(transformations).then(() => {
-					user.meta.hasAvatar = true;
-					return AccountController.save(transaction, user).then(() => {
-						return UserController.getPublicUser(transaction, user, user);
+				let promise = Promise.all(createNewAvatars).then(() => {
+					let unlinkOldAvatars = oldSalt ? sizes.map(size => {
+						return new Promise((resolve, reject) => {
+							let path = AccountController.getAvatarPath(user, size.name, oldSalt);
+							fs.exists(path, exists => {
+								if(!exists) resolve();
+								fs.unlink(path, err => {
+									if(err) reject(err);
+									resolve();
+								});
+							});
+						});
+					}) : [];
+					return Promise.all(unlinkOldAvatars).then(() => {
+						user.avatarId = newSalt;
+						return AccountController.save(transaction, user).then(() => {
+							return UserController.getPublicUser(transaction, user, user);
+						});
 					});
-				}).catch((err: any) => {
-					// Log + forward error.
-					request.log(err);
-					return Promise.reject(Boom.badImplementation('An server error occurred! Please try again.'));
 				});
 				
 				resolve(promise);

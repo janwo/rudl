@@ -94,6 +94,7 @@ import {LegalFooterComponent} from './ui/widgets/legal-footer/legal-footer.compo
 import {CommentItemComponent} from './ui/widgets/comment/comment-item.component';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {ScrollService} from './services/scroll.service';
+import {SettingsProfileComponent} from './ui/layouts/settings/settings-profile.component';
 
 @NgModule({
 	declarations: [
@@ -117,6 +118,7 @@ import {ScrollService} from './services/scroll.service';
 		MenuComponent,
 		EmojiPickerComponent,
 		MenuItemComponent,
+		SettingsProfileComponent,
 		EmojiComponent,
 		ExpeditionComponent,
 		LandingComponent,

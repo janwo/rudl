@@ -40,7 +40,7 @@ export module TestController {
 				lat: Number.parseFloat(faker.address.latitude()),
 				lng: Number.parseFloat(faker.address.longitude())
 			},
-			hasAvatar: false,
+			avatarId: null,
 			onBoard: true,
 			profileText: faker.lorem.sentences(2),
 			password: AuthController.hashPassword(faker.internet.password()),

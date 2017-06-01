@@ -167,4 +167,12 @@ export class UserService {
 	suggestedPeople(offset = 0, limit = 25): Observable<User[]> {
 		return this.dataService.get(`/api/suggestions/people?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
 	}
+	
+	updateAvatar(file: File): Observable<User> {
+		let promise = file == null ? this.dataService.post(`/api/account/delete-avatar`, null, true) : this.dataService.multipart(`/api/account/avatar`, file, true);
+		return promise.map((json: JsonResponse) => json.data).do(user => this.authenticatedProfile.next({
+			loggedIn: !!user,
+			user: user
+		})).share();
+	}
 }

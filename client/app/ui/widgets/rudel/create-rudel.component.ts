@@ -8,6 +8,7 @@ import {TranslationListComponent} from '../translation/translation-list.componen
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import Language = Locale.Language;
 import Translations = Locale.Translations;
+import {CarouselComponent} from '../wrapper/carousel.component';
 
 @Component({
 	templateUrl: 'create-rudel.component.html',
@@ -19,6 +20,7 @@ export class CreateRudelComponent implements OnInit {
 	@Input() defaultName: string;
 	@Output() onCanceled: EventEmitter<any> = new EventEmitter();
 	@ViewChild(TranslationListComponent) translationList: TranslationListComponent;
+	@ViewChild(CarouselComponent) carousel: CarouselComponent;
 	form: FormGroup;
 	@Input() rudel: Rudel;
 	
@@ -54,7 +56,11 @@ export class CreateRudelComponent implements OnInit {
 	submit() {
 		this.translationList.markAsTouched();
 		this.form.controls.icon.markAsTouched();
-		if (!this.form.valid) return;
+		if (!this.form.valid) {
+			if(!this.form.controls.translations.valid) this.carousel.go(0);
+			else if(!this.form.controls.icon.valid) this.carousel.go(1);
+			return;
+		}
 		
 		// Mark as pending.
 		this.submitPending = true;

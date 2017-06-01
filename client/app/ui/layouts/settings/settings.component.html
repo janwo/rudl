@@ -1,8 +1,9 @@
-<h1>Einstellungen</h1>
-<menu></menu>
-<section class="tab-content">
-    <expander [title]="'E-Mail Adresse ändern'"></expander>
-    <expander [title]="'E-Mail Adresse ändern'"></expander>
-    <expander [title]="'E-Mail Adresse ändern'"></expander>
-    <expander [title]="'Passwort ändern'"></expander>
+<h1 i18n>Einstellungen</h1>
+<section class="card">
+    <menu>
+        <menu-item [makeRoomIfSmall]="true" [icon]="'person_outline'" [title]="'Profil'" [link]="['profile']"></menu-item>
+        <menu-item [makeRoomIfSmall]="true" [icon]="'hourglass_empty'" [title]="'Coming soon'" class="coming-soon"></menu-item>
+        <menu-item [makeRoomIfSmall]="true" [icon]="'hourglass_empty'" [title]="'Coming Soon'" class="coming-soon"></menu-item>
+    </menu>
+    <router-outlet></router-outlet>
 </section>

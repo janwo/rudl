@@ -34,6 +34,7 @@ import {ExpeditionMapComponent} from './ui/layouts/expedition/expedition-map.com
 import {ExpeditionAttendeesComponent} from './ui/layouts/expedition/expedition-attendees.component';
 import {ExpeditionCommentsComponent} from './ui/layouts/expedition/expedition-comments.component';
 import {RudelPastExpeditionsComponent} from './ui/layouts/rudel/rudel-past-expeditions.component';
+import {SettingsProfileComponent} from './ui/layouts/settings/settings-profile.component';
 
 const appRoutes: Routes = [
 	{
@@ -171,7 +172,11 @@ const appRoutes: Routes = [
 			
 			// No boarding required.
 			{path: 'boarding', component: BoardingComponent},
-			{path: 'settings', component: SettingsComponent},
+			{path: 'settings', component: SettingsComponent, children: [
+				{path: '', redirectTo: 'profile', pathMatch: 'full'},
+				{path: 'profile', component: SettingsProfileComponent}
+			]
+			},
 			{
 				path: '404', component: NotFoundComponent, data: {
 				title: 'Oops, nothing here!',
