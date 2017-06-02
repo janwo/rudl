@@ -133,6 +133,33 @@ export module AccountController {
 	}
 	
 	export namespace RouteHandlers {
+		
+		/**
+		 * Handles [POST] /api/account/update
+		 * @param request Request-Object
+		 * @param request.payload.profileText profileText
+		 * @param request.payload.firstName firstName
+		 * @param request.payload.lastName lastName
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function update(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			
+			// Update user.
+			if (request.payload.profileText) request.auth.credentials.profileText = request.payload.profileText;
+			if (request.payload.firstName) request.auth.credentials.firstName = request.payload.firstName;
+			if (request.payload.lastName) request.auth.credentials.lastName = request.payload.lastName;
+			
+			let promise = AccountController.save(transaction, request.auth.credentials).then(() => {
+				return UserController.getPublicUser(transaction, request.auth.credentials, request.auth.credentials);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
 		/**
 		 * Handles [POST] /api/account/delete-avatar
 		 * @param request Request-Object

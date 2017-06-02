@@ -37,3 +37,12 @@ export interface UserStatistics {
 	lists: number;
 	rudel: number;
 }
+
+export interface UserRecipe {
+	username?: string;
+	mail?: string;
+	password?: string;
+	profileText?: string;
+	firstName?: string;
+	lastName?: string;
+};

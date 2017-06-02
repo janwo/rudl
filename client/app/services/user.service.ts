@@ -2,7 +2,7 @@ import {DataService, JsonResponse} from './data.service';
 import {Router} from '@angular/router';
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
-import {User} from '../models/user';
+import {User, UserRecipe} from '../models/user';
 import {Location} from '../models/location';
 
 export interface UserStatus {
@@ -174,5 +174,12 @@ export class UserService {
 			loggedIn: !!user,
 			user: user
 		})).share();
+	}
+	
+	update(recipe: UserRecipe): Observable<User> {
+		return this.dataService.post(`/api/account/update`, JSON.stringify(recipe), true).map((json: JsonResponse) => json.data as User).do(user => this.authenticatedProfile.next({
+			loggedIn: !!user,
+			user: user
+		})).share();;
 	}
 }

@@ -3,8 +3,28 @@ import {RoutesConfiguration} from '../binders/RoutesBinder';
 import {Config} from '../../../run/config';
 import {AccountController} from '../controllers/AccountController';
 import * as Joi from 'joi';
+import {UserController} from '../controllers/UserController';
 
 export const RoutesConfig: RoutesConfiguration = [
+	{
+		path: '/api/account/update',
+		method: 'POST',
+		handler: AccountController.RouteHandlers.update,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				payload: {
+					profileText: UserValidation.profileText.optional(),
+					firstName: UserValidation.firstName.optional(),
+					lastName: UserValidation.lastName.optional()
+				}
+			}
+		}
+	},
 	{
 		path: '/api/account/avatar',
 		method: 'POST',
