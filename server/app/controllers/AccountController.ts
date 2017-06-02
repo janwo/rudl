@@ -98,36 +98,68 @@ export module AccountController {
 	}
 	
 	export enum AvatarSizes {
-		small, medium, large
+		small = 100, medium = 400, large = 700
 	}
 	
-	export function getAvatarPath(user: User, size: AvatarSizes, salt: string = null): string {
-		let targetSize = 'small';
-		switch(size) {
-			case AvatarSizes.medium:
-				targetSize = 'medium';
-				break;
-			case AvatarSizes.large:
-				targetSize = 'large';
-				break;
-		}
-		return Path.resolve(Config.paths.avatars.dir, `${user.id}-${targetSize}-${salt ? salt : user.avatarId}.png`);
+	export function getAvatarPath(user: User, size: AvatarSizes = AvatarSizes.small, salt: string = null): string {
+		return Path.resolve(Config.paths.avatars.dir, `${user.id}-${AvatarSizes[size]}-${salt ? salt : user.avatarId}.png`);
 	}
 	
 	export function getAvatarLink(user: User, size: AvatarSizes = AvatarSizes.small, salt: string = null): string {
-		let targetSize = 'small';
-		switch(size) {
-			case AvatarSizes.medium:
-				targetSize = 'medium';
-				break;
-			case AvatarSizes.large:
-				targetSize = 'large';
-				break;
-		}
-		return `${Config.backend.domain + Config.paths.avatars.publicPath + user.id}-${targetSize}-${salt ? salt : user.avatarId}.png`;
+		return `${Config.backend.domain + Config.paths.avatars.publicPath + user.id}-${AvatarSizes[size]}-${salt ? salt : user.avatarId}.png`;
+	}
+	
+	export function deleteAvatar(user: User): Promise<User> {
+		let unlinkOldAvatars = user.avatarId ? [
+			AvatarSizes.small,
+			AvatarSizes.medium,
+			AvatarSizes.large
+		].map((size: AvatarSizes) => {
+			return new Promise((resolve, reject) => {
+				let path = AccountController.getAvatarPath(user, size, user.avatarId);
+				fs.exists(path, exists => {
+					if(!exists) resolve();
+					fs.unlink(path, err => {
+						if(err) reject(err);
+						resolve();
+					});
+				});
+			});
+		}) : [];
+		return Promise.all(unlinkOldAvatars).then(() => {
+			user.avatarId = null;
+			return user;
+		});
 	}
 	
 	export namespace RouteHandlers {
+		
+		/**
+		 * Handles [POST] /api/account/update
+		 * @param request Request-Object
+		 * @param request.payload.profileText profileText
+		 * @param request.payload.firstName firstName
+		 * @param request.payload.lastName lastName
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function update(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			
+			// Update user.
+			if (request.payload.profileText) request.auth.credentials.profileText = request.payload.profileText;
+			if (request.payload.firstName) request.auth.credentials.firstName = request.payload.firstName;
+			if (request.payload.lastName) request.auth.credentials.lastName = request.payload.lastName;
+			
+			let promise = AccountController.save(transaction, request.auth.credentials).then(() => {
+				return UserController.getPublicUser(transaction, request.auth.credentials, request.auth.credentials);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
 		/**
 		 * Handles [POST] /api/account/delete-avatar
 		 * @param request Request-Object
@@ -141,23 +173,7 @@ export module AccountController {
 			let promise = new Promise(resolve => {
 				// Has no avatar? Done!
 				if(!user.avatarId) return resolve();
-				
-				let unlinkOldAvatars = [
-					AvatarSizes.small,
-					AvatarSizes.medium,
-					AvatarSizes.large
-				].map(size => new Promise((resolve, reject) => {
-					let path = AccountController.getAvatarPath(user, size);
-					fs.exists(path, exists => {
-						if(!exists) resolve();
-						fs.unlink(path, err => {
-							if(err) reject(err);
-							resolve();
-						});
-					});
-				}));
-				let promise = Promise.all(unlinkOldAvatars).then(() => {
-					user.avatarId = null;
+				let promise = AccountController.deleteAvatar(user).then((user: User) => {
 					return AccountController.save(transaction, user).then(() => {
 						return UserController.getPublicUser(transaction, user, user);
 					});
@@ -179,63 +195,32 @@ export module AccountController {
 			let user = request.auth.credentials;
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise = new Promise((resolve, reject) => {
-				if (!request.payload.file) {
-					reject(Boom.badData('Missing file payload.'));
-					return;
-				}
-				
-				// Create sharp instance.
-				let transformer = sharp().png();
-				request.payload.file.pipe(transformer);
-				
-				// Make paths retrievable.
-				let newSalt = shortid.generate();
-				let oldSalt = user.avatarId;
-				let sizes = [
-					{
-						name: AvatarSizes.small,
-						size: 100
-					},
-					{
-						name: AvatarSizes.medium,
-						size: 450
-					},
-					{
-						name: AvatarSizes.large,
-						size: 800
-					}
-				];
-				
-				// Set transformation streams.
-				let createNewAvatars = sizes.map(size => {
-					return transformer.clone().resize(size.size, size.size).max().crop(sharp.strategy.entropy).toFile(AccountController.getAvatarPath(user, size.name, newSalt))
-				});
-				
-				// Execute transformations, update and return user profile.
-				let promise = Promise.all(createNewAvatars).then(() => {
-					let unlinkOldAvatars = oldSalt ? sizes.map(size => {
-						return new Promise((resolve, reject) => {
-							let path = AccountController.getAvatarPath(user, size.name, oldSalt);
-							fs.exists(path, exists => {
-								if(!exists) resolve();
-								fs.unlink(path, err => {
-									if(err) reject(err);
-									resolve();
-								});
-							});
-						});
-					}) : [];
-					return Promise.all(unlinkOldAvatars).then(() => {
-						user.avatarId = newSalt;
-						return AccountController.save(transaction, user).then(() => {
-							return UserController.getPublicUser(transaction, user, user);
-						});
+			// Create sharp instance.
+			let transformer = sharp().png();
+			request.payload.file.pipe(transformer);
+			
+			// Make paths retrievable.
+			let newSalt = shortid.generate();
+			let sizes = [
+				AvatarSizes.small,
+				AvatarSizes.medium,
+				AvatarSizes.large
+			];
+			
+			// Set transformation streams.
+			let createNewAvatars = sizes.map((size: AvatarSizes) => {
+				return transformer.clone().resize(size, size).max().crop(sharp.strategy.entropy).toFile(AccountController.getAvatarPath(user, size, newSalt))
+			});
+			
+			// Execute transformations, update and return user profile.
+			let promise = Promise.all(createNewAvatars).then(() => {
+				return AccountController.deleteAvatar(user).then((user: User) => {
+					user.avatarId = newSalt;
+					return AccountController.save(transaction, user).then(() => {
+						return UserController.getPublicUser(transaction, user, user);
 					});
 				});
-				
-				resolve(promise);
-			});
+			}, (err) => Promise.reject(err));
 			
 			reply.api(promise, transactionSession);
 		}
