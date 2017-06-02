@@ -122,7 +122,9 @@ export default {
 									ENV: JSON.stringify(Config.env),
 									DOMAIN: JSON.stringify(Config.backend.domain),
 									MESSAGE_TYPES: JSON.stringify(Config.frontend.messageTypes),
-									API_KEYS: JSON.stringify(Config.frontend.apiKeys)
+									API_KEYS: JSON.stringify(Config.frontend.apiKeys),
+									MAX_UPLOAD_BYTES: JSON.stringify(Config.backend.maxUploadBytes),
+									UPLOAD_MIME_TYPES: JSON.stringify(Config.backend.uploadMimeTypes)
 								}
 							}),
 							new HtmlWebpackPlugin({
@@ -183,6 +185,12 @@ export default {
 		maxUploadBytes: {
 			avatars: 2097152
 		},
+		uploadMimeTypes: [
+			'image/png',
+			'image/jpeg',
+			'image/webp',
+			'image/gif'
+		],
 		log: {
 			serverLogs: {
 				console: {

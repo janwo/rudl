@@ -22,6 +22,12 @@ $settings-profile-component-avatar-size: 7.5rem;
         height: $settings-profile-component-avatar-size;
         margin-bottom: map_get($base-padding, 'default');
       }
+
+      .error {
+        color: map_get($base-colors, 'warning');
+        font-size: map_get($base-font-size, 'small');
+        margin-bottom: map_get($base-padding, 'small');
+      }
     }
   }
 }

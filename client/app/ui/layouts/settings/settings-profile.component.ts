@@ -1,5 +1,4 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
 import {UserService, UserStatus} from '../../../services/user.service';
 import {Form, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {User} from "../../../models/user";
@@ -15,19 +14,31 @@ export class SettingsProfileComponent implements OnInit, OnDestroy {
 	form: FormGroup;
 	user: User;
 	pendingAvatarUpload = false;
+	validAvatar = true;
 	avatarButtonStyle = ButtonStyles.filledInverseShadowed;
 	authenticatedUserSubscription: Subscription;
+	uploadMimeTypes = process.env.UPLOAD_MIME_TYPES;
+	maxUploadBytes = process.env.MAX_UPLOAD_BYTES;
 	
 	constructor(public userService: UserService,
 	            private fb: FormBuilder ) {}
 	
 	onChangedAvatar(input: HTMLInputElement): void {
-		if(input.files && input.files[0]) {
-			this.pendingAvatarUpload = true;
-			this.userService.updateAvatar(input.files[0]).subscribe(() => {
-				this.pendingAvatarUpload = false;
-			});
+		this.validAvatar = true;
+		this.pendingAvatarUpload = true;
+		
+		// Validate file.
+		let file = input.files ? input.files[0] : undefined;
+		if(!file || !this.uploadMimeTypes.some((mime: string) => mime == file.type.toLowerCase()) || file.size > this.maxUploadBytes.avatars) {
+			this.validAvatar = false;
+			this.pendingAvatarUpload = false;
+			return;
 		}
+		
+		// Upload.
+		this.userService.updateAvatar(input.files[0]).subscribe(() => {
+			this.pendingAvatarUpload = false;
+		});
 	}
 	
 	onDeleteAvatar(): void {

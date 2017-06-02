@@ -1846,6 +1846,10 @@ file-loader@^0.11.1:
   dependencies:
     loader-utils "^1.0.2"
 
+file-type@4.x.x:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/file-type/-/file-type-4.3.0.tgz#b26f0a35e03f6857848d18b8a27238448caa79a5"
+
 filename-regex@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/filename-regex/-/filename-regex-2.0.1.tgz#c1c4b9bee3e09725ddb106b75c1e301fe2f18b26"
@@ -2314,6 +2318,13 @@ heavy@4.x.x:
     hoek "4.x.x"
     joi "10.x.x"
 
+henning@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/henning/-/henning-2.0.5.tgz#ee6e1c786b9b592f629b16bd1cd50c046a297634"
+  dependencies:
+    supervizor "1.x.x"
+    thurston "2.x.x"
+
 hmac-drbg@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/hmac-drbg/-/hmac-drbg-1.0.1.tgz#d2745701025a6c775a6c545793ed502fc0c649a1"
@@ -2337,6 +2348,13 @@ homedir@^0.6.0:
 hosted-git-info@^2.1.4:
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/hosted-git-info/-/hosted-git-info-2.4.2.tgz#0076b9f46a270506ddbaaea56496897460612a67"
+
+houdin@2.x.x:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/houdin/-/houdin-2.0.8.tgz#d06dbab46af353bfec550a3719a837f402b3b1d9"
+  dependencies:
+    file-type "4.x.x"
+    hoek "4.x.x"
 
 hpack.js@^2.1.6:
   version "2.1.6"
@@ -4963,6 +4981,12 @@ subtext@^4.3.x:
     pez "2.x.x"
     wreck "10.x.x"
 
+supervizor@1.x.x:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/supervizor/-/supervizor-1.0.5.tgz#8efa208b2bf99e27633b137c28a49b94f27b2262"
+  dependencies:
+    boom "4.x.x"
+
 supports-color@3.1.2, supports-color@^3.1.0, supports-color@^3.1.1:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-3.1.2.tgz#72a262894d9d408b956ca05ff37b2ed8a6e2a2d5"
@@ -5034,6 +5058,13 @@ tar@^2.0.0, tar@^2.2.1:
 through@~2.3.4, through@~2.3.6:
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
+
+thurston@2.x.x:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/thurston/-/thurston-2.0.5.tgz#2d9117e714c0f45ab59a4fa7f9cef8a14f6f418f"
+  dependencies:
+    houdin "2.x.x"
+    items "2.x.x"
 
 timed-out@^4.0.0:
   version "4.0.1"

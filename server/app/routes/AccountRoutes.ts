@@ -16,6 +16,11 @@ export const RoutesConfig: RoutesConfiguration = [
 				parse: true,
 				allow: 'multipart/form-data'
 			},
+			validate: {
+				payload: {
+					file: Joi.required()
+				}
+			},
 			auth: {
 				scope: [
 					UserRoles.user

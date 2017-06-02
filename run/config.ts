@@ -91,6 +91,7 @@ export const Config: {
 			deleteIn: number
 		},
 		maxUploadBytes: { [key: string]: number },
+		uploadMimeTypes: string[],
 		log: {
 			serverLogs: {
 				console: {

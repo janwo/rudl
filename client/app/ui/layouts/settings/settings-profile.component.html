@@ -19,8 +19,9 @@
     </form>
 </div>
 <div class="content avatar-content">
-    <user-avatar [user]="user"></user-avatar>
-    <input #uploadAvatar type="file" class="hide" accept="image/*" (change)="onChangedAvatar($event.target)">
+    <user-avatar [user]="user" [loading]="pendingAvatarUpload"></user-avatar>
+    <input #uploadAvatar type="file" class="hide" max accept="{{uploadMimeTypes.join('|')}}" (change)="onChangedAvatar($event.target)">
+    <span *ngIf="!validAvatar" i18n class="error">File is not an image or exceeds the maximal file size.</span>
     <styled-button [disabled]="pendingAvatarUpload" [style]="avatarButtonStyle" [text]="'Profilbild setzen'" (click)="uploadAvatar.click()"></styled-button>
     <styled-button [disabled]="pendingAvatarUpload" [style]="avatarButtonStyle" *ngIf="user.hasAvatar" (click)="onDeleteAvatar()" [text]="'Profilbild löschen'"></styled-button>
 </div>
