@@ -17,7 +17,6 @@ $settings-profile-component-avatar-size: 7.5rem;
       flex-direction: column;
 
       user-avatar {
-        cursor: pointer;
         width: $settings-profile-component-avatar-size;
         height: $settings-profile-component-avatar-size;
         margin-bottom: map_get($base-padding, 'smaller');

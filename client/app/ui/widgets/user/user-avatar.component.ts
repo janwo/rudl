@@ -10,4 +10,5 @@ export class UserAvatarComponent {
 	
 	@HostBinding('class.loading') @Input() loading: boolean;
 	@Input() user: User;
+	@Input() size: 'small' | 'medium' | 'large' = 'small';
 }

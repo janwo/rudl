@@ -63,22 +63,8 @@ const appRoutes: Routes = [
 			{path: '', redirectTo: 'explore', pathMatch: 'full'},
 			{path: 'explore', component: ExploreComponent, canActivate: [BoardingGuard]},
 			
-			{path: 'people', component: PeopleComponent, pathMatch: 'full', canActivate: [BoardingGuard]},
+			{path: 'expeditions', component: PeopleComponent, pathMatch: 'full', canActivate: [BoardingGuard]},
 			
-			{
-				path: 'people/not-found', component: NotFoundComponent, data: {
-				title: 'Invalid username!',
-				image: require('../assets/boarding/radar.png'),
-				description: 'The requested user does not exist!'
-			}
-			},
-			{
-				path: 'people/deleted-message', component: NotFoundComponent, data: {
-				title: 'We deleted your account!',
-				image: require('../assets/boarding/radar.png'),
-				description: 'Hope you come back soon <3.'
-			}
-			},
 			{
 				path: 'people/:username', resolve: {
 				user: UserResolver
@@ -172,6 +158,7 @@ const appRoutes: Routes = [
 			
 			// No boarding required.
 			{path: 'boarding', component: BoardingComponent},
+			
 			{path: 'settings', component: SettingsComponent, children: [
 				{path: '', redirectTo: 'profile', pathMatch: 'full'},
 				{path: 'profile', component: SettingsProfileComponent}
