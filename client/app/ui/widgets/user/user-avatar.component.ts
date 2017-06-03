@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, HostBinding, Input} from '@angular/core';
 import {User} from '../../../models/user';
 
 @Component({
@@ -8,5 +8,7 @@ import {User} from '../../../models/user';
 })
 export class UserAvatarComponent {
 	
+	@HostBinding('class.loading') @Input() loading: boolean;
 	@Input() user: User;
+	@Input() size: 'small' | 'medium' | 'large' = 'small';
 }

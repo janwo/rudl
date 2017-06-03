@@ -7,20 +7,31 @@ $settings-profile-component-avatar-size: 7.5rem;
   display: flex;
   flex-direction: row;
 
-  .content {
+  & > * {
     flex: 0 0 50%;
-    display: flex;
-    flex-direction: column;
 
     &.avatar-content {
       align-items: center;
       justify-content: center;
+      display: flex;
+      flex-direction: column;
 
       user-avatar {
-        cursor: pointer;
         width: $settings-profile-component-avatar-size;
         height: $settings-profile-component-avatar-size;
-        margin-bottom: map_get($base-padding, 'default');
+        margin-bottom: map_get($base-padding, 'smaller');
+      }
+
+      .error {
+        color: map_get($base-colors, 'warning');
+        font-size: map_get($base-font-size, 'small');
+        margin-bottom: map_get($base-padding, 'small');
+      }
+    }
+
+    &.profile-content {
+      styled-button {
+        margin-top: map_get($base-padding, 'smaller') - map_get($base-padding, 'small');
       }
     }
   }

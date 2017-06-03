@@ -1,10 +1,12 @@
 @import '../../variables';
 
+$user-avatar-loading-animation-speed: 3s;
+
 :host {
   position: relative;
   display: block;
 
-  div {
+  &.loading:after, div, svg {
     position: absolute;
     top: 0;
     left: 0;
@@ -13,20 +15,47 @@
     border-radius: 50%;
     background-size: cover;
     background-position: center;
+  }
 
-    &.plain {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: map_get($base-colors, 'primary');
+  svg {
+    background-color: map_get($base-colors, 'primary');
+    font-family: $base-heading-font-family;
+    fill: map_get($base-colors, 'background');
+    text-transform: uppercase;
+  }
 
-      svg {
-        width: 100%;
-        height: 100%;
-        font-family: $base-heading-font-family;
-        fill: map_get($base-colors, 'background');
-        text-transform: uppercase;
-      }
+  &.loading {
+    div {
+      width: calc(100% - #{map_get($base-line-widths, 'larger') * 2});
+      height: calc(100% - #{map_get($base-line-widths, 'larger') * 2});
+      top: map_get($base-line-widths, 'larger');
+      left: map_get($base-line-widths, 'larger');
+      opacity: 0.5;
+    }
+
+    &:after {
+      content: '';
+      border: solid map_get($base-line-widths, 'larger') inactive(map_get($base-colors, 'primary'));
+      border-top-color: map_get($base-colors, 'primary');
+      animation: loading $user-avatar-loading-animation-speed cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    }
+  }
+
+  @keyframes loading {
+    0% {
+      transform: rotate(0deg)
+    }
+    25% {
+      transform: rotate(90deg);
+    }
+    50% {
+      transform: rotate(180deg);
+    }
+    75% {
+      transform: rotate(270deg);
+    }
+    100% {
+      transform: rotate(360deg);
     }
   }
 }
