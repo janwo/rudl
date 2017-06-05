@@ -34,11 +34,11 @@ export class BoardingComponent implements OnInit, OnDestroy {
 	
 	step: number = 0;
 	steps: string[] = [
-		'Welcome to rudl',
-		'Find Rudels',
-		'Create Events',
-		'Meet People',
-		'Grant Permissions'
+		'Wilkommen bei rudl',
+		'Finde Rudel',
+		'Erstelle Events',
+		'Treffe Menschen',
+		'Berechtigungen geben'
 	];
 	permissionStatus: 'ungranted' | 'granting' | 'granted' | 'denied' = 'ungranted';
 	locationSubscription: Subscription;

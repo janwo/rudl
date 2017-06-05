@@ -3,28 +3,28 @@
         <div class="card" [@fadeIn]="true">
             <div class="image"></div>
             <h1>{{steps[0]}}</h1>
-            <span>Some text 1</span>
+            <span>Cool, dass du dich für die App interessierst! Die App ist noch im totalen Anfangsstadium. Einiges ist noch nicht funktionsfähig und übersetzt, deswegen ist Geduld noch wichtig.</span>
         </div>
     </div>
     <div class="item">
         <div class="card">
             <div class="image"></div>
             <h1>{{steps[1]}}</h1>
-            <span>Some text 2</span>
+            <span>Rudl empfiehlt dir Rudel (Interessen) in deiner Nähe und bringt dich mit ähnlichen Menschen zusammen.</span>
         </div>
     </div>
     <div class="item">
         <div class="card">
             <div class="image"></div>
             <h1>{{steps[2]}}</h1>
-            <span>Some text 3</span>
+            <span>In jedem Rudel kannst du Streifzüge erstellen oder beitreten. Die nächste Grillparty, Happening oder ein spontanes Event in deiner Nachbarschaft.</span>
         </div>
     </div>
     <div class="item">
         <div class="card">
             <div class="image"></div>
             <h1>{{steps[3]}}</h1>
-            <span>Some text 4</span>
+            <span>Bald wird dir Rudl auch ähnliche Menschen mit deinen Interessen empfehlen können.</span>
         </div>
     </div>
     <div class="item">
@@ -32,7 +32,7 @@
             <div class="image"></div>
             <h1>{{steps[4]}}</h1>
             <span *ngIf="permissionStatus == 'denied'">Seems like you denied the permission, please check your browser settings to enable location sharing!</span>
-            <span *ngIf="permissionStatus != 'denied'">In order to show you all relevant rudels and events near you, rudl needs to access your location.</span>
+            <span *ngIf="permissionStatus != 'denied'"><!--In order to show you all relevant rudels and events near you, rudl needs to access your location.-->Um dir Rudel in deiner Nähe anzuzeigen und die App nutzen zu können, muss dein Standort abgerufen werden.</span>
             <styled-button *ngIf="permissionStatus != 'denied'" [style]="ButtonStyles.filled"
                     [text]="permissionStatus == 'granted' ? 'Thank you!' : (permissionStatus == 'granting' ? 'Please wait...' : 'Grant Permission')"
                     [disabled]="permissionStatus != 'ungranted'" (click)="grantPermission()"></styled-button>

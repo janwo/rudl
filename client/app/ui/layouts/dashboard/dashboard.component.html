@@ -20,8 +20,8 @@
     <dropdown-menu #dropdownMenu [arrowAlignment]="'right'">
         <menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'pets'" [title]="'Deine Rudel'"
                 [link]="['/people', userStatus.user.username, 'rudel']"></menu-item>
-        <menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'format_list_bulleted'"
-                [title]="'Deine Listen'" [link]="['/people', userStatus.user.username, 'lists']"></menu-item>
+       <!-- <menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'format_list_bulleted'"
+                [title]="'Deine Listen'" [link]="['/people', userStatus.user.username, 'lists']"></menu-item>-->
         <menu-item [icon]="'settings'" [title]="'Einstellungen'" [link]="['/settings']"></menu-item>
         <menu-item [icon]="'exit_to_app'" [title]="'Abmelden'" (click)="signOut()"></menu-item>
     </dropdown-menu>

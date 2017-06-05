@@ -16,8 +16,8 @@
             <dropdown-menu #dropdownMenu [arrowAlignment]="'right'">
                 <menu-item [icon]="'edit'" [title]="'Rudel bearbeiten'" [link]="['edit']"
                         *ngIf="rudel.relations.isOwned"></menu-item>
-                <menu-item [icon]="'format_list_bulleted'" [title]="'In Liste speichern'"
-                        [link]="['add-to-list']"></menu-item>
+               <!-- <menu-item [icon]="'format_list_bulleted'" [title]="'In Liste speichern'"
+                        [link]="['add-to-list']"></menu-item>-->
                 <menu-item [icon]="'event_note'" [title]="'Streifzug erstellen'"
                         [link]="['create-expedition']"></menu-item>
             </dropdown-menu>
