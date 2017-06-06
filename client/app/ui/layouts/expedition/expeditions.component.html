@@ -1,0 +1,8 @@
+<item-wrapper [columns]="2" *ngIf="expeditions && expeditions.length > 0; else loading">
+    <expedition-item *ngFor="let expedition of expeditions" [expedition]="expedition"></expedition-item>
+</item-wrapper>
+
+<ng-template #loading>
+    <empty [emptyState]="emptyState" *ngIf="expeditions && expeditions.length == 0"></empty>
+    <loading *ngIf="expeditions == null"></loading>
+</ng-template>

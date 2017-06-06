@@ -3,7 +3,7 @@ import {RouterModule, Routes} from '@angular/router';
 import {DashboardComponent} from './ui/layouts/dashboard/dashboard.component';
 import {LoginGuard} from './guards/login';
 import {ExploreComponent} from './ui/layouts/explore/explore.component';
-import {PeopleComponent} from './ui/layouts/people/people.component';
+import {ExpeditionsComponent} from './ui/layouts/expedition/expeditions.component';
 import {SettingsComponent} from './ui/layouts/settings/settings.component';
 import {ListComponent} from './ui/layouts/list/list.component';
 import {SearchComponent} from './ui/layouts/search/search.component';
@@ -63,7 +63,7 @@ const appRoutes: Routes = [
 			{path: '', redirectTo: 'explore', pathMatch: 'full'},
 			{path: 'explore', component: ExploreComponent, canActivate: [BoardingGuard]},
 			
-			{path: 'expeditions', component: PeopleComponent, pathMatch: 'full', canActivate: [BoardingGuard]},
+			{path: 'expeditions', component: ExpeditionsComponent, pathMatch: 'full', canActivate: [BoardingGuard]},
 			
 			{
 				path: 'people/:username', resolve: {

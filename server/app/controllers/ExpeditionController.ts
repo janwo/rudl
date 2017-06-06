@@ -172,12 +172,12 @@ export module ExpeditionController {
 	
 	export function approveUser(transaction: Transaction, expedition: Expedition, user: User, relatedUser: User): Promise<void> {
 		return this.getOwner(transaction, expedition).then((owner: User) => {
-			let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:FOLLOWS_RUDEL]->(r:Rudel) WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) WITH e, u MATCH (u)-[pje:POSSIBLY_JOINS_EXPEDITION]-(e) DETACH DELETE pje`;
+			let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}), (r:Rudel)<-[:BELONGS_TO_RUDEL]-(e) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) WITH e, u, r CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:FOLLOWS_RUDEL]->(r) WITH e, u MATCH (u)-[pje:POSSIBLY_JOINS_EXPEDITION]-(e) DETACH DELETE pje`;
 			if (owner && owner.id != user.id && relatedUser.id == owner.id) query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) CREATE UNIQUE (e)-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]->(u)`;
 			if (owner && owner.id != user.id && expedition.needsApproval) {
 				let possibleRelationship = relatedUser.id == owner.id ? '(e)-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]->(u)' : '(e)<-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]-(u)';
-				query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) OR NOT ${possibleRelationship} CREATE UNIQUE ${possibleRelationship}` +
-					` WITH e, u MATCH (e)-[pje:POSSIBLY_JOINS_EXPEDITION]-(u) WHERE (e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u) AND (e)-[:POSSIBLY_JOINS_EXPEDITION]->(u) DETACH DELETE pje WITH u, e CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:FOLLOWS_RUDEL]->(r:Rudel) WHERE (r)<-[:BELONGS_TO_RUDEL]-(e)`;
+				query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}), (r:Rudel)<-[:BELONGS_TO_RUDEL]-(e) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) OR NOT ${possibleRelationship} CREATE UNIQUE ${possibleRelationship}` +
+					` WITH e, u, r MATCH (e)-[pje:POSSIBLY_JOINS_EXPEDITION]-(u) WHERE (e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u) AND (e)-[:POSSIBLY_JOINS_EXPEDITION]->(u) DETACH DELETE pje WITH u, r, e CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:FOLLOWS_RUDEL]->(r)`;
 			}
 			
 			// Make invitation / request.
@@ -588,7 +588,7 @@ export module ExpeditionController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then(user => {
 				if (!user) return Promise.reject(Boom.notFound('User not found!'));
-				return ExpeditionController.findByUser(transaction, user, request.query.offset, request.query.limit);
+				return ExpeditionController.findByUser(transaction, user, false, request.query.offset, request.query.limit);
 			}).then((expeditions: Expedition[]) => ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials));
 			
 			reply.api(promise, transactionSession);

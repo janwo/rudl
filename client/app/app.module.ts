@@ -16,7 +16,7 @@ import {UserService} from './services/user.service';
 import {IndicatorComponent} from './ui/widgets/state/indicator.component';
 import {DropdownMenuComponent} from './ui/widgets/menu/dropdown-menu.component';
 import {MenuComponent} from './ui/widgets/menu/menu.component';
-import {PeopleComponent} from './ui/layouts/people/people.component';
+import {ExpeditionsComponent} from './ui/layouts/expedition/expeditions.component';
 import {RudelComponent} from './ui/layouts/rudel/rudel.component';
 import {SettingsComponent} from './ui/layouts/settings/settings.component';
 import {ExpanderComponent} from './ui/widgets/control/expander.component';
@@ -138,7 +138,7 @@ import {SettingsProfileComponent} from './ui/layouts/settings/settings-profile.c
 		MapComponent,
 		AddToListComponent,
 		ExploreComponent,
-		PeopleComponent,
+		ExpeditionsComponent,
 		StackComponent,
 		UserItemComponent,
 		CommentItemComponent,
