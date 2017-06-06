@@ -6,8 +6,8 @@
         <span class="description">{{user.profileText}}</span>
     </div>
     <div class="statistics">
+        <!--{value: user.statistics.lists, subject: 'Liste(n)', link: ['lists']},-->
         <statistics [statistics]="[
-		{value: user.statistics.lists, subject: 'Liste(n)', link: ['lists']},
 		{value: user.statistics.followees, subject: 'Folgt', link: ['followees']},
 		{value: user.statistics.followers, subject: 'Follower', link: ['followers']}
 		]"></statistics>

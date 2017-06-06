@@ -172,12 +172,12 @@ export module ExpeditionController {
 	
 	export function approveUser(transaction: Transaction, expedition: Expedition, user: User, relatedUser: User): Promise<void> {
 		return this.getOwner(transaction, expedition).then((owner: User) => {
-			let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) CREATE UNIQUE (u)-[:FOLLOWS_RUDEL]->(:Rudel)<-[:BELONGS_TO_RUDEL]-(e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u) WITH e, u MATCH (u)-[pje:POSSIBLY_JOINS_EXPEDITION]-(e) DETACH DELETE pje`;
+			let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:FOLLOWS_RUDEL]->(r:Rudel) WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) WITH e, u MATCH (u)-[pje:POSSIBLY_JOINS_EXPEDITION]-(e) DETACH DELETE pje`;
 			if (owner && owner.id != user.id && relatedUser.id == owner.id) query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) CREATE UNIQUE (e)-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]->(u)`;
 			if (owner && owner.id != user.id && expedition.needsApproval) {
 				let possibleRelationship = relatedUser.id == owner.id ? '(e)-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]->(u)' : '(e)<-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]-(u)';
 				query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) OR NOT ${possibleRelationship} CREATE UNIQUE ${possibleRelationship}` +
-					` WITH e, u MATCH (e)-[pje:POSSIBLY_JOINS_EXPEDITION]-(u) WHERE (e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u) AND (e)-[:POSSIBLY_JOINS_EXPEDITION]->(u) DETACH DELETE pje WITH u, e CREATE UNIQUE (u)-[:FOLLOWS_RUDEL]->(:Rudel)<-[:BELONGS_TO_RUDEL]-(e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)`;
+					` WITH e, u MATCH (e)-[pje:POSSIBLY_JOINS_EXPEDITION]-(u) WHERE (e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u) AND (e)-[:POSSIBLY_JOINS_EXPEDITION]->(u) DETACH DELETE pje WITH u, e CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:FOLLOWS_RUDEL]->(r:Rudel) WHERE (r)<-[:BELONGS_TO_RUDEL]-(e)`;
 			}
 			
 			// Make invitation / request.

@@ -16,7 +16,7 @@
     </item-wrapper>
 </section>
 <section *ngIf="searchValue">
-    <h1 i18n>Lists</h1>
+    <!--<h1 i18n>Lists</h1>
     <item-wrapper class="results" [ngClass]="{expanded: !collapsedLists}">
         <li class="card create" [ngClass]="{expanded: expandedListCreation}">
             <div class="title" (click)="expandedListCreation = true">
@@ -30,7 +30,7 @@
         <li *ngFor="let list of lists">
             <list-item [highlight]="searchValue" [list]="list"></list-item>
         </li>
-    </item-wrapper>
+    </item-wrapper>-->
 </section>
 <section *ngIf="users && users.length > 0">
     <h1 i18n>People</h1>

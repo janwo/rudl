@@ -15,7 +15,7 @@ $profile-avatar-size: 5rem;
   }
 
   & > .card {
-    flex: 1 1 auto;
+    flex: 0 0 auto;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -23,7 +23,6 @@ $profile-avatar-size: 5rem;
     margin-top: $profile-avatar-size * 0.66;
 
     @include breakpoint('small') {
-      flex: 0 0 auto;
       width: 15rem;
     }
 

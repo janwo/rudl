@@ -25,6 +25,10 @@
         max-width: 25rem;
       }
 
+      @include breakpoint(null, 'small') {
+        order: 1;
+      }
+
       h2 {
         color: map_get($base-colors, 'secondary-text');
       }
