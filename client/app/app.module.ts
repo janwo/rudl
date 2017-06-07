@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {NgModule, TRANSLATIONS, LOCALE_ID, TRANSLATIONS_FORMAT} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {AppComponent} from './ui/app.component';
 import {LoginComponent} from './ui/widgets/login.component';

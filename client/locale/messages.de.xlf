@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="3254af9acb61fe6a3c6577be47bbe5c382890ce1" datatype="html">
+        <source>Einstellungen</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/settings/settings.component.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="073a3f169b30a9c2028b9f4ea4ef0fe02e956fb6" datatype="html">
+        <source>Rudel</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/search/search.component.ts</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="16b8ee1865f8f2e319cbb09b70a812a3321cf619" datatype="html">
+        <source>Bilde ein neues Rudel</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/search/search.component.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4ee30b9285d5bf3610118b8b01d1731e0c4fed05" datatype="html">
+        <source>People</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/search/search.component.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="88243abd8988ba30cc911172ad920d036a057993" datatype="html">
+        <source>Imprint</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/legal/legal.component.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/legal-footer/legal-footer.component.ts</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3a52dd570719577ddfbdff42aaadef64c1589ccc" datatype="html">
+        <source>Cool, dass du dich für die App interessierst! Die App ist noch im totalen Anfangsstadium. Einiges ist noch nicht funktionsfähig und übersetzt, deswegen ist Geduld noch wichtig.</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8779938b420da2d2faae8c3cc1d43b9794b373c0" datatype="html">
+        <source>Im Sommer geht&apos;s los!</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/landing/landing.component.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="f62d08bdabf57ea986abb4b561a3f0225f712875" datatype="html">
+        <source>Zusammen mit der Community empfiehlt dir rudl neue Aktivitäten, ganz nach deinem Geschmack. Du
+            hinterlegst all jene Aktivitäten, von denen du träumst, schwärmst oder die du noch heute beginnst. Komm mit
+            ins Team, joine uns im Sommer hier auf rudl.me :)</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/landing/landing.component.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="e50aed3b68d3f2bcbb54413092ae714191be52ba" datatype="html">
+        <source>Streifzug des Rudels &quot;<x id="INTERPOLATION"/>&quot;</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/expedition/expedition.component.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="f01274281b49b1c319ede7c42a9a2d36199b2817" datatype="html">
+        <source>File is not an image or exceeds the maximal file size.</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/settings/settings-profile.component.ts</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7368c0739e84b7301694133093cd9d323d334d15" datatype="html">
+        <source>What are you looking for?</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/search/search-bar.component.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+        <note priority="1" from="description">What are you looking for?</note>
+      </trans-unit>
+      <trans-unit id="744bb513038ef779df0aa9e50122db4a5cddb9e8" datatype="html">
+        <source>rudl</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/logo.component.ts</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1470eabded471793a7ef2271e2a1dc30a1a3265f" datatype="html">
+        <source>Datum</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/control/form/datetime.component.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="051d2e768e3113af47747139eeca269c599286a2" datatype="html">
+        <source>Uhrzeit (Stunde)</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/control/form/datetime.component.ts</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="a41efb735da227da81772b9b1e49c56110f9a5f7" datatype="html">
+        <source>Uhrzeit (Minute)</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/control/form/datetime.component.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="170cf1faf122500e428d4fe4052c18e49294c6ce" datatype="html">
+        <source><x id="INTERPOLATION"/></source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/expedition/expedition-item.component.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3353a33022d16886356deeea164a4b507a12fdae" datatype="html">
+        <source>Du bist Teilnehmer</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/expedition/expedition-item.component.ts</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7972c16edbffd2d23f66e0d5999b1d5dc94af4c3" datatype="html">
+        <source>Made with <x id="START_ITALIC_TEXT" ctype="x-i"/>local_pizza<x id="CLOSE_ITALIC_TEXT" ctype="x-i"/> in Bremen</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/legal-footer/legal-footer.component.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

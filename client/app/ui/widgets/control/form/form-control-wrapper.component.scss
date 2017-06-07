@@ -1,5 +1,5 @@
-@import '../../../variables';
-@import "../../../mixins";
+@import '../../../variables.scss';
+@import "../../../mixins.scss";
 
 $form-control-wrapper-input-padding: map_get($base-font-size, 'default') / 1.5; // Golden Ratio <3
 

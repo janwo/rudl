@@ -1,4 +1,4 @@
-@import '../../variables';
+@import '../../variables.scss';
 
 $modal-background-layer-color: map_get($base-colors, 'background-modal');
 $modal-background-color: map_get($base-colors, 'secondary');

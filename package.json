@@ -2,7 +2,7 @@
   "name": "rudl",
   "version": "0.2.0",
   "scripts": {
-    "i18n": "ng-xi18n --project client ",
+    "i18n": "ng-xi18n --project client --i18nFormat=xlf",
     "start": "ts-node run/index.ts"
   },
   "dependencies": {

@@ -1,4 +1,4 @@
-@import '../../variables';
+@import '../../variables.scss';
 
 $indicator-colors: (
   'active-background': map_get($base-colors, 'primary'),

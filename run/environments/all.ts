@@ -7,7 +7,7 @@ let CleanObsoleteChunks = require('webpack-clean-obsolete-chunks');
 export default {
 	env: process.env.ENV,
 	name: 'rudl - General Environment',
-	debug: process.env.DEBUG_BACKEND || false,
+	debug: false,
 	paths: {
 		api: {
 			publicPath: '/api/'

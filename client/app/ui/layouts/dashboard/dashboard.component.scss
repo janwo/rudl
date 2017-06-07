@@ -1,5 +1,5 @@
-@import '../../variables';
-@import "../../mixins";
+@import '../../variables.scss';
+@import "../../mixins.scss";
 
 $header-background-color: map_get($base-colors, 'background-highlighted');
 $header-content-size: 2rem;

@@ -17,7 +17,8 @@ export module TestController {
 		].sort();
 		let firstName = faker.name.firstName();
 		let lastName = faker.name.lastName();
-		let user: User = {
+		// Return.
+		return {
 			id: shortid.generate(),
 			firstName: firstName,
 			lastName: lastName,
@@ -47,9 +48,6 @@ export module TestController {
 			createdAt: date[0],
 			updatedAt: date[1]
 		};
-		
-		// Return.
-		return user;
 	}
 	
 	export function generateRudel(): Rudel {

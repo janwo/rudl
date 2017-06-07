@@ -1,5 +1,5 @@
-@import '../../variables';
-@import "../../mixins";
+@import '../../variables.scss';
+@import "../../mixins.scss";
 
 $location-search-border-color: map_get($base-colors, 'secondary');
 

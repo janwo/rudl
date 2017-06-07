@@ -1,4 +1,4 @@
-@import "variables";
+@import "variables.scss";
 
 @mixin breakpoint($min-breakpoint: null, $max-breakpoint: null) {
   $min-breakpoint: map-get($base-breakpoints, $min-breakpoint);

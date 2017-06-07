@@ -23,7 +23,8 @@
     "../node_modules"
   ],
   "angularCompilerOptions": {
-    "skipMetadataEmit": true
+    "skipMetadataEmit": true,
+    "genDir": "./locale"
   },
   "awesomeTypescriptLoaderOptions": {
     "useWebpackText": true

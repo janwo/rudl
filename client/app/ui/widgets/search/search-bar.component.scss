@@ -1,4 +1,4 @@
-@import '../../variables';
+@import '../../variables.scss';
 
 $search-bar-font-size: map_get($base-font-size, 'large');
 $search-bar-height: map_get($base-padding, 'small') * 2 + map_get($base-font-size, 'default');

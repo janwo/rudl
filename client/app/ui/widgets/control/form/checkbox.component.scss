@@ -1,4 +1,4 @@
-@import '../../../variables';
+@import '../../../variables.scss';
 
 $checkbox-text-font-size: map_get($base-font-size, 'default');
 $checkbox-padding: $checkbox-text-font-size / 1.5; // --> 1 / 1.5 = 0.666

@@ -5,6 +5,7 @@ services:
     container_name: rudl
     environment:
       - ENV
+      - LANGUAGE
       - DOMAIN
     ports:
       - "80:80"
@@ -12,6 +13,7 @@ services:
     volumes:
       - ./letsencrypt:/root/letsencrypt
       - ./.cache:/root/.cache
+      - ./.env:/root/app/.env
       - ./server:/root/app/server
       - ./client:/root/app/client
       - ./run:/root/app/run
