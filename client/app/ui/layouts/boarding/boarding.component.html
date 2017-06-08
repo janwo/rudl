@@ -1,33 +1,33 @@
-<carousel [maxSteps]="steps.length" #carousel>
-    <div class="item">
+<carousel #carousel>
+    <carousel-slide>
         <div class="card" [@fadeIn]="true">
             <div class="image"></div>
             <h1>{{steps[0]}}</h1>
             <span i18n>Cool, dass du dich für die App interessierst! Die App ist noch im totalen Anfangsstadium. Einiges ist noch nicht funktionsfähig und übersetzt, deswegen ist Geduld noch wichtig.</span>
         </div>
-    </div>
-    <div class="item">
+    </carousel-slide>
+    <carousel-slide>
         <div class="card">
             <div class="image"></div>
             <h1>{{steps[1]}}</h1>
             <span>Rudl empfiehlt dir Rudel (Interessen) in deiner Nähe und bringt dich mit ähnlichen Menschen zusammen.</span>
         </div>
-    </div>
-    <div class="item">
+    </carousel-slide>
+    <carousel-slide>
         <div class="card">
             <div class="image"></div>
             <h1>{{steps[2]}}</h1>
             <span>In jedem Rudel kannst du Streifzüge erstellen oder beitreten. Die nächste Grillparty, Happening oder ein spontanes Event in deiner Nachbarschaft.</span>
         </div>
-    </div>
-    <div class="item">
+    </carousel-slide>
+    <carousel-slide>
         <div class="card">
             <div class="image"></div>
             <h1>{{steps[3]}}</h1>
             <span>Bald wird dir Rudl auch ähnliche Menschen mit deinen Interessen empfehlen können.</span>
         </div>
-    </div>
-    <div class="item">
+    </carousel-slide>
+    <carousel-slide>
         <div class="card">
             <div class="image"></div>
             <h1>{{steps[4]}}</h1>
@@ -39,14 +39,14 @@
             <styled-button *ngIf="permissionStatus == 'denied'" [style]="ButtonStyles.filledInverse" [text]="'Get help'"
                     (click)="openHelpTopic()"></styled-button>
         </div>
-    </div>
+    </carousel-slide>
 </carousel>
 <footer>
     <styled-button class="back" *ngIf="carousel.index() > 0" [style]="ButtonStyles.filled" [text]="'Go back'"
             (click)="carousel.back()"></styled-button>
-    <styled-button class="next" *ngIf="carousel.index() < steps.length - 1" [style]="ButtonStyles.filled"
+    <styled-button class="next" *ngIf="carousel.index() < carousel.length() - 1" [style]="ButtonStyles.filled"
             [text]="'Continue'" (click)="carousel.next()"></styled-button>
-    <styled-button class="done" *ngIf="carousel.index() == steps.length - 1" [disabled]="permissionStatus != 'granted'"
+    <styled-button class="done" *ngIf="carousel.index() == carousel.length() - 1" [disabled]="permissionStatus != 'granted'"
             [style]="ButtonStyles.filled" [text]="'Finish'" (click)="finishBoarding()"></styled-button>
-    <indicator [indicators]="steps" [selectedIndex]="carousel.index()" [interactive]="false"></indicator>
+    <indicator [steps]="carousel.length()" [selectedStep]="carousel.index()"></indicator>
 </footer>

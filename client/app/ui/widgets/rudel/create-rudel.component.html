@@ -1,6 +1,6 @@
 <form class="form-wrapper" [formGroup]="form">
-    <carousel [maxSteps]="2" #carousel>
-        <div class="item split">
+    <carousel #carousel>
+        <carousel-slide class="split">
             <div class="content">
                 <translation-list [defaultText]="defaultName"
                         [takenTranslations]="form.controls.translations"></translation-list>
@@ -9,8 +9,8 @@
                 <h2>Benenne das Rudel</h2>
                 <p>Jedes Rudel ist eine Interessensgemeinschaft, z.B. "Joggen gehen" oder "Treffen im Café".</p>
             </div>
-        </div>
-        <div class="item split">
+        </carousel-slide>
+        <carousel-slide class="split">
             <div class="content info">
                 <h2>Füge ein Icon hinzu!</h2>
                 <p>Das Icon erhöht den Wiedererkennnungswert deines Rudels!</p>
@@ -20,19 +20,17 @@
                     <emoji-picker formControlName="icon"></emoji-picker>
                 </form-control-wrapper>
             </div>
-        </div>
+        </carousel-slide>
     </carousel>
     <footer>
         <styled-button class="back" *ngIf="carousel.index() == 0" [style]="cancelButtonStyle" [text]="'Abbrechen'"
                 (click)="cancel()"></styled-button>
         <styled-button class="back" *ngIf="carousel.index() > 0" [disabled]="submitPending" [text]="'Go back'"
                 (click)="carousel.back()"></styled-button>
-        <styled-button class="next" *ngIf="carousel.index() < 1" [disabled]="submitPending" [text]="'Continue'"
+        <styled-button class="next" *ngIf="carousel.index() < carousel.length() - 1" [disabled]="submitPending" [text]="'Continue'"
                 (click)="carousel.next()"></styled-button>
-        <styled-button class="done" *ngIf="carousel.index() == 1" [disabled]="submitPending" (click)="submit()"
+        <styled-button class="done" *ngIf="carousel.index() == carousel.length() - 1" [disabled]="submitPending" (click)="submit()"
                 [text]="'Create Expedition'"></styled-button>
-        <indicator [indicators]="[
-'Basisinformationen',
-'Icon']" [selectedIndex]="carousel.index()" [interactive]="false"></indicator>
+        <indicator [steps]="carousel.length()" [selectedStep]="carousel.index()"></indicator>
     </footer>
 </form>

@@ -1,7 +1,7 @@
 <form [formGroup]="form" class="card">
     <h1>Create your expedition</h1>
-    <carousel [maxSteps]="4" #carousel>
-        <div class="item split" formGroupName="general">
+    <carousel #carousel>
+        <carousel-slide class="split" formGroupName="general">
             <div class="content">
                 <form-control-wrapper [errorMessages]="{
 						minlength: 'Der Titel ist zu kurz (mindestens 5 Zeichen).',
@@ -25,8 +25,8 @@
                 <h2>Did you know?</h2>
                 <p>You can decide, whether you want to approve new members of the expedition!</p>
             </div>
-        </div>
-        <div class="item split" formGroupName="icon">
+        </carousel-slide>
+        <carousel-slide class="split" formGroupName="icon">
             <div class="content">
                 <form-control-wrapper>
                     <emoji-picker formControlName="icon"></emoji-picker>
@@ -36,8 +36,8 @@
                 <h2>Add an emoji!</h2>
                 <p>Give your expedition an unique icon to increase it's visibility!</p>
             </div>
-        </div>
-        <div class="item split" formGroupName="location">
+        </carousel-slide>
+        <carousel-slide class="split" formGroupName="location">
             <div class="content">
                 <form-control-wrapper class="map">
                     <location-picker formControlName="location"></location-picker>
@@ -49,8 +49,8 @@
                 <location-search [locationFocus]="form.get('location').get('location').value"
                         (locationSelected)="form.get('location').get('location').setValue($event)"></location-search>
             </div>
-        </div>
-        <div class="item split" formGroupName="time">
+        </carousel-slide>
+        <carousel-slide class="split" formGroupName="time">
             <div class="content">
                 <form-control-wrapper [errorMessages]="{
 					required: 'Gebe ein Datum an.'
@@ -65,19 +65,15 @@
                 <h2>Date of the expedition</h2>
                 <p>Last step, when shall it happen?</p>
             </div>
-        </div>
+        </carousel-slide>
     </carousel>
     <footer>
         <styled-button class="back" *ngIf="carousel.index() > 0" [disabled]="submitPending" [text]="'Go back'"
                 (click)="carousel.back()"></styled-button>
-        <styled-button class="next" *ngIf="carousel.index() < 3" [disabled]="submitPending" [text]="'Continue'"
+        <styled-button class="next" *ngIf="carousel.index() < carousel.length() - 1" [disabled]="submitPending" [text]="'Continue'"
                 (click)="carousel.next()"></styled-button>
-        <styled-button class="done" *ngIf="carousel.index() == 3" [disabled]="submitPending" (click)="submit()"
+        <styled-button class="done" *ngIf="carousel.index() == carousel.length() - 1" [disabled]="submitPending" (click)="submit()"
                 [text]="'Create Expedition'"></styled-button>
-        <indicator [indicators]="[
-	'Basisinformationen',
-	'Icon',
-	'Ort',
-	'Datum']" [selectedIndex]="carousel.index()" [interactive]="false"></indicator>
+        <indicator [steps]="carousel.length()" [selectedStep]="carousel.index()"></indicator>
     </footer>
 </form>

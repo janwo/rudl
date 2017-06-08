@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, Output} from '@angular/core';
 
 @Component({
 	templateUrl: 'item-wrapper.component.html',
@@ -8,7 +8,13 @@ import {Component, Input} from '@angular/core';
 export class ItemWrapperComponent {
 	
 	@Input() columns: number = 1;
-	@Input() noMargins: boolean = false;
+	@Input() margins: boolean = true;
+	@Input() horizontal: boolean = false;
+	@Output() scrollX: number = 0;
+	@Output() scrollY: number = 0;
 	
-	constructor() {}
+	onScroll(element: Element): void {
+		this.scrollX = element.scrollWidth ? (element.scrollLeft + element.clientWidth) / element.scrollWidth : 1;
+		this.scrollY = element.scrollHeight ? (element.scrollTop + element.clientHeight) / element.scrollHeight : 1;
+	}
 }

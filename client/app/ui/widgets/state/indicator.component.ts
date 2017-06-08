@@ -5,15 +5,10 @@ import {Component, Input} from '@angular/core';
 	styleUrls: ['indicator.component.scss'],
 	selector: 'indicator'
 })
-export class IndicatorComponent {
+export class IndicatorComponent{
 	
-	@Input() indicators: Array<string>;
-	@Input() interactive: boolean = true;
-	@Input() selectedIndex: number = 0;
+	@Input() steps: number;
+	@Input() displayAsPercentage: boolean = false;
+	@Input() selectedStep: number = 0;
 	
-	constructor() {}
-	
-	onClick(clickedIndex: number) {
-		if (this.interactive) this.selectedIndex = clickedIndex;
-	}
 }

@@ -1,6 +1,15 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {
+	AfterContentInit, Component, ContentChildren, Input, OnInit, QueryList, ViewChildren, ChangeDetectorRef,
+	OnDestroy, AfterViewChecked
+} from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
+
+@Component({
+	selector: 'carousel-slide',
+	template: '<ng-content></ng-content>'
+})
+export class CarouselSlideComponent {}
 
 @Component({
 	templateUrl: 'carousel.component.html',
@@ -9,45 +18,51 @@ import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 })
 export class CarouselComponent implements OnInit {
 	
-	@Input() maxSteps = 1;
-	protected step: number = 0;
+	@Input() pageSize = 1;
+	private itemIndex: number = 0;
 	itemTransformation: SafeStyle;
+	@ContentChildren(CarouselSlideComponent) protected children: QueryList<CarouselSlideComponent>;
 	
 	constructor(private router: Router,
 	            private route: ActivatedRoute,
-	            private sanitizer: DomSanitizer) {
-		// Sanitize style.
-		this.itemTransformation = this.sanitizer.bypassSecurityTrustStyle(`translateX(-${this.step * 100}%)`);
-	}
+	            private sanitizer: DomSanitizer) {}
 	
 	next(): void {
-		if (this.step < this.maxSteps) this.go(this.step + 1);
+		if (this.children && this.itemIndex < this.children.length - 1) this.go(this.itemIndex + 1);
 	}
 	
 	back(): void {
-		if (this.step > 0) this.go(this.step - 1);
+		if (this.itemIndex > 0) this.go(this.itemIndex - 1);
 	}
 	
-	go(index: number): void {
-		this.router.navigate([{step: index}], {
+	go(step: number): void {
+		this.router.navigate([{idx: step}], {
 			relativeTo: this.route
 		});
 	}
 	
+	ready(): boolean {
+		return !!this.children;
+	}
+	
 	index(): number {
-		return this.step;
+		return this.itemIndex;
+	}
+	
+	length(): number {
+		return this.children ? this.children.length : 0;
 	}
 	
 	ngOnInit(): void {
 		// Get params.
 		this.route.params.forEach((params: Params) => {
-			let step = parseInt(params['step']) || 0;
+			let step = parseInt(params['idx']) || 0;
 			
 			// Get selected step.
-			this.step = Math.min(Math.max(0, step), this.maxSteps - 1);
+			this.itemIndex = this.children ? Math.min(Math.max(0, step), this.children.length - 1) : 0;
 			
 			// Sanitize style.
-			this.itemTransformation = this.sanitizer.bypassSecurityTrustStyle(`translateX(-${this.step * 100}%)`);
+			this.itemTransformation = this.sanitizer.bypassSecurityTrustStyle(`translateX(-${this.itemIndex * 100}%)`);
 		});
 	}
 }

@@ -1,9 +1,9 @@
 @import '../../variables.scss';
 
-$indicator-colors: (
-  'active-background': map_get($base-colors, 'primary'),
-  'default-background': inactive(map_get($base-colors, 'primary'))
-);
+$indicator-active-background: map_get($base-colors, 'primary');
+$indicator-default-background: inactive(map_get($base-colors, 'primary'));
+$indicator-size: 0.5rem;
+$indicator-percentage-full-width: 10rem;
 
 :host {
   display: flex;
@@ -16,20 +16,30 @@ $indicator-colors: (
 
     li {
       display: inline-block;
-      width: 0.75rem;
-      height: 0.75rem;
-      margin: 0.25rem;
-      background-color: map_get($indicator-colors, 'default-background');
-      border-radius: 50%;
+      width: $indicator-size;
+      height: $indicator-size;
+      margin: map_get($base-padding, 'smallest');
+      background-color: $indicator-default-background;
+      border-radius: $indicator-size / 2;
 
       &.active {
         cursor: default;
-        background-color: map_get($indicator-colors, 'active-background');
+        background-color: $indicator-active-background;
       }
     }
+  }
 
-    &.interactive li {
-      cursor: pointer;
+  div {
+    border-radius: $indicator-size / 2;
+    background-color: $indicator-default-background;
+    overflow: hidden;
+    width: $indicator-percentage-full-width;
+
+    i {
+      display: block;
+      background-color: $indicator-active-background;
+      border-radius: $indicator-size / 2;
+      height: $indicator-size;
     }
   }
 }

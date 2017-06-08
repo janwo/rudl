@@ -44,7 +44,7 @@
 			<input id="lastName" maxlength="24" formControlName="lastName" placeholder="{{placeholders.lastName}}" type="text">
 		</form-control-wrapper>
 	</div>
-	<indicator [ngClass]="{hide: signInOnly}" [indicators]="['Basic Information', 'Personal Information']"></indicator>
+	<indicator [ngClass]="{hide: signInOnly}" [steps]="2"></indicator>
 </form>
 <styled-button class="auth-button-mail" (click)="onClickMailButton()" [icon]="'mail'" [text]="(signInOnly ? 'Sign In with Mail' : ( isCollapsed || indicatorComponent.selectedIndex == 1 ? 'Sign Up with Mail' : 'Continue'))"></styled-button>
 

@@ -1,4 +1,4 @@
-import {NgModule, TRANSLATIONS, LOCALE_ID, TRANSLATIONS_FORMAT} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {AppComponent} from './ui/app.component';
 import {LoginComponent} from './ui/widgets/login.component';
@@ -84,7 +84,7 @@ import {RudelAddToListComponent} from './ui/layouts/rudel/rudel-add-to-list.comp
 import {RudelFollowersComponent} from './ui/layouts/rudel/rudel-followers.component';
 import {ListFollowersComponent} from './ui/layouts/list/list-followers.component';
 import {ListRudelComponent} from './ui/layouts/list/list-rudel.component';
-import {CarouselComponent} from './ui/widgets/wrapper/carousel.component';
+import {CarouselComponent, CarouselSlideComponent} from './ui/widgets/wrapper/carousel.component';
 import {NotFoundComponent} from './ui/layouts/404/404.component';
 import {ExpeditionCommentsComponent} from './ui/layouts/expedition/expedition-comments.component';
 import {ExpeditionAttendeesComponent} from './ui/layouts/expedition/expedition-attendees.component';
@@ -95,6 +95,7 @@ import {CommentItemComponent} from './ui/widgets/comment/comment-item.component'
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {ScrollService} from './services/scroll.service';
 import {SettingsProfileComponent} from './ui/layouts/settings/settings-profile.component';
+import {ArrayPipe} from './pipes/array.pipe';
 
 @NgModule({
 	declarations: [
@@ -102,6 +103,7 @@ import {SettingsProfileComponent} from './ui/layouts/settings/settings-profile.c
 		LoginComponent,
 		StyledButtonComponent,
 		CarouselComponent,
+		CarouselSlideComponent,
 		DropdownMenuComponent,
 		RudelPastExpeditionsComponent,
 		RudelItemComponent,
@@ -172,6 +174,7 @@ import {SettingsProfileComponent} from './ui/layouts/settings/settings-profile.c
 		FanComponent,
 		LocationSearchComponent,
 		SafePipe,
+		ArrayPipe,
 		TranslationListComponent,
 		DateTimeComponent
 	],

@@ -1,3 +1,3 @@
-<ul [ngClass]="{'two-columns-layout': columns == 2, 'three-columns-layout': columns == 3, 'single-column-layout': columns == 1, 'no-margins': noMargins}">
+<ul [ngClass]="{'two-columns-layout': columns == 2, 'horizontal-layout': horizontal, 'three-columns-layout': columns == 3, 'single-column-layout': columns == 1, 'margins': margins}" (scroll)="onScroll($event.target)">
     <ng-content></ng-content>
 </ul>

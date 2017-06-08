@@ -75,12 +75,12 @@ export class LoginComponent implements OnInit {
 		this.signInOnly = !this.signInOnly;
 		
 		// Reset selected index of the indicator.
-		this.indicatorComponent.selectedIndex = 0;
+		this.indicatorComponent.selectedStep = 0;
 	}
 	
 	onClickMailButton() {
 		// Increase indicator on click.
-		if (!this.isCollapsed && this.indicatorComponent.selectedIndex == 0) this.indicatorComponent.selectedIndex++;
+		if (!this.isCollapsed && this.indicatorComponent.selectedStep == 0) this.indicatorComponent.selectedStep++;
 		
 		// Unfold, if not done already.
 		if (this.isCollapsed) this.isCollapsed = false;

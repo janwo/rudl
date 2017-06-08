@@ -1,4 +1,7 @@
-<ul [ngClass]="{interactive: interactive}">
-    <li (click)="onClick(i)" *ngFor="let indicator of indicators; let i = index" title="{{indicator}}"
-            [ngClass]="{active: i == selectedIndex}"></li>
+<ul *ngIf="!displayAsPercentage">
+    <li (click)="onClick(i)" *ngFor="let indicator of steps | array; let i = index"
+            [ngClass]="{active: i == selectedStep}"></li>
 </ul>
+<div *ngIf="displayAsPercentage">
+    <i [style.width.%]="selectedStep / steps * 100"></i>
+</div>
