@@ -164,6 +164,28 @@ export class DatabaseManager {
 			isRelationship: false,
 			uniqueness: [
 				'id'
+			],
+			indices: [
+				'createdAt',
+			]
+		},
+		notificationRecipient: {
+			name: 'NOTIFICATION_RECIPIENT',
+			isRelationship: true
+		},
+		notificationSubject: {
+			name: 'NOTIFICATION_SUBJECT',
+			isRelationship: true
+		},
+		notificationSender: {
+			name: 'NOTIFICATION_SENDER',
+			isRelationship: true
+		},
+		notification: {
+			name: 'Notification',
+			isRelationship: false,
+			indices: [
+				'createdAt'
 			]
 		}
 	};
@@ -172,14 +194,31 @@ export class DatabaseManager {
 		return {
 			unflatten: <L extends Node | Relationship | any, T extends { [key: string]: L }, K extends keyof T>(record: Record<T> | Record<T>[], returnVariable: K): L | L[] => {
 				if (record instanceof Array) return record.map((record => DatabaseManager.neo4jFunctions.unflatten(record, returnVariable)));
-				
-				let $return = record.get(returnVariable);
+				let $return = record.get(returnVariable) as any;
 				if (typeof $return == 'object') {
+					for (let v in $return) {
+						if (!$return.hasOwnProperty(v)) continue;
+						
+						if (typeof $return[v] == 'object') {
+							// Convert integers already.
+							if ($return[v] instanceof Integer) {
+								$return[v] = Integer.toNumber(v);
+								continue;
+							}
+							
+							// Flatten, stop check.
+							$return = dot.dot($return);
+							break;
+						}
+					}
+					
+					// Convert remaining numbers.
 					$return = _.mapValues($return, (v: any) => {
-						return v instanceof Integer ? Integer.toNumber(v) : v;
+						return v instanceof Integer ? Integer.toNumber(v) : v
 					}) as L;
 					dot.object($return);
 				}
+				
 				return $return;
 			},
 			flatten: <T extends Node | Relationship>(document: T): any | any[] => {

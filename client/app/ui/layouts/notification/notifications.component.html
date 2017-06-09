@@ -1,0 +1,8 @@
+<item-wrapper [columns]="1" *ngIf="notifications && notifications.length > 0; else loading">
+    <notification-item *ngFor="let notification of notifications" [notification]="notification"></notification-item>
+</item-wrapper>
+
+<ng-template #loading>
+    <empty [emptyState]="emptyState" *ngIf="notifications && notifications.length == 0"></empty>
+    <loading *ngIf="notifications == null"></loading>
+</ng-template>

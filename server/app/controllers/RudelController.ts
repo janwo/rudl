@@ -40,48 +40,71 @@ export module RudelController {
 		}).then(() => {});
 	}
 	
-	export function getPublicRudel(transaction: Transaction, rudel: Rudel | Rudel[], relatedUser: User): Promise<any | any[]> {
+	export function getPublicRudel(transaction: Transaction, rudel: Rudel | Rudel[], relatedUser: User, preview = false): Promise<any | any[]> {
 		let createPublicRudel = (rudel: Rudel): Promise<any> => {
-			let rudelOwnerPromise = RudelController.getOwner(transaction, rudel);
-			let publicRudelOwnerPromise = rudelOwnerPromise.then((owner: User) => {
-				return UserController.getPublicUser(transaction, owner, relatedUser);
-			});
-			let rudelStatisticsPromise = RudelController.getStatistics(transaction, rudel, relatedUser);
+			// Gather expedition information.
+			let promise = ((): Promise<[User, any, RudelStatistics]> => {
+				if (!preview) {
+					let rudelOwnerPromise = RudelController.getOwner(transaction, rudel);
+					let publicRudelOwnerPromise = rudelOwnerPromise.then((owner: User) => {
+						return UserController.getPublicUser(transaction, owner, relatedUser, true);
+					});
+					let rudelStatisticsPromise = RudelController.getStatistics(transaction, rudel, relatedUser);
+					return Promise.all([
+						rudelOwnerPromise,
+						publicRudelOwnerPromise,
+						rudelStatisticsPromise
+					]);
+				}
+				return Promise.resolve([])
+			})();
 			
-			return Promise.all([
-				rudelOwnerPromise,
-				publicRudelOwnerPromise,
-				rudelStatisticsPromise
-			]).then((values: [User, any, RudelStatistics]) => {
+			// Modify rudel information.
+			return promise.then(values => {
 				// Add default links.
 				let links = {
 					icon: UtilController.getIconUrl(rudel.icon)
 				};
 				
-				// Build profile.
-				return Promise.resolve(dot.transform({
+				let transformationRecipe = {
 					'rudel.id': 'id',
 					'rudel.translations': 'translations',
 					'rudel.icon': 'icon',
 					'defaultLocation': 'defaultLocation',
-					'owner': 'owner',
-					'links': 'links',
 					'rudel.createdAt': 'createdAt',
 					'rudel.updatedAt': 'updatedAt',
-					'isOwner': 'relations.isOwned',
-					'statistics.isFollowed': 'relations.isFollowed',
-					'statistics.rudel': 'statistics.rudel',
-					'statistics.followers': 'statistics.followers',
-					'statistics.lists': 'statistics.lists',
-					'statistics.expeditions': 'statistics.expeditions'
-				}, {
+					'links': 'links'
+				};
+				
+				let transformationObject = {
 					rudel: rudel,
-					defaultLocation: rudel.defaultLocation || relatedUser.location,
 					links: links,
-					statistics: values[2],
-					owner: values[1],
-					isOwner: values[0].id == relatedUser.id
-				}));
+					defaultLocation: rudel.defaultLocation || relatedUser.location
+				};
+				
+				// Emit extended information.
+				if(!preview) {
+					// Extend transformation recipe.
+					transformationRecipe = Object.assign(transformationRecipe, {
+						'owner': 'owner',
+						'isOwner': 'relations.isOwned',
+						'statistics.isFollowed': 'relations.isFollowed',
+						'statistics.rudel': 'statistics.rudel',
+						'statistics.followers': 'statistics.followers',
+						'statistics.lists': 'statistics.lists',
+						'statistics.expeditions': 'statistics.expeditions'
+					});
+					
+					// Extend transformation object.
+					transformationObject = Object.assign(transformationObject, {
+						statistics: values[2],
+						owner: values[1],
+						isOwner: values[0].id == relatedUser.id
+					});
+				}
+				
+				// Build profile.
+				return dot.transform(transformationRecipe, transformationObject);
 			});
 		};
 		

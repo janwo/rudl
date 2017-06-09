@@ -19,85 +19,108 @@ export module ExpeditionController {
 	export const FUZZY_HOURS = 3;
 	export const FUZZY_METERS = 500;
 	
-	export function getPublicExpedition(transaction: Transaction, expedition: Expedition | Expedition[], relatedUser: User): Promise<any | any[]> {
+	export function getPublicExpedition(transaction: Transaction, expedition: Expedition | Expedition[], relatedUser: User, preview = false): Promise<any | any[]> {
 		let createPublicExpedition = (expedition: Expedition): Promise<any> => {
-			let expeditionOwnerPromise = ExpeditionController.getOwner(transaction, expedition);
-			let publicExpeditionOwnerPromise = expeditionOwnerPromise.then((owner: User) => {
-				return UserController.getPublicUser(transaction, owner, relatedUser);
-			});
-			let expeditionStatisticsPromise = ExpeditionController.getStatistics(transaction, expedition, relatedUser);
-			let rudelPromise = ExpeditionController.getRudel(transaction, expedition).then((rudel: Rudel) => {
-				return RudelController.getPublicRudel(transaction, rudel, relatedUser);
-			});
+			// Gather expedition information.
+			let promise = ((): Promise<[User, any, ExpeditionStatistics, Rudel]> => {
+				if(!preview) {
+					let expeditionOwnerPromise = ExpeditionController.getOwner(transaction, expedition);
+					let publicExpeditionOwnerPromise = expeditionOwnerPromise.then((owner: User) => {
+						return UserController.getPublicUser(transaction, owner, relatedUser);
+					});
+					let expeditionStatisticsPromise = ExpeditionController.getStatistics(transaction, expedition, relatedUser);
+					let rudelPromise = ExpeditionController.getRudel(transaction, expedition).then((rudel: Rudel) => {
+						return RudelController.getPublicRudel(transaction, rudel, relatedUser, true);
+					});
+					return Promise.all([
+						expeditionOwnerPromise,
+						publicExpeditionOwnerPromise,
+						expeditionStatisticsPromise,
+						rudelPromise
+					]);
+				}
+				return Promise.resolve([]);
+			})();
 			
-			return Promise.all([
-				expeditionOwnerPromise,
-				publicExpeditionOwnerPromise,
-				expeditionStatisticsPromise,
-				rudelPromise
-			]).then((values: [User, any, ExpeditionStatistics, Rudel]) => {
+			// Modify expedition information.
+			return promise.then(values => {
 				// Add default links.
 				let links = {
 					icon: UtilController.getIconUrl(expedition.icon)
 				};
 				
-				// Mask data for unapproved users.
-				let dateAccuracy = 0;
-				let locationAccuracy = 0;
-				if (expedition.needsApproval && !values[2].isAttendee) {
-					// Seedable randomness to prevent hijacking unmasked data by recalling this function multiple times.
-					let randomSeed: Random.RandomSeed = Random.create(expedition.id + Config.backend.salts.random);
-					
-					// Mask time.
-					if (expedition.fuzzyTime) {
-						dateAccuracy = ExpeditionController.FUZZY_HOURS * 3600;
-						moment(expedition.date).add(randomSeed.intBetween(-FUZZY_HOURS, FUZZY_HOURS), 'hours').minute(0).second(0).millisecond(0);
-					}
-					
-					// Mask location.
-					locationAccuracy = ExpeditionController.FUZZY_METERS;
-					let distance = randomSeed.intBetween(-FUZZY_METERS, FUZZY_METERS);
-					let pi = Math.PI;
-					let R = 6378137; // Earth’s radius
-					let dLat = distance / R;
-					let dLng = distance / ( R * Math.cos(pi * expedition.location.lng / 180) );
-					expedition.location.lat = expedition.location.lat + ( dLat * 180 / pi );
-					expedition.location.lng = expedition.location.lng + ( dLng * 180 / pi );
-				}
-				
-				// Build profile.
-				return Promise.resolve(dot.transform({
+				let transformationRecipe = {
 					'expedition.id': 'id',
 					'expedition.title': 'title',
 					'expedition.description': 'description',
-					'expedition.date': 'date.isoString',
-					'dateAccuracy': 'date.accuracy',
 					'expedition.icon': 'icon',
-					'expedition.needsApproval': 'needsApproval',
-					'expedition.location': 'location',
 					'expedition.createdAt': 'createdAt',
 					'expedition.updatedAt': 'updatedAt',
-					"locationAccuracy": "location.accuracy",
-					"rudel": "rudel",
-					'links': 'links',
-					'owner': 'owner',
-					'isOwner': 'relations.isOwned',
-					'statistics.attendees': 'statistics.attendees',
-					'statistics.invitees': 'statistics.invitees',
-					'statistics.applicants': 'statistics.applicants',
-					'statistics.isAttendee': 'relations.isAttendee',
-					'statistics.isInvitee': 'relations.isInvitee',
-					'statistics.isApplicant': 'relations.isApplicant'
-				}, {
-					locationAccuracy: locationAccuracy,
-					dateAccuracy: dateAccuracy,
-					statistics: values[2],
+					'links': 'links'
+				};
+				
+				let transformationObject = {
 					expedition: expedition,
-					rudel: values[3],
-					links: links,
-					owner: values[1],
-					isOwner: values[0].id == relatedUser.id
-				}));
+					links: links
+				};
+				
+				// Emit extended information.
+				if (!preview) {
+					// Mask data for unapproved users.
+					let dateAccuracy = 0;
+					let locationAccuracy = 0;
+					if (expedition.needsApproval && !values[2].isAttendee) {
+						// Seedable randomness to prevent hijacking unmasked data by recalling this function multiple times.
+						let randomSeed: Random.RandomSeed = Random.create(expedition.id + Config.backend.salts.random);
+						
+						// Mask time.
+						if (expedition.fuzzyTime) {
+							dateAccuracy = ExpeditionController.FUZZY_HOURS * 3600;
+							moment(expedition.date).add(randomSeed.intBetween(-FUZZY_HOURS, FUZZY_HOURS), 'hours').minute(0).second(0).millisecond(0);
+						}
+						
+						// Mask location.
+						locationAccuracy = ExpeditionController.FUZZY_METERS;
+						let distance = randomSeed.intBetween(-FUZZY_METERS, FUZZY_METERS);
+						let pi = Math.PI;
+						let R = 6378137; // Earth’s radius
+						let dLat = distance / R;
+						let dLng = distance / ( R * Math.cos(pi * expedition.location.lng / 180) );
+						expedition.location.lat = expedition.location.lat + ( dLat * 180 / pi );
+						expedition.location.lng = expedition.location.lng + ( dLng * 180 / pi );
+					}
+					
+					// Extend transformation recipe.
+					transformationRecipe = Object.assign(transformationRecipe, {
+						'expedition.date': 'date.isoString',
+						'dateAccuracy': 'date.accuracy',
+						'expedition.needsApproval': 'needsApproval',
+						'expedition.location': 'location',
+						"locationAccuracy": "location.accuracy",
+						"rudel": "rudel",
+						'owner': 'owner',
+						'isOwner': 'relations.isOwned',
+						'statistics.attendees': 'statistics.attendees',
+						'statistics.invitees': 'statistics.invitees',
+						'statistics.applicants': 'statistics.applicants',
+						'statistics.isAttendee': 'relations.isAttendee',
+						'statistics.isInvitee': 'relations.isInvitee',
+						'statistics.isApplicant': 'relations.isApplicant'
+					});
+					
+					// Extend transformation object.
+					transformationObject = Object.assign(transformationObject, {
+						locationAccuracy: locationAccuracy,
+						dateAccuracy: dateAccuracy,
+						statistics: values[2],
+						rudel: values[3],
+						owner: values[1],
+						isOwner: values[0].id == relatedUser.id
+					});
+				}
+				
+				// Build profile.
+				return Promise.resolve(dot.transform(transformationRecipe, transformationObject));
 			});
 		};
 		let now = Date.now();
@@ -148,11 +171,21 @@ export module ExpeditionController {
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 0).pop());
 	}
 	
-	export function findByUser(transaction: Transaction, user: User, ownsOnly = false, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:${ownsOnly ? 'OWNS_EXPEDITION' : 'JOINS_EXPEDITION'}]->(e:Expedition) RETURN COALESCE(properties(e), []) as e SKIP $skip LIMIT $limit`, {
+	export function findUpcomingByUser(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
+		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e, u, apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date > apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") - 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			limit: limit,
-			skip: skip
+			skip: skip,
+			now: new Date().toISOString()
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
+	}
+	
+	export function findDoneByUser(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
+		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e, u, apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date < apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") + 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date DESC SKIP $skip LIMIT $limit`, {
+			userId: user.id,
+			limit: limit,
+			skip: skip,
+			now: new Date().toISOString()
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
 	}
 	
@@ -574,22 +607,39 @@ export module ExpeditionController {
 		}
 		
 		/**
-		 * Handles [GET] /api/expeditions/by/{username}
+		 * Handles [GET] /api/expeditions/upcoming/{username}
 		 * @param request Request-Object
-		 * @param request.params.username username
 		 * @param request.query.offset offset (optional, default=0)
 		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function by(request: any, reply: any): void {
+		export function upcoming(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise: Promise<any> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then(user => {
-				if (!user) return Promise.reject(Boom.notFound('User not found!'));
-				return ExpeditionController.findByUser(transaction, user, false, request.query.offset, request.query.limit);
-			}).then((expeditions: Expedition[]) => ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials));
+			let promise: Promise<any> = ExpeditionController.findUpcomingByUser(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
+				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [GET] /api/expeditions/done/{username}
+		 * @param request Request-Object
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function done(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = ExpeditionController.findDoneByUser(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
+				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
+			});
 			
 			reply.api(promise, transactionSession);
 		}

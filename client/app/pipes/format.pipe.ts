@@ -16,16 +16,16 @@ export class FormatPipe implements PipeTransform {
 		let replacementStrategies = [
 			{
 				className: 'bold',
-				regExp: /\*\*(.*)\*\*/
+				regExp: /\*\*(.*?)\*\*/g
 			},
 			{
 				className: 'italic',
-				regExp: /\*(.*)\*/
+				regExp: /\*(.*?)\*/g
 			}
 		];
 		
 		// Replace.
-		let safeHTML = replacementStrategies.reduce((text: string, replacementStrategy: {
+		text = replacementStrategies.reduce((text: string, replacementStrategy: {
 			className: string,
 			regExp: RegExp
 		}) => {
@@ -33,6 +33,7 @@ export class FormatPipe implements PipeTransform {
 				return `<span class="${replacementStrategy.className}">${match[1]}</span>`;
 			});
 		}, text);
-		return this.sanitized.bypassSecurityTrustHtml(safeHTML);
+		
+		return this.sanitized.bypassSecurityTrustHtml(text);
 	}
 }

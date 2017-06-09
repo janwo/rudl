@@ -48,9 +48,11 @@ $profile-avatar-size: 5rem;
       .cta {
         display: flex;
         justify-content: space-between;
+        margin-left: auto;
 
         @include breakpoint('small') {
           margin-top: map_get($base-padding, 'smaller');
+          margin-left: 0;
         }
 
         styled-button {

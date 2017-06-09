@@ -1,9 +1,9 @@
 import {Document} from './document';
-import {User} from './user';
+import {User, UserPreview} from './user';
 
 export interface Comment extends Document {
 	message: string;
-	owner: User;
+	owner: UserPreview;
 	pinned: boolean;
 	relations: {
 		isOwned: boolean;

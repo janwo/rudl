@@ -3,10 +3,10 @@
     <span class="name" [innerHTML]="highlight ? (rudel.name | highlight: highlight) : rudel.name"></span>
     <slots [users]="[rudel.owner]" [slots]="rudel.statistics.followers"></slots>
     <ul>
-        <li class="owner">
+        <li>
             <span>{{rudel.owner.firstName + ' ' + rudel.owner.lastName}}</span>
         </li>
-        <li class="approval-status">
+        <li>
             <span>{{rudel.statistics.followers}} Follower</span>
         </li>
     </ul>

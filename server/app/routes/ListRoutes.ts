@@ -10,7 +10,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/lists/by/{username}',
 		method: 'GET',
-		handler: ListController.RouteHandlers.getListsBy,
+		handler: ListController.RouteHandlers.by,
 		config: {
 			auth: {
 				scope: [
@@ -31,7 +31,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/lists/like/{query}',
 		method: 'GET',
-		handler: ListController.RouteHandlers.getListsLike,
+		handler: ListController.RouteHandlers.like,
 		config: {
 			auth: {
 				scope: [
@@ -52,7 +52,7 @@ export const RoutesConfig: RoutesConfiguration = [
 	{
 		path: '/api/lists/=/{id}',
 		method: 'GET',
-		handler: ListController.RouteHandlers.getList,
+		handler: ListController.RouteHandlers.get,
 		config: {
 			auth: {
 				scope: [

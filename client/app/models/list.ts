@@ -1,12 +1,15 @@
 import {Locale} from './locale';
 import {Document} from './document';
-import {User} from './user';
+import {User, UserPreview} from './user';
 
-export interface List extends Document {
+export interface ListPreview extends Document {
 	name: string;
-	owner: User;
 	links: ListLinks;
-	icon: string;
+	translations: Locale.Translations;
+}
+
+export interface List extends ListPreview {
+	owner: UserPreview;
 	relations: {
 		isFollowed: boolean;
 		isOwned: boolean;
@@ -15,11 +18,9 @@ export interface List extends Document {
 		followers: number;
 		rudel: number;
 	};
-	translations: Locale.Translations;
 }
 
 export interface ListLinks {
-	icon: string;
 }
 
 export interface ListRecipe {

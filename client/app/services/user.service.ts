@@ -2,12 +2,13 @@ import {DataService, JsonResponse} from './data.service';
 import {Router} from '@angular/router';
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
-import {User, UserRecipe} from '../models/user';
+import {AuthenticatedUser, User, UserRecipe} from '../models/user';
 import {Location} from '../models/location';
+import {Notification} from '../models/notification';
 
 export interface UserStatus {
 	loggedIn: boolean;
-	user: User
+	user: AuthenticatedUser
 }
 
 @Injectable()
@@ -51,7 +52,7 @@ export class UserService {
 		// Listen on token expeditions in data service and redirect it to the authenticatedProfile observer.
 		this.dataService.getTokenObservable().flatMap((tokenString: string) => {
 			return tokenString ? this.get() : Observable.of(null);
-		}).subscribe((user: User) => {
+		}).subscribe((user: AuthenticatedUser) => {
 			this.authenticatedProfile.next({
 				loggedIn: !!user,
 				user: user
@@ -124,7 +125,7 @@ export class UserService {
 		});
 	}
 	
-	get(username: string = 'me'): Observable<User> {
+	get(username: string = 'me'): Observable<User | AuthenticatedUser> {
 		return this.dataService.get(`/api/users/=/${username}`, true).map((json: JsonResponse) => json.data).share();
 	}
 	
@@ -148,14 +149,14 @@ export class UserService {
 		return this.dataService.get(`/api/users/like/${query}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
 	}
 	
-	updateLocation(location: Location): Observable<User> {
+	updateLocation(location: Location): Observable<AuthenticatedUser> {
 		return this.dataService.post(`/api/account/location`, `${JSON.stringify(location)}`, true).map((json: JsonResponse) => json.data).do(user => this.authenticatedProfile.next({
 			loggedIn: !!user,
 			user: user
 		})).share();
 	}
 	
-	updateBoarding(boarded: boolean): Observable<User> {
+	updateBoarding(boarded: boolean): Observable<AuthenticatedUser> {
 		return this.dataService.post(`/api/account/boarding`, `${JSON.stringify({
 			boarded: boarded
 		})}`, true).map((json: JsonResponse) => json.data).do(user => this.authenticatedProfile.next({
@@ -168,7 +169,7 @@ export class UserService {
 		return this.dataService.get(`/api/suggestions/people?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
 	}
 	
-	updateAvatar(file: File): Observable<User> {
+	updateAvatar(file: File): Observable<AuthenticatedUser> {
 		let promise = file == null ? this.dataService.post(`/api/account/delete-avatar`, null, true) : this.dataService.multipart(`/api/account/avatar`, file, true);
 		return promise.map((json: JsonResponse) => json.data).do(user => this.authenticatedProfile.next({
 			loggedIn: !!user,
@@ -176,10 +177,14 @@ export class UserService {
 		})).share();
 	}
 	
-	update(recipe: UserRecipe): Observable<User> {
-		return this.dataService.post(`/api/account/update`, JSON.stringify(recipe), true).map((json: JsonResponse) => json.data as User).do(user => this.authenticatedProfile.next({
+	update(recipe: UserRecipe): Observable<AuthenticatedUser> {
+		return this.dataService.post(`/api/account/update`, JSON.stringify(recipe), true).map((json: JsonResponse) => json.data as AuthenticatedUser).do(user => this.authenticatedProfile.next({
 			loggedIn: !!user,
 			user: user
-		})).share();;
+		})).share();
+	}
+	
+	notifications(offset = 0, limit = 25): Observable<Notification[]> {
+		return this.dataService.get(`/api/account/notifications?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
 	}
 }

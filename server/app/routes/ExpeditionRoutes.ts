@@ -29,9 +29,9 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/expeditions/by/{username}',
+		path: '/api/expeditions/upcoming',
 		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.by,
+		handler: ExpeditionController.RouteHandlers.upcoming,
 		config: {
 			auth: {
 				scope: [
@@ -39,9 +39,24 @@ export const RoutesConfig: RoutesConfiguration = [
 				]
 			},
 			validate: {
-				params: {
-					username: UsernameValidation
-				},
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
+				}
+			}
+		}
+	},
+	{
+		path: '/api/expeditions/done',
+		method: 'GET',
+		handler: ExpeditionController.RouteHandlers.done,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
 				query: {
 					offset: Joi.number().min(0).default(0),
 					limit: Joi.number().positive().max(100).default(25)
@@ -180,24 +195,6 @@ export const RoutesConfig: RoutesConfiguration = [
 			validate: {
 				params: {
 					id: Joi.string()
-				}
-			}
-		}
-	},
-	{
-		path: '/api/expeditions/create',
-		method: 'POST',
-		handler: ExpeditionController.RouteHandlers.create,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			},
-			validate: {
-				payload: {
-					rudel: Joi.string(),
-					expedition: ExpeditionValidation
 				}
 			}
 		}

@@ -107,5 +107,23 @@ export const RoutesConfig: RoutesConfiguration = [
 				}
 			}
 		}
-	}
+	},
+	{
+		path: '/api/account/notifications',
+		method: 'GET',
+		handler: AccountController.RouteHandlers.notifications,
+		config: {
+			auth: {
+				scope: [
+					UserRoles.user
+				]
+			},
+			validate: {
+				query: {
+					offset: Joi.number().min(0).default(0),
+					limit: Joi.number().positive().max(100).default(25)
+				}
+			}
+		}
+	},
 ];

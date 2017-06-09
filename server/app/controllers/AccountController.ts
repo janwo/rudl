@@ -2,13 +2,19 @@ import * as Boom from 'boom';
 import * as Path from 'path';
 import {Config} from '../../../run/config';
 import {User, UserRoles} from '../models/user/User';
+import {Notification, NotificationType} from '../models/notification/Notification';
 import {DatabaseManager, TransactionSession} from '../Database';
 import {UserController} from './UserController';
 import * as sharp from 'sharp';
 import Transaction from 'neo4j-driver/lib/v1/transaction';
 import {AuthController} from './AuthController';
 import * as shortid from 'shortid';
+import * as dot from 'dot-object';
 import * as fs from 'fs';
+import {Expedition} from '../models/expedition/Expedition';
+import {ExpeditionController} from './ExpeditionController';
+import {RudelController} from './RudelController';
+import {Rudel} from '../models/rudel/Rudel';
 
 export module AccountController {
 	
@@ -132,7 +138,82 @@ export module AccountController {
 		});
 	}
 	
+	export namespace NotificationController {
+		export function get(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Notification[]> {
+			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n, apoc.date.parse(n.createdAt, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date ORDER BY date SKIP $skip LIMIT $limit OPTIONAL MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User), (n)-[:NOTIFICATION_SUBJECT]->(subject) WITH subject, sender, n RETURN COALESCE(apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)), []) as n`, {
+				userId: user.id,
+				limit: limit,
+				skip: skip
+			}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'n'));
+		}
+		
+		export function getPublicNotification(transaction: Transaction, notification: Notification | Notification[], relatedUser: User): Promise<any | any[]> {
+			let createPublicNotification = (notification: Notification): Promise<any> => {
+				let userProfilePromise = UserController.getPublicUser(transaction, notification.sender, relatedUser, true);
+				let subjectProfilePromise;
+				switch(notification.type) {
+					case NotificationType.ADDED_EXPEDITION:
+					case NotificationType.INVITED_TO_EXPEDITION:
+					case NotificationType.APPLIED_FOR_EXPEDITION:
+						subjectProfilePromise = ExpeditionController.getPublicExpedition(transaction, notification.subject as any as Expedition, relatedUser, true);
+						break;
+					
+					case NotificationType.JOINED_RUDEL:
+						subjectProfilePromise = RudelController.getPublicRudel(transaction, notification.subject as any as Rudel, relatedUser, true);
+						break;
+				}
+				
+				return Promise.all([
+					userProfilePromise,
+					subjectProfilePromise
+				]).then((values: [User]) => {
+					// Build profile.
+					return Promise.resolve(dot.transform({
+						'notification.type': 'type',
+						'sender': 'sender',
+						'subject': 'subject',
+						'notification.createdAt': 'createdAt'
+					}, {
+						notification: notification,
+						sender: values[0],
+						subject: values[1]
+					}));
+				});
+			};
+			
+			let now = Date.now();
+			let transformed = notification instanceof Array ? Promise.all(notification.map(createPublicNotification)) : createPublicNotification(notification);
+			return transformed.then((result: any | Array<any>) => {
+				console.log(`Building profile of ${result instanceof Array ? result.length + ' notifications' : '1 notification'} took ${Date.now() - now} millis`);
+				return result;
+			});
+		}
+		
+		export function set(transaction: Transaction, type: NotificationType, user: User, subject: Document, sender: User): Promise<void> {
+			return Promise.resolve();
+		}
+	}
+	
 	export namespace RouteHandlers {
+		
+		/**
+		 * Handles [GET] /api/account/notifications
+		 * @param request Request-Object
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function notifications(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = AccountController.NotificationController.get(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((notifications: Notification[]) => {
+				return AccountController.NotificationController.getPublicNotification(transaction, notifications, request.auth.credentials);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
 		
 		/**
 		 * Handles [POST] /api/account/update

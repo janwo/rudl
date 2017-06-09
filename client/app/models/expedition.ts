@@ -1,21 +1,24 @@
 import {Document} from './document';
-import {User} from './user';
-import {Rudel} from './rudel';
+import {User, UserPreview} from './user';
+import {Rudel, RudelPreview} from './rudel';
 import {VagueLocation} from './location';
 
-export interface Expedition extends Document {
+export interface ExpeditionPreview extends Document {
 	title: string;
-	description?: string;
+	icon: string;
+	links: ExpeditionLinks;
+	description: string;
+}
+
+export interface Expedition extends ExpeditionPreview {
 	location: VagueLocation;
 	date: {
 		accuracy: number,
 		isoString: string;
 	};
 	needsApproval: boolean;
-	owner: User;
-	links: ExpeditionLinks;
-	rudel: Rudel;
-	icon: string;
+	owner: UserPreview;
+	rudel: RudelPreview;
 	relations: {
 		isApplicant: boolean;
 		isInvitee: boolean;

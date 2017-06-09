@@ -1,0 +1,68 @@
+@import '../../variables.scss';
+
+$notification-avatar-size: 2.5rem;
+
+:host {
+  display: block;
+
+  .card {
+    cursor: pointer;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .message {
+      margin-left: map_get($base-padding, 'smaller');
+
+      /deep/ .bold {
+        font-weight: $base-font-weight-bold;
+        color: map_get($base-colors, 'primary');
+      }
+    }
+
+    .date {
+      margin-left: auto;
+      font-size: map_get($base-font-size, 'small');
+      color: map_get($base-colors, 'secondary-text');
+    }
+
+    .icon {
+      position: relative;
+      height: $notification-avatar-size;
+      width: $notification-avatar-size;
+      flex: 0 0 auto;
+
+      user-avatar {
+        height: $notification-avatar-size;
+        width: $notification-avatar-size;
+      }
+
+      .clip-mask {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: $notification-avatar-size;
+        width: $notification-avatar-size / 2;
+        overflow: hidden;
+
+        emoji {
+          margin-left: -$notification-avatar-size / 2;
+          height: $notification-avatar-size;
+          width: $notification-avatar-size;
+        }
+      }
+    }
+
+    .overflow {
+      position: relative;
+      pointer-events: none;
+      display: flex;
+      flex-direction: row;
+
+      & /deep/ > * {
+        pointer-events: auto;
+      }
+    }
+  }
+}

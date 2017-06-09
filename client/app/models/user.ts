@@ -2,17 +2,26 @@ import {Document} from './document';
 import {Locale} from './locale';
 import {Location} from './location';
 
-export interface User extends Document {
+export interface UserPreview extends Document {
+	name: string;
+	icon: string;
 	firstName: string;
 	lastName: string;
 	username: string;
-	location: Location;
-	profileText: string;
 	hasAvatar: boolean;
-	onBoard: boolean;
+	profileText: string;
+	links: UserLinks;
+	translations: Locale.Translations;
+}
+
+export interface User extends UserPreview {
 	relations: UserRelations;
 	statistics: UserStatistics;
-	links: UserLinks;
+}
+
+export interface AuthenticatedUser extends User {
+	location: Location;
+	onBoard: boolean;
 	languages: Array<Locale.Language>;
 }
 

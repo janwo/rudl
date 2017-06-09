@@ -1,0 +1,13 @@
+<div class="card" [routerLink]="link">
+    <div class="icon">
+        <user-avatar [user]="notification.sender"></user-avatar>
+        <div class="clip-mask" *ngIf="emoji">
+            <emoji [emoji]="emoji"></emoji>
+        </div>
+    </div>
+    <span class="message" [innerHtml]="message | format "></span>
+    <span class="date">{{formattedDate}}</span>
+    <div class="overflow" (click)="$event.stopPropagation()">
+        <ng-content></ng-content>
+    </div>
+</div>

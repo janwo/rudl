@@ -15,7 +15,7 @@
 			}" [infoMessage]="formControlCount(takenTranslations.value[i].translation, 50)">
                 <input type="text" maxlength="50" formControlName="translation">
             </form-control-wrapper>
-            <styled-button *ngIf="takenTranslations.length > 1" [icon]="'trash-o'" [style]="buttonStyle"
+            <styled-button *ngIf="takenTranslations.length > 1" [icon]="'delete'" [style]="buttonStyle"
                     (click)="deleteLanguage(takenTranslationControl.value.language)"></styled-button>
         </li>
     </ul>

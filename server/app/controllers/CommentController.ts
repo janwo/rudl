@@ -61,7 +61,7 @@ export module CommentController {
 		let createPublicComment = (comment: Comment): Promise<any> => {
 			let commentOwnerPromise = CommentController.getOwner(transaction, comment);
 			let publicCommentOwnerPromise = commentOwnerPromise.then((owner: User) => {
-				return UserController.getPublicUser(transaction, owner, relatedUser);
+				return UserController.getPublicUser(transaction, owner, relatedUser, true);
 			});
 			return Promise.all([
 				commentOwnerPromise,

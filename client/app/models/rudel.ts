@@ -1,12 +1,18 @@
 import {Locale} from './locale';
 import {Document} from './document';
-import {User} from './user';
+import {UserPreview} from './user';
 import {Location} from './location';
 
-export interface Rudel extends Document {
+export interface RudelPreview extends Document {
 	name: string;
-	owner: User;
+	icon: string;
 	links: RudelLinks;
+	translations: Locale.Translations;
+	defaultLocation: Location;
+}
+
+export interface Rudel extends RudelPreview {
+	owner: UserPreview;
 	relations: {
 		isFollowed: boolean;
 		isOwned: boolean;
@@ -16,9 +22,6 @@ export interface Rudel extends Document {
 		lists: number;
 		expeditions: number;
 	};
-	defaultLocation: Location;
-	icon: string;
-	translations: Locale.Translations;
 }
 
 export interface RudelLinks {

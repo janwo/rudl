@@ -35,6 +35,9 @@ import {ExpeditionAttendeesComponent} from './ui/layouts/expedition/expedition-a
 import {ExpeditionCommentsComponent} from './ui/layouts/expedition/expedition-comments.component';
 import {RudelPastExpeditionsComponent} from './ui/layouts/rudel/rudel-past-expeditions.component';
 import {SettingsProfileComponent} from './ui/layouts/settings/settings-profile.component';
+import {NotificationsComponent} from './ui/layouts/notification/notifications.component';
+import {ExpeditionsDoneComponent} from './ui/layouts/expedition/expeditions-done.component';
+import {ExpeditionsUpcomingComponent} from './ui/layouts/expedition/expeditions-upcoming.component';
 
 const appRoutes: Routes = [
 	{
@@ -63,7 +66,14 @@ const appRoutes: Routes = [
 			{path: '', redirectTo: 'explore', pathMatch: 'full'},
 			{path: 'explore', component: ExploreComponent, canActivate: [BoardingGuard]},
 			
-			{path: 'expeditions', component: ExpeditionsComponent, pathMatch: 'full', canActivate: [BoardingGuard]},
+			{path: 'expeditions', component: ExpeditionsComponent, canActivate: [BoardingGuard], children: [
+				{path: '', redirectTo: 'upcoming', pathMatch: 'full'},
+				{path: 'done', component: ExpeditionsDoneComponent},
+				{path: 'upcoming', component: ExpeditionsUpcomingComponent}
+			]
+			},
+			
+			{path: 'notifications', component: NotificationsComponent, pathMatch: 'full', canActivate: [BoardingGuard]},
 			
 			{
 				path: 'people/:username', resolve: {

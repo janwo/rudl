@@ -1,0 +1,12 @@
+@import '../../variables.scss';
+@import "../../mixins.scss";
+
+:host {
+  display: block;
+  @include setup-max-width();
+  padding: map_get($base-padding, 'default');
+
+  item-wrapper {
+
+  }
+}

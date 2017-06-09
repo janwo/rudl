@@ -3,9 +3,8 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Locale} from '../models/locale';
 import {UserService} from './user.service';
-import {Expedition, ExpeditionAttendeeStatus, ExpeditionRecipe, ExpeditionRequestResponse} from '../models/expedition';
+import {Expedition, ExpeditionRecipe, ExpeditionRequestResponse} from '../models/expedition';
 import {Rudel} from '../models/rudel';
-import {User} from '../models/user';
 import Translations = Locale.Translations;
 
 @Injectable()
@@ -51,8 +50,12 @@ export class ExpeditionService {
 		return this.dataService.get(rudel === false ? `/api/expeditions/nearby?offset=${offset}&limit=${limit}` : `/api/expeditions/near/${rudel}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
 	}
 	
-	by(username: string = 'me', offset = 0, limit = 25): Observable<Expedition[]> {
-		return this.dataService.get(`/api/expeditions/by/${username}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
+	upcoming(offset = 0, limit = 25): Observable<Expedition[]> {
+		return this.dataService.get(`/api/expeditions/upcoming?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
+	}
+	
+	done(offset = 0, limit = 25): Observable<Expedition[]> {
+		return this.dataService.get(`/api/expeditions/done?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
 	}
 	
 	private handleExpeditionResponse(data: any | any[]): Expedition | Expedition[] {

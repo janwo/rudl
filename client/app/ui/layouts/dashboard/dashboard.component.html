@@ -9,8 +9,8 @@
             <menu>
                 <menu-item [makeRoomIfSmall]="true" [icon]="'grain'" [title]="'Entdecken'"
                         [link]="['/explore']"></menu-item>
-                <menu-item [makeRoomIfSmall]="true" [icon]="'event_available'" [title]="'Streifzüge'"
-                        [link]="['/expeditions']"></menu-item>
+                <menu-item [makeRoomIfSmall]="true" [icon]="'notifications_none'" [title]="'Meldungen'"
+                        [link]="['/notifications']"></menu-item>
                 <menu-item class="search-menu-item" [icon]="'search'" [title]="'Suche'"
                         [link]="['/search']"></menu-item>
             </menu>
@@ -18,8 +18,9 @@
     </div>
     <user-avatar *ngIf="userStatus?.loggedIn" [user]="userStatus.user" (click)="dropdownMenu.toggle()"></user-avatar>
     <dropdown-menu #dropdownMenu [arrowAlignment]="'right'">
-        <menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'pets'" [title]="'Deine Rudel'"
+        <menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'person_outline'" [title]="'Dein Profil'"
                 [link]="['/people', userStatus.user.username, 'rudel']"></menu-item>
+        <menu-item [icon]="'event_available'" [title]="'Deine Streifzüge'" [link]="['/expeditions']"></menu-item>
        <!-- <menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'format_list_bulleted'"
                 [title]="'Deine Listen'" [link]="['/people', userStatus.user.username, 'lists']"></menu-item>-->
         <menu-item [icon]="'settings'" [title]="'Einstellungen'" [link]="['/settings']"></menu-item>

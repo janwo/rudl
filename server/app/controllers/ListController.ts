@@ -12,39 +12,62 @@ import {RudelController} from './RudelController';
 
 export module ListController {
 	
-	export function getPublicList(transaction: Transaction, list: List | List[], relatedUser: User): Promise<any | any[]> {
+	export function getPublicList(transaction: Transaction, list: List | List[], relatedUser: User, preview = false): Promise<any | any[]> {
 		let createPublicList = (list: List): Promise<any> => {
-			let listOwnerPromise = ListController.getOwner(transaction, list);
-			let publicListOwnerPromise = listOwnerPromise.then((owner: User) => UserController.getPublicUser(transaction, owner, relatedUser));
-			let listStatisticsPromise = ListController.getStatistics(transaction, list, relatedUser);
+			// Gather expedition information.
+			let promise = ((): Promise<[User, any, ListStatistics]> => {
+				if (!preview) {
+					let listOwnerPromise = ListController.getOwner(transaction, list);
+					let publicListOwnerPromise = listOwnerPromise.then((owner: User) => UserController.getPublicUser(transaction, owner, relatedUser, true));
+					let listStatisticsPromise = ListController.getStatistics(transaction, list, relatedUser);
+					return Promise.all([
+						listOwnerPromise,
+						publicListOwnerPromise,
+						listStatisticsPromise
+					]);
+				}
+				return Promise.resolve([]);
+			})();
 			
-			return Promise.all([
-				listOwnerPromise,
-				publicListOwnerPromise,
-				listStatisticsPromise
-			]).then((values: [User, any, ListStatistics]) => {
+			// Modify list information.
+			return promise.then(values => {
 				// Add default links.
 				let links = {};
 				
-				// Build profile.
-				return dot.transform({
+				let transformationRecipe = {
 					'list.id': 'id',
 					'list.translations': 'translations',
-					'owner': 'owner',
 					'links': 'links',
-					'isOwner': 'relations.isOwned',
 					'list.updatedAt': 'updatedAt',
-					'list.createdAt': 'createdAt',
-					'statistics.isFollowed': 'relations.isFollowed',
-					'statistics.rudel': 'statistics.rudel',
-					'statistics.followers': 'statistics.followers'
-				}, {
-					list: list,
-					statistics: values[2],
+					'list.createdAt': 'createdAt'
+				};
+				
+				let transformationObject = {
 					links: links,
-					owner: values[1],
-					isOwner: values[0].id == relatedUser.id
-				});
+					list: list
+				};
+				
+				// Emit extended information.
+				if(!preview) {
+					// Extend transformation recipe.
+					transformationRecipe = Object.assign(transformationRecipe, {
+						'owner': 'owner',
+						'isOwner': 'relations.isOwned',
+						'statistics.isFollowed': 'relations.isFollowed',
+						'statistics.rudel': 'statistics.rudel',
+						'statistics.followers': 'statistics.followers'
+					});
+					
+					// Extend transformation object.
+					transformationObject = Object.assign(transformationObject, {
+						statistics: values[2],
+						owner: values[1],
+						isOwner: values[0].id == relatedUser.id
+					});
+				}
+				
+				// Build profile.
+				return dot.transform(transformationRecipe, transformationObject);
 			});
 		};
 		
@@ -219,7 +242,6 @@ export module ListController {
 		/**
 		 * Handles [POST] /api/lists/create
 		 * @param request Request-Object
-		 * @param request.payload.icon icon
 		 * @param request.payload.translations translations
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
@@ -272,7 +294,7 @@ export module ListController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getList(request: any, reply: any): void {
+		export function get(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
@@ -374,7 +396,7 @@ export module ListController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getListsBy(request: any, reply: any): void {
+		export function by(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
@@ -395,7 +417,7 @@ export module ListController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getListsLike(request: any, reply: any): void {
+		export function like(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
@@ -484,7 +506,7 @@ export module ListController {
 				if (!rudel) return Promise.reject(Boom.badRequest('Rudel does not exist!'));
 				return ListController.getRudelMap(transaction, rudel, request.auth.credentials, request.query.offset, request.query.limit);
 			}).then((pairs: any) => {
-				return ListController.getPublicList(transaction, pairs.map((pair: any) => pair.list), request.auth.credentials).then((lists: any[]) => {
+				return ListController.getPublicList(transaction, pairs.map((pair: any) => pair.list), request.auth.credentials, true).then((lists: any[]) => {
 					return lists.map((list: any, i: number) => {
 						return {
 							list: list,

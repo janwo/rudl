@@ -96,6 +96,10 @@ import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {ScrollService} from './services/scroll.service';
 import {SettingsProfileComponent} from './ui/layouts/settings/settings-profile.component';
 import {ArrayPipe} from './pipes/array.pipe';
+import {NotificationsComponent} from './ui/layouts/notification/notifications.component';
+import {NotificationItemComponent} from "./ui/widgets/notification/notification-item.component";
+import {ExpeditionsDoneComponent} from './ui/layouts/expedition/expeditions-done.component';
+import {ExpeditionsUpcomingComponent} from './ui/layouts/expedition/expeditions-upcoming.component';
 
 @NgModule({
 	declarations: [
@@ -111,10 +115,14 @@ import {ArrayPipe} from './pipes/array.pipe';
 		ListComponent,
 		RudelComponent,
 		StatisticsComponent,
+		NotificationsComponent,
+		ExpeditionsDoneComponent,
+		ExpeditionsUpcomingComponent,
 		SlotsComponent,
 		ModalComponent,
 		QuestionComponent,
 		LogoComponent,
+		NotificationItemComponent,
 		ExpeditionItemComponent,
 		LocationPickerComponent,
 		MenuComponent,

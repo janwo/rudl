@@ -1,35 +1,7 @@
-<h1>Einladungen</h1>
-<ng-container *ngIf="expeditions && expeditions.length > 0; else loadingInvites">
-    <item-wrapper [horizontal]="true" [columns]="2" #wrapper>
-        <expedition-item *ngFor="let expedition of expeditions" [expedition]="expedition"></expedition-item>
-    </item-wrapper>
-</ng-container>
-
-<ng-template #loadingInvites>
-    <empty [emptyState]="emptyState" *ngIf="expeditions && expeditions.length == 0"></empty>
-    <loading *ngIf="expeditions == null"></loading>
-</ng-template>
-
-<h1>Zukünftige</h1>
-<ng-container *ngIf="expeditions && expeditions.length > 0; else loadingComing">
-    <item-wrapper [columns]="2">
-        <expedition-item *ngFor="let expedition of expeditions" [expedition]="expedition"></expedition-item>
-    </item-wrapper>
-</ng-container>
-
-<ng-template #loadingComing>
-    <empty [emptyState]="emptyState" *ngIf="expeditions && expeditions.length == 0"></empty>
-    <loading *ngIf="expeditions == null"></loading>
-</ng-template>
-
-<h1>Bisherige</h1>
-<ng-container *ngIf="expeditions && expeditions.length > 0; else loadingPast">
-    <item-wrapper [columns]="2">
-        <expedition-item *ngFor="let expedition of expeditions" [expedition]="expedition"></expedition-item>
-    </item-wrapper>
-</ng-container>
-
-<ng-template #loadingPast>
-    <empty [emptyState]="emptyState" *ngIf="expeditions && expeditions.length == 0"></empty>
-    <loading *ngIf="expeditions == null"></loading>
-</ng-template>
+<menu>
+    <menu-item [icon]="'event_note'" [makeRoomIfSmall]="true" [title]="'Künftige Streifzüge'"
+            [link]="['upcoming']"></menu-item>
+    <menu-item [icon]="'event_busy'" [makeRoomIfSmall]="true" [title]="'Bisherige Streifzüge'"
+            [link]="['done']"></menu-item>
+</menu>
+<router-outlet></router-outlet>

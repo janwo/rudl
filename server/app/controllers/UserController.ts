@@ -84,19 +84,28 @@ export module UserController {
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 0).pop());
 	}
 	
-	export function getPublicUser(transaction: Transaction, user: User | User[], relatedUser: User): Promise<any | any[]> {
+	export function getPublicUser(transaction: Transaction, user: User | User[], relatedUser: User, preview = false): Promise<any | any[]> {
 		let createPublicUser = (user: User) => {
-			// Run further promises.
-			return Promise.all([
-				UserController.getStatistics(transaction, user, relatedUser)
-			]).then((results: [UserStatistics]) => {
-				// Define default links.
+			// Gather user information.
+			let promise = ((): Promise<[UserStatistics]> => {
+				if(!preview) {
+					let userStatistics = UserController.getStatistics(transaction, user, relatedUser);
+					return Promise.all([
+						userStatistics
+					]);
+				}
+				return Promise.resolve([]);
+			})();
+			
+			// Modify user information.
+			return promise.then((results: [UserStatistics]) => {
+				// Add default links.
 				let links: any = {
 					followers: `${Config.backend.domain}/api/users/${user.username}/followers`,
 					followees: `${Config.backend.domain}/api/users/${user.username}/following`
 				};
 				
-				// Define avatar links?
+				// Add avatar links?
 				if (user.avatarId) {
 					links['avatars'] = {
 						small: AccountController.getAvatarLink(user, AccountController.AvatarSizes.small),
@@ -112,32 +121,45 @@ export module UserController {
 					'user.lastName': 'lastName',
 					'hasAvatar': 'hasAvatar',
 					'user.profileText': 'profileText',
-					'user.onBoard': 'onBoard',
-					'user.languages': 'languages',
 					'user.createdAt': 'createdAt',
 					'user.updatedAt': 'updatedAt',
-					'links': 'links',
-					'statistics.rudel': 'statistics.rudel',
-					'statistics.followers': 'statistics.followers',
-					'statistics.followees': 'statistics.followees',
-					'statistics.lists': 'statistics.lists',
-					'statistics.mutualFollowers': 'relations.mutualFollowers',
-					'statistics.mutualFollowees': 'relations.mutualFollowees',
-					'statistics.isFollower': 'relations.isFollower',
-					'statistics.isFollowee': 'relations.isFollowee'
+					'links': 'links'
 				};
 				
-				// Emit private information.
-				if (user.id == relatedUser.id) Object.assign(transformationRecipe, {
-					'user.location': 'location'
-				});
-				
-				return dot.transform(transformationRecipe, {
+				let transformationObject = {
 					user: user,
 					hasAvatar: !!user.avatarId,
-					statistics: results[0],
 					links: links
-				}) as any;
+				};
+				
+				// Emit extended information.
+				if (!preview) {
+					// Extend transformation recipe.
+					transformationRecipe = Object.assign(transformationRecipe, {
+						'statistics.rudel': 'statistics.rudel',
+						'statistics.followers': 'statistics.followers',
+						'statistics.followees': 'statistics.followees',
+						'statistics.lists': 'statistics.lists',
+						'statistics.mutualFollowers': 'relations.mutualFollowers',
+						'statistics.mutualFollowees': 'relations.mutualFollowees',
+						'statistics.isFollower': 'relations.isFollower',
+						'statistics.isFollowee': 'relations.isFollowee'
+					});
+					
+					// Extend transformation object.
+					transformationObject = Object.assign(transformationObject, {
+						statistics: results[0]
+					});
+				}
+				
+				// Emit private information.
+				if (user.id == relatedUser.id) transformationRecipe = Object.assign(transformationRecipe, {
+					'user.location': 'location',
+					'user.onBoard': 'onBoard',
+					'user.languages': 'languages',
+				});
+				
+				return dot.transform(transformationRecipe, transformationObject) as any;
 			});
 		};
 		
