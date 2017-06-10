@@ -88,9 +88,9 @@ export module ListController {
 	export function getStatistics(transaction: Transaction, list: List, relatedUser: User): Promise<ListStatistics> {
 		let queries: string[] = [
 			"MATCH (list:List {id: $listId})",
-			"OPTIONAL MATCH (list)<-[fl:FOLLOWS_LIST]-() WITH COUNT(fl) as followersCount, list",
+			"OPTIONAL MATCH (list)<-[fl:LIKES_LIST]-() WITH COUNT(fl) as followersCount, list",
 			"OPTIONAL MATCH (list)<-[btl:BELONGS_TO_LIST]-() WITH COUNT(btl) as rudelCount, followersCount",
-			"OPTIONAL MATCH (list)<-[fl:FOLLOWS_LIST]-(:User {id: $relatedUserId}) WITH followersCount, rudelCount, COUNT(fl) > 0 as isFollowed"
+			"OPTIONAL MATCH (list)<-[fl:LIKES_LIST]-(:User {id: $relatedUserId}) WITH followersCount, rudelCount, COUNT(fl) > 0 as isFollowed"
 		];
 		
 		let transformations: string[] = [
@@ -110,7 +110,7 @@ export module ListController {
 	}
 	
 	export function findByUser(transaction: Transaction, user: User, ownsOnly = false, skip = 0, limit = 25): Promise<List[]> {
-		return transaction.run<List, any>(`MATCH(:User {id: $userId})-[:${ownsOnly ? 'OWNS_LIST' : 'FOLLOWS_LIST'}]->(l:List) RETURN COALESCE(properties(l), []) as l SKIP $skip LIMIT $limit`, {
+		return transaction.run<List, any>(`MATCH(:User {id: $userId})-[:${ownsOnly ? 'OWNS_LIST' : 'LIKES_LIST'}]->(l:List) RETURN COALESCE(properties(l), []) as l SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			limit: limit,
 			skip: skip
@@ -183,7 +183,7 @@ export module ListController {
 	}
 	
 	export function followers(transaction: Transaction, list: List, skip = 0, limit = 25): Promise<User[]> {
-		return transaction.run<User, any>(`MATCH(:List {id: $listId})<-[:FOLLOWS_LIST]-(followers:User) RETURN COALESCE(properties(followers), []) as followers SKIP $skip LIMIT $limit`, {
+		return transaction.run<User, any>(`MATCH(:List {id: $listId})<-[:LIKES_LIST]-(followers:User) RETURN COALESCE(properties(followers), []) as followers SKIP $skip LIMIT $limit`, {
 			listId: list.id,
 			skip: skip,
 			limit: limit
@@ -191,7 +191,7 @@ export module ListController {
 	}
 	
 	export function follow(transaction: Transaction, list: List, user: User): Promise<void> {
-		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WITH u, l MERGE (u)-[:FOLLOWS_LIST {createdAt: $now}]->(l) WITH u, l OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, l, u WHERE count = 0 CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
+		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WITH u, l WHERE NOT (u)-[:LIKES_LIST]->(l) CREATE UNIQUE (u)-[:LIKES_LIST {createdAt: $now}]->(l) WITH u, l OPTIONAL MATCH (u)-[dll:DISLIKES_LIST]->(l) DETACH DELETE dll OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, l, u WHERE count = 0 CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
 			userId: user.id,
 			listId: list.id,
 			now: new Date().toISOString()
@@ -199,9 +199,10 @@ export module ListController {
 	}
 	
 	export function unfollow(transaction: Transaction, list: List, user: User): Promise<void> {
-		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) OPTIONAL MATCH (u)-[ol:OWNS_LIST]->(l) OPTIONAL MATCH (u)-[fl:FOLLOWS_LIST]->(l) DETACH DELETE fl, ol", {
+		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WHERE NOT (u)-[:DISLIKES_LIST]->(l) CREATE UNIQUE (u)-[:DISLIKES_LIST {createdAt: $now}]->(l) OPTIONAL MATCH (u)-[ol:OWNS_LIST]->(l) OPTIONAL MATCH (u)-[ll:LIKES_LIST]->(l) DETACH DELETE ll, ol CREATE UNIQUE ", {
 			userId: user.id,
-			listId: list.id
+			listId: list.id,
+			now: new Date().toISOString()
 		}).then(() => {
 			return this.followers(transaction, list, 0, 1).then((followers: User[]) => {
 				if(followers.length > 0) return transaction.run("MATCH(l:List {id: $listId}), (u:User {id: $newOwnerId}) CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {

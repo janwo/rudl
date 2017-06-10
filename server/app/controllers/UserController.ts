@@ -43,10 +43,10 @@ export module UserController {
 		// Set queries.
 		let queries: string[] = [
 			"MATCH (user:User {id: $userId})",
-			"OPTIONAL MATCH (user)-[fr:FOLLOWS_RUDEL]->() WITH COUNT(fr) as rudelCount, user",
-			"OPTIONAL MATCH (user)-[fl:FOLLOWS_LIST]->() WITH rudelCount, COUNT(fl) as listsCount, user",
-			"OPTIONAL MATCH (user)-[:FOLLOWS_USER]->(fes:User) WITH rudelCount, listsCount, fes as followees, COUNT(fes) as followeesCount, user",
-			"OPTIONAL MATCH (user)<-[:FOLLOWS_USER]-(frs:User) WITH rudelCount, listsCount, followees, followeesCount, frs as followers, COUNT(frs) as followersCount, user"
+			"OPTIONAL MATCH (user)-[fr:LIKES_RUDEL]->() WITH COUNT(fr) as rudelCount, user",
+			"OPTIONAL MATCH (user)-[fl:LIKES_LIST]->() WITH rudelCount, COUNT(fl) as listsCount, user",
+			"OPTIONAL MATCH (user)-[:LIKES_USER]->(fes:User) WITH rudelCount, listsCount, fes as followees, COUNT(fes) as followeesCount, user",
+			"OPTIONAL MATCH (user)<-[:LIKES_USER]-(frs:User) WITH rudelCount, listsCount, followees, followeesCount, frs as followers, COUNT(frs) as followersCount, user"
 		];
 		
 		let transformations: string[] = [
@@ -60,10 +60,10 @@ export module UserController {
 		if (user.id != relatedUser.id) {
 			queries = queries.concat([
 				"MATCH (relatedUser:User {id: $relatedUserId}) WITH rudelCount, listsCount, followees, followeesCount, followers, followersCount, user, relatedUser",
-				"OPTIONAL MATCH (relatedUser)-[mfes:FOLLOWS_USER]->(followees) WITH rudelCount, listsCount, followeesCount, followersCount, COUNT(mfes) as mutualFolloweesCount, user, relatedUser",
-				"OPTIONAL MATCH (relatedUser)<-[mfrs:FOLLOWS_USER]-(followers) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, COUNT(mfrs) as mutualFollowersCount, user, relatedUser",
-				"OPTIONAL MATCH (user)<-[fu:FOLLOWS_USER]-(relatedUser) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, mutualFollowersCount, COUNT(fu) > 0 as isFollowee, user, relatedUser",
-				"OPTIONAL MATCH (user)-[fu:FOLLOWS_USER]->(relatedUser) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, mutualFollowersCount, isFollowee, COUNT(fu) > 0 as isFollower"
+				"OPTIONAL MATCH (relatedUser)-[mfes:LIKES_USER]->(followees) WITH rudelCount, listsCount, followeesCount, followersCount, COUNT(mfes) as mutualFolloweesCount, user, relatedUser",
+				"OPTIONAL MATCH (relatedUser)<-[mfrs:LIKES_USER]-(followers) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, COUNT(mfrs) as mutualFollowersCount, user, relatedUser",
+				"OPTIONAL MATCH (user)<-[fu:LIKES_USER]-(relatedUser) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, mutualFollowersCount, COUNT(fu) > 0 as isFollowee, user, relatedUser",
+				"OPTIONAL MATCH (user)-[fu:LIKES_USER]->(relatedUser) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, mutualFollowersCount, isFollowee, COUNT(fu) > 0 as isFollower"
 			]);
 			
 			transformations = transformations.concat([
@@ -172,7 +172,7 @@ export module UserController {
 	}
 	
 	export function followers(transaction: Transaction, user: User, skip: number = 0, limit: number = 25): Promise<User[]> {
-		return transaction.run<User, any>(`MATCH(:User {id: $userId})<-[:FOLLOWS_USER]-(followers:User) RETURN COALESCE(properties(followers), []) as followers SKIP $skip LIMIT $limit`, {
+		return transaction.run<User, any>(`MATCH(:User {id: $userId})<-[:LIKES_USER]-(followers:User) RETURN COALESCE(properties(followers), []) as followers SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			skip: skip,
 			limit: limit
@@ -180,7 +180,7 @@ export module UserController {
 	}
 	
 	export function followees(transaction: Transaction, user: User, skip: number = 0, limit: number = 25): Promise<User[]> {
-		return transaction.run<User, any>(`MATCH(:User {id: $userId})-[:FOLLOWS_USER]->(followees:User) RETURN COALESCE(properties(followees), []) as followees SKIP $skip LIMIT $limit`, {
+		return transaction.run<User, any>(`MATCH(:User {id: $userId})-[:LIKES_USER]->(followees:User) RETURN COALESCE(properties(followees), []) as followees SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			skip: skip,
 			limit: limit
@@ -189,7 +189,7 @@ export module UserController {
 	
 	export function follow(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
 		if (aimedUser.id === user.id) return Promise.reject<void>('Users cannot follow themselves.');
-		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) MERGE (user)-[:FOLLOWS_USER {createdAt: $now}]->(followee)", {
+		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:LIKES_USER]->(followee) OPTIONAL MATCH (user)-[dlu:DISLIKES_USER]->(followee) DETACH DELETE dlu CREATE UNIQUE (user)-[:LIKES_USER {createdAt: $now}]->(followee)", {
 			userId: user.id,
 			followeeUserId: aimedUser.id,
 			now: new Date().toISOString()
@@ -198,9 +198,10 @@ export module UserController {
 	
 	export function unfollow(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
 		if (aimedUser.id === user.id) return Promise.reject<void>('Users cannot unfollow themselves.');
-		return transaction.run("MATCH(user:User {id: $userId})-[fu:FOLLOWS_USER]->(followee:User {id: $followeeUserId}) DETACH DELETE fu", {
+		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:DISLIKES_USER]->(followee) OPTIONAL MATCH (user)-[lu:LIKES_USER]->(followee) DETACH DELETE lu CREATE UNIQUE (user)-[:DISLIKES_USER {createdAt: $now}]->(followee)", {
 			userId: user.id,
-			followeeUserId: aimedUser.id
+			followeeUserId: aimedUser.id,
+			now: new Date().toISOString()
 		}).then(() => {});
 	}
 	

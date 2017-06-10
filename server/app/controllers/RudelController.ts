@@ -117,7 +117,7 @@ export module RudelController {
 	}
 	
 	export function findByUser(transaction: Transaction, user: User, ownsOnly = false, skip = 0, limit = 25): Promise<Rudel[]> {
-		return transaction.run<Rudel, any>(`MATCH(:User {id : $userId })-[:${ownsOnly ? 'OWNS_RUDEL' : 'FOLLOWS_RUDEL'}]->(r:Rudel) RETURN COALESCE(properties(r), []) as r SKIP $skip LIMIT $limit`, {
+		return transaction.run<Rudel, any>(`MATCH(:User {id : $userId })-[:${ownsOnly ? 'OWNS_RUDEL' : 'LIKES_RUDEL'}]->(r:Rudel) RETURN COALESCE(properties(r), []) as r SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			skip: skip,
 			limit: limit
@@ -148,10 +148,10 @@ export module RudelController {
 	export function getStatistics(transaction: Transaction, rudel: Rudel, relatedUser: User): Promise<RudelStatistics> {
 		let queries: string[] = [
 			"MATCH (rudel:Rudel {id: $rudelId})",
-			"OPTIONAL MATCH (rudel)<-[fr:FOLLOWS_RUDEL]-() WITH COUNT(fr) as followersCount, rudel",
+			"OPTIONAL MATCH (rudel)<-[fr:LIKES_RUDEL]-() WITH COUNT(fr) as followersCount, rudel",
 			"OPTIONAL MATCH (rudel)-[btl:BELONGS_TO_LIST]->() WITH COUNT(btl) as listsCount, followersCount, rudel",
 			"OPTIONAL MATCH (rudel)<-[btr:BELONGS_TO_RUDEL]-() WITH COUNT(btr) as expeditionsCount, followersCount, rudel, listsCount",
-			"OPTIONAL MATCH (rudel)<-[fr:FOLLOWS_RUDEL]-(:User {id: $relatedUserId}) WITH followersCount, listsCount, COUNT(fr) > 0 as isFollowed, expeditionsCount"
+			"OPTIONAL MATCH (rudel)<-[fr:LIKES_RUDEL]-(:User {id: $relatedUserId}) WITH followersCount, listsCount, COUNT(fr) > 0 as isFollowed, expeditionsCount"
 		];
 		
 		let transformations: string[] = [
@@ -178,7 +178,7 @@ export module RudelController {
 	}
 	
 	export function follow(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
-		return transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WITH u, r MERGE (u)-[:FOLLOWS_RUDEL {createdAt: $now}]->(r) WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
+		return transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WITH u, r WHERE NOT (u)-[:LIKES_RUDEL]->(r) CREATE UNIQUE (u)-[:LIKES_RUDEL {createdAt: $now}]->(r) WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
 			userId: user.id,
 			rudelId: rudel.id,
 			now: new Date().toISOString()
@@ -187,9 +187,10 @@ export module RudelController {
 	
 	export function unfollow(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
 		let deleteExpeditions = ExpeditionController.removeExpeditions(transaction, rudel, user);
-		let deleteRelationships = transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) OPTIONAL MATCH (u)-[or:OWNS_RUDEL]->(r) OPTIONAL MATCH (u)-[fr:FOLLOWS_RUDEL]->(r) DETACH DELETE fr, or", {
+		let deleteRelationships = transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:DISLIKES_RUDEL]->(r) OPTIONAL MATCH (u)-[or:OWNS_RUDEL]->(r) OPTIONAL MATCH (u)-[fr:LIKES_RUDEL]->(r) DETACH DELETE fr, or CREATE UNIQUE (u)-[:DISLIKES_RUDEL {createdAt: $now}]->(r)", {
 			userId: user.id,
-			rudelId: rudel.id
+			rudelId: rudel.id,
+			now: new Date().toISOString()
 		});
 		
 		return Promise.all([
@@ -214,7 +215,7 @@ export module RudelController {
 	}
 	
 	export function followers(transaction: Transaction, rudel: Rudel, skip = 0, limit = 25): Promise<User[]> {
-		return transaction.run<User, any>(`MATCH(:Rudel {id: $rudelId})<-[:FOLLOWS_RUDEL]-(followers:User) RETURN COALESCE(properties(followers), []) as followers SKIP $skip LIMIT $limit`, {
+		return transaction.run<User, any>(`MATCH(:Rudel {id: $rudelId})<-[:LIKES_RUDEL]-(followers:User) RETURN COALESCE(properties(followers), []) as followers SKIP $skip LIMIT $limit`, {
 			rudelId: rudel.id,
 			skip: skip,
 			limit: limit

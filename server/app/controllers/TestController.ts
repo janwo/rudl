@@ -138,7 +138,7 @@ export module TestController {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise = transaction.run("MATCH (u1:User), (u2:User) WITH u1, u2 WHERE rand() < $probability AND u1 <> u2 " +
-				"MERGE (u1)-[:FOLLOWS_USER]->(u2)", {
+				"MERGE (u1)-[:LIKES_USER]->(u2)", {
 				probability: request.params.probability / 100
 			}).then(() => `Users randomly follow ~${request.params.probability}% of all users!`);
 			
@@ -156,7 +156,7 @@ export module TestController {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise = transaction.run("MATCH (u:User), (r:Rudel) WITH u1, r WHERE rand() < $probability " +
-				"MERGE (u)-[:FOLLOWS_RUDEL]->(r)", {
+				"MERGE (u)-[:LIKES_RUDEL]->(r)", {
 				probability: request.params.probability / 100
 			}).then(() => `Users randomly follow ~${request.params.probability}% of all rudel!`);
 			

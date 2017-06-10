@@ -212,7 +212,7 @@ export module ExpeditionController {
 				let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}), (r:Rudel)<-[:BELONGS_TO_RUDEL]-(e)
 				WHERE NOT (e)-[:JOINS_EXPEDITION]-(u)
 				WITH e, u, r
-				CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:FOLLOWS_RUDEL]->(r)
+				CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:LIKES_RUDEL]->(r)
 				WITH e, u
 				MATCH (u)-[pje:POSSIBLY_JOINS_EXPEDITION]-(e)
 				DETACH DELETE pje`;
@@ -232,7 +232,9 @@ export module ExpeditionController {
 						WHERE (e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u) AND (e)-[:POSSIBLY_JOINS_EXPEDITION]->(u)
 						DETACH DELETE pje
 						WITH u, r, e
-						CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:FOLLOWS_RUDEL]->(r)`;
+						CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:LIKES_RUDEL]->(r)
+						OPTIONAL MATCH (u)-[dlr:DISLIKES_RUDEL]->(r)
+						DETACH DELETE dlr`;
 				return transaction.run(query, {
 					expeditionId: expedition.id,
 					userId: user.id,
@@ -254,7 +256,9 @@ export module ExpeditionController {
 			let addUser = (): Promise<boolean> => {
 				let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}), (r:Rudel)<-[:BELONGS_TO_RUDEL]-(e)
 				WHERE NOT (e)<-[:JOINS_EXPEDITION]-(u) AND NOT (e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u)
-				CREATE UNIQUE (e)<-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]-(u)-[:FOLLOWS_RUDEL]->(r)`;
+				CREATE UNIQUE (e)<-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]-(u)-[:LIKES_RUDEL]->(r)
+				OPTIONAL MATCH (u)-[dlr:DISLIKES_RUDEL]->(r)
+				DETACH DELETE dlr`;
 				return transaction.run(query, {
 					expeditionId: expedition.id,
 					userId: user.id,
@@ -453,7 +457,7 @@ export module ExpeditionController {
 		status: AttendeeStatus,
 		user: User
 	}[]> {
-		return transaction.run<User, any>("MATCH(e:Expedition {id : $expeditionId}), (relatedUser:User {id: $relatedUserId}) WITH relatedUser, e CALL apoc.index.search('User', $query) YIELD node WITH node as u, e, relatedUser WHERE (u)-[:FOLLOWS_USER]->(relatedUser) OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) RETURN {user: properties(u), status: {isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0}} as u SKIP $skip LIMIT $limit", {
+		return transaction.run<User, any>("MATCH(e:Expedition {id : $expeditionId}), (relatedUser:User {id: $relatedUserId}) WITH relatedUser, e CALL apoc.index.search('User', $query) YIELD node WITH node as u, e, relatedUser WHERE (u)-[:LIKES_USER]->(relatedUser) OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) RETURN {user: properties(u), status: {isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0}} as u SKIP $skip LIMIT $limit", {
 			expeditionId: expedition.id,
 			query: `${DatabaseManager.neo4jFunctions.escapeLucene(query)}~`,
 			relatedUserId: relatedUser.id,
