@@ -13,6 +13,8 @@ import {Config} from '../../../run/config';
 import {ExpeditionRecipe} from '../../../client/app/models/expedition';
 import Transaction from 'neo4j-driver/lib/v1/transaction';
 import {RudelController} from './RudelController';
+import {AccountController} from './AccountController';
+import {NotificationType} from '../models/notification/Notification';
 
 export module ExpeditionController {
 	
@@ -205,35 +207,153 @@ export module ExpeditionController {
 	
 	export function approveUser(transaction: Transaction, expedition: Expedition, user: User, relatedUser: User): Promise<void> {
 		return this.getOwner(transaction, expedition).then((owner: User) => {
-			let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}), (r:Rudel)<-[:BELONGS_TO_RUDEL]-(e) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) WITH e, u, r CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:FOLLOWS_RUDEL]->(r) WITH e, u MATCH (u)-[pje:POSSIBLY_JOINS_EXPEDITION]-(e) DETACH DELETE pje`;
-			if (owner && owner.id != user.id && relatedUser.id == owner.id) query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) CREATE UNIQUE (e)-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]->(u)`;
-			if (owner && owner.id != user.id && expedition.needsApproval) {
-				let possibleRelationship = relatedUser.id == owner.id ? '(e)-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]->(u)' : '(e)<-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]-(u)';
-				query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}), (r:Rudel)<-[:BELONGS_TO_RUDEL]-(e) WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) OR NOT ${possibleRelationship} CREATE UNIQUE ${possibleRelationship}` +
-					` WITH e, u, r MATCH (e)-[pje:POSSIBLY_JOINS_EXPEDITION]-(u) WHERE (e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u) AND (e)-[:POSSIBLY_JOINS_EXPEDITION]->(u) DETACH DELETE pje WITH u, r, e CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:FOLLOWS_RUDEL]->(r)`;
+			// Add initial owner.
+			if (!owner || owner.id == user.id) {
+				let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}), (r:Rudel)<-[:BELONGS_TO_RUDEL]-(e)
+				WHERE NOT (e)-[:JOINS_EXPEDITION]-(u)
+				WITH e, u, r
+				CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:FOLLOWS_RUDEL]->(r)
+				WITH e, u
+				MATCH (u)-[pje:POSSIBLY_JOINS_EXPEDITION]-(e)
+				DETACH DELETE pje`;
+				return transaction.run(query, {
+					expeditionId: expedition.id,
+					userId: user.id,
+					now: new Date().toISOString()
+				});
 			}
 			
-			// Make invitation / request.
-			return transaction.run(query, {
-				expeditionId: expedition.id,
-				userId: user.id,
-				now: new Date().toISOString()
-			});
-		}).then(() => {});
+			// Find matching possible joins.
+			let findJoins = (): Promise<boolean> => {
+				let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}), (r:Rudel)<-[:BELONGS_TO_RUDEL]-(e)
+						WHERE NOT (e)<-[:JOINS_EXPEDITION]-(u)
+						WITH u, r, e
+						MATCH (e)-[pje:POSSIBLY_JOINS_EXPEDITION]-(u)
+						WHERE (e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u) AND (e)-[:POSSIBLY_JOINS_EXPEDITION]->(u)
+						DETACH DELETE pje
+						WITH u, r, e
+						CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:FOLLOWS_RUDEL]->(r)`;
+				return transaction.run(query, {
+					expeditionId: expedition.id,
+					userId: user.id,
+					now: new Date().toISOString()
+				}).then(results => (results.summary.counters.relationshipsCreated() as any as number) > 0);
+			};
+			
+			let inviteUser = (): Promise<boolean> => {
+				let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId})
+				WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) AND NOT (e)-[:POSSIBLY_JOINS_EXPEDITION]->(u)
+				CREATE UNIQUE (e)-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]->(u)`;
+				return transaction.run(query, {
+					expeditionId: expedition.id,
+					userId: user.id,
+					now: new Date().toISOString()
+				}).then(results => (results.summary.counters.relationshipsCreated() as any as number) > 0);
+			};
+			
+			let addUser = (): Promise<boolean> => {
+				let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}), (r:Rudel)<-[:BELONGS_TO_RUDEL]-(e)
+				WHERE NOT (e)<-[:JOINS_EXPEDITION]-(u) AND NOT (e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u)
+				CREATE UNIQUE (e)<-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]-(u)-[:FOLLOWS_RUDEL]->(r)`;
+				return transaction.run(query, {
+					expeditionId: expedition.id,
+					userId: user.id,
+					now: new Date().toISOString()
+				}).then(results => (results.summary.counters.relationshipsCreated() as any as number) > 0);
+			};
+			
+			// If owner is approving someone...
+			if (relatedUser.id == owner.id) {
+				return inviteUser().then(invited => {
+					return findJoins().then(accepted => {
+						if(invited || accepted) return AccountController.NotificationController.set(
+							transaction,
+							accepted ? NotificationType.ACCEPTED_APPLICATION_FOR_EXPEDITION : NotificationType.INVITED_TO_EXPEDITION,
+							user,
+							expedition,
+							relatedUser
+						);
+					});
+				});
+			}
+			
+			// If a non-owner is approving himself.
+			if (user.id == relatedUser.id) {
+				return addUser().then(applied => {
+					return Promise.resolve(expedition.needsApproval ? findJoins() : inviteUser().then(() => findJoins())).then(joined => {
+						if (applied || joined) return AccountController.NotificationController.set(
+							transaction,
+							joined ? (expedition.needsApproval ? NotificationType.ACCEPTED_INVITATION_FOR_EXPEDITION : NotificationType.JOINED_EXPEDITION ) : NotificationType.APPLIED_FOR_EXPEDITION,
+							owner,
+							expedition,
+							relatedUser
+						);
+					});
+				});
+			}
+		});
 	}
 	
 	export function approveAllUsers(transaction: Transaction, expedition: Expedition): Promise<void> {
-		return transaction.run(`MATCH (e:Expedition {id: $expeditionId})<-[pje:POSSIBLY_JOINS_EXPEDITION]-() SET pje.createdAt = $now WITH pje CALL apoc.refactor.setType(pje, 'JOINS_EXPEDITION') YIELD output RETURN {}`, {
+		//TODO Notifications
+		return transaction.run(`MATCH (e:Expedition {id: $expeditionId})<-[pje:POSSIBLY_JOINS_EXPEDITION]-()
+		SET pje.createdAt = $now
+		WITH pje
+		CALL apoc.refactor.setType(pje, 'JOINS_EXPEDITION') YIELD output
+		RETURN {}`, {
 			expeditionId: expedition.id,
 			now: new Date().toISOString()
 		}).then(() => {});
 	}
 	
-	export function rejectUser(transaction: Transaction, expedition: Expedition, user: User): Promise<void> {
-		return transaction.run(`MATCH (e:Expedition {id: $expeditionId}), (u:User {id: $userId}) WITH u, e OPTIONAL MATCH (e)-[pje:POSSIBLY_JOINS_EXPEDITION]-(u) OPTIONAL MATCH (e)-[je:JOINS_EXPEDITION]-(u) OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment)<-[:OWNS_COMMENT]-(u) DETACH DELETE c, pje, je`, {
-			expeditionId: expedition.id,
-			userId: user.id
-		}).then(() => {});
+	export function rejectUser(transaction: Transaction, expedition: Expedition, user: User, relatedUser: User): Promise<boolean> {
+		return this.getOwner(transaction, expedition).then((owner: User) => {
+			if(owner.id == relatedUser.id) {
+				return transaction.run(`MATCH (e:Expedition {id: $expeditionId}), (u:User {id: $userId})
+				WITH u, e
+				OPTIONAL MATCH (e)<-[pje:POSSIBLY_JOINS_EXPEDITION]-(u)
+				OPTIONAL MATCH (e)-[pjeAll:POSSIBLY_JOINS_EXPEDITION]-(u)
+				OPTIONAL MATCH (e)<-[je:JOINS_EXPEDITION]-(u)
+				OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment)<-[:OWNS_COMMENT]-(u)
+				DETACH DELETE c, pjeAll, pje, je
+				WITH count(pje) > 0 as applied, count(je) > 0 as joined
+				RETURN {applied: applied, joined: joined} as deleted`, {
+					expeditionId: expedition.id,
+					userId: user.id
+				}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'deleted').pop()).then((deleted: any) => {
+					if(deleted.joined || deleted.applied) return AccountController.NotificationController.set(
+						transaction,
+						deleted.joined ? NotificationType.REJECTED_FROM_EXPEDITION : NotificationType.REJECTED_APPLICATION_FOR_EXPEDITION,
+						user,
+						expedition,
+						relatedUser
+					);
+				});
+			}
+			
+			if(user.id == relatedUser.id) {
+				return transaction.run(`MATCH (e:Expedition {id: $expeditionId}), (u:User {id: $userId})
+				WITH u, e
+				OPTIONAL MATCH (e)-[pje:POSSIBLY_JOINS_EXPEDITION]->(u)
+				OPTIONAL MATCH (e)-[pjeAll:POSSIBLY_JOINS_EXPEDITION]-(u)
+				OPTIONAL MATCH (e)<-[je:JOINS_EXPEDITION]-(u)
+				OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment)<-[:OWNS_COMMENT]-(u)
+				DETACH DELETE c, pjeAll, pje, je
+				WITH count(pje) > 0 as invited, count(je) > 0 as joined
+				RETURN {invited: invited, joined: joined} as deleted`, {
+					expeditionId: expedition.id,
+					userId: user.id
+				}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'deleted').pop()).then((deleted: any) => {
+					if(deleted.joined || deleted.invited) return AccountController.NotificationController.set(
+						transaction,
+						deleted.joined ? NotificationType.LEFT_EXPEDITION : NotificationType.REJECTED_INVITATION_FOR_EXPEDITION,
+						owner,
+						expedition,
+						user
+					);
+				});
+			}
+		});
 	}
 	
 	export interface AttendeeStatus {
@@ -501,7 +621,6 @@ export module ExpeditionController {
 						user: User
 					}, index: number) => {
 						attendee.user = user[index];
-						console.log(attendee);
 						return attendee;
 					});
 				});
@@ -566,7 +685,7 @@ export module ExpeditionController {
 				if (!values[1]) return Promise.reject(Boom.notFound('User not found.'));
 				return ExpeditionController.getOwner(transaction, values[0]).then((owner: User) => {
 					if (owner.id == request.auth.credentials.id && values[1].id == owner.id) return ExpeditionController.removeExpedition(transaction, values[0]).then(() => {});
-					if (owner.id == request.auth.credentials.id || values[1].id == request.auth.credentials.id) return ExpeditionController.rejectUser(transaction, values[0], values[1]).then(() => {
+					if (owner.id == request.auth.credentials.id || values[1].id == request.auth.credentials.id) return ExpeditionController.rejectUser(transaction, values[0], values[1], request.auth.credentials).then(() => {
 						return Promise.all([
 							ExpeditionController.getAttendeeStatus(transaction, values[0], values[1]),
 							UserController.getPublicUser(transaction, values[1], request.auth.credentials),

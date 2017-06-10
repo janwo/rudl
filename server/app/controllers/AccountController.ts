@@ -2,6 +2,7 @@ import * as Boom from 'boom';
 import * as Path from 'path';
 import {Config} from '../../../run/config';
 import {User, UserRoles} from '../models/user/User';
+import {Node} from '../models/Node';
 import {Notification, NotificationType} from '../models/notification/Notification';
 import {DatabaseManager, TransactionSession} from '../Database';
 import {UserController} from './UserController';
@@ -139,8 +140,9 @@ export module AccountController {
 	}
 	
 	export namespace NotificationController {
+		//TODO empty list
 		export function get(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Notification[]> {
-			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n, apoc.date.parse(n.createdAt, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date ORDER BY date SKIP $skip LIMIT $limit OPTIONAL MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User), (n)-[:NOTIFICATION_SUBJECT]->(subject) WITH subject, sender, n RETURN COALESCE(apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)), []) as n`, {
+			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n, apoc.date.parse(n.createdAt, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date ORDER BY date SKIP $skip LIMIT $limit MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User), (n)-[:NOTIFICATION_SUBJECT]->(subject) WITH subject, sender, n RETURN apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)) as n`, {
 				userId: user.id,
 				limit: limit,
 				skip: skip
@@ -153,12 +155,19 @@ export module AccountController {
 				let subjectProfilePromise;
 				switch(notification.type) {
 					case NotificationType.ADDED_EXPEDITION:
+					case NotificationType.JOINED_EXPEDITION:
+					case NotificationType.LEFT_EXPEDITION:
+					case NotificationType.REJECTED_FROM_EXPEDITION:
 					case NotificationType.INVITED_TO_EXPEDITION:
+					case NotificationType.ACCEPTED_INVITATION_FOR_EXPEDITION:
+					case NotificationType.REJECTED_INVITATION_FOR_EXPEDITION:
 					case NotificationType.APPLIED_FOR_EXPEDITION:
+					case NotificationType.ACCEPTED_APPLICATION_FOR_EXPEDITION:
+					case NotificationType.REJECTED_APPLICATION_FOR_EXPEDITION:
 						subjectProfilePromise = ExpeditionController.getPublicExpedition(transaction, notification.subject as any as Expedition, relatedUser, true);
 						break;
 					
-					case NotificationType.JOINED_RUDEL:
+					case NotificationType.LIKES_RUDEL:
 						subjectProfilePromise = RudelController.getPublicRudel(transaction, notification.subject as any as Rudel, relatedUser, true);
 						break;
 				}
@@ -189,8 +198,17 @@ export module AccountController {
 			});
 		}
 		
-		export function set(transaction: Transaction, type: NotificationType, user: User, subject: Document, sender: User): Promise<void> {
-			return Promise.resolve();
+		export function set(transaction: Transaction, type: NotificationType, recipient: User, subject: Node, sender: User): Promise<void> {
+			//TODO Label alles als NODE
+			let query = `MATCH(subject {id : $subjectId }), (recipient:User {id: $recipientId}), (sender:User {id: $senderId})
+				CREATE UNIQUE (sender)<-[:NOTIFICATION_SENDER]-(n:Notification {type: $type, createdAt: $now})-[:NOTIFICATION_SUBJECT]->(subject), (n)-[:NOTIFICATION_RECIPIENT]->(recipient)`;
+			return transaction.run(query, {
+				type: type,
+				recipientId: recipient.id,
+				subjectId: subject.id,
+				senderId: sender.id,
+				now: new Date().toISOString()
+			}).then(() => {});
 		}
 	}
 	
