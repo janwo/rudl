@@ -8,13 +8,13 @@
     <div class="statistics">
         <!--{value: user.statistics.lists, subject: 'Liste(n)', link: ['lists']},-->
         <statistics [statistics]="[
-		{value: user.statistics.followees, subject: 'Folgt', link: ['followees']},
-		{value: user.statistics.followers, subject: 'Follower', link: ['followers']}
+		{value: user.statistics.likees, subject: 'Folgt', link: ['likees']},
+		{value: user.statistics.likers, subject: 'Liker', link: ['likers']}
 		]"></statistics>
         <div class="cta" *ngIf="!!user.relations">
-            <styled-button [style]="user.relations.isFollowee ? buttonStyleFollowing : buttonStyleDefault"
+            <styled-button [style]="user.relations.isLikee ? buttonStyleFollowing : buttonStyleDefault"
                     (click)="onToggleFollow()" [disabled]="pendingFollowRequest"
-                    [text]="user.relations.isFollowee ? 'Following' : 'Follow'"></styled-button>
+                    [text]="user.relations.isLikee ? 'Following' : 'Follow'"></styled-button>
         </div>
     </div>
 </div>
@@ -24,9 +24,9 @@
        <!-- <menu-item [makeRoomIfSmall]="true" [icon]="'format_list_bulleted'" [title]="'Listen'"
                 [link]="['lists']"></menu-item>-->
         <menu-item [makeRoomIfSmall]="true" [icon]="'people_outline'" [title]="'Folgt'"
-                [link]="['followees']"></menu-item>
-        <menu-item [makeRoomIfSmall]="true" [icon]="'people_outline'" [title]="'Follower'"
-                [link]="['followers']"></menu-item>
+                [link]="['likees']"></menu-item>
+        <menu-item [makeRoomIfSmall]="true" [icon]="'people_outline'" [title]="'Liker'"
+                [link]="['likers']"></menu-item>
     </menu>
     <router-outlet></router-outlet>
 </div>

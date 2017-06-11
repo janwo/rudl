@@ -202,7 +202,7 @@ export class DatabaseManager {
 						if (typeof $return[v] == 'object') {
 							// Convert integers already.
 							if ($return[v] instanceof Integer) {
-								$return[v] = Integer.toNumber(v);
+								$return[v] = Integer.toNumber($return[v]);
 								continue;
 							}
 							

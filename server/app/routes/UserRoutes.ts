@@ -45,9 +45,9 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/users/=/{username}/followers',
+		path: '/api/users/=/{username}/likers',
 		method: 'GET',
-		handler: UserController.RouteHandlers.followers,
+		handler: UserController.RouteHandlers.likers,
 		config: {
 			auth: {
 				scope: [
@@ -66,9 +66,9 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/users/=/{username}/followees',
+		path: '/api/users/=/{username}/likees',
 		method: 'GET',
-		handler: UserController.RouteHandlers.followees,
+		handler: UserController.RouteHandlers.likees,
 		config: {
 			auth: {
 				scope: [

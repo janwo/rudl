@@ -53,9 +53,9 @@ export module ListController {
 					transformationRecipe = Object.assign(transformationRecipe, {
 						'owner': 'owner',
 						'isOwner': 'relations.isOwned',
-						'statistics.isFollowed': 'relations.isFollowed',
+						'statistics.isLiked': 'relations.isLiked',
 						'statistics.rudel': 'statistics.rudel',
-						'statistics.followers': 'statistics.followers'
+						'statistics.likers': 'statistics.likers'
 					});
 					
 					// Extend transformation object.
@@ -81,22 +81,22 @@ export module ListController {
 	
 	export interface ListStatistics {
 		rudel: number;
-		followers: number;
-		isFollowed: boolean;
+		likers: number;
+		isLiked: boolean;
 	}
 	
 	export function getStatistics(transaction: Transaction, list: List, relatedUser: User): Promise<ListStatistics> {
 		let queries: string[] = [
 			"MATCH (list:List {id: $listId})",
-			"OPTIONAL MATCH (list)<-[fl:LIKES_LIST]-() WITH COUNT(fl) as followersCount, list",
-			"OPTIONAL MATCH (list)<-[btl:BELONGS_TO_LIST]-() WITH COUNT(btl) as rudelCount, followersCount",
-			"OPTIONAL MATCH (list)<-[fl:LIKES_LIST]-(:User {id: $relatedUserId}) WITH followersCount, rudelCount, COUNT(fl) > 0 as isFollowed"
+			"OPTIONAL MATCH (list)<-[fl:LIKES_LIST]-() WITH COUNT(fl) as likersCount, list",
+			"OPTIONAL MATCH (list)<-[btl:BELONGS_TO_LIST]-() WITH COUNT(btl) as rudelCount, likersCount",
+			"OPTIONAL MATCH (list)<-[fl:LIKES_LIST]-(:User {id: $relatedUserId}) WITH likersCount, rudelCount, COUNT(fl) > 0 as isLiked"
 		];
 		
 		let transformations: string[] = [
 			"rudel: rudelCount",
-			"isFollowed: isFollowed",
-			"followers: followersCount"
+			"isLiked: isLiked",
+			"likers: likersCount"
 		];
 		
 		// Add final query.
@@ -182,16 +182,16 @@ export module ListController {
 		}).then(() => {});
 	}
 	
-	export function followers(transaction: Transaction, list: List, skip = 0, limit = 25): Promise<User[]> {
-		return transaction.run<User, any>(`MATCH(:List {id: $listId})<-[:LIKES_LIST]-(followers:User) RETURN COALESCE(properties(followers), []) as followers SKIP $skip LIMIT $limit`, {
+	export function likers(transaction: Transaction, list: List, skip = 0, limit = 25): Promise<User[]> {
+		return transaction.run<User, any>(`MATCH(:List {id: $listId})<-[:LIKES_LIST]-(likers:User) RETURN COALESCE(properties(likers), []) as likers SKIP $skip LIMIT $limit`, {
 			listId: list.id,
 			skip: skip,
 			limit: limit
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'followers'));
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'likers'));
 	}
 	
 	export function follow(transaction: Transaction, list: List, user: User): Promise<void> {
-		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WITH u, l WHERE NOT (u)-[:LIKES_LIST]->(l) CREATE UNIQUE (u)-[:LIKES_LIST {createdAt: $now}]->(l) WITH u, l OPTIONAL MATCH (u)-[dll:DISLIKES_LIST]->(l) DETACH DELETE dll OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, l, u WHERE count = 0 CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
+		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WHERE NOT (u)-[:LIKES_LIST]->(l) WITH u, l CREATE UNIQUE (u)-[:LIKES_LIST {createdAt: $now}]->(l) WITH u, l OPTIONAL MATCH (u)-[dll:DISLIKES_LIST]->(l) DETACH DELETE dll WITH u, l OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, l, u WHERE count = 0 CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
 			userId: user.id,
 			listId: list.id,
 			now: new Date().toISOString()
@@ -199,16 +199,16 @@ export module ListController {
 	}
 	
 	export function unfollow(transaction: Transaction, list: List, user: User): Promise<void> {
-		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WHERE NOT (u)-[:DISLIKES_LIST]->(l) CREATE UNIQUE (u)-[:DISLIKES_LIST {createdAt: $now}]->(l) OPTIONAL MATCH (u)-[ol:OWNS_LIST]->(l) OPTIONAL MATCH (u)-[ll:LIKES_LIST]->(l) DETACH DELETE ll, ol CREATE UNIQUE ", {
+		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WHERE NOT (u)-[:DISLIKES_LIST]->(l) WITH u, l CREATE UNIQUE (u)-[:DISLIKES_LIST {createdAt: $now}]->(l) WITH u, l OPTIONAL MATCH (u)-[ol:OWNS_LIST]->(l) OPTIONAL MATCH (u)-[ll:LIKES_LIST]->(l) DETACH DELETE ll, ol", {
 			userId: user.id,
 			listId: list.id,
 			now: new Date().toISOString()
 		}).then(() => {
-			return this.followers(transaction, list, 0, 1).then((followers: User[]) => {
-				if(followers.length > 0) return transaction.run("MATCH(l:List {id: $listId}), (u:User {id: $newOwnerId}) CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
+			return this.likers(transaction, list, 0, 1).then((likers: User[]) => {
+				if(likers.length > 0) return transaction.run("MATCH(l:List {id: $listId}), (u:User {id: $newOwnerId}) CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
 					listId: list.id,
 					now: new Date().toISOString(),
-					newOwnerId: followers.pop().id
+					newOwnerId: likers.pop().id
 				});
 				
 				// Delete list, because it's an orphan node.
@@ -430,7 +430,7 @@ export module ListController {
 		}
 		
 		/**
-		 * Handles [GET] /api/lists/=/{id}/followers
+		 * Handles [GET] /api/lists/=/{id}/likers
 		 * @param request Request-Object
 		 * @param request.params.id id
 		 * @param request.query.offset offset (optional, default=0)
@@ -438,13 +438,13 @@ export module ListController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function followers(request: any, reply: any): void {
+		export function likers(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ListController.get(transaction, request.params.id).then((list: List) => {
 				if (!list) return Promise.reject<User[]>(Boom.badRequest('List does not exist!'));
-				return ListController.followers(transaction, list, request.query.offset, request.query.limit);
+				return ListController.likers(transaction, list, request.query.offset, request.query.limit);
 			}).then((users: User[]) => UserController.getPublicUser(transaction, users, request.auth.credentials));
 			
 			reply.api(promise, transactionSession);

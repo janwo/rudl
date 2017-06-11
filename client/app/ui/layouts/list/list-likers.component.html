@@ -1,0 +1,7 @@
+<item-wrapper [columns]="2" *ngIf="likers; else loading">
+    <user-item *ngFor="let liker of likers" [user]="liker"></user-item>
+</item-wrapper>
+
+<ng-template #loading>
+    <loading></loading>
+</ng-template>

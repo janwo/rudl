@@ -214,9 +214,9 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/lists/=/{id}/followers',
+		path: '/api/lists/=/{id}/likers',
 		method: 'GET',
-		handler: ListController.RouteHandlers.followers,
+		handler: ListController.RouteHandlers.likers,
 		config: {
 			auth: {
 				scope: [

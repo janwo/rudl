@@ -88,9 +88,9 @@ export module RudelController {
 					transformationRecipe = Object.assign(transformationRecipe, {
 						'owner': 'owner',
 						'isOwner': 'relations.isOwned',
-						'statistics.isFollowed': 'relations.isFollowed',
+						'statistics.isLiked': 'relations.isLiked',
 						'statistics.rudel': 'statistics.rudel',
-						'statistics.followers': 'statistics.followers',
+						'statistics.likers': 'statistics.likers',
 						'statistics.lists': 'statistics.lists',
 						'statistics.expeditions': 'statistics.expeditions'
 					});
@@ -140,24 +140,24 @@ export module RudelController {
 	
 	export interface RudelStatistics {
 		lists: number;
-		followers: number;
+		likers: number;
 		expeditions: number;
-		isFollowed: boolean;
+		isLiked: boolean;
 	}
 	
 	export function getStatistics(transaction: Transaction, rudel: Rudel, relatedUser: User): Promise<RudelStatistics> {
 		let queries: string[] = [
 			"MATCH (rudel:Rudel {id: $rudelId})",
-			"OPTIONAL MATCH (rudel)<-[fr:LIKES_RUDEL]-() WITH COUNT(fr) as followersCount, rudel",
-			"OPTIONAL MATCH (rudel)-[btl:BELONGS_TO_LIST]->() WITH COUNT(btl) as listsCount, followersCount, rudel",
-			"OPTIONAL MATCH (rudel)<-[btr:BELONGS_TO_RUDEL]-() WITH COUNT(btr) as expeditionsCount, followersCount, rudel, listsCount",
-			"OPTIONAL MATCH (rudel)<-[fr:LIKES_RUDEL]-(:User {id: $relatedUserId}) WITH followersCount, listsCount, COUNT(fr) > 0 as isFollowed, expeditionsCount"
+			"OPTIONAL MATCH (rudel)<-[fr:LIKES_RUDEL]-() WITH COUNT(fr) as likersCount, rudel",
+			"OPTIONAL MATCH (rudel)-[btl:BELONGS_TO_LIST]->() WITH COUNT(btl) as listsCount, likersCount, rudel",
+			"OPTIONAL MATCH (rudel)<-[btr:BELONGS_TO_RUDEL]-() WITH COUNT(btr) as expeditionsCount, likersCount, rudel, listsCount",
+			"OPTIONAL MATCH (rudel)<-[fr:LIKES_RUDEL]-(:User {id: $relatedUserId}) WITH likersCount, listsCount, COUNT(fr) > 0 as isLiked, expeditionsCount"
 		];
 		
 		let transformations: string[] = [
 			"lists: listsCount",
-			"isFollowed: isFollowed",
-			"followers: followersCount",
+			"isLiked: isLiked",
+			"likers: likersCount",
 			"expeditions: expeditionsCount"
 		];
 		
@@ -178,7 +178,7 @@ export module RudelController {
 	}
 	
 	export function follow(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
-		return transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WITH u, r WHERE NOT (u)-[:LIKES_RUDEL]->(r) CREATE UNIQUE (u)-[:LIKES_RUDEL {createdAt: $now}]->(r) WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
+		return transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:LIKES_RUDEL]->(r) WITH u, r CREATE UNIQUE (u)-[:LIKES_RUDEL {createdAt: $now}]->(r) WITH u, r OPTIONAL MATCH (u)-[dlr:DISLIKES_RUDEL]->(r) DETACH DELETE dlr WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE UNIQUE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
 			userId: user.id,
 			rudelId: rudel.id,
 			now: new Date().toISOString()
@@ -187,7 +187,7 @@ export module RudelController {
 	
 	export function unfollow(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
 		let deleteExpeditions = ExpeditionController.removeExpeditions(transaction, rudel, user);
-		let deleteRelationships = transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:DISLIKES_RUDEL]->(r) OPTIONAL MATCH (u)-[or:OWNS_RUDEL]->(r) OPTIONAL MATCH (u)-[fr:LIKES_RUDEL]->(r) DETACH DELETE fr, or CREATE UNIQUE (u)-[:DISLIKES_RUDEL {createdAt: $now}]->(r)", {
+		let deleteRelationships = transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:DISLIKES_RUDEL]->(r) WITH u, r CREATE UNIQUE (u)-[:DISLIKES_RUDEL {createdAt: $now}]->(r) WITH u, r OPTIONAL MATCH (u)-[or:OWNS_RUDEL]->(r) OPTIONAL MATCH (u)-[fr:LIKES_RUDEL]->(r) DETACH DELETE fr, or", {
 			userId: user.id,
 			rudelId: rudel.id,
 			now: new Date().toISOString()
@@ -197,11 +197,11 @@ export module RudelController {
 			deleteExpeditions,
 			deleteRelationships
 		]).then(() => {
-			return this.followers(transaction, rudel, 0, 1).then((followers: User[]) => {
-				if(followers.length > 0) return transaction.run("MATCH(r:Rudel {id: $rudelId}), (u:User {id: $newOwnerId}) WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
+			return this.likers(transaction, rudel, 0, 1).then((likers: User[]) => {
+				if(likers.length > 0) return transaction.run("MATCH(r:Rudel {id: $rudelId}), (u:User {id: $newOwnerId}) WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
 					rudelId: rudel.id,
 					now: new Date().toISOString(),
-					newOwnerId: followers.pop().id
+					newOwnerId: likers.pop().id
 				});
 				
 				// Delete rudel, because it's an orphan node.
@@ -214,12 +214,12 @@ export module RudelController {
 		});
 	}
 	
-	export function followers(transaction: Transaction, rudel: Rudel, skip = 0, limit = 25): Promise<User[]> {
-		return transaction.run<User, any>(`MATCH(:Rudel {id: $rudelId})<-[:LIKES_RUDEL]-(followers:User) RETURN COALESCE(properties(followers), []) as followers SKIP $skip LIMIT $limit`, {
+	export function likers(transaction: Transaction, rudel: Rudel, skip = 0, limit = 25): Promise<User[]> {
+		return transaction.run<User, any>(`MATCH(:Rudel {id: $rudelId})<-[:LIKES_RUDEL]-(likers:User) RETURN COALESCE(properties(likers), []) as likers SKIP $skip LIMIT $limit`, {
 			rudelId: rudel.id,
 			skip: skip,
 			limit: limit
-		}).then(result => DatabaseManager.neo4jFunctions.unflatten(result.records, 'followers'));
+		}).then(result => DatabaseManager.neo4jFunctions.unflatten(result.records, 'likers'));
 	}
 	
 	export namespace RouteHandlers {
@@ -380,7 +380,7 @@ export module RudelController {
 		}
 		
 		/**
-		 * Handles [GET] /api/rudel/=/{id}/followers
+		 * Handles [GET] /api/rudel/=/{id}/likers
 		 * @param request Request-Object
 		 * @param request.params.id id
 		 * @param request.query.offset offset (optional, default=0)
@@ -388,13 +388,13 @@ export module RudelController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function followers(request: any, reply: any): void {
+		export function likers(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = RudelController.get(transaction, request.params.id).then((rudel: Rudel) => {
 				if (!rudel) return Promise.reject(Boom.badRequest('Rudel does not exist!'));
-				return RudelController.followers(transaction, rudel, request.query.offset, request.query.limit);
+				return RudelController.likers(transaction, rudel, request.query.offset, request.query.limit);
 			}).then((users: User[]) => UserController.getPublicUser(transaction, users, request.auth.credentials));
 			
 			reply.api(promise, transactionSession);

@@ -50,7 +50,7 @@ export class ListComponent implements OnInit {
 		}
 		
 		this.pendingFollowRequest = true;
-		let obs = this.list.relations.isFollowed ? this.listService.unfollow(this.list.id) : this.listService.follow(this.list.id);
+		let obs = this.list.relations.isLiked ? this.listService.unfollow(this.list.id) : this.listService.follow(this.list.id);
 		obs.subscribe((updatedList: List) => {
 			this.pendingFollowRequest = false;
 			

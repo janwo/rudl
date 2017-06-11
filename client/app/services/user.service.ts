@@ -129,12 +129,12 @@ export class UserService {
 		return this.dataService.get(`/api/users/=/${username}`, true).map((json: JsonResponse) => json.data).share();
 	}
 	
-	followers(username: string = 'me', offset = 0, limit = 25): Observable<User[]> {
-		return this.dataService.get(`/api/users/=/${username}/followers?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
+	likers(username: string = 'me', offset = 0, limit = 25): Observable<User[]> {
+		return this.dataService.get(`/api/users/=/${username}/likers?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
 	}
 	
-	followees(username: string = 'me', offset = 0, limit = 25): Observable<User[]> {
-		return this.dataService.get(`/api/users/=/${username}/followees?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
+	likees(username: string = 'me', offset = 0, limit = 25): Observable<User[]> {
+		return this.dataService.get(`/api/users/=/${username}/likees?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
 	}
 	
 	follow(username: string): Observable<User> {

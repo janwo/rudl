@@ -103,9 +103,9 @@ export const RoutesConfig: RoutesConfiguration = [
 		}
 	},
 	{
-		path: '/api/rudel/=/{id}/followers',
+		path: '/api/rudel/=/{id}/likers',
 		method: 'GET',
-		handler: RudelController.RouteHandlers.followers,
+		handler: RudelController.RouteHandlers.likers,
 		config: {
 			auth: {
 				scope: [

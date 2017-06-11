@@ -24,8 +24,8 @@ export class UserItemComponent implements OnInit {
 			}
 			
 			let choices = [
-				`You have ${this.user.relations.mutualFollowers} mutual followers`,
-				`You have ${this.user.relations.mutualFollowees} mutual followees`
+				`You have ${this.user.relations.mutualLikers} mutual likers`,
+				`You have ${this.user.relations.mutualLikees} mutual likees`
 			];
 			this.info = choices[Math.trunc(choices.length * Math.random())];
 		}

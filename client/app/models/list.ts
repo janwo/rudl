@@ -11,11 +11,11 @@ export interface ListPreview extends Document {
 export interface List extends ListPreview {
 	owner: UserPreview;
 	relations: {
-		isFollowed: boolean;
+		isLiked: boolean;
 		isOwned: boolean;
 	};
 	statistics: {
-		followers: number;
+		likers: number;
 		rudel: number;
 	};
 }

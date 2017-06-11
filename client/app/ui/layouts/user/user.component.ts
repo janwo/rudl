@@ -44,6 +44,6 @@ export class UserComponent implements OnInit, OnDestroy {
 	}
 	
 	onToggleFollow(): void {
-		this.changeFollowStateSubject.next(!this.user.relations.isFollowee);
+		this.changeFollowStateSubject.next(!this.user.relations.isLikee);
 	}
 }

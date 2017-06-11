@@ -30,13 +30,13 @@ export module UserController {
 	
 	export interface UserStatistics {
 		rudel: number;
-		followers: number;
-		followees: number;
+		likers: number;
+		likees: number;
 		lists: number;
-		mutualFollowers?: number;
-		mutualFollowees?: number;
-		isFollower?: boolean;
-		isFollowee?: boolean;
+		mutualLikers?: number;
+		mutualLikees?: number;
+		isLiker?: boolean;
+		isLikee?: boolean;
 	}
 	
 	export function getStatistics(transaction: Transaction, user: User, relatedUser: User): Promise<UserStatistics> {
@@ -45,32 +45,32 @@ export module UserController {
 			"MATCH (user:User {id: $userId})",
 			"OPTIONAL MATCH (user)-[fr:LIKES_RUDEL]->() WITH COUNT(fr) as rudelCount, user",
 			"OPTIONAL MATCH (user)-[fl:LIKES_LIST]->() WITH rudelCount, COUNT(fl) as listsCount, user",
-			"OPTIONAL MATCH (user)-[:LIKES_USER]->(fes:User) WITH rudelCount, listsCount, fes as followees, COUNT(fes) as followeesCount, user",
-			"OPTIONAL MATCH (user)<-[:LIKES_USER]-(frs:User) WITH rudelCount, listsCount, followees, followeesCount, frs as followers, COUNT(frs) as followersCount, user"
+			"OPTIONAL MATCH (user)-[:LIKES_USER]->(fes:User) WITH rudelCount, listsCount, fes as likees, COUNT(fes) as likeesCount, user",
+			"OPTIONAL MATCH (user)<-[:LIKES_USER]-(frs:User) WITH rudelCount, listsCount, likees, likeesCount, frs as likers, COUNT(frs) as likersCount, user"
 		];
 		
 		let transformations: string[] = [
 			"rudel: rudelCount",
 			"lists: listsCount",
-			"followees: followeesCount",
-			"followers: followersCount"
+			"likees: likeesCount",
+			"likers: likersCount"
 		];
 		
 		// Set additional queries for relational data.
 		if (user.id != relatedUser.id) {
 			queries = queries.concat([
-				"MATCH (relatedUser:User {id: $relatedUserId}) WITH rudelCount, listsCount, followees, followeesCount, followers, followersCount, user, relatedUser",
-				"OPTIONAL MATCH (relatedUser)-[mfes:LIKES_USER]->(followees) WITH rudelCount, listsCount, followeesCount, followersCount, COUNT(mfes) as mutualFolloweesCount, user, relatedUser",
-				"OPTIONAL MATCH (relatedUser)<-[mfrs:LIKES_USER]-(followers) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, COUNT(mfrs) as mutualFollowersCount, user, relatedUser",
-				"OPTIONAL MATCH (user)<-[fu:LIKES_USER]-(relatedUser) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, mutualFollowersCount, COUNT(fu) > 0 as isFollowee, user, relatedUser",
-				"OPTIONAL MATCH (user)-[fu:LIKES_USER]->(relatedUser) WITH rudelCount, listsCount, followeesCount, followersCount, mutualFolloweesCount, mutualFollowersCount, isFollowee, COUNT(fu) > 0 as isFollower"
+				"MATCH (relatedUser:User {id: $relatedUserId}) WITH rudelCount, listsCount, likees, likeesCount, likers, likersCount, user, relatedUser",
+				"OPTIONAL MATCH (relatedUser)-[mfes:LIKES_USER]->(likees) WITH rudelCount, listsCount, likeesCount, likersCount, COUNT(mfes) as mutualLikeesCount, user, relatedUser",
+				"OPTIONAL MATCH (relatedUser)<-[mfrs:LIKES_USER]-(likers) WITH rudelCount, listsCount, likeesCount, likersCount, mutualLikeesCount, COUNT(mfrs) as mutualLikersCount, user, relatedUser",
+				"OPTIONAL MATCH (user)<-[fu:LIKES_USER]-(relatedUser) WITH rudelCount, listsCount, likeesCount, likersCount, mutualLikeesCount, mutualLikersCount, COUNT(fu) > 0 as isLikee, user, relatedUser",
+				"OPTIONAL MATCH (user)-[fu:LIKES_USER]->(relatedUser) WITH rudelCount, listsCount, likeesCount, likersCount, mutualLikeesCount, mutualLikersCount, isLikee, COUNT(fu) > 0 as isLiker"
 			]);
 			
 			transformations = transformations.concat([
-				"mutualFollowers: mutualFolloweesCount",
-				"mutualFollowees: mutualFollowersCount",
-				"isFollower: isFollower",
-				"isFollowee: isFollowee"
+				"mutualLikers: mutualLikeesCount",
+				"mutualLikees: mutualLikersCount",
+				"isLiker: isLiker",
+				"isLikee: isLikee"
 			]);
 		}
 		
@@ -101,8 +101,8 @@ export module UserController {
 			return promise.then((results: [UserStatistics]) => {
 				// Add default links.
 				let links: any = {
-					followers: `${Config.backend.domain}/api/users/${user.username}/followers`,
-					followees: `${Config.backend.domain}/api/users/${user.username}/following`
+					likers: `${Config.backend.domain}/api/users/${user.username}/likers`,
+					likees: `${Config.backend.domain}/api/users/${user.username}/following`
 				};
 				
 				// Add avatar links?
@@ -137,13 +137,13 @@ export module UserController {
 					// Extend transformation recipe.
 					transformationRecipe = Object.assign(transformationRecipe, {
 						'statistics.rudel': 'statistics.rudel',
-						'statistics.followers': 'statistics.followers',
-						'statistics.followees': 'statistics.followees',
+						'statistics.likers': 'statistics.likers',
+						'statistics.likees': 'statistics.likees',
 						'statistics.lists': 'statistics.lists',
-						'statistics.mutualFollowers': 'relations.mutualFollowers',
-						'statistics.mutualFollowees': 'relations.mutualFollowees',
-						'statistics.isFollower': 'relations.isFollower',
-						'statistics.isFollowee': 'relations.isFollowee'
+						'statistics.mutualLikers': 'relations.mutualLikers',
+						'statistics.mutualLikees': 'relations.mutualLikees',
+						'statistics.isLiker': 'relations.isLiker',
+						'statistics.isLikee': 'relations.isLikee'
 					});
 					
 					// Extend transformation object.
@@ -171,25 +171,25 @@ export module UserController {
 		});
 	}
 	
-	export function followers(transaction: Transaction, user: User, skip: number = 0, limit: number = 25): Promise<User[]> {
-		return transaction.run<User, any>(`MATCH(:User {id: $userId})<-[:LIKES_USER]-(followers:User) RETURN COALESCE(properties(followers), []) as followers SKIP $skip LIMIT $limit`, {
+	export function likers(transaction: Transaction, user: User, skip: number = 0, limit: number = 25): Promise<User[]> {
+		return transaction.run<User, any>(`MATCH(:User {id: $userId})<-[:LIKES_USER]-(likers:User) RETURN COALESCE(properties(likers), []) as likers SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			skip: skip,
 			limit: limit
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'followers'));
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'likers'));
 	}
 	
-	export function followees(transaction: Transaction, user: User, skip: number = 0, limit: number = 25): Promise<User[]> {
-		return transaction.run<User, any>(`MATCH(:User {id: $userId})-[:LIKES_USER]->(followees:User) RETURN COALESCE(properties(followees), []) as followees SKIP $skip LIMIT $limit`, {
+	export function likees(transaction: Transaction, user: User, skip: number = 0, limit: number = 25): Promise<User[]> {
+		return transaction.run<User, any>(`MATCH(:User {id: $userId})-[:LIKES_USER]->(likees:User) RETURN COALESCE(properties(likees), []) as likees SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			skip: skip,
 			limit: limit
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'followees'));
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'likees'));
 	}
 	
 	export function follow(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
 		if (aimedUser.id === user.id) return Promise.reject<void>('Users cannot follow themselves.');
-		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:LIKES_USER]->(followee) OPTIONAL MATCH (user)-[dlu:DISLIKES_USER]->(followee) DETACH DELETE dlu CREATE UNIQUE (user)-[:LIKES_USER {createdAt: $now}]->(followee)", {
+		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:LIKES_USER]->(followee) WITH user, followee CREATE UNIQUE (user)-[:LIKES_USER {createdAt: $now}]->(followee) WITH user, followee OPTIONAL MATCH (user)-[dlu:DISLIKES_USER]->(followee) DETACH DELETE dlu", {
 			userId: user.id,
 			followeeUserId: aimedUser.id,
 			now: new Date().toISOString()
@@ -198,7 +198,7 @@ export module UserController {
 	
 	export function unfollow(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
 		if (aimedUser.id === user.id) return Promise.reject<void>('Users cannot unfollow themselves.');
-		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:DISLIKES_USER]->(followee) OPTIONAL MATCH (user)-[lu:LIKES_USER]->(followee) DETACH DELETE lu CREATE UNIQUE (user)-[:DISLIKES_USER {createdAt: $now}]->(followee)", {
+		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:DISLIKES_USER]->(followee) WITH user, followee CREATE UNIQUE (user)-[:DISLIKES_USER {createdAt: $now}]->(followee) WITH user, followee OPTIONAL MATCH (user)-[lu:LIKES_USER]->(followee) DETACH DELETE lu", {
 			userId: user.id,
 			followeeUserId: aimedUser.id,
 			now: new Date().toISOString()
@@ -244,7 +244,7 @@ export module UserController {
 		}
 		
 		/**
-		 * Handles [GET] /api/users/=/{username}/followers
+		 * Handles [GET] /api/users/=/{username}/likers
 		 * @param request Request-Object
 		 * @param request.params.username username
 		 * @param request.query.offset offset (optional, default=0)
@@ -252,20 +252,20 @@ export module UserController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function followers(request: any, reply: any): void {
+		export function likers(request: any, reply: any): void {
 			// Create user promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<User> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then((user: User) => {
 				if (!user) return Promise.reject(Boom.notFound('User not found!'));
-				return UserController.followers(transaction, user, request.query.offset, request.query.limit);
+				return UserController.likers(transaction, user, request.query.offset, request.query.limit);
 			}).then((users: User[]) => UserController.getPublicUser(transaction, users, request.auth.credentials));
 			
 			reply.api(promise, transactionSession);
 		}
 		
 		/**
-		 * Handles [GET] /api/users/=/{username}/followees
+		 * Handles [GET] /api/users/=/{username}/likees
 		 * @param request Request-Object
 		 * @param request.params.username username
 		 * @param request.query.offset offset (optional, default=0)
@@ -273,13 +273,13 @@ export module UserController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function followees(request: any, reply: any): void {
+		export function likees(request: any, reply: any): void {
 			// Create user promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<User> = Promise.resolve(request.params.username != 'me' ? UserController.findByUsername(transaction, request.params.username) : request.auth.credentials).then((user: User) => {
 				if (!user) return Promise.reject(Boom.badRequest('User does not exist!'));
-				return UserController.followees(transaction, user, request.query.offset, request.query.limit);
+				return UserController.likees(transaction, user, request.query.offset, request.query.limit);
 			}).then((users: User[]) => UserController.getPublicUser(transaction, users, request.auth.credentials));
 			
 			reply.api(promise, transactionSession);

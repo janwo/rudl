@@ -34,15 +34,15 @@ export interface UserLinks {
 }
 
 export interface UserRelations {
-	isFollowee: boolean;
-	isFollower: boolean;
-	mutualFollowers: number;
-	mutualFollowees: number;
+	isLikee: boolean;
+	isLiker: boolean;
+	mutualLikers: number;
+	mutualLikees: number;
 }
 
 export interface UserStatistics {
-	followers: number;
-	followees: number;
+	likers: number;
+	likees: number;
 	lists: number;
 	rudel: number;
 }

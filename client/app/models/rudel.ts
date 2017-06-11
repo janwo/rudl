@@ -14,11 +14,11 @@ export interface RudelPreview extends Document {
 export interface Rudel extends RudelPreview {
 	owner: UserPreview;
 	relations: {
-		isFollowed: boolean;
+		isLiked: boolean;
 		isOwned: boolean;
 	};
 	statistics: {
-		followers: number;
+		likers: number;
 		lists: number;
 		expeditions: number;
 	};

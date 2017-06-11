@@ -54,8 +54,8 @@ import {MenuItemComponent} from './ui/widgets/menu/menu-item.component';
 import {LandingComponent} from './ui/layouts/landing/landing.component';
 import {UserComponent} from './ui/layouts/user/user.component';
 import {UserRudelComponent} from './ui/layouts/user/user-rudel.component';
-import {UserFolloweesComponent} from './ui/layouts/user/user-followees.component';
-import {UserFollowersComponent} from './ui/layouts/user/user-followers.component';
+import {UserLikeesComponent} from './ui/layouts/user/user-likees.component';
+import {UserLikersComponent} from './ui/layouts/user/user-likers.component';
 import {UserListsComponent} from './ui/layouts/user/user-lists.component';
 import {UserAvatarComponent} from './ui/widgets/user/user-avatar.component';
 import {UserItemComponent} from './ui/widgets/user/user-item.component';
@@ -81,8 +81,8 @@ import {RudelExpeditionsComponent} from './ui/layouts/rudel/rudel-expeditions.co
 import {RudelPastExpeditionsComponent} from './ui/layouts/rudel/rudel-past-expeditions.component';
 import {RudelCreateExpeditionComponent} from './ui/layouts/rudel/rudel-create-expedition.component';
 import {RudelAddToListComponent} from './ui/layouts/rudel/rudel-add-to-list.component';
-import {RudelFollowersComponent} from './ui/layouts/rudel/rudel-followers.component';
-import {ListFollowersComponent} from './ui/layouts/list/list-followers.component';
+import {RudelLikersComponent} from './ui/layouts/rudel/rudel-likers.component';
+import {ListLikersComponent} from './ui/layouts/list/list-likers.component';
 import {ListRudelComponent} from './ui/layouts/list/list-rudel.component';
 import {CarouselComponent, CarouselSlideComponent} from './ui/widgets/wrapper/carousel.component';
 import {NotFoundComponent} from './ui/layouts/404/404.component';
@@ -139,7 +139,7 @@ import {ExpeditionsUpcomingComponent} from './ui/layouts/expedition/expeditions-
 		RudelEditComponent,
 		RudelCreateExpeditionComponent,
 		RudelExpeditionsComponent,
-		RudelFollowersComponent,
+		RudelLikersComponent,
 		RudelAddToListComponent,
 		UserAvatarComponent,
 		ExpeditionCommentsComponent,
@@ -171,13 +171,13 @@ import {ExpeditionsUpcomingComponent} from './ui/layouts/expedition/expeditions-
 		FormControlWrapper,
 		UserComponent,
 		UserRudelComponent,
-		UserFolloweesComponent,
+		UserLikeesComponent,
 		KeysPipe,
-		UserFollowersComponent,
+		UserLikersComponent,
 		UserListsComponent,
 		BoardingComponent,
 		LegalFooterComponent,
-		ListFollowersComponent,
+		ListLikersComponent,
 		ListRudelComponent,
 		FanComponent,
 		LocationSearchComponent,

@@ -58,8 +58,8 @@ export class ListService {
 		}).share();
 	}
 	
-	followers(list: string, offset = 0, limit = 25): Observable<User[]> {
-		return this.dataService.get(`/api/lists/=/${list}/followers?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data as User[]).share();
+	likers(list: string, offset = 0, limit = 25): Observable<User[]> {
+		return this.dataService.get(`/api/lists/=/${list}/likers?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data as User[]).share();
 	}
 	
 	rudel(list: string, offset = 0, limit = 25): Observable<Rudel[]> {

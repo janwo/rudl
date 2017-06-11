@@ -1,13 +1,13 @@
 <div class="card" [routerLink]="['/rudel', rudel.id]">
     <emoji [emoji]="rudel.links.icon"></emoji>
     <span class="name" [innerHTML]="highlight ? (rudel.name | highlight: highlight) : rudel.name"></span>
-    <slots [users]="[rudel.owner]" [slots]="rudel.statistics.followers"></slots>
+    <slots [users]="[rudel.owner]" [slots]="rudel.statistics.likers"></slots>
     <ul>
         <li>
             <span>{{rudel.owner.firstName + ' ' + rudel.owner.lastName}}</span>
         </li>
         <li>
-            <span>{{rudel.statistics.followers}} Follower</span>
+            <span>{{rudel.statistics.likers}} Liker</span>
         </li>
     </ul>
     <div class="overflow" (click)="$event.stopPropagation()">
