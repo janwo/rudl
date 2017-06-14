@@ -5,7 +5,4 @@
   @include setup-max-width();
   padding: map_get($base-padding, 'default');
 
-  stack {
-    min-height: calc(100% - #{map_get($base-padding, 'default') * 2});
-  }
 }

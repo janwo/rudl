@@ -3,13 +3,11 @@
 </header>
 <section>
     <menu>
-        <menu-item [title]="'Verantwortlicher'" [link]="['about']"></menu-item>
-        <menu-item [title]="'Nutzungsbedingungen'" [link]="['terms']"></menu-item>
-        <menu-item [title]="'Datenschutzbestimmungen'" [link]="['privacy']"></menu-item>
+        <menu-item [makeRoomIfSmall]="true" [title]="'Verantwortlicher'" [link]="['about']" [icon]="'face'"></menu-item>
+        <menu-item [makeRoomIfSmall]="true" [title]="'Nutzungsbedingungen'" [link]="['terms']" [icon]="'account_balance'"></menu-item>
+        <menu-item [makeRoomIfSmall]="true" [title]="'Datenschutzbestimmungen'" [link]="['privacy']" [icon]="'fingerprint'"></menu-item>
     </menu>
-    <div class="card">
-        <router-outlet></router-outlet>
-    </div>
-    <legal-footer></legal-footer>
+    <router-outlet></router-outlet>
+    <app-footer></app-footer>
 </section>
 

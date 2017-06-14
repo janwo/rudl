@@ -194,11 +194,6 @@ export module ExpeditionController {
 	}
 	
 	export function findUpcomingByRudel(transaction: Transaction, rudel: Rudel, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		console.log(`CALL spatial.withinDistance("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e`)
-		console.log( {
-			latitude: user.location.lat,
-				longitude: user.location.lng
-		})
 		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) WITH e, apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date > apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") - 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date SKIP $skip LIMIT $limit`, {
 			rudelId: rudel.id,
 			location: {

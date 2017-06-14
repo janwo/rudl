@@ -2,6 +2,8 @@
 @import "../../mixins.scss";
 
 :host {
+  line-height: map_get($base-line-height, 'multiline');
+
   p {
     display: flex;
     flex-direction: column;

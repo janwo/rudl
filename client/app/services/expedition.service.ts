@@ -46,8 +46,8 @@ export class ExpeditionService {
 		return this.dataService.get(`/api/expeditions/=/${expedition}/invite-like/${query}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data as ExpeditionRequestResponse[]).share();
 	}
 	
-	nearby(rudel: string | boolean = false, offset = 0, limit = 25): Observable<Expedition[]> {
-		return this.dataService.get(rudel === false ? `/api/expeditions/nearby?offset=${offset}&limit=${limit}` : `/api/expeditions/near/${rudel}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
+	nearby(offset = 0, limit = 25): Observable<Expedition[]> {
+		return this.dataService.get(`/api/expeditions/nearby?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
 	}
 	
 	upcoming(offset = 0, limit = 25): Observable<Expedition[]> {

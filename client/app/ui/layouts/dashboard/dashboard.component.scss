@@ -140,7 +140,7 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
       height: calc(100vh - #{$header-vertical-padding * 2 + $header-content-size});
     }
 
-    legal-footer {
+    app-footer {
       flex: 0 0 auto;
     }
   }

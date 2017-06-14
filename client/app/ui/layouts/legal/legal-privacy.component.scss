@@ -2,6 +2,8 @@
 @import "../../mixins.scss";
 
 :host {
+  line-height: map_get($base-line-height, 'multiline');
+
   li {
     list-style: decimal inside;
     margin-bottom: map_get($base-padding, 'smallest');
