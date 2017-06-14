@@ -43,13 +43,8 @@ $legal-horizontal-padding-mobile: map_get($base-padding, 'smaller');
       padding: $legal-vertical-padding $legal-horizontal-padding;
     }
 
-    .card p {
-      display: flex;
-      flex-direction: column;
-
-      & > *:first-child {
-        font-weight: $base-font-weight-bold;
-      }
+    menu {
+      margin-bottom: map_get($base-padding, 'default');
     }
   }
 }

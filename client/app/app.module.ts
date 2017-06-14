@@ -100,6 +100,9 @@ import {NotificationsComponent} from './ui/layouts/notification/notifications.co
 import {NotificationItemComponent} from "./ui/widgets/notification/notification-item.component";
 import {ExpeditionsDoneComponent} from './ui/layouts/expedition/expeditions-done.component';
 import {ExpeditionsUpcomingComponent} from './ui/layouts/expedition/expeditions-upcoming.component';
+import {LegalAboutComponent} from './ui/layouts/legal/legal-about.component';
+import {LegalTermsComponent} from './ui/layouts/legal/legal-terms.component';
+import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component';
 
 @NgModule({
 	declarations: [
@@ -141,6 +144,9 @@ import {ExpeditionsUpcomingComponent} from './ui/layouts/expedition/expeditions-
 		RudelExpeditionsComponent,
 		RudelLikersComponent,
 		RudelAddToListComponent,
+		LegalAboutComponent,
+		LegalTermsComponent,
+		LegalPrivacyComponent,
 		UserAvatarComponent,
 		ExpeditionCommentsComponent,
 		ExpeditionAttendeesComponent,

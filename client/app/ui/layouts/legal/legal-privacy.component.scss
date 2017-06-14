@@ -1,0 +1,9 @@
+@import '../../variables.scss';
+@import "../../mixins.scss";
+
+:host {
+  li {
+    list-style: decimal inside;
+    margin-bottom: map_get($base-padding, 'smallest');
+  }
+}

@@ -1,0 +1,13 @@
+@import '../../variables.scss';
+@import "../../mixins.scss";
+
+:host {
+  p {
+    display: flex;
+    flex-direction: column;
+
+    & > *:first-child {
+      font-weight: $base-font-weight-bold;
+    }
+  }
+}
