@@ -21,6 +21,7 @@ export module ExpeditionController {
 	
 	export const FUZZY_HOURS = 3;
 	export const FUZZY_METERS = 500;
+	export const REGIONAL_RADIUS_METERS = 30000;
 	
 	export function getPublicExpedition(transaction: Transaction, expedition: Expedition | Expedition[], relatedUser: User, preview = false): Promise<any | any[]> {
 		let createPublicExpedition = (expedition: Expedition): Promise<any> => {
@@ -175,7 +176,7 @@ export module ExpeditionController {
 	}
 	
 	export function findUpcomingByUser(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date > apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") - 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date SKIP $skip LIMIT $limit`, {
+		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e, apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date > apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") - 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			limit: limit,
 			skip: skip,
@@ -184,7 +185,7 @@ export module ExpeditionController {
 	}
 	
 	export function findDoneByUser(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date < apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") + 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date DESC SKIP $skip LIMIT $limit`, {
+		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e, apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date < apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") + 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date DESC SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			limit: limit,
 			skip: skip,
@@ -192,18 +193,31 @@ export module ExpeditionController {
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
 	}
 	
-	export function findUpcomingByRudel(transaction: Transaction, rudel: Rudel, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) OPTIONAL MATCH (r)<-[:BELONGS_TO_RUDEL]-(e:Expedition) WITH e apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date > apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") - 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date SKIP $skip LIMIT $limit`, {
+	export function findUpcomingByRudel(transaction: Transaction, rudel: Rudel, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
+		console.log(`CALL spatial.withinDistance("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e`)
+		console.log( {
+			latitude: user.location.lat,
+				longitude: user.location.lng
+		})
+		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) WITH e, apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date > apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") - 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date SKIP $skip LIMIT $limit`, {
 			rudelId: rudel.id,
+			location: {
+				latitude: user.location.lat,
+				longitude: user.location.lng
+			},
 			limit: limit,
 			skip: skip,
 			now: new Date().toISOString()
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
 	}
 	
-	export function findDoneByRudel(transaction: Transaction, rudel: Rudel, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) OPTIONAL MATCH (r)<-[:BELONGS_TO_RUDEL]-(e:Expedition) WITH e apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date < apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") + 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date DESC SKIP $skip LIMIT $limit`, {
+	export function findDoneByRudel(transaction: Transaction, rudel: Rudel, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
+		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) WITH e, apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date < apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") + 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date DESC SKIP $skip LIMIT $limit`, {
 			rudelId: rudel.id,
+			location: {
+				latitude: user.location.lat,
+				longitude: user.location.lng
+			},
 			limit: limit,
 			skip: skip,
 			now: new Date().toISOString()
@@ -252,7 +266,7 @@ export module ExpeditionController {
 						DETACH DELETE pje
 						WITH u, r, e
 						CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:LIKES_RUDEL]->(r)
-						OPTIONAL MATCH (u)-[dlr:DISLIKES_RUDEL]->(r)
+						WITH u, r OPTIONAL MATCH (u)-[dlr:DISLIKES_RUDEL]->(r)
 						DETACH DELETE dlr`;
 				return transaction.run(query, {
 					expeditionId: expedition.id,
@@ -276,6 +290,7 @@ export module ExpeditionController {
 				let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}), (r:Rudel)<-[:BELONGS_TO_RUDEL]-(e)
 				WHERE NOT (e)<-[:JOINS_EXPEDITION]-(u) AND NOT (e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u)
 				CREATE UNIQUE (e)<-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]-(u)-[:LIKES_RUDEL]->(r)
+				WITH u, r
 				OPTIONAL MATCH (u)-[dlr:DISLIKES_RUDEL]->(r)
 				DETACH DELETE dlr`;
 				return transaction.run(query, {
@@ -396,13 +411,13 @@ export module ExpeditionController {
 		// Delete all expeditions of an rudel.
 		let removeCommentsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(nodes:Expedition)`;
 		let removeNotificationsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(subjects:Expedition)`;
-		let removeExpeditionsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e, c`;
+		let removeExpeditionsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e`;
 		
 		// Delete all expeditions of an user within an rudel?
 		if(user) {
 			removeCommentsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(nodes:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId})`;
 			removeNotificationsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(subjects:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId})`;
-			removeExpeditionsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId}) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e, c`;
+			removeExpeditionsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId}) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e`;
 		}
 		
 		let params = {
@@ -427,7 +442,7 @@ export module ExpeditionController {
 			removeComments,
 			removeNotifications
 		]).then(() => {
-			return transaction.run(`MATCH(e:Expedition {id: $expeditionId}) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e, c`, {
+			return transaction.run(`MATCH(e:Expedition {id: $expeditionId}) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e`, {
 				expeditionId: expedition.id
 			});
 		}).then(() => {});
@@ -457,7 +472,7 @@ export module ExpeditionController {
 		
 		// Save.
 		let promises: Promise<any>[] = [
-			transaction.run("MERGE (e:Expedition {id: $expedition.id}) ON CREATE SET e = $flattenExpedition ON MATCH SET e = $flattenExpedition", {
+			transaction.run(`MERGE (e:Expedition {id: $expedition.id}) ON CREATE SET e = $flattenExpedition ON MATCH SET e = $flattenExpedition WITH e OPTIONAL MATCH (e)<-[r:RTREE_REFERENCE]-() DETACH DELETE r WITH e CALL spatial.addNode("Expedition", e) yield node RETURN COUNT(*)`, {
 				expedition: expedition,
 				flattenExpedition: DatabaseManager.neo4jFunctions.flatten(expedition)
 			})
@@ -521,25 +536,11 @@ export module ExpeditionController {
 	}
 	
 	export function getNearbyExpeditions(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>("MATCH(e:Expedition) WITH e ORDER BY distance(point($location), point(e.location)) RETURN properties(e) as e SKIP $skip LIMIT $limit", {
-			location: dot.transform({
-				'lat': 'latitude',
-				'lng': 'longitude'
-			}, user.location),
-			limit: limit,
-			skip: skip
-		}).then(results => {
-			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e');
-		});
-	}
-	
-	export function getNearbyExpeditionsWithinRudel(transaction: Transaction, user: User, rudel: Rudel, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>("MATCH(r:Rudel {id: $rudelId}) WITH r MATCH (e:Expedition)-[:BELONGS_TO_RUDEL]->(r) WITH e ORDER BY distance(point($location), point(e.location)) WITH properties(e) as e RETURN e SKIP $skip LIMIT $limit", {
-			location: dot.transform({
-				'lat': 'latitude',
-				'lng': 'longitude'
-			}, user.location),
-			rudelId: rudel.id,
+		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
+			location: {
+				latitude: user.location.lat,
+				longitude: user.location.lng
+			},
 			limit: limit,
 			skip: skip
 		}).then(results => {
@@ -823,7 +824,7 @@ export module ExpeditionController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = RudelController.get(transaction, request.params.rudel).then((rudel: Rudel) => {
 				if (!rudel) return Promise.reject(Boom.badRequest('Rudel does not exist!'));
-				return ExpeditionController.findUpcomingByRudel(transaction, rudel, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
+				return ExpeditionController.findUpcomingByRudel(transaction, rudel, request.auth.credentials, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
 					return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
 				});
 			});
@@ -846,7 +847,7 @@ export module ExpeditionController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = RudelController.get(transaction, request.params.rudel).then((rudel: Rudel) => {
 				if (!rudel) return Promise.reject(Boom.badRequest('Rudel does not exist!'));
-				return ExpeditionController.findDoneByRudel(transaction, rudel, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
+				return ExpeditionController.findDoneByRudel(transaction, rudel, request.auth.credentials, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
 					return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
 				});
 			});
@@ -867,29 +868,6 @@ export module ExpeditionController {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ExpeditionController.getNearbyExpeditions(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
-				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
-			});
-			
-			reply.api(promise, transactionSession);
-		}
-		
-		/**
-		 * Handles [GET] /api/expeditions/near/{rudel}
-		 * @param request Request-Object
-		 * @param request.query.offset offset (optional, default=0)
-		 * @param request.query.limit limit (optional, default=25)
-		 * @param request.params.rudel rudel
-		 * @param request.auth.credentials
-		 * @param reply Reply-Object
-		 */
-		export function nearbyWithinRudel(request: any, reply: any): void {
-			// Create promise.
-			let transactionSession = new TransactionSession();
-			let transaction = transactionSession.beginTransaction();
-			let promise: Promise<any> = RudelController.get(transaction, request.params.rudel).then((rudel: Rudel) => {
-				if (!rudel) return Promise.reject(Boom.notFound('Rudel not found!'));
-				return ExpeditionController.getNearbyExpeditionsWithinRudel(transaction, request.auth.credentials, rudel, request.query.offset, request.query.limit);
-			}).then((expeditions: Expedition[]) => {
 				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
 			});
 			

@@ -31,7 +31,7 @@ export class RudelExpeditionsComponent implements OnInit, OnDestroy {
 		this.expeditionsSubscription = this.route.parent.data.flatMap((data: { rudel: Rudel }) => {
 			this.rudel = data.rudel;
 			return this.scrollService.hasScrolledToBottom().map(() => this.expeditions ? this.expeditions.length : 0).startWith(0).distinct().flatMap((offset: number) => {
-				return this.expeditionService.nearby(this.rudel.id, offset, 25);
+				return this.expeditionService.upcomingByRudel(this.rudel.id, offset, 25);
 			});
 		}).subscribe((expeditions: Expedition[]) => {
 			if (expeditions.length < 25) this.expeditionsSubscription.unsubscribe();

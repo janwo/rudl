@@ -58,6 +58,14 @@ export class ExpeditionService {
 		return this.dataService.get(`/api/expeditions/done?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
 	}
 	
+	upcomingByRudel(rudel: string, offset = 0, limit = 25): Observable<Expedition[]> {
+		return this.dataService.get(`/api/expeditions/upcoming/${rudel}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
+	}
+	
+	doneByRudel(rudel: string, offset = 0, limit = 25): Observable<Expedition[]> {
+		return this.dataService.get(`/api/expeditions/done/${rudel}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
+	}
+	
 	private handleExpeditionResponse(data: any | any[]): Expedition | Expedition[] {
 		let handleExpedition = (expedition: Expedition) => {
 			if (expedition) expedition.rudel.name = Locale.getBestTranslation(expedition.rudel.translations, this.userService.getAuthenticatedUser().user.languages);

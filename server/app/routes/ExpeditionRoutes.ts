@@ -127,27 +127,6 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
-			path: '/api/expeditions/near/{rudel}',
-			method: 'GET',
-			handler: ExpeditionController.RouteHandlers.nearbyWithinRudel,
-			config: {
-				auth: {
-					scope: [
-						UserRoles.user
-					]
-				},
-				validate: {
-					params: {
-						rudel: Joi.string()
-					},
-					query: {
-						offset: Joi.number().min(0).default(0),
-						limit: Joi.number().positive().max(100).default(25)
-					}
-				}
-			}
-		},
-		{
 			path: '/api/expeditions/=/{id}/attendees',
 			method: 'GET',
 			handler: ExpeditionController.RouteHandlers.getAttendees,
@@ -239,6 +218,24 @@ export const RoutesConfig: RoutesConfiguration = {
 				validate: {
 					params: {
 						id: Joi.string()
+					}
+				}
+			}
+		},
+		{
+			path: '/api/expeditions/create',
+			method: 'POST',
+			handler: ExpeditionController.RouteHandlers.create,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					payload: {
+						rudel: Joi.string(),
+						expedition: ExpeditionValidation
 					}
 				}
 			}

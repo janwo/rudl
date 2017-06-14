@@ -56,8 +56,8 @@ $login-text-divider-font-size: map_get($base-font-size, 'default') * 0.75;
     }
   }
 
-  .social-login {
-    margin-bottom: map_get($base-padding, 'smaller');
+  .terms-info {
     margin-top: map_get($base-padding, 'smaller');
+    margin-bottom: map_get($base-padding, 'smaller');
   }
 }

@@ -54,4 +54,4 @@ export interface UserRecipe {
 	profileText?: string;
 	firstName?: string;
 	lastName?: string;
-};
+}

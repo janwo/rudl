@@ -1,4 +1,4 @@
-<small>Durch die Registrierung stimme ich den <a [routerLink]="['/legal/privacy']">Datenschutzbestimmungen</a> und <a [routerLink]="['/legal/terms']">Nutzungsbedingungen</a> zu.</small>
+<small class="terms-info" *ngIf="!signInOnly">Durch die Registrierung stimme ich den <a [routerLink]="['/legal/privacy']">Datenschutzbestimmungen</a> und <a [routerLink]="['/legal/terms']">Nutzungsbedingungen</a> zu.</small>
 <div class="social-login">
 	<styled-button [style]="facebookButtonStyle" [link]="'/oauth/facebook'"
             [text]="signInOnly ? 'Einloggen via Facebook' : 'Registrieren via Facebook'"></styled-button>
