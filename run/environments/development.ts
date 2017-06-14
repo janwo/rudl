@@ -70,18 +70,8 @@ export default {
 			http: 8080
 		},
 		log: {
-			serverLogs: {
-				console: {
-					enabled: true
-				}
-			},
-			databaseLogs: {
-				redis: {
-					enabled: true
-				},
-				neo4j: {
-					enabled: true
-				}
+			console: {
+				enabled: true
 			}
 		}
 	}

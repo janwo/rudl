@@ -15,6 +15,7 @@ import Transaction from 'neo4j-driver/lib/v1/transaction';
 import {RudelController} from './RudelController';
 import {AccountController} from './AccountController';
 import {NotificationType} from '../models/notification/Notification';
+import {CommentController} from './CommentController';
 
 export module ExpeditionController {
 	
@@ -174,7 +175,7 @@ export module ExpeditionController {
 	}
 	
 	export function findUpcomingByUser(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e, u, apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date > apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") - 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date SKIP $skip LIMIT $limit`, {
+		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date > apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") - 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			limit: limit,
 			skip: skip,
@@ -183,8 +184,26 @@ export module ExpeditionController {
 	}
 	
 	export function findDoneByUser(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e, u, apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date < apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") + 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date DESC SKIP $skip LIMIT $limit`, {
+		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date < apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") + 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date DESC SKIP $skip LIMIT $limit`, {
 			userId: user.id,
+			limit: limit,
+			skip: skip,
+			now: new Date().toISOString()
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
+	}
+	
+	export function findUpcomingByRudel(transaction: Transaction, rudel: Rudel, skip = 0, limit = 25): Promise<Expedition[]> {
+		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) OPTIONAL MATCH (r)<-[:BELONGS_TO_RUDEL]-(e:Expedition) WITH e apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date > apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") - 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date SKIP $skip LIMIT $limit`, {
+			rudelId: rudel.id,
+			limit: limit,
+			skip: skip,
+			now: new Date().toISOString()
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
+	}
+	
+	export function findDoneByRudel(transaction: Transaction, rudel: Rudel, skip = 0, limit = 25): Promise<Expedition[]> {
+		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) OPTIONAL MATCH (r)<-[:BELONGS_TO_RUDEL]-(e:Expedition) WITH e apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date < apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") + 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date DESC SKIP $skip LIMIT $limit`, {
+			rudelId: rudel.id,
 			limit: limit,
 			skip: skip,
 			now: new Date().toISOString()
@@ -374,21 +393,43 @@ export module ExpeditionController {
 	}
 	
 	export function removeExpeditions(transaction: Transaction, rudel: Rudel, user: User = null): Promise<void> {
-		// Delete all expeditions of an user within an rudel.
-		if(user) return transaction.run(`MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId}) OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e, c`, {
+		// Delete all expeditions of an rudel.
+		let removeCommentsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(nodes:Expedition)`;
+		let removeNotificationsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(subjects:Expedition)`;
+		let removeExpeditionsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e, c`;
+		
+		// Delete all expeditions of an user within an rudel?
+		if(user) {
+			removeCommentsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(nodes:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId})`;
+			removeNotificationsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(subjects:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId})`;
+			removeExpeditionsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId}) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e, c`;
+		}
+		
+		let params = {
 			rudelId: rudel.id,
 			userId: user.id
-		}).then(() => {});
+		};
 		
-		// Delete all expeditions of an rudel.
-		return transaction.run(`MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition) OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e, c`, {
-			rudelId: rudel.id
-		}).then(() => {});
+		let removeComments = CommentController.removeAll(transaction, removeCommentsQuery, params);
+		let removeNotifications = AccountController.NotificationController.removeAll(transaction, removeNotificationsQuery, params);
+		return Promise.all([
+			removeComments,
+			removeNotifications
+		]).then(() => {
+			return transaction.run(removeExpeditionsQuery, params).then(() => {});
+		});
 	}
 	
 	export function removeExpedition(transaction: Transaction, expedition: Expedition): Promise<void> {
-		return transaction.run(`MATCH(e:Expedition {id: $expeditionId}) OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e, c`, {
-			expeditionId: expedition.id
+		let removeComments = CommentController.remove(transaction, expedition);
+		let removeNotifications = AccountController.NotificationController.remove(transaction, expedition);
+		return Promise.all([
+			removeComments,
+			removeNotifications
+		]).then(() => {
+			return transaction.run(`MATCH(e:Expedition {id: $expeditionId}) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e, c`, {
+				expeditionId: expedition.id
+			});
 		}).then(() => {});
 	}
 	
@@ -730,14 +771,14 @@ export module ExpeditionController {
 		}
 		
 		/**
-		 * Handles [GET] /api/expeditions/upcoming/{username}
+		 * Handles [GET] /api/expeditions/upcoming
 		 * @param request Request-Object
 		 * @param request.query.offset offset (optional, default=0)
 		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function upcoming(request: any, reply: any): void {
+		export function upcomingByUser(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
@@ -749,19 +790,65 @@ export module ExpeditionController {
 		}
 		
 		/**
-		 * Handles [GET] /api/expeditions/done/{username}
+		 * Handles [GET] /api/expeditions/done
 		 * @param request Request-Object
 		 * @param request.query.offset offset (optional, default=0)
 		 * @param request.query.limit limit (optional, default=25)
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function done(request: any, reply: any): void {
+		export function doneByUser(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ExpeditionController.findDoneByUser(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
 				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [GET] /api/expeditions/upcoming/{rudel}
+		 * @param request Request-Object
+		 * @param request.params.rudel rudel
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function upcomingByRudel(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = RudelController.get(transaction, request.params.rudel).then((rudel: Rudel) => {
+				if (!rudel) return Promise.reject(Boom.badRequest('Rudel does not exist!'));
+				return ExpeditionController.findUpcomingByRudel(transaction, rudel, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
+					return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
+				});
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [GET] /api/expeditions/done/{rudel}
+		 * @param request Request-Object
+		 * @param request.params.rudel rudel
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function doneByRudel(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = RudelController.get(transaction, request.params.rudel).then((rudel: Rudel) => {
+				if (!rudel) return Promise.reject(Boom.badRequest('Rudel does not exist!'));
+				return ExpeditionController.findDoneByRudel(transaction, rudel, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
+					return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
+				});
 			});
 			
 			reply.api(promise, transactionSession);

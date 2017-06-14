@@ -2,6 +2,7 @@ import * as ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 export default {
 	name: 'rudl - Test Environment',
+	debug: true,
 	frontend: {
 		webpack: {
 			config: [
@@ -25,23 +26,6 @@ export default {
 					};
 				}
 			]
-		}
-	},
-	backend: {
-		log: {
-			serverLogs: {
-				console: {
-					enabled: true
-				}
-			},
-			databaseLogs: {
-				redis: {
-					enabled: true
-				},
-				neo4j: {
-					enabled: true
-				}
-			}
 		}
 	}
 };

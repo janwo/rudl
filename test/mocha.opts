@@ -1,0 +1,4 @@
+--reporter spec
+--watch
+--watch-extensions ts
+--compilers ts:test/mocha-compiler,tsx:test/mocha-compiler

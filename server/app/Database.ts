@@ -337,19 +337,10 @@ export class DatabaseManager {
 				DatabaseManager.onlineStatus.redisClient = true;
 			});
 			
-			DatabaseManager.redisClient.on("monitor", (time: any, args: any) => {
-				console.log(time + ": " + args);
-			});
-			
 			DatabaseManager.redisClient.on("end", () => {
 				console.log('Connection to redis ended...');
 				DatabaseManager.onlineStatus.redisClient = false;
 			});
-			
-			if (Config.backend.log.databaseLogs.redis.enabled) {
-				console.log('Listening on any errors within redis database...');
-				DatabaseManager.redisClient.on('error', console.error);
-			}
 			
 			let wait = setInterval(() => {
 				if (_.values(DatabaseManager.onlineStatus).indexOf(false) < 0) {

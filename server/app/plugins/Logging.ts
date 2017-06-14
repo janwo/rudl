@@ -19,7 +19,7 @@ export const PluginsConfig: PluginsConfiguration = [
 				let reporters: any = {};
 				
 				// Enable logging to console?
-				if (Config.backend.log.serverLogs.console.enabled) {
+				if (Config.backend.log.console.enabled) {
 					reporters.console = [
 						{
 							module: 'good-squeeze',
@@ -43,7 +43,7 @@ export const PluginsConfig: PluginsConfiguration = [
 				}
 				
 				// Enable console to file?
-				if (Config.backend.log.serverLogs.file.enabled) {
+				if (Config.backend.log.file.enabled) {
 					reporters.file = [
 						{
 							module: 'good-squeeze',
@@ -60,7 +60,7 @@ export const PluginsConfig: PluginsConfiguration = [
 							args: [
 								'log', {
 									interval: '1d',
-									path: Config.backend.log.serverLogs.file.dirPath
+									path: Config.backend.log.file.dirPath
 								}
 							]
 						}

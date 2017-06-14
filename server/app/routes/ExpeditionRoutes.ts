@@ -6,198 +6,243 @@ import {ExpeditionValidation} from '../models/expedition/Expedition';
 
 const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.string().regex(/^me$/));
 
-export const RoutesConfig: RoutesConfiguration = [
-	{
-		path: '/api/expeditions/like/{query}',
-		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.like,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			},
-			validate: {
-				params: {
-					query: Joi.string().min(3)
+export const RoutesConfig: RoutesConfiguration = {
+	name: 'expedition-routes',
+	routes: [
+		{
+			path: '/api/expeditions/like/{query}',
+			method: 'GET',
+			handler: ExpeditionController.RouteHandlers.like,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
 				},
-				query: {
-					offset: Joi.number().min(0).default(0),
-					limit: Joi.number().positive().max(100).default(25)
+				validate: {
+					params: {
+						query: Joi.string().min(3)
+					},
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
+					}
 				}
 			}
-		}
-	},
-	{
-		path: '/api/expeditions/upcoming',
-		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.upcoming,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			},
-			validate: {
-				query: {
-					offset: Joi.number().min(0).default(0),
-					limit: Joi.number().positive().max(100).default(25)
-				}
-			}
-		}
-	},
-	{
-		path: '/api/expeditions/done',
-		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.done,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			},
-			validate: {
-				query: {
-					offset: Joi.number().min(0).default(0),
-					limit: Joi.number().positive().max(100).default(25)
-				}
-			}
-		}
-	},
-	{
-		path: '/api/expeditions/nearby',
-		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.nearby,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			},
-			validate: {
-				query: {
-					offset: Joi.number().min(0).default(0),
-					limit: Joi.number().positive().max(100).default(25)
-				}
-			}
-		}
-	},
-	{
-		path: '/api/expeditions/near/{rudel}',
-		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.nearbyWithinRudel,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			},
-			validate: {
-				params: {
-					rudel: Joi.string()
+		},
+		{
+			path: '/api/expeditions/upcoming',
+			method: 'GET',
+			handler: ExpeditionController.RouteHandlers.upcomingByUser,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
 				},
-				query: {
-					offset: Joi.number().min(0).default(0),
-					limit: Joi.number().positive().max(100).default(25)
+				validate: {
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
+					}
 				}
 			}
-		}
-	},
-	{
-		path: '/api/expeditions/=/{id}/attendees',
-		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.getAttendees,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			},
-			validate: {
-				params: {
-					id: Joi.string()
+		},
+		{
+			path: '/api/expeditions/done',
+			method: 'GET',
+			handler: ExpeditionController.RouteHandlers.doneByUser,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
 				},
-				query: {
-					offset: Joi.number().min(0).default(0),
-					limit: Joi.number().positive().max(100).default(25)
+				validate: {
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
+					}
 				}
 			}
-		}
-	},
-	{
-		path: '/api/expeditions/=/{id}/invite-like/{query}',
-		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.inviteLike,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			},
-			validate: {
-				params: {
-					id: Joi.string(),
-					query: Joi.string().min(3)
+		},
+		{
+			path: '/api/expeditions/upcoming/{rudel}',
+			method: 'GET',
+			handler: ExpeditionController.RouteHandlers.upcomingByRudel,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
 				},
-				query: {
-					offset: Joi.number().min(0).default(0),
-					limit: Joi.number().positive().max(100).default(25)
+				validate: {
+					params: {
+						rudel: Joi.string().required()
+					},
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
+					}
+				}
+			}
+		},
+		{
+			path: '/api/expeditions/done/{rudel}',
+			method: 'GET',
+			handler: ExpeditionController.RouteHandlers.doneByRudel,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					params: {
+						rudel: Joi.string().required()
+					},
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
+					}
+				}
+			}
+		},
+		{
+			path: '/api/expeditions/nearby',
+			method: 'GET',
+			handler: ExpeditionController.RouteHandlers.nearby,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
+					}
+				}
+			}
+		},
+		{
+			path: '/api/expeditions/near/{rudel}',
+			method: 'GET',
+			handler: ExpeditionController.RouteHandlers.nearbyWithinRudel,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					params: {
+						rudel: Joi.string()
+					},
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
+					}
+				}
+			}
+		},
+		{
+			path: '/api/expeditions/=/{id}/attendees',
+			method: 'GET',
+			handler: ExpeditionController.RouteHandlers.getAttendees,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					params: {
+						id: Joi.string()
+					},
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
+					}
+				}
+			}
+		},
+		{
+			path: '/api/expeditions/=/{id}/invite-like/{query}',
+			method: 'GET',
+			handler: ExpeditionController.RouteHandlers.inviteLike,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					params: {
+						id: Joi.string(),
+						query: Joi.string().min(3)
+					},
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
+					}
+				}
+			}
+		},
+		{
+			path: '/api/expeditions/=/{id}/approve/{username}',
+			method: 'POST',
+			handler: ExpeditionController.RouteHandlers.approveUser,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					params: {
+						id: Joi.string(),
+						username: UsernameValidation
+					}
+				}
+			}
+		},
+		{
+			path: '/api/expeditions/=/{id}/reject/{username}',
+			method: 'POST',
+			handler: ExpeditionController.RouteHandlers.rejectUser,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					params: {
+						id: Joi.string(),
+						username: UsernameValidation
+					}
+				}
+			}
+		},
+		{
+			path: '/api/expeditions/=/{id}',
+			method: 'GET',
+			handler: ExpeditionController.RouteHandlers.get,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					params: {
+						id: Joi.string()
+					}
 				}
 			}
 		}
-	},
-	{
-		path: '/api/expeditions/=/{id}/approve/{username}',
-		method: 'POST',
-		handler: ExpeditionController.RouteHandlers.approveUser,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			},
-			validate: {
-				params: {
-					id: Joi.string(),
-					username: UsernameValidation
-				}
-			}
-		}
-	},
-	{
-		path: '/api/expeditions/=/{id}/reject/{username}',
-		method: 'POST',
-		handler: ExpeditionController.RouteHandlers.rejectUser,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			},
-			validate: {
-				params: {
-					id: Joi.string(),
-					username: UsernameValidation
-				}
-			}
-		}
-	},
-	{
-		path: '/api/expeditions/=/{id}',
-		method: 'GET',
-		handler: ExpeditionController.RouteHandlers.get,
-		config: {
-			auth: {
-				scope: [
-					UserRoles.user
-				]
-			},
-			validate: {
-				params: {
-					id: Joi.string()
-				}
-			}
-		}
-	}
-];
+	]
+};
 

@@ -10,6 +10,7 @@ import {ExpeditionController} from './ExpeditionController';
 import {CommentRecipe} from '../../../client/app/models/comment';
 import {Expedition} from '../models/expedition/Expedition';
 import Transaction from 'neo4j-driver/lib/v1/transaction';
+import {AccountController} from "./AccountController";
 
 export module CommentController {
 	
@@ -45,11 +46,31 @@ export module CommentController {
 		}).then(() => {});
 	}
 	
-	export function remove(transaction: Transaction, comment: Comment): Promise<any> {
-		return transaction.run(`MATCH(c:Comment {id: $commentId}) DETACH DELETE c`, {
-			commentId: comment.id
+	export function removeById(transaction: Transaction, comment: Comment): Promise<any> {
+		return AccountController.NotificationController.remove(transaction, comment).then(() => {
+			return transaction.run(`MATCH(c:Comment {id: $commentId}) DETACH DELETE c`, {
+				commentId: comment.id
+			}).then(() => {});
+		});
+	}
+	
+	export function remove(transaction: Transaction, node: Node): Promise<void> {
+		return this.removeAll(transaction, `MATCH(nodes {id: $nodeId})`, {
+			nodeId: node.id
 		}).then(() => {});
 	}
+	
+	/**
+	 * Deletes comments of all matching nodes
+	 * @param transaction transaction
+	 * @param query Query that returns `nodes` that matches all subjects
+	 * @param params params for query
+	 * @returns {Promise<void>}
+	 */
+	export function removeAll(transaction: Transaction, query: string, params: {[key: string]: string}): Promise<void> {
+		return AccountController.NotificationController.removeAll(transaction, `${query} WITH nodes OPTIONAL MATCH(nodes)<-[:BELONGS_TO_NODE]-(subjects:Comment)`, params).then(() => {
+			return transaction.run(`${query} WITH nodes OPTIONAL MATCH (nodes)<-[:BELONGS_TO_NODE]-(c:Comment) DETACH DELETE c`, params).then(() => {});
+		}).then(() => {});}
 	
 	export function get(transaction: Transaction, commentId: string): Promise<any> {
 		return transaction.run(`MATCH(c:Comment {id: $commentId}) RETURN COALESCE(properties(c), []) as c LIMIT 1`, {
@@ -187,7 +208,7 @@ export module CommentController {
 				if (!comment) return Promise.reject(Boom.notFound('Comment not found.'));
 				return CommentController.getOwner(transaction, comment).then((owner: User) => {
 					if (owner.id != request.auth.credentials.id) return Promise.reject(Boom.forbidden('You do not have enough privileges to update comment.'));
-					return CommentController.remove(transaction, comment).then(() => {});
+					return CommentController.removeById(transaction, comment).then(() => {});
 				});
 			});
 			

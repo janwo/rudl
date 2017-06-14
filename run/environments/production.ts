@@ -41,11 +41,12 @@ export default {
 		}
 	},
 	backend: {
+		excludeRoutes: [
+			'test-routes'
+		],
 		log: {
-			serverLogs: {
-				file: {
-					enabled: true
-				}
+			file: {
+				enabled: true
 			}
 		}
 	}

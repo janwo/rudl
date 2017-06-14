@@ -86,6 +86,7 @@ export const Config: {
 			random: string
 			jwt: string
 		},
+		excludeRoutes: string[],
 		jwt: {
 			expiresIn: number,
 			deleteIn: number
@@ -93,22 +94,12 @@ export const Config: {
 		maxUploadBytes: { [key: string]: number },
 		uploadMimeTypes: string[],
 		log: {
-			serverLogs: {
-				console: {
-					enabled: boolean
-				},
-				file: {
-					enabled: boolean,
-					dirPath: string
-				}
+			console: {
+				enabled: boolean
 			},
-			databaseLogs: {
-				redis: {
-					enabled: boolean
-				},
-				neo4j: {
-					enabled: boolean
-				}
+			file: {
+				enabled: boolean,
+				dirPath: string
 			}
 		},
 		db: {
