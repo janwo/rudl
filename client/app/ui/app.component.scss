@@ -87,6 +87,11 @@
   line-height: inherit;
 }
 
+/deep/ small {
+  font-size: map_get($base-font-size, 'small');
+  hyphens: auto;
+}
+
 // App component.
 :host {
   display: flex;

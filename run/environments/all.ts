@@ -165,6 +165,7 @@ export default {
 			random: process.env.SALT_RANDOM,
 			password: process.env.SALT_PASSWORD
 		},
+		excludeRoutes: [],
 		mails: {
 			admin: 'we@rudl.me',
 			noreply: 'noreply@rudl.me'
@@ -192,22 +193,12 @@ export default {
 			'image/gif'
 		],
 		log: {
-			serverLogs: {
-				console: {
-					enabled: false
-				},
-				file: {
-					enabled: false,
-					dirPath: process.env.LOGS_DIR || root('logs')
-				}
+			console: {
+				enabled: false
 			},
-			databaseLogs: {
-				redis: {
-					enabled: false
-				},
-				neo4j: {
-					enabled: false
-				}
+			file: {
+				enabled: false,
+				dirPath: process.env.LOGS_DIR || root('logs')
 			}
 		},
 		providers: {

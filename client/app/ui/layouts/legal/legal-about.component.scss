@@ -1,0 +1,15 @@
+@import '../../variables.scss';
+@import "../../mixins.scss";
+
+:host {
+  line-height: map_get($base-line-height, 'multiline');
+
+  p {
+    display: flex;
+    flex-direction: column;
+
+    & > *:first-child {
+      font-weight: $base-font-weight-bold;
+    }
+  }
+}

@@ -1,30 +1,37 @@
-import {Component, Input, OnDestroy} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Rudel} from '../../../models/rudel';
-import {Observable} from 'rxjs';
 import {RudelService} from '../../../services/rudel.service';
-
-export enum UserSuggestionsType {
-	GENERAL, NEARBY
-}
+import {Subscription} from 'rxjs/Subscription';
+import {ExpeditionService} from '../../../services/expedition.service';
+import {Expedition} from '../../../models/expedition';
 
 @Component({
 	templateUrl: 'explore.component.html',
 	styleUrls: ['explore.component.scss']
 })
-export class ExploreComponent implements OnDestroy {
+export class ExploreComponent implements OnInit, OnDestroy {
 	
-	@Input() type: UserSuggestionsType = UserSuggestionsType.GENERAL;
-	suggestedRudelStream: Observable<Rudel[]>;
+	suggestedRudelSubscription: Subscription;
+	suggestedRudel: Rudel[];
+	nearbyExpeditionsSubscription: Subscription;
+	nearbyExpeditions: Expedition[];
 	
-	constructor(private rudelService: RudelService) {
-		this.suggestedRudelStream = this.rudelService.suggestRudel();
+	constructor(private rudelService: RudelService,
+	            private expeditionService: ExpeditionService) {}
+	
+	ngOnInit(): void {
+		this.suggestedRudelSubscription = this.rudelService.suggestRudel().subscribe((rudel: Rudel[]) => {
+			this.suggestedRudel = rudel;
+		});
+		
+		this.nearbyExpeditionsSubscription = this.expeditionService.nearby().subscribe((expeditions: Expedition[]) => {
+			this.nearbyExpeditions = expeditions;
+			this.nearbyExpeditions = expeditions.concat(expeditions);
+		});
 	}
 	
 	ngOnDestroy(): void {
-	
-	}
-	
-	markRudelAs(rudel: Rudel, markedAs: 'like' | 'dislike') {
-		console.log(rudel.name + ' was marked as ' + markedAs);
+		this.suggestedRudelSubscription.unsubscribe();
+		this.nearbyExpeditionsSubscription.unsubscribe();
 	}
 }

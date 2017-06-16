@@ -44,11 +44,12 @@ export default {
 	backend: {
 		domain: process.env.DOMAIN || 'https://localhost',
 		ssl: true,
+		excludeRoutes: [
+			'test-routes'
+		],
 		log: {
-			serverLogs: {
-				file: {
-					enabled: true
-				}
+			file: {
+				enabled: true
 			}
 		}
 	}

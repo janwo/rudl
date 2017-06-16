@@ -17,9 +17,10 @@ export const DecoratorsConfig: DecoratorsConfiguration = [
 			
 			
 			let respondWithSuccess = (data: any) => {
-				let response: any = {};
-				response['statusCode'] = 200;
-				if (data) response['data'] = data;
+				let response: any = {
+					statusCode: 200
+				};
+				if (data) response.data = data;
 				this.response(response);
 			};
 			

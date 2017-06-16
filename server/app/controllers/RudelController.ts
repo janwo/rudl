@@ -9,6 +9,7 @@ import {UtilController} from './UtilController';
 import {ExpeditionController} from './ExpeditionController';
 import Transaction from 'neo4j-driver/lib/v1/transaction';
 import * as shortid from 'shortid';
+import {AccountController} from './AccountController';
 
 export module RudelController {
 	
@@ -205,8 +206,13 @@ export module RudelController {
 				});
 				
 				// Delete rudel, because it's an orphan node.
-				return ExpeditionController.removeExpeditions(transaction, rudel).then(() => {
-					return transaction.run("MATCH(r:Rudel {id: $rudelId}) CALL apoc.index.removeNodeByName('Rudel', r) DETACH DELETE r ", {
+				let removeExpeditions = ExpeditionController.removeExpeditions(transaction, rudel);
+				let removeNotifications = AccountController.NotificationController.remove(transaction, rudel);
+				return Promise.all([
+					removeExpeditions,
+					removeNotifications
+				]).then(() => {
+					return transaction.run("MATCH(r:Rudel {id: $rudelId}) OPTIONAL MATCH (r)<-[:NOTIFICATION_SUBJECT]-(n:Notification) CALL apoc.index.removeNodeByName('Rudel', r) DETACH DELETE r ", {
 						rudelId: rudel.id
 					});
 				});

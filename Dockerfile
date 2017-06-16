@@ -6,7 +6,7 @@ WORKDIR /root/app
 
 RUN curl -o- -L https://yarnpkg.com/install.sh | bash && \
 apt-get update && apt-get install nano && \
-npm install -g typescript ts-node forever nodemon
+npm install -g typescript ts-node forever nodemon mocha
 
 ADD package.json yarn.lock ./
 RUN yarn install

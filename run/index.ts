@@ -28,24 +28,43 @@ let webpack = new forever.Monitor(root('run/webpack.ts'), {
 webpack.on('restart', restart);
 webpack.on('watch:restart', watch);
 webpack.on('exit:code', exit);
-webpack.start();
 
 // Backend server.
-let backendServerCommands = [
+let backendCommands = [
 	'ts-node',
 	`--project ${root('server')}`
 ];
-if (!Config.debug) backendServerCommands.push(`--fast`);
-let backendServerCommand = backendServerCommands.join(' ');
-if (Config.debug) backendServerCommand = `nodemon --ext ts,json --watch ${root('server')} --inspect=0.0.0.0:${Config.backend.ports.nodeDebug} --exec ${backendServerCommand}`;
-let backendServer = new forever.Monitor(root('run/backend-server.ts'), {
-	command: backendServerCommand,
+if (!Config.debug) backendCommands.push(`--fast`);
+let backendCommand = backendCommands.join(' ');
+if (Config.debug) backendCommand = `nodemon --ext ts,json --watch ${root('server')} --inspect=0.0.0.0:${Config.backend.ports.nodeDebug} --exec ${backendCommand}`;
+let backendServer = new forever.Monitor(root('run/backend.ts'), {
+	command: backendCommand,
 	watch: false,
 	max: 3
 });
 backendServer.on('restart', restart);
 backendServer.on('watch:restart', watch);
 backendServer.on('exit:code', exit);
-backendServer.start();
 
-require("forever").startServer(webpack, backendServer);
+// Backend tests.
+let backendTestsCommands = [
+	'mocha'
+];
+
+// Run backend tests.
+let backendTestsCommand = backendTestsCommands.join(' ');
+let backendTests = new forever.Monitor('test/index.ts', {
+	command: backendTestsCommand,
+	watch: false,
+	max: 1
+});
+
+// Start tests instead?
+if(Config.env == 'test') {
+	backendTests.start();
+	require("forever").startServer(backendTests);
+} else {
+	backendServer.start();
+	webpack.start();
+	require("forever").startServer(webpack, backendServer);
+}

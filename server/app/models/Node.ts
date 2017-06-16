@@ -3,3 +3,5 @@ export interface Node {
 	createdAt?: string;
 	updatedAt?: string;
 }
+
+export const DATETIME_FORMAT = 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'';

@@ -2,15 +2,12 @@
     <logo></logo>
 </header>
 <section>
-    <div class="card">
-        <h1 i18n>Imprint</h1>
-        <p>
-            <span>Angaben gemäß § 5 TMG</span>
-            <span>Jan Wolf</span>
-            <span>Kleine Helle 41</span>
-            <span>28195 Bremen</span>
-            <span>we@rudl.me</span>
-        </p>
-    </div>
+    <menu>
+        <menu-item [makeRoomIfSmall]="true" [title]="'Verantwortlicher'" [link]="['about']" [icon]="'face'"></menu-item>
+        <menu-item [makeRoomIfSmall]="true" [title]="'Nutzungsbedingungen'" [link]="['terms']" [icon]="'account_balance'"></menu-item>
+        <menu-item [makeRoomIfSmall]="true" [title]="'Datenschutzbestimmungen'" [link]="['privacy']" [icon]="'fingerprint'"></menu-item>
+    </menu>
+    <router-outlet></router-outlet>
+    <app-footer></app-footer>
 </section>
 

@@ -87,16 +87,16 @@ export module TestController {
 			// Prepare users.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
+			
+			let users: User[] = [];
+			for (let i = 0; i < (request.params.count || 100); i++) {
+				let singleUser = DatabaseManager.neo4jFunctions.flatten(TestController.generateUser());
+				users.push(singleUser);
+			}
+			
 			let promise = transaction.run(`FOREACH(x IN $users | MERGE (u:User {username: x.username }) SET u = x)`, {
-				users: (() => {
-					let users = [];
-					for (let i = 0; i < (request.params.count || 100); i++) {
-						let singleUser = DatabaseManager.neo4jFunctions.flatten(TestController.generateUser());
-						users.push(singleUser);
-					}
-					return users;
-				})()
-			}).then(() => `${request.params.count} users had been added!`);
+				users: users
+			}).then(() => users);
 			
 			// Insert users.
 			reply.api(promise, transactionSession);

@@ -90,7 +90,7 @@ import {ExpeditionCommentsComponent} from './ui/layouts/expedition/expedition-co
 import {ExpeditionAttendeesComponent} from './ui/layouts/expedition/expedition-attendees.component';
 import {ExpeditionMapComponent} from './ui/layouts/expedition/expedition-map.component';
 import {CommentService} from './services/comment.service';
-import {LegalFooterComponent} from './ui/widgets/legal-footer/legal-footer.component';
+import {FooterComponent} from './ui/widgets/footer/footer.component';
 import {CommentItemComponent} from './ui/widgets/comment/comment-item.component';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import {ScrollService} from './services/scroll.service';
@@ -100,6 +100,9 @@ import {NotificationsComponent} from './ui/layouts/notification/notifications.co
 import {NotificationItemComponent} from "./ui/widgets/notification/notification-item.component";
 import {ExpeditionsDoneComponent} from './ui/layouts/expedition/expeditions-done.component';
 import {ExpeditionsUpcomingComponent} from './ui/layouts/expedition/expeditions-upcoming.component';
+import {LegalAboutComponent} from './ui/layouts/legal/legal-about.component';
+import {LegalTermsComponent} from './ui/layouts/legal/legal-terms.component';
+import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component';
 
 @NgModule({
 	declarations: [
@@ -141,6 +144,9 @@ import {ExpeditionsUpcomingComponent} from './ui/layouts/expedition/expeditions-
 		RudelExpeditionsComponent,
 		RudelLikersComponent,
 		RudelAddToListComponent,
+		LegalAboutComponent,
+		LegalTermsComponent,
+		LegalPrivacyComponent,
 		UserAvatarComponent,
 		ExpeditionCommentsComponent,
 		ExpeditionAttendeesComponent,
@@ -176,7 +182,7 @@ import {ExpeditionsUpcomingComponent} from './ui/layouts/expedition/expeditions-
 		UserLikersComponent,
 		UserListsComponent,
 		BoardingComponent,
-		LegalFooterComponent,
+		FooterComponent,
 		ListLikersComponent,
 		ListRudelComponent,
 		FanComponent,

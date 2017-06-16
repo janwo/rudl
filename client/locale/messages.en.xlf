@@ -42,7 +42,7 @@
           <context context-type="linenumber">6</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/widgets/legal-footer/legal-footer.component.ts</context>
+          <context context-type="sourcefile">app/ui/widgets/app-footer/app-footer.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
@@ -149,7 +149,7 @@
         <source>Made with <x id="START_ITALIC_TEXT" ctype="x-i"/>local_pizza<x id="CLOSE_ITALIC_TEXT" ctype="x-i"/> in Bremen</source>
         <target/>
         <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/widgets/legal-footer/legal-footer.component.ts</context>
+          <context context-type="sourcefile">app/ui/widgets/app-footer/app-footer.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>

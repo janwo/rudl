@@ -9,6 +9,7 @@ import {Rudel} from '../models/rudel/Rudel';
 import {ListRecipe} from '../../../client/app/models/list';
 import Transaction from 'neo4j-driver/lib/v1/transaction';
 import {RudelController} from './RudelController';
+import {AccountController} from "./AccountController";
 
 export module ListController {
 	
@@ -212,8 +213,10 @@ export module ListController {
 				});
 				
 				// Delete list, because it's an orphan node.
-				return transaction.run("MATCH(l:List {id: $listId}) CALL apoc.index.removeNodeByName('List', l) DETACH DELETE l", {
-					listId: list.id
+				return AccountController.NotificationController.remove(transaction, list).then(() => {
+					return transaction.run("MATCH(l:List {id: $listId}) CALL apoc.index.removeNodeByName('List', l) DETACH DELETE l", {
+						listId: list.id
+					});
 				});
 			}).then(() => {});
 		});

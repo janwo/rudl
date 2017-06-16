@@ -38,6 +38,9 @@ import {SettingsProfileComponent} from './ui/layouts/settings/settings-profile.c
 import {NotificationsComponent} from './ui/layouts/notification/notifications.component';
 import {ExpeditionsDoneComponent} from './ui/layouts/expedition/expeditions-done.component';
 import {ExpeditionsUpcomingComponent} from './ui/layouts/expedition/expeditions-upcoming.component';
+import {LegalAboutComponent} from './ui/layouts/legal/legal-about.component';
+import {LegalTermsComponent} from './ui/layouts/legal/legal-terms.component';
+import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component';
 
 const appRoutes: Routes = [
 	{
@@ -55,7 +58,13 @@ const appRoutes: Routes = [
 	},
 	{
 		path: 'legal',
-		component: LegalComponent
+		component: LegalComponent,
+		children: [
+			{path: '', redirectTo: 'about', pathMatch: 'full'},
+			{path: 'about', component: LegalAboutComponent, pathMatch: 'full'},
+			{path: 'terms', component: LegalTermsComponent},
+			{path: 'privacy', component: LegalPrivacyComponent}
+		]
 	},
 	{
 		path: '',

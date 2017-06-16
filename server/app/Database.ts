@@ -69,13 +69,13 @@ export class DatabaseManager {
 		expeditions: {
 			name: 'Expedition',
 			isRelationship: false,
-			indices: [
-				'location_lng',
-				'location_lat'
-			],
 			uniqueness: [
 				'id'
 			],
+			spatial: {
+				longitude: 'location_lng',
+				latitude: 'location_lat'
+			},
 			fulltext: {
 				Expedition: [
 					'title',
@@ -246,14 +246,21 @@ export class DatabaseManager {
 		let promises: Promise<void>[] = Object.keys(DatabaseManager.neo4jCollections).map((collection: any) => {
 			collection = DatabaseManager.neo4jCollections[collection];
 			let promises: Promise<any>[] = [];
+			
+			// Indices.
 			(collection.indices || []).forEach((index: string) => {
 				promises.push(session.run(`CREATE INDEX ON :${collection.name}(${index})`));
 			});
 			
+			// Unique.
 			(collection.uniqueness || []).forEach((uniqueness: string) => {
 				promises.push(session.run(`CREATE CONSTRAINT ON (x:${collection.name}) ASSERT x.${uniqueness} IS UNIQUE`));
 			});
 			
+			// Spatial.
+			if(collection.spatial) promises.push(session.run(`CALL spatial.layers() YIELD name as names WITH collect(names) as layers WHERE NOT "${collection.name}" IN layers CALL spatial.addPointLayerXY('${collection.name}', '${collection.spatial.longitude}', '${collection.spatial.latitude}') YIELD node RETURN COUNT(*)`));
+			
+			// Fulltext.
 			Object.keys(collection.fulltext || {}).forEach((key: string) => {
 				let properties: any = {};
 				properties[collection.name] = collection.fulltext[key];
@@ -337,19 +344,10 @@ export class DatabaseManager {
 				DatabaseManager.onlineStatus.redisClient = true;
 			});
 			
-			DatabaseManager.redisClient.on("monitor", (time: any, args: any) => {
-				console.log(time + ": " + args);
-			});
-			
 			DatabaseManager.redisClient.on("end", () => {
 				console.log('Connection to redis ended...');
 				DatabaseManager.onlineStatus.redisClient = false;
 			});
-			
-			if (Config.backend.log.databaseLogs.redis.enabled) {
-				console.log('Listening on any errors within redis database...');
-				DatabaseManager.redisClient.on('error', console.error);
-			}
 			
 			let wait = setInterval(() => {
 				if (_.values(DatabaseManager.onlineStatus).indexOf(false) < 0) {
