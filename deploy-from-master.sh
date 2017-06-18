@@ -2,7 +2,7 @@
 set -o errexit
 
 # Start fetching.
-commits=$(git fetch && git log HEAD..origin/master --oneline)
+commits=$(git fetch -quiet && git log HEAD..origin/master --oneline)
 
 if [ "$commits" ]; then
   # Pull repository.
