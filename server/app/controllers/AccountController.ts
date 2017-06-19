@@ -139,6 +139,8 @@ export module AccountController {
 		});
 	}
 	
+	
+	
 	export namespace NotificationController {
 		export function get(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Notification[]> {
 			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n, apoc.date.parse(n.createdAt, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date ORDER BY date SKIP $skip LIMIT $limit MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User), (n)-[:NOTIFICATION_SUBJECT]->(subject) WITH subject, sender, n RETURN apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)) as n`, {

@@ -221,11 +221,14 @@ export default {
 				callbackURL: '/oauth/google'
 			}
 		},
-		mailer: {
-			service: process.env.MAILER_SERVICE_PROVIDER || 'MAILER_SERVICE_PROVIDER',
+		mail: {
+			host: 'alkaid.uberspace.de',
+			port: 587,
+			secure: false,
+			requireTLS: true,
 			auth: {
-				user: process.env.MAILER_EMAIL_ID || 'noreply',
-				pass: process.env.MAILER_PASSWORD || '*jh9ER_QD_"nbGNs'
+				user: 'noreply@rudl.me',
+				pass: '*jh9ER_QD_"nbGNs'
 			}
 		}
 	}

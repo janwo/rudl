@@ -9,6 +9,7 @@ import * as AutoSNI from 'auto-sni';
 import * as Path from 'path';
 import {Server} from 'hapi';
 import 'vision';
+import {MailManager} from './Mail';
 
 export function hapiServer(): Promise<Server> {
 	// Create dirs.

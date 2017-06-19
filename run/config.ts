@@ -135,8 +135,11 @@ export const Config: {
 				callbackURL: string
 			}
 		},
-		mailer: {
-			service: string,
+		mail: {
+			host: string,
+			port: number,
+			secure: boolean,
+			requireTLS: boolean,
 			auth: {
 				user: string,
 				pass: string
