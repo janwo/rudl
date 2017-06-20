@@ -84,9 +84,9 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
-			path: '/api/rudel/like/{query}',
+			path: '/api/rudel/search/{query}',
 			method: 'GET',
-			handler: RudelController.RouteHandlers.like,
+			handler: RudelController.RouteHandlers.search,
 			config: {
 				auth: {
 					scope: [
@@ -126,9 +126,9 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
-			path: '/api/rudel/follow/{id}',
+			path: '/api/rudel/like/{id}',
 			method: 'POST',
-			handler: RudelController.RouteHandlers.follow,
+			handler: RudelController.RouteHandlers.like,
 			config: {
 				auth: {
 					scope: [
@@ -143,9 +143,9 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
-			path: '/api/rudel/unfollow/{id}',
+			path: '/api/rudel/dislike/{id}',
 			method: 'POST',
-			handler: RudelController.RouteHandlers.unfollow,
+			handler: RudelController.RouteHandlers.dislike,
 			config: {
 				auth: {
 					scope: [
@@ -155,6 +155,60 @@ export const RoutesConfig: RoutesConfiguration = {
 				validate: {
 					params: {
 						id: Joi.string()
+					}
+				}
+			}
+		},
+		{
+			path: '/api/rudel/recent',
+			method: 'GET',
+			handler: RudelController.RouteHandlers.recent,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
+					}
+				}
+			}
+		},
+		{
+			path: '/api/rudel/popular',
+			method: 'GET',
+			handler: RudelController.RouteHandlers.popular,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
+					}
+				}
+			}
+		},
+		{
+			path: '/api/rudel/suggested',
+			method: 'GET',
+			handler: RudelController.RouteHandlers.suggested,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
 					}
 				}
 			}

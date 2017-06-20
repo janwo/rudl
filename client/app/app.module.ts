@@ -103,6 +103,8 @@ import {ExpeditionsUpcomingComponent} from './ui/layouts/expedition/expeditions-
 import {LegalAboutComponent} from './ui/layouts/legal/legal-about.component';
 import {LegalTermsComponent} from './ui/layouts/legal/legal-terms.component';
 import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component';
+import {ExploreRudelComponent} from './ui/layouts/explore/explore-rudel.component';
+import {ExploreExpeditionsComponent} from './ui/layouts/explore/explore-expeditions.component';
 
 @NgModule({
 	declarations: [
@@ -176,6 +178,8 @@ import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component'
 		LegalComponent,
 		FormControlWrapper,
 		UserComponent,
+		ExploreExpeditionsComponent,
+		ExploreRudelComponent,
 		UserRudelComponent,
 		UserLikeesComponent,
 		KeysPipe,

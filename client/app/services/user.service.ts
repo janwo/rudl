@@ -137,16 +137,16 @@ export class UserService {
 		return this.dataService.get(`/api/users/=/${username}/likees?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
 	}
 	
-	follow(username: string): Observable<User> {
-		return this.dataService.post(`/api/users/follow/${username}`, null, true).map((json: JsonResponse) => json.data as User).share();
+	like(username: string): Observable<User> {
+		return this.dataService.post(`/api/users/like/${username}`, null, true).map((json: JsonResponse) => json.data as User).share();
 	}
 	
-	unfollow(username: string): Observable<User> {
-		return this.dataService.post(`/api/users/unfollow/${username}`, null, true).map((json: JsonResponse) => json.data as User).share();
+	dislike(username: string): Observable<User> {
+		return this.dataService.post(`/api/users/dislike/${username}`, null, true).map((json: JsonResponse) => json.data as User).share();
 	}
 	
-	like(query: string, offset = 0, limit = 25): Observable<User[]> {
-		return this.dataService.get(`/api/users/like/${query}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
+	search(query: string, offset = 0, limit = 25): Observable<User[]> {
+		return this.dataService.get(`/api/users/search/${query}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
 	}
 	
 	updateLocation(location: Location): Observable<AuthenticatedUser> {
@@ -165,8 +165,8 @@ export class UserService {
 		})).share();
 	}
 	
-	suggestedPeople(offset = 0, limit = 25): Observable<User[]> {
-		return this.dataService.get(`/api/suggestions/people?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
+	suggested(offset = 0, limit = 25): Observable<User[]> {
+		return this.dataService.get(`/api/users/suggested?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
 	}
 	
 	updateAvatar(file: File): Observable<AuthenticatedUser> {

@@ -1,0 +1,32 @@
+<ng-container *ngIf="suggestedExpeditions && suggestedExpeditions.length > 0; else loadingSuggestedExpeditions">
+    <h1>Empfohlende Streifzüge</h1>
+    <item-wrapper [horizontal]="true" [columns]="1">
+        <expedition-item *ngFor="let suggestedExpeditionItem of suggestedExpeditions" [expedition]="suggestedExpeditionItem"></expedition-item>
+    </item-wrapper>
+</ng-container>
+
+<ng-template #loadingSuggestedExpeditions>
+    <loading *ngIf="suggestedExpeditions == null"></loading>
+</ng-template>
+
+<ng-container *ngIf="popularExpeditions && popularExpeditions.length > 0; else loadingPopularExpeditions">
+    <h1>Beliebte Streifzüge</h1>
+    <item-wrapper [horizontal]="true" [columns]="1">
+        <expedition-item *ngFor="let popularExpeditionItem of popularExpeditions" [expedition]="popularExpeditionItem"></expedition-item>
+    </item-wrapper>
+</ng-container>
+
+<ng-template #loadingPopularExpeditions>
+    <loading *ngIf="popularExpeditions == null"></loading>
+</ng-template>
+
+<ng-container *ngIf="recentExpeditions && recentExpeditions.length > 0; else loadingRecentExpeditions">
+    <h1>Neue Streifzüge</h1>
+    <item-wrapper [horizontal]="true" [columns]="1">
+        <expedition-item *ngFor="let recentExpeditionItem of recentExpeditions" [expedition]="recentExpeditionItem"></expedition-item>
+    </item-wrapper>
+</ng-container>
+
+<ng-template #loadingRecentExpeditions>
+    <loading *ngIf="recentExpeditions == null"></loading>
+</ng-template>

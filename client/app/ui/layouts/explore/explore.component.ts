@@ -9,29 +9,4 @@ import {Expedition} from '../../../models/expedition';
 	templateUrl: 'explore.component.html',
 	styleUrls: ['explore.component.scss']
 })
-export class ExploreComponent implements OnInit, OnDestroy {
-	
-	suggestedRudelSubscription: Subscription;
-	suggestedRudel: Rudel[];
-	nearbyExpeditionsSubscription: Subscription;
-	nearbyExpeditions: Expedition[];
-	
-	constructor(private rudelService: RudelService,
-	            private expeditionService: ExpeditionService) {}
-	
-	ngOnInit(): void {
-		this.suggestedRudelSubscription = this.rudelService.suggestRudel().subscribe((rudel: Rudel[]) => {
-			this.suggestedRudel = rudel;
-		});
-		
-		this.nearbyExpeditionsSubscription = this.expeditionService.nearby().subscribe((expeditions: Expedition[]) => {
-			this.nearbyExpeditions = expeditions;
-			this.nearbyExpeditions = expeditions.concat(expeditions);
-		});
-	}
-	
-	ngOnDestroy(): void {
-		this.suggestedRudelSubscription.unsubscribe();
-		this.nearbyExpeditionsSubscription.unsubscribe();
-	}
-}
+export class ExploreComponent {}

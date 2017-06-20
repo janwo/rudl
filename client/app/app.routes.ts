@@ -41,6 +41,8 @@ import {ExpeditionsUpcomingComponent} from './ui/layouts/expedition/expeditions-
 import {LegalAboutComponent} from './ui/layouts/legal/legal-about.component';
 import {LegalTermsComponent} from './ui/layouts/legal/legal-terms.component';
 import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component';
+import {ExploreExpeditionsComponent} from './ui/layouts/explore/explore-expeditions.component';
+import {ExploreRudelComponent} from './ui/layouts/explore/explore-rudel.component';
 
 const appRoutes: Routes = [
 	{
@@ -73,7 +75,12 @@ const appRoutes: Routes = [
 		children: [
 			// Boarding required.
 			{path: '', redirectTo: 'explore', pathMatch: 'full'},
-			{path: 'explore', component: ExploreComponent, canActivate: [BoardingGuard]},
+			
+			{path: 'explore', component: ExploreComponent, canActivate: [BoardingGuard], children: [
+				{path: '', redirectTo: 'rudel', pathMatch: 'full'},
+				{path: 'rudel', component: ExploreRudelComponent},
+				{path: 'expeditions', component: ExploreExpeditionsComponent}
+			]},
 			
 			{path: 'expeditions', component: ExpeditionsComponent, canActivate: [BoardingGuard], children: [
 				{path: '', redirectTo: 'upcoming', pathMatch: 'full'},

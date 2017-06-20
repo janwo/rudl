@@ -31,9 +31,9 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
-			path: '/api/lists/like/{query}',
+			path: '/api/lists/search/{query}',
 			method: 'GET',
-			handler: ListController.RouteHandlers.like,
+			handler: ListController.RouteHandlers.search,
 			config: {
 				auth: {
 					scope: [
@@ -182,9 +182,9 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
-			path: '/api/lists/follow/{list}',
+			path: '/api/lists/like/{list}',
 			method: 'POST',
-			handler: ListController.RouteHandlers.follow,
+			handler: ListController.RouteHandlers.like,
 			config: {
 				auth: {
 					scope: [
@@ -199,9 +199,9 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
-			path: '/api/lists/unfollow/{list}',
+			path: '/api/lists/dislike/{list}',
 			method: 'POST',
-			handler: ListController.RouteHandlers.unfollow,
+			handler: ListController.RouteHandlers.dislike,
 			config: {
 				auth: {
 					scope: [

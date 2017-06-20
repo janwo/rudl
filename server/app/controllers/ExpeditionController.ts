@@ -43,7 +43,7 @@ export module ExpeditionController {
 						rudelPromise
 					]);
 				}
-				return Promise.resolve([]);
+				return Promise.resolve([]) as Promise<[User, any, ExpeditionStatistics, Rudel]>;
 			})();
 			
 			// Modify expedition information.
@@ -58,14 +58,16 @@ export module ExpeditionController {
 					'expedition.title': 'title',
 					'expedition.description': 'description',
 					'expedition.icon': 'icon',
-					'expedition.createdAt': 'createdAt',
-					'expedition.updatedAt': 'updatedAt',
+					'createdAt': 'createdAt',
+					'updatedAt': 'updatedAt',
 					'links': 'links'
 				};
 				
 				let transformationObject = {
 					expedition: expedition,
-					links: links
+					links: links,
+					createdAt: UtilController.isoDate(expedition.createdAt),
+					updatedAt: UtilController.isoDate(expedition.updatedAt)
 				};
 				
 				// Emit extended information.
@@ -96,7 +98,7 @@ export module ExpeditionController {
 					
 					// Extend transformation recipe.
 					transformationRecipe = Object.assign(transformationRecipe, {
-						'expedition.date': 'date.isoString',
+						'isoDateString': 'date.isoString',
 						'dateAccuracy': 'date.accuracy',
 						'expedition.needsApproval': 'needsApproval',
 						'expedition.location': 'location',
@@ -118,6 +120,7 @@ export module ExpeditionController {
 						dateAccuracy: dateAccuracy,
 						statistics: values[2],
 						rudel: values[3],
+						isoDateString: UtilController.isoDate(expedition.date),
 						owner: values[1],
 						isOwner: values[0].id == relatedUser.id
 					});
@@ -176,25 +179,25 @@ export module ExpeditionController {
 	}
 	
 	export function findUpcomingByUser(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e, apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date > apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") - 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date SKIP $skip LIMIT $limit`, {
+		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e WHERE e.date > $after ORDER BY e.date SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
 			userId: user.id,
 			limit: limit,
 			skip: skip,
-			now: new Date().toISOString()
+			after: new Date().getTime() / 1000 - 43200
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
 	}
 	
 	export function findDoneByUser(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e, apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date < apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") + 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date DESC SKIP $skip LIMIT $limit`, {
+		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e WHERE e.date < $before ORDER BY e.date DESC SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
 			userId: user.id,
 			limit: limit,
 			skip: skip,
-			now: new Date().toISOString()
+			before: new Date().getTime() / 1000 + 43200
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
 	}
 	
 	export function findUpcomingByRudel(transaction: Transaction, rudel: Rudel, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) WITH e, apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date > apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") - 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date SKIP $skip LIMIT $limit`, {
+		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) AND e.date > $after ORDER BY e.date SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
 			rudelId: rudel.id,
 			location: {
 				latitude: user.location.lat,
@@ -202,12 +205,12 @@ export module ExpeditionController {
 			},
 			limit: limit,
 			skip: skip,
-			now: new Date().toISOString()
+			after: new Date().getTime() / 1000 - 43200
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
 	}
 	
 	export function findDoneByRudel(transaction: Transaction, rudel: Rudel, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) WITH e, apoc.date.parse(e.date, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date WHERE date < apoc.date.parse($now, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") + 43200 RETURN COALESCE(properties(e), []) as e ORDER BY date DESC SKIP $skip LIMIT $limit`, {
+		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) AND e.date < $before ORDER BY e.date DESC SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
 			rudelId: rudel.id,
 			location: {
 				latitude: user.location.lat,
@@ -215,7 +218,7 @@ export module ExpeditionController {
 			},
 			limit: limit,
 			skip: skip,
-			now: new Date().toISOString()
+			before: new Date().getTime() / 1000 + 43200
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
 	}
 	
@@ -247,7 +250,7 @@ export module ExpeditionController {
 				return transaction.run(query, {
 					expeditionId: expedition.id,
 					userId: user.id,
-					now: new Date().toISOString()
+					now: new Date().getTime() / 1000
 				});
 			}
 			
@@ -266,7 +269,7 @@ export module ExpeditionController {
 				return transaction.run(query, {
 					expeditionId: expedition.id,
 					userId: user.id,
-					now: new Date().toISOString()
+					now: new Date().getTime() / 1000
 				}).then(results => (results.summary.counters.relationshipsCreated() as any as number) > 0);
 			};
 			
@@ -277,7 +280,7 @@ export module ExpeditionController {
 				return transaction.run(query, {
 					expeditionId: expedition.id,
 					userId: user.id,
-					now: new Date().toISOString()
+					now: new Date().getTime() / 1000
 				}).then(results => (results.summary.counters.relationshipsCreated() as any as number) > 0);
 			};
 			
@@ -291,7 +294,7 @@ export module ExpeditionController {
 				return transaction.run(query, {
 					expeditionId: expedition.id,
 					userId: user.id,
-					now: new Date().toISOString()
+					now: new Date().getTime() / 1000
 				}).then(results => (results.summary.counters.relationshipsCreated() as any as number) > 0);
 			};
 			
@@ -335,7 +338,7 @@ export module ExpeditionController {
 		CALL apoc.refactor.setType(pje, 'JOINS_EXPEDITION') YIELD output
 		RETURN {}`, {
 			expeditionId: expedition.id,
-			now: new Date().toISOString()
+			now: new Date().getTime() / 1000
 		}).then(() => {});
 	}
 	
@@ -449,19 +452,17 @@ export module ExpeditionController {
 			title: recipe.title,
 			description: recipe.description,
 			needsApproval: recipe.needsApproval,
-			date: recipe.date,
+			date: UtilController.timestamp(recipe.date),
 			icon: recipe.icon,
 			location: recipe.location,
-			fuzzyTime: recipe.fuzzyTime,
-			createdAt: null,
-			updatedAt: null
+			fuzzyTime: recipe.fuzzyTime
 		};
 		return this.save(transaction, expedition).then(() => expedition);
 	}
 	
 	export function save(transaction: Transaction, expedition: Expedition): Promise<void> {
 		// Set timestamps.
-		let now = new Date().toISOString();
+		let now = Date.now() / 1000;
 		if (!expedition.createdAt) expedition.createdAt = now;
 		expedition.updatedAt = now;
 		
@@ -497,7 +498,7 @@ export module ExpeditionController {
 		status: AttendeeStatus,
 		user: User
 	}[]> {
-		return transaction.run<User, any>(`MATCH(e:Expedition {id : $expeditionId})-[pje]-(u:User) WHERE (e)-[:POSSIBLY_JOINS_EXPEDITION]-(u) OR (e)-[:JOINS_EXPEDITION]-(u) WITH e, u, apoc.date.parse(pje.createdAt, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) WITH u, invitee, attendee, applicant, date ORDER BY date DESC RETURN {user: properties(u), status: {isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0}} as u SKIP $skip LIMIT $limit`, {
+		return transaction.run<User, any>(`MATCH(e:Expedition {id : $expeditionId})-[pje]-(u:User) WHERE (e)-[:POSSIBLY_JOINS_EXPEDITION]-(u) OR (e)-[:JOINS_EXPEDITION]-(u) WITH e, u, pje.createdAt as date OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) WITH u, invitee, attendee, applicant, date ORDER BY date DESC RETURN {user: properties(u), status: {isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0}} as u SKIP $skip LIMIT $limit`, {
 			expeditionId: expedition.id,
 			skip: skip,
 			limit: limit
@@ -530,7 +531,14 @@ export module ExpeditionController {
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r').pop());
 	}
 	
-	export function getNearbyExpeditions(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
+	export function isAttendee(transaction: Transaction, expedition: Expedition, user: User): Promise<boolean> {
+		return transaction.run<Expedition, any>("MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) OPTIONAL MATCH (e)<-[je:JOINS_EXPEDITION]-(u) RETURN COUNT(je) > 0 as je", {
+			expeditionId: expedition.id,
+			userId: user.id
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'je').pop());
+	}
+	
+	export function nearby(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
 		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
 			location: {
 				latitude: user.location.lat,
@@ -543,11 +551,43 @@ export module ExpeditionController {
 		});
 	}
 	
-	export function isAttendee(transaction: Transaction, expedition: Expedition, user: User): Promise<boolean> {
-		return transaction.run<Expedition, any>("MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) OPTIONAL MATCH (e)<-[je:JOINS_EXPEDITION]-(u) RETURN COUNT(je) > 0 as je", {
-			expeditionId: expedition.id,
-			userId: user.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'je').pop());
+	export function popular(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
+		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
+			location: {
+				latitude: user.location.lat,
+				longitude: user.location.lng
+			},
+			limit: limit,
+			skip: skip
+		}).then(results => {
+			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e');
+		});
+	}
+	
+	export function recent(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
+		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
+			location: {
+				latitude: user.location.lat,
+				longitude: user.location.lng
+			},
+			limit: limit,
+			skip: skip
+		}).then(results => {
+			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e');
+		});
+	}
+	
+	export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
+		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
+			location: {
+				latitude: user.location.lat,
+				longitude: user.location.lng
+			},
+			limit: limit,
+			skip: skip
+		}).then(results => {
+			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e');
+		});
 	}
 	
 	export namespace RouteHandlers {
@@ -573,6 +613,8 @@ export module ExpeditionController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = RudelController.get(transaction, request.payload.rudel).then((rudel: Rudel) => {
 				if (!rudel) return Promise.reject(Boom.badRequest('Rudel does not exist!'));
+				if(moment().diff(request.payload.expedition.date) > 0) return Promise.reject(Boom.badRequest('Date is in the past!'));
+				
 				return ExpeditionController.create(transaction, request.payload.expedition).then((expedition: Expedition) => {
 					return Promise.all([
 						ExpeditionController.setOwner(transaction, expedition, request.auth.credentials),
@@ -724,6 +766,7 @@ export module ExpeditionController {
 			]).then((values: [Expedition, User]) => {
 				if (!values[0]) return Promise.reject(Boom.notFound('Expedition not found.'));
 				if (!values[1]) return Promise.reject(Boom.notFound('User not found.'));
+				
 				return ExpeditionController.getOwner(transaction, values[0]).then((owner: User) => {
 					if (owner.id == request.auth.credentials.id && values[1].id == owner.id) return ExpeditionController.removeExpedition(transaction, values[0]).then(() => {});
 					if (owner.id == request.auth.credentials.id || values[1].id == request.auth.credentials.id) return ExpeditionController.rejectUser(transaction, values[0], values[1], request.auth.credentials).then(() => {
@@ -737,7 +780,7 @@ export module ExpeditionController {
 								user: values[1],
 								expedition: values[2]
 							};
-						});
+						}) as Promise<any>;
 					});
 					return Promise.reject(Boom.forbidden('You do not have enough privileges to perform this operation.'));
 				});
@@ -747,7 +790,7 @@ export module ExpeditionController {
 		}
 		
 		/**
-		 * Handles [GET] /api/expeditions/like/{query}
+		 * Handles [GET] /api/expeditions/search/{query}
 		 * @param request Request-Object
 		 * @param request.params.query query
 		 * @param request.query.offset offset (optional, default=0)
@@ -755,7 +798,7 @@ export module ExpeditionController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function like(request: any, reply: any): void {
+		export function search(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
@@ -862,7 +905,64 @@ export module ExpeditionController {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise: Promise<any> = ExpeditionController.getNearbyExpeditions(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
+			let promise: Promise<any> = ExpeditionController.nearby(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
+				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [GET] /api/expeditions/recent
+		 * @param request Request-Object
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function recent(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = ExpeditionController.recent(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
+				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [GET] /api/expeditions/popular
+		 * @param request Request-Object
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function popular(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = ExpeditionController.popular(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
+				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [GET] /api/expeditions/suggested
+		 * @param request Request-Object
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function suggested(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = ExpeditionController.suggested(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((expeditions: Expedition[]) => {
 				return ExpeditionController.getPublicExpedition(transaction, expeditions, request.auth.credentials);
 			});
 			

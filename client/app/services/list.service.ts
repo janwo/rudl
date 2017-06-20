@@ -44,15 +44,15 @@ export class ListService {
 		return this.dataService.post(`/api/lists/update`, JSON.stringify(recipe), true).map((json: JsonResponse) => json.data as List);
 	}
 	
-	follow(list: string): Observable<List> {
-		return this.dataService.post(`/api/lists/follow/${list}`, null, true).map((json: JsonResponse) => json.data as List).map((list: List) => {
+	like(list: string): Observable<List> {
+		return this.dataService.post(`/api/lists/like/${list}`, null, true).map((json: JsonResponse) => json.data as List).map((list: List) => {
 			list.name = Locale.getBestTranslation(list.translations, this.userService.getAuthenticatedUser().user.languages);
 			return list;
 		}).share();
 	}
 	
-	unfollow(list: string): Observable<List> {
-		return this.dataService.post(`/api/lists/unfollow/${list}`, null, true).map((json: JsonResponse) => json.data as List).map((list: List) => {
+	dislike(list: string): Observable<List> {
+		return this.dataService.post(`/api/lists/dislike/${list}`, null, true).map((json: JsonResponse) => json.data as List).map((list: List) => {
 			if (list) list.name = Locale.getBestTranslation(list.translations, this.userService.getAuthenticatedUser().user.languages);
 			return list;
 		}).share();
@@ -71,8 +71,8 @@ export class ListService {
 		}).share();
 	}
 	
-	like(query: string, offset = 0, limit = 25): Observable<List[]> {
-		return this.dataService.get(`/api/lists/like/${query}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => {
+	search(query: string, offset = 0, limit = 25): Observable<List[]> {
+		return this.dataService.get(`/api/lists/search/${query}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => {
 			return json.data.map((list: List) => {
 				list.name = Locale.getBestTranslation(list.translations, this.userService.getAuthenticatedUser().user.languages);
 				return list;

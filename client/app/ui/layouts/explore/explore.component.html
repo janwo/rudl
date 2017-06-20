@@ -1,21 +1,7 @@
-<ng-container *ngIf="suggestedRudel && suggestedRudel.length > 0; else loadingSuggestedRudel">
-    <h1>Rudel für dich</h1>
-    <item-wrapper [horizontal]="true" [columns]="1">
-        <rudel-item *ngFor="let suggestedRudelItem of suggestedRudel" [rudel]="suggestedRudelItem"></rudel-item>
-    </item-wrapper>
-</ng-container>
-
-<ng-template #loadingSuggestedRudel>
-    <loading *ngIf="suggestedRudel == null"></loading>
-</ng-template>
-
-<ng-container *ngIf="nearbyExpeditions && nearbyExpeditions.length > 0; else loadingNearbyExpeditions">
-    <h1>Streifzüge in deiner Nähe</h1>
-    <item-wrapper [horizontal]="true" [columns]="1">
-        <expedition-item *ngFor="let nearbyExpedition of nearbyExpeditions" [expedition]="nearbyExpedition"></expedition-item>
-    </item-wrapper>
-</ng-container>
-
-<ng-template #loadingNearbyExpeditions>
-    <loading *ngIf="nearbyExpeditions == null"></loading>
-</ng-template>
+<menu>
+    <menu-item [icon]="'pets'" [makeRoomIfSmall]="true" [title]="'Rudel'"
+            [link]="['rudel']"></menu-item>
+    <menu-item [icon]="'event_available'" [makeRoomIfSmall]="true" [title]="'Streifzüge'"
+            [link]="['expeditions']"></menu-item>
+</menu>
+<router-outlet></router-outlet>

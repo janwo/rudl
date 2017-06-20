@@ -21,16 +21,14 @@ export module RudelController {
 			id: shortid.generate(),
 			icon: recipe.icon,
 			translations: recipe.translations,
-			defaultLocation: null,
-			createdAt: null,
-			updatedAt: null
+			defaultLocation: null
 		};
 		return RudelController.save(transaction, rudel).then(() => rudel);
 	}
 	
 	export function save(transaction: Transaction, rudel: Rudel): Promise<void> {
 		// Set timestamps.
-		let now = new Date().toISOString();
+		let now = Date.now() / 1000;
 		if (!rudel.createdAt) rudel.createdAt = now;
 		rudel.updatedAt = now;
 		
@@ -57,7 +55,7 @@ export module RudelController {
 						rudelStatisticsPromise
 					]);
 				}
-				return Promise.resolve([])
+				return Promise.resolve([]) as Promise<[User, any, RudelStatistics]>;
 			})();
 			
 			// Modify rudel information.
@@ -72,13 +70,15 @@ export module RudelController {
 					'rudel.translations': 'translations',
 					'rudel.icon': 'icon',
 					'defaultLocation': 'defaultLocation',
-					'rudel.createdAt': 'createdAt',
-					'rudel.updatedAt': 'updatedAt',
+					'createdAt': 'createdAt',
+					'updatedAt': 'updatedAt',
 					'links': 'links'
 				};
 				
 				let transformationObject = {
 					rudel: rudel,
+					createdAt: UtilController.isoDate(rudel.createdAt),
+					updatedAt: UtilController.isoDate(rudel.updatedAt),
 					links: links,
 					defaultLocation: rudel.defaultLocation || relatedUser.location
 				};
@@ -178,20 +178,20 @@ export module RudelController {
 		}).then(result => DatabaseManager.neo4jFunctions.unflatten(result.records, 'owner').pop());
 	}
 	
-	export function follow(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
+	export function like(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
 		return transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:LIKES_RUDEL]->(r) WITH u, r CREATE UNIQUE (u)-[:LIKES_RUDEL {createdAt: $now}]->(r) WITH u, r OPTIONAL MATCH (u)-[dlr:DISLIKES_RUDEL]->(r) DETACH DELETE dlr WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE UNIQUE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
 			userId: user.id,
 			rudelId: rudel.id,
-			now: new Date().toISOString()
+			now: new Date().getTime() / 1000
 		}).then(() => {});
 	}
 	
-	export function unfollow(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
+	export function dislike(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
 		let deleteExpeditions = ExpeditionController.removeExpeditions(transaction, rudel, user);
 		let deleteRelationships = transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:DISLIKES_RUDEL]->(r) WITH u, r CREATE UNIQUE (u)-[:DISLIKES_RUDEL {createdAt: $now}]->(r) WITH u, r OPTIONAL MATCH (u)-[or:OWNS_RUDEL]->(r) OPTIONAL MATCH (u)-[fr:LIKES_RUDEL]->(r) DETACH DELETE fr, or", {
 			userId: user.id,
 			rudelId: rudel.id,
-			now: new Date().toISOString()
+			now: new Date().getTime() / 1000
 		});
 		
 		return Promise.all([
@@ -201,7 +201,7 @@ export module RudelController {
 			return this.likers(transaction, rudel, 0, 1).then((likers: User[]) => {
 				if(likers.length > 0) return transaction.run("MATCH(r:Rudel {id: $rudelId}), (u:User {id: $newOwnerId}) WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
 					rudelId: rudel.id,
-					now: new Date().toISOString(),
+					now: new Date().getTime() / 1000,
 					newOwnerId: likers.pop().id
 				});
 				
@@ -228,6 +228,28 @@ export module RudelController {
 		}).then(result => DatabaseManager.neo4jFunctions.unflatten(result.records, 'likers'));
 	}
 	
+	export function popular(transaction: Transaction, skip = 0, limit = 25): Promise<Rudel[]> {
+		return transaction.run<User, any>('CALL apoc.index.search("Rudel", $query) YIELD node WITH properties(node) as r RETURN r SKIP $skip LIMIT $limit', {
+			skip: skip,
+			limit: limit
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r'));
+	}
+	
+	export function suggested(transaction: Transaction, skip = 0, limit = 25): Promise<Rudel[]> {
+		return transaction.run<User, any>('CALL apoc.index.search("Rudel", $query) YIELD node WITH properties(node) as r RETURN r SKIP $skip LIMIT $limit', {
+			skip: skip,
+			limit: limit
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r'));
+	}
+	
+	export function recent(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Rudel[]> {
+		return transaction.run<User, any>('MATCH(r:Rudel), (u:User {id: $userId}) WHERE NOT (r)<-[:DISLIKES_RUDEL]-(u) AND NOT (r)<-[:LIKES_RUDEL]-(u) ORDER BY r.createdAt RETURN r SKIP $skip LIMIT $limit', {
+			userId: user.id,
+			skip: skip,
+			limit: limit
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r'));
+	}
+	
 	export namespace RouteHandlers {
 		
 		/**
@@ -246,7 +268,7 @@ export module RudelController {
 				translations: request.payload.translations,
 				icon: request.payload.icon
 			}).then(rudel => {
-				return RudelController.follow(transaction, rudel, request.auth.credentials).then(() => {
+				return RudelController.like(transaction, rudel, request.auth.credentials).then(() => {
 					return RudelController.getPublicRudel(transaction, rudel, request.auth.credentials);
 				});
 			});
@@ -303,7 +325,7 @@ export module RudelController {
 		}
 		
 		/**
-		 * Handles [GET] /api/rudel/like/{query}
+		 * Handles [GET] /api/rudel/search/{query}
 		 * @param request Request-Object
 		 * @param request.params.query query
 		 * @param request.query.offset offset (optional, default=0)
@@ -311,7 +333,7 @@ export module RudelController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function like(request: any, reply: any): void {
+		export function search(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
@@ -344,18 +366,18 @@ export module RudelController {
 		}
 		
 		/**
-		 * Handles [POST] /api/rudel/follow/{id}
+		 * Handles [POST] /api/rudel/like/{id}
 		 * @param request Request-Object
 		 * @param request.auth.credentials
 		 * @param request.params.id id
 		 * @param reply Reply-Object
 		 */
-		export function follow(request: any, reply: any): void {
+		export function like(request: any, reply: any): void {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise = RudelController.get(transaction, request.params.id).then((rudel: Rudel) => {
 				if (!rudel) return Promise.reject(Boom.notFound('Rudel not found!'));
-				return RudelController.follow(transaction, rudel, request.auth.credentials).then(() => {
+				return RudelController.like(transaction, rudel, request.auth.credentials).then(() => {
 					return RudelController.getPublicRudel(transaction, rudel, request.auth.credentials);
 				});
 			});
@@ -364,18 +386,18 @@ export module RudelController {
 		}
 		
 		/**
-		 * Handles [POST] /api/rudel/unfollow/{id}
+		 * Handles [POST] /api/rudel/dislike/{id}
 		 * @param request Request-Object
 		 * @param request.auth.credentials
 		 * @param request.params.id id
 		 * @param reply Reply-Object
 		 */
-		export function unfollow(request: any, reply: any): void {
+		export function dislike(request: any, reply: any): void {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise = RudelController.get(transaction, request.params.id).then((rudel: Rudel) => {
 				if (!rudel) return Promise.reject(Boom.notFound('Rudel not found!'));
-				return RudelController.unfollow(transaction, rudel, request.auth.credentials).then(() => {
+				return RudelController.dislike(transaction, rudel, request.auth.credentials).then(() => {
 					return RudelController.get(transaction, rudel.id).then(rudel => {
 						return rudel ? RudelController.getPublicRudel(transaction, rudel, request.auth.credentials) : null;
 					});
@@ -402,6 +424,63 @@ export module RudelController {
 				if (!rudel) return Promise.reject(Boom.badRequest('Rudel does not exist!'));
 				return RudelController.likers(transaction, rudel, request.query.offset, request.query.limit);
 			}).then((users: User[]) => UserController.getPublicUser(transaction, users, request.auth.credentials));
+			
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [GET] /api/rudel/popular
+		 * @param request Request-Object
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function popular(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = RudelController.popular(transaction, request.query.offset, request.query.limit).then((rudel: Rudel[]) => {
+				return RudelController.getPublicRudel(transaction, rudel, request.auth.credentials);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [GET] /api/rudel/recent
+		 * @param request Request-Object
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function recent(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = RudelController.recent(transaction, request.query.offset, request.query.limit).then((rudel: Rudel[]) => {
+				return RudelController.getPublicRudel(transaction, rudel, request.auth.credentials);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [GET] /api/rudel/suggested
+		 * @param request Request-Object
+		 * @param request.query.offset offset (optional, default=0)
+		 * @param request.query.limit limit (optional, default=25)
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function suggested(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = RudelController.suggested(transaction, request.query.offset, request.query.limit).then((rudel: Rudel[]) => {
+				return RudelController.getPublicRudel(transaction, rudel, request.auth.credentials);
+			});
 			
 			reply.api(promise, transactionSession);
 		}

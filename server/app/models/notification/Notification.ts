@@ -5,7 +5,7 @@ export interface Notification {
 	type: NotificationType;
 	sender: User;
 	subject: Node,
-	createdAt: string
+	createdAt: number
 }
 
 export enum NotificationType {

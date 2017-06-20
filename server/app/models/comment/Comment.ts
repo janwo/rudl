@@ -2,7 +2,6 @@ import * as Joi from 'joi';
 import {Node} from '../Node';
 
 export interface Comment extends Node {
-	updatedAt: string;
 	message: string;
 	pinned: boolean;
 }

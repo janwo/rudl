@@ -26,9 +26,9 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
-			path: '/api/users/like/{query}',
+			path: '/api/users/search/{query}',
 			method: 'GET',
-			handler: UserController.RouteHandlers.getUsersLike,
+			handler: UserController.RouteHandlers.search,
 			config: {
 				auth: {
 					scope: [
@@ -89,9 +89,9 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
-			path: '/api/users/follow/{followee}',
+			path: '/api/users/like/{user}',
 			method: 'POST',
-			handler: UserController.RouteHandlers.follow,
+			handler: UserController.RouteHandlers.like,
 			config: {
 				auth: {
 					scope: [
@@ -100,15 +100,15 @@ export const RoutesConfig: RoutesConfiguration = {
 				},
 				validate: {
 					params: {
-						followee: UserValidation.username
+						user: UserValidation.username
 					}
 				}
 			}
 		},
 		{
-			path: '/api/users/unfollow/{followee}',
+			path: '/api/users/dislike/{user}',
 			method: 'POST',
-			handler: UserController.RouteHandlers.unfollow,
+			handler: UserController.RouteHandlers.dislike,
 			config: {
 				auth: {
 					scope: [
@@ -117,7 +117,7 @@ export const RoutesConfig: RoutesConfiguration = {
 				},
 				validate: {
 					params: {
-						followee: UserValidation.username
+						user: UserValidation.username
 					}
 				}
 			}

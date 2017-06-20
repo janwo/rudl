@@ -32,7 +32,7 @@ export class UserComponent implements OnInit, OnDestroy {
 		// Define changed follow state subscription.
 		this.changeFollowStateSubscription = this.changeFollowStateSubject.asObservable().distinctUntilChanged().flatMap(follow => {
 			this.pendingFollowRequest = true;
-			return follow ? this.userService.follow(this.user.username) : this.userService.unfollow(this.user.username);
+			return follow ? this.userService.like(this.user.username) : this.userService.dislike(this.user.username);
 		}).subscribe((updatedUser: User) => {
 			this.user = updatedUser;
 			this.pendingFollowRequest = false;

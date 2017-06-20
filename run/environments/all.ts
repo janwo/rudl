@@ -135,7 +135,7 @@ export default {
 								metadata: Config.frontend.metadata
 							}),
 							new Webpack.optimize.CommonsChunkPlugin({
-								name: [
+								names: [
 									'static/app', 'static/vendor', 'static/polyfill'
 								]
 							}),

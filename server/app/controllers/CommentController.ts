@@ -11,6 +11,7 @@ import {CommentRecipe} from '../../../client/app/models/comment';
 import {Expedition} from '../models/expedition/Expedition';
 import Transaction from 'neo4j-driver/lib/v1/transaction';
 import {AccountController} from "./AccountController";
+import {UtilController} from './UtilController';
 
 export module CommentController {
 	
@@ -18,16 +19,14 @@ export module CommentController {
 		let comment: Comment = {
 			id: shortid.generate(),
 			message: recipe.message,
-			pinned: recipe.pinned,
-			createdAt: null,
-			updatedAt: null
+			pinned: recipe.pinned
 		};
 		return this.save(transaction, comment).then(() => comment);
 	}
 	
 	export function save(transaction: Transaction, comment: Comment): Promise<void> {
 		// Set timestamps.
-		let now = new Date().toISOString();
+		let now = Date.now() / 1000;
 		if (!comment.createdAt) comment.createdAt = now;
 		comment.updatedAt = now;
 		
@@ -93,12 +92,14 @@ export module CommentController {
 					'comment.id': 'id',
 					'comment.message': 'message',
 					'comment.pinned': 'pinned',
-					'comment.updatedAt': 'updatedAt',
-					'comment.createdAt': 'createdAt',
+					'updatedAt': 'updatedAt',
+					'createdAt': 'createdAt',
 					'owner': 'owner',
 					'isOwner': 'relations.isOwned'
 				}, {
 					comment: comment,
+					createdAt: UtilController.isoDate(comment.createdAt),
+					updatedAt: UtilController.isoDate(comment.updatedAt),
 					owner: values[1],
 					isOwner: values[0].id == relatedUser.id
 				}));

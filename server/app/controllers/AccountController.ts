@@ -66,9 +66,7 @@ export module AccountController {
 						verified: false
 					}
 				},
-				password: AuthController.hashPassword(recipe.password),
-				createdAt: null,
-				updatedAt: null
+				password: AuthController.hashPassword(recipe.password)
 			};
 			return this.save(transaction, user).then(() => user);
 		});
@@ -93,7 +91,7 @@ export module AccountController {
 	
 	export function save(transaction: Transaction, user: User): Promise<void> {
 		// Set timestamps.
-		let now = new Date().toISOString();
+		let now = Date.now() / 1000;
 		if (!user.createdAt) user.createdAt = now;
 		user.updatedAt = now;
 		
@@ -143,7 +141,7 @@ export module AccountController {
 	
 	export namespace NotificationController {
 		export function get(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Notification[]> {
-			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n, apoc.date.parse(n.createdAt, "s", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'") as date ORDER BY date SKIP $skip LIMIT $limit MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User), (n)-[:NOTIFICATION_SUBJECT]->(subject) WITH subject, sender, n RETURN apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)) as n`, {
+			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n ORDER BY n.createdAt SKIP $skip LIMIT $limit MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User), (n)-[:NOTIFICATION_SUBJECT]->(subject) WITH apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)) as n RETURN COALESCE(n, []) as n`, {
 				userId: user.id,
 				limit: limit,
 				skip: skip
@@ -225,7 +223,7 @@ export module AccountController {
 				recipientId: recipient.id,
 				subjectId: subject.id,
 				senderId: sender.id,
-				now: new Date().toISOString()
+				now: new Date().getTime() / 1000
 			}).then(() => {});
 		}
 	}

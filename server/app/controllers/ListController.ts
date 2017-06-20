@@ -10,6 +10,7 @@ import {ListRecipe} from '../../../client/app/models/list';
 import Transaction from 'neo4j-driver/lib/v1/transaction';
 import {RudelController} from './RudelController';
 import {AccountController} from "./AccountController";
+import {UtilController} from './UtilController';
 
 export module ListController {
 	
@@ -27,7 +28,7 @@ export module ListController {
 						listStatisticsPromise
 					]);
 				}
-				return Promise.resolve([]);
+				return Promise.resolve([]) as Promise<[User, any, ListStatistics]>;
 			})();
 			
 			// Modify list information.
@@ -39,13 +40,15 @@ export module ListController {
 					'list.id': 'id',
 					'list.translations': 'translations',
 					'links': 'links',
-					'list.updatedAt': 'updatedAt',
-					'list.createdAt': 'createdAt'
+					'updatedAt': 'updatedAt',
+					'createdAt': 'createdAt'
 				};
 				
 				let transformationObject = {
 					links: links,
-					list: list
+					list: list,
+					createdAt: UtilController.isoDate(list.createdAt),
+					updatedAt: UtilController.isoDate(list.updatedAt)
 				};
 				
 				// Emit extended information.
@@ -121,8 +124,6 @@ export module ListController {
 	export function create(transaction: Transaction, recipe: ListRecipe): Promise<List> {
 		let list: List = {
 			id: shortid.generate(),
-			createdAt: null,
-			updatedAt: null,
 			translations: recipe.translations
 		};
 		return ListController.save(transaction, list).then(() => list);
@@ -130,7 +131,7 @@ export module ListController {
 	
 	export function save(transaction: Transaction, list: List): Promise<void> {
 		// Set timestamps.
-		let now = new Date().toISOString();
+		let now = Date.now() / 1000;
 		if (!list.createdAt) list.createdAt = now;
 		list.updatedAt = now;
 		
@@ -195,7 +196,7 @@ export module ListController {
 		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WHERE NOT (u)-[:LIKES_LIST]->(l) WITH u, l CREATE UNIQUE (u)-[:LIKES_LIST {createdAt: $now}]->(l) WITH u, l OPTIONAL MATCH (u)-[dll:DISLIKES_LIST]->(l) DETACH DELETE dll WITH u, l OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, l, u WHERE count = 0 CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
 			userId: user.id,
 			listId: list.id,
-			now: new Date().toISOString()
+			now: new Date().getTime() / 1000
 		}).then(() => {});
 	}
 	
@@ -203,12 +204,12 @@ export module ListController {
 		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WHERE NOT (u)-[:DISLIKES_LIST]->(l) WITH u, l CREATE UNIQUE (u)-[:DISLIKES_LIST {createdAt: $now}]->(l) WITH u, l OPTIONAL MATCH (u)-[ol:OWNS_LIST]->(l) OPTIONAL MATCH (u)-[ll:LIKES_LIST]->(l) DETACH DELETE ll, ol", {
 			userId: user.id,
 			listId: list.id,
-			now: new Date().toISOString()
+			now: new Date().getTime() / 1000
 		}).then(() => {
 			return this.likers(transaction, list, 0, 1).then((likers: User[]) => {
 				if(likers.length > 0) return transaction.run("MATCH(l:List {id: $listId}), (u:User {id: $newOwnerId}) CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
 					listId: list.id,
-					now: new Date().toISOString(),
+					now: new Date().getTime() / 1000,
 					newOwnerId: likers.pop().id
 				});
 				
@@ -413,7 +414,7 @@ export module ListController {
 		}
 		
 		/**
-		 * Handles [GET] /api/lists/like/{query}
+		 * Handles [GET] /api/lists/search/{query}
 		 * @param request Request-Object
 		 * @param request.params.query query
 		 * @param request.query.offset offset (optional, default=0)
@@ -421,7 +422,7 @@ export module ListController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function like(request: any, reply: any): void {
+		export function search(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
@@ -454,13 +455,13 @@ export module ListController {
 		}
 		
 		/**
-		 * Handles [POST] /api/lists/follow/{list}
+		 * Handles [POST] /api/lists/like/{list}
 		 * @param request Request-Object
 		 * @param request.auth.credentials
 		 * @param request.params.list list
 		 * @param reply Reply-Object
 		 */
-		export function follow(request: any, reply: any): void {
+		export function like(request: any, reply: any): void {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ListController.get(transaction, request.params.list).then((list: List) => {
@@ -472,13 +473,13 @@ export module ListController {
 		}
 		
 		/**
-		 * Handles [POST] /api/lists/unfollow/{list}
+		 * Handles [POST] /api/lists/dislike/{list}
 		 * @param request Request-Object
 		 * @param request.auth.credentials
 		 * @param request.params.list list
 		 * @param reply Reply-Object
 		 */
-		export function unfollow(request: any, reply: any): void {
+		export function dislike(request: any, reply: any): void {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ListController.get(transaction, request.params.list).then((list: List) => {

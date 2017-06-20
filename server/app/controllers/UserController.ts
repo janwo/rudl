@@ -5,6 +5,7 @@ import {Config} from '../../../run/config';
 import {User} from '../models/user/User';
 import {DatabaseManager, TransactionSession} from '../Database';
 import {AccountController} from './AccountController';
+import {UtilController} from './UtilController';
 
 export module UserController {
 	
@@ -87,7 +88,7 @@ export module UserController {
 	export function getPublicUser(transaction: Transaction, user: User | User[], relatedUser: User, preview = false): Promise<any | any[]> {
 		let createPublicUser = (user: User) => {
 			// Gather user information.
-			let promise = ((): Promise<[UserStatistics]> => {
+			let promise = ((): Promise<UserStatistics[]> => {
 				if(!preview) {
 					let userStatistics = UserController.getStatistics(transaction, user, relatedUser);
 					return Promise.all([
@@ -98,7 +99,7 @@ export module UserController {
 			})();
 			
 			// Modify user information.
-			return promise.then((results: [UserStatistics]) => {
+			return promise.then(values => {
 				// Add default links.
 				let links: any = {
 					likers: `${Config.backend.domain}/api/users/${user.username}/likers`,
@@ -121,13 +122,15 @@ export module UserController {
 					'user.lastName': 'lastName',
 					'hasAvatar': 'hasAvatar',
 					'user.profileText': 'profileText',
-					'user.createdAt': 'createdAt',
-					'user.updatedAt': 'updatedAt',
+					'createdAt': 'createdAt',
+					'updatedAt': 'updatedAt',
 					'links': 'links'
 				};
 				
 				let transformationObject = {
 					user: user,
+					createdAt: UtilController.isoDate(user.createdAt),
+					updatedAt: UtilController.isoDate(user.updatedAt),
 					hasAvatar: !!user.avatarId,
 					links: links
 				};
@@ -148,7 +151,7 @@ export module UserController {
 					
 					// Extend transformation object.
 					transformationObject = Object.assign(transformationObject, {
-						statistics: results[0]
+						statistics: values[0]
 					});
 				}
 				
@@ -187,21 +190,21 @@ export module UserController {
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'likees'));
 	}
 	
-	export function follow(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
+	export function like(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
 		if (aimedUser.id === user.id) return Promise.reject<void>('Users cannot follow themselves.');
 		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:LIKES_USER]->(followee) WITH user, followee CREATE UNIQUE (user)-[:LIKES_USER {createdAt: $now}]->(followee) WITH user, followee OPTIONAL MATCH (user)-[dlu:DISLIKES_USER]->(followee) DETACH DELETE dlu", {
 			userId: user.id,
 			followeeUserId: aimedUser.id,
-			now: new Date().toISOString()
+			now: new Date().getTime() / 1000
 		}).then(() => {});
 	}
 	
-	export function unfollow(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
+	export function dislike(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
 		if (aimedUser.id === user.id) return Promise.reject<void>('Users cannot unfollow themselves.');
 		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:DISLIKES_USER]->(followee) WITH user, followee CREATE UNIQUE (user)-[:DISLIKES_USER {createdAt: $now}]->(followee) WITH user, followee OPTIONAL MATCH (user)-[lu:LIKES_USER]->(followee) DETACH DELETE lu", {
 			userId: user.id,
 			followeeUserId: aimedUser.id,
-			now: new Date().toISOString()
+			now: new Date().getTime() / 1000
 		}).then(() => {});
 	}
 	
@@ -224,7 +227,7 @@ export module UserController {
 		}
 		
 		/**
-		 * Handles [GET] /api/users/like/{query}
+		 * Handles [GET] /api/users/search/{query}
 		 * @param request Request-Object
 		 * @param request.params.query query
 		 * @param request.query.offset offset (optional, default=0)
@@ -232,7 +235,7 @@ export module UserController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getUsersLike(request: any, reply: any): void {
+		export function search(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
@@ -286,19 +289,19 @@ export module UserController {
 		}
 		
 		/**
-		 * Handles [POST] /api/users/follow/{followee}
+		 * Handles [POST] /api/users/like/{user}
 		 * @param request Request-Object
 		 * @param request.auth.credentials
-		 * @param request.params.followee followee
+		 * @param request.params.user user
 		 * @param reply Reply-Object
 		 */
-		export function follow(request: any, reply: any): void {
+		export function like(request: any, reply: any): void {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise = UserController.findByUsername(transaction, request.params.followee).then((followee: User) => {
-				if (!followee) return Promise.reject(Boom.notFound('Followee not found!'));
-				return UserController.follow(transaction, request.auth.credentials, followee).then(() => {
-					return UserController.getPublicUser(transaction, followee, request.auth.credentials);
+			let promise = UserController.findByUsername(transaction, request.params.user).then((user: User) => {
+				if (!user) return Promise.reject(Boom.notFound('User not found!'));
+				return UserController.like(transaction, request.auth.credentials, user).then(() => {
+					return UserController.getPublicUser(transaction, user, request.auth.credentials);
 				});
 			});
 			
@@ -306,19 +309,19 @@ export module UserController {
 		}
 		
 		/**
-		 * Handles [POST] /api/users/unfollow/{followee}
+		 * Handles [POST] /api/users/dislike/{user}
 		 * @param request Request-Object
 		 * @param request.auth.credentials
-		 * @param request.params.followee followee
+		 * @param request.params.user user
 		 * @param reply Reply-Object
 		 */
-		export function unfollow(request: any, reply: any): void {
+		export function dislike(request: any, reply: any): void {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise = findByUsername(transaction, request.params.followee).then((followee: User) => {
-				if (!followee) return Promise.reject(Boom.notFound('Followee not found!'));
-				return UserController.unfollow(transaction, request.auth.credentials, followee).then(() => {
-					return UserController.getPublicUser(transaction, followee, request.auth.credentials);
+			let promise = findByUsername(transaction, request.params.user).then((user: User) => {
+				if (!user) return Promise.reject(Boom.notFound('User not found!'));
+				return UserController.dislike(transaction, request.auth.credentials, user).then(() => {
+					return UserController.getPublicUser(transaction, user, request.auth.credentials);
 				});
 			});
 			

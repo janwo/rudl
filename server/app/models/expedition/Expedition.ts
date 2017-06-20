@@ -7,7 +7,7 @@ export interface Expedition extends Node {
 	title: string;
 	description: string;
 	needsApproval: boolean;
-	date: string;
+	date: number;
 	fuzzyTime: boolean;
 	location: {
 		lat: number,
