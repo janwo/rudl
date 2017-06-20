@@ -17,7 +17,7 @@ export module UtilController {
 	}
 	
 	export function timestamp(iso: string): number {
-		return new Date(iso).getTime() / 1000;
+		return Math.trunc(new Date(iso).getTime() / 1000);
 	}
 	
 	export namespace RouteHandlers {

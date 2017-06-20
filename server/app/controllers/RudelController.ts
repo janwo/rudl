@@ -228,22 +228,24 @@ export module RudelController {
 		}).then(result => DatabaseManager.neo4jFunctions.unflatten(result.records, 'likers'));
 	}
 	
-	export function popular(transaction: Transaction, skip = 0, limit = 25): Promise<Rudel[]> {
-		return transaction.run<User, any>('CALL apoc.index.search("Rudel", $query) YIELD node WITH properties(node) as r RETURN r SKIP $skip LIMIT $limit', {
+	export function popular(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Rudel[]> {
+		return transaction.run<User, any>('MATCH(r:Rudel), (u:User {id: $userId}) WHERE NOT (r)<-[:DISLIKES_RUDEL]-(u) AND NOT (r)<-[:LIKES_RUDEL]-(u) WITH r ORDER BY r.createdAt SKIP $skip LIMIT $limit RETURN properties(r) as r', {
+			userId: user.id,
 			skip: skip,
 			limit: limit
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r'));
 	}
 	
-	export function suggested(transaction: Transaction, skip = 0, limit = 25): Promise<Rudel[]> {
-		return transaction.run<User, any>('CALL apoc.index.search("Rudel", $query) YIELD node WITH properties(node) as r RETURN r SKIP $skip LIMIT $limit', {
+	export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Rudel[]> {
+		return transaction.run<User, any>('MATCH(r:Rudel), (u:User {id: $userId}) WHERE NOT (r)<-[:DISLIKES_RUDEL]-(u) AND NOT (r)<-[:LIKES_RUDEL]-(u) WITH r ORDER BY r.createdAt SKIP $skip LIMIT $limit RETURN properties(r) as r', {
+			userId: user.id,
 			skip: skip,
 			limit: limit
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r'));
 	}
 	
 	export function recent(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Rudel[]> {
-		return transaction.run<User, any>('MATCH(r:Rudel), (u:User {id: $userId}) WHERE NOT (r)<-[:DISLIKES_RUDEL]-(u) AND NOT (r)<-[:LIKES_RUDEL]-(u) ORDER BY r.createdAt RETURN r SKIP $skip LIMIT $limit', {
+		return transaction.run<User, any>('MATCH(r:Rudel), (u:User {id: $userId}) WHERE NOT (r)<-[:DISLIKES_RUDEL]-(u) AND NOT (r)<-[:LIKES_RUDEL]-(u) WITH r ORDER BY r.createdAt SKIP $skip LIMIT $limit RETURN properties(r) as r', {
 			userId: user.id,
 			skip: skip,
 			limit: limit
@@ -440,7 +442,7 @@ export module RudelController {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise: Promise<any> = RudelController.popular(transaction, request.query.offset, request.query.limit).then((rudel: Rudel[]) => {
+			let promise: Promise<any> = RudelController.popular(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((rudel: Rudel[]) => {
 				return RudelController.getPublicRudel(transaction, rudel, request.auth.credentials);
 			});
 			
@@ -459,7 +461,7 @@ export module RudelController {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise: Promise<any> = RudelController.recent(transaction, request.query.offset, request.query.limit).then((rudel: Rudel[]) => {
+			let promise: Promise<any> = RudelController.recent(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((rudel: Rudel[]) => {
 				return RudelController.getPublicRudel(transaction, rudel, request.auth.credentials);
 			});
 			
@@ -478,7 +480,7 @@ export module RudelController {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise: Promise<any> = RudelController.suggested(transaction, request.query.offset, request.query.limit).then((rudel: Rudel[]) => {
+			let promise: Promise<any> = RudelController.suggested(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((rudel: Rudel[]) => {
 				return RudelController.getPublicRudel(transaction, rudel, request.auth.credentials);
 			});
 			

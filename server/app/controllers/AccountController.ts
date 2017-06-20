@@ -16,6 +16,7 @@ import {Expedition} from '../models/expedition/Expedition';
 import {ExpeditionController} from './ExpeditionController';
 import {RudelController} from './RudelController';
 import {Rudel} from '../models/rudel/Rudel';
+import {UtilController} from './UtilController';
 
 export module AccountController {
 	
@@ -197,9 +198,10 @@ export module AccountController {
 						'notification.type': 'type',
 						'sender': 'sender',
 						'subject': 'subject',
-						'notification.createdAt': 'createdAt'
+						'createdAt': 'createdAt'
 					}, {
 						notification: notification,
+						createdAt: UtilController.isoDate(notification.createdAt),
 						sender: values[0],
 						subject: values[1]
 					}));

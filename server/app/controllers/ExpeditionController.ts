@@ -179,7 +179,7 @@ export module ExpeditionController {
 	}
 	
 	export function findUpcomingByUser(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e WHERE e.date > $after ORDER BY e.date SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
+		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e WHERE e.date > $after WITH e ORDER BY e.date SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
 			userId: user.id,
 			limit: limit,
 			skip: skip,
@@ -188,7 +188,7 @@ export module ExpeditionController {
 	}
 	
 	export function findDoneByUser(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e WHERE e.date < $before ORDER BY e.date DESC SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
+		return transaction.run<Expedition, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e WHERE e.date < $before WITH e ORDER BY e.date DESC SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
 			userId: user.id,
 			limit: limit,
 			skip: skip,
@@ -197,7 +197,7 @@ export module ExpeditionController {
 	}
 	
 	export function findUpcomingByRudel(transaction: Transaction, rudel: Rudel, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) AND e.date > $after ORDER BY e.date SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
+		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) AND e.date > $after WITH e ORDER BY e.date SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
 			rudelId: rudel.id,
 			location: {
 				latitude: user.location.lat,
@@ -210,7 +210,7 @@ export module ExpeditionController {
 	}
 	
 	export function findDoneByRudel(transaction: Transaction, rudel: Rudel, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) AND e.date < $before ORDER BY e.date DESC SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
+		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) AND e.date < $before WITH e ORDER BY e.date DESC SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
 			rudelId: rudel.id,
 			location: {
 				latitude: user.location.lat,

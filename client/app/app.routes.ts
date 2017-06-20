@@ -51,7 +51,7 @@ const appRoutes: Routes = [
 		pathMatch: 'full'
 	},
 	{
-		path: 'sign_upp',
+		path: 'sign-up',
 		component: LandingComponent,
 		pathMatch: 'full',
 		data: {
