@@ -229,7 +229,7 @@ export module RudelController {
 	}
 	
 	export function popular(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Rudel[]> {
-		return transaction.run<User, any>('MATCH(r:Rudel), (u:User {id: $userId}) WHERE NOT (r)<-[:DISLIKES_RUDEL]-(u) AND NOT (r)<-[:LIKES_RUDEL]-(u) WITH r ORDER BY r.createdAt SKIP $skip LIMIT $limit RETURN properties(r) as r', {
+		return transaction.run<User, any>('MATCH(r:Rudel), (u:User {id: $userId}) WHERE NOT (r)<-[:DISLIKES_RUDEL]-(u) AND NOT (r)<-[:LIKES_RUDEL]-(u) WITH r OPTIONAL MATCH (r)<-[lr:LIKES_RUDEL]-(:Users) WITH r, COUNT(lr) as popularity ORDER BY popularity SKIP $skip LIMIT $limit RETURN properties(r) as r', {
 			userId: user.id,
 			skip: skip,
 			limit: limit
@@ -245,7 +245,7 @@ export module RudelController {
 	}
 	
 	export function recent(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Rudel[]> {
-		return transaction.run<User, any>('MATCH(r:Rudel), (u:User {id: $userId}) WHERE NOT (r)<-[:DISLIKES_RUDEL]-(u) AND NOT (r)<-[:LIKES_RUDEL]-(u) WITH r ORDER BY r.createdAt SKIP $skip LIMIT $limit RETURN properties(r) as r', {
+		return transaction.run<User, any>('MATCH(r:Rudel), (u:User {id: $userId}) WHERE NOT (r)<-[:DISLIKES_RUDEL]-(u) AND NOT (r)<-[:LIKES_RUDEL]-(u) WITH r ORDER BY r.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(r) as r', {
 			userId: user.id,
 			skip: skip,
 			limit: limit

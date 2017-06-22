@@ -1,10 +1,11 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, QueryList, ViewChild} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {Subscription} from 'rxjs';
 import {Router} from '@angular/router';
 import {ButtonStyles} from '../../widgets/control/styled-button.component';
 import {UserService} from '../../../services/user.service';
 import {Title} from '@angular/platform-browser';
+import {CarouselComponent} from "../../widgets/wrapper/carousel.component";
 
 @Component({
 	templateUrl: 'boarding.component.html',
@@ -32,14 +33,7 @@ export class BoardingComponent implements OnInit, OnDestroy {
 		title.setTitle('rudl.me - Boarding in Progress');
 	}
 	
-	step: number = 0;
-	steps: string[] = [
-		'Wilkommen bei rudl',
-		'Finde Rudel',
-		'Erstelle Events',
-		'Treffe Menschen',
-		'Berechtigungen geben'
-	];
+	carouselIndex: number = 0;
 	permissionStatus: 'ungranted' | 'granting' | 'granted' | 'denied' = 'ungranted';
 	locationSubscription: Subscription;
 	ButtonStyles = ButtonStyles;
@@ -51,6 +45,10 @@ export class BoardingComponent implements OnInit, OnDestroy {
 		}, error => {
 			this.permissionStatus = 'denied';
 		});
+	}
+	
+	setCarouselIndex(index: number): void {
+		this.carouselIndex = index;
 	}
 	
 	grantPermission(): void {

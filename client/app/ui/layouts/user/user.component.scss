@@ -6,7 +6,7 @@ $profile-avatar-size: 5rem;
 :host {
   display: flex;
   @include setup-max-width();
-  padding: map_get($base-padding, 'default');
+  @include setup-default-padding();
   flex-direction: column;
 
   @include breakpoint('small') {

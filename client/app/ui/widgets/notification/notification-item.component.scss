@@ -1,4 +1,5 @@
 @import '../../variables.scss';
+@import '../../mixins.scss';
 
 $notification-avatar-size: 2.5rem;
 
@@ -12,19 +13,34 @@ $notification-avatar-size: 2.5rem;
     flex-direction: row;
     align-items: center;
 
-    .message {
+    .content {
       margin-left: map_get($base-padding, 'smaller');
+      display: flex;
+      flex-direction: row;
 
-      /deep/ .bold {
-        font-weight: $base-font-weight-bold;
-        color: map_get($base-colors, 'primary');
+      @include breakpoint(null, 'small') {
+        flex-direction: column;
       }
-    }
 
-    .date {
-      margin-left: auto;
-      font-size: map_get($base-font-size, 'small');
-      color: map_get($base-colors, 'secondary-text');
+      .message {
+        @include breakpoint(null, 'small') {
+          margin-bottom: map_get($base-padding, 'smallest');
+        }
+
+        /deep/ .bold {
+          font-weight: $base-font-weight-bold;
+          color: map_get($base-colors, 'primary');
+        }
+      }
+
+      .date {
+        font-size: map_get($base-font-size, 'small');
+        color: map_get($base-colors, 'secondary-text');
+
+        @include breakpoint('small') {
+          margin-left: auto;
+        }
+      }
     }
 
     .icon {

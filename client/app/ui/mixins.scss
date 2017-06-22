@@ -36,6 +36,17 @@
   width: 100%;
 }
 
+@mixin setup-default-padding() {
+
+  @include breakpoint('small') {
+    padding: map_get($base-padding, 'default');
+  }
+
+  @include breakpoint(null, 'small') {
+    padding: map_get($base-padding, 'smaller');
+  }
+}
+
 @mixin setup-input-borders() {
   border: map_get($base-line-widths, 'default') inactive(map_get($base-colors, 'secondary')) solid;
   border-radius: $base-border-radius;

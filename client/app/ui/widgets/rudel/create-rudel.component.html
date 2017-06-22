@@ -1,5 +1,5 @@
 <form class="form-wrapper" [formGroup]="form">
-    <carousel #carousel>
+    <carousel #carousel (index)="setCarouselIndex($event)">
         <carousel-slide class="split">
             <div class="content">
                 <translation-list [defaultText]="defaultName"
@@ -23,14 +23,14 @@
         </carousel-slide>
     </carousel>
     <footer>
-        <styled-button class="back" *ngIf="carousel.index() == 0" [style]="cancelButtonStyle" [text]="'Abbrechen'"
+        <styled-button class="back" *ngIf="carouselIndex == 0" [style]="cancelButtonStyle" [text]="'Abbrechen'"
                 (click)="cancel()"></styled-button>
-        <styled-button class="back" *ngIf="carousel.index() > 0" [disabled]="submitPending" [text]="'Go back'"
+        <styled-button class="back" *ngIf="carouselIndex > 0" [disabled]="submitPending" [text]="'Go back'"
                 (click)="carousel.back()"></styled-button>
-        <styled-button class="next" *ngIf="carousel.index() < carousel.length() - 1" [disabled]="submitPending" [text]="'Continue'"
+        <styled-button class="next" *ngIf="carouselIndex < 2 - 1" [disabled]="submitPending" [text]="'Continue'"
                 (click)="carousel.next()"></styled-button>
-        <styled-button class="done" *ngIf="carousel.index() == carousel.length() - 1" [disabled]="submitPending" (click)="submit()"
+        <styled-button class="done" *ngIf="carouselIndex == 2 - 1" [disabled]="submitPending" (click)="submit()"
                 [text]="'Create Expedition'"></styled-button>
-        <indicator [steps]="carousel.length()" [selectedStep]="carousel.index()"></indicator>
+        <indicator [steps]="2" [selectedStep]="carouselIndex"></indicator>
     </footer>
 </form>

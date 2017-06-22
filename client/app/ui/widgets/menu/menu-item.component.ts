@@ -78,8 +78,8 @@ export class MenuItemComponent implements OnInit, OnDestroy, AfterViewChecked {
 		MenuItemComponent.mql.removeListener(this.checkRoom);
 	}
 	
-	@HostListener('click', ['$event'])
-	onClick(event: Event) {
+	@HostListener('click')
+	onClick() {
 		// Navigate, if link was set.
 		if (this.link) this.router.navigate(this.link, {
 			relativeTo: this.route

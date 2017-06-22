@@ -142,6 +142,7 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
 
     app-footer {
       flex: 0 0 auto;
+      margin-bottom: map_get($base-padding, 'default');
     }
   }
 }

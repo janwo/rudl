@@ -3,7 +3,7 @@
 
 :host {
   display: flex;
-  padding: map_get($base-padding, 'default');
+  @include setup-default-padding();
   flex-direction: column;
   @include setup-max-width();
 
@@ -48,7 +48,7 @@
         }
       }
 
-      &.expanded {
+      &:not(.collapsed) {
         .title {
           cursor: default;
           font-weight: $base-heading-font-weight;

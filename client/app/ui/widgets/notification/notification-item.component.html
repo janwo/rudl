@@ -5,8 +5,10 @@
             <emoji [emoji]="emoji"></emoji>
         </div>
     </div>
-    <span class="message" [innerHtml]="message | format "></span>
-    <span class="date">{{formattedDate}}</span>
+    <div class="content">
+        <span class="message" [innerHtml]="message | format "></span>
+        <span class="date">{{formattedDate}}</span>
+    </div>
     <div class="overflow" (click)="$event.stopPropagation()">
         <ng-content></ng-content>
     </div>

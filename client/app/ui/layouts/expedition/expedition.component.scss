@@ -4,7 +4,7 @@
 :host {
   display: block;
   @include setup-max-width();
-  padding: map_get($base-padding, 'default') map_get($base-padding, 'default') 0;
+  @include setup-default-padding();
 
   .card {
     display: flex;

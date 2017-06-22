@@ -16,6 +16,7 @@ export class RudelCreateExpeditionComponent implements OnInit {
 	
 	rudel: Rudel;
 	form: FormGroup;
+	carouselIndex: number;
 	submitPending: boolean;
 	@ViewChild(CarouselComponent) carousel: CarouselComponent;
 	
@@ -79,16 +80,15 @@ export class RudelCreateExpeditionComponent implements OnInit {
 		});
 	}
 	
+	setCarouselIndex(index: number): void {
+		this.carouselIndex = index;
+	}
+	
 	submit() {
 		for (const key in this.form.controls) this.form.controls[key].markAsTouched();
 		if (!this.form.valid) {
 			// Go to corresponding page.
-			[
-				this.form.controls.general,
-				this.form.controls.icon,
-				this.form.controls.location,
-				this.form.controls.time
-			].every((control: FormGroup, page: number) => {
+			Object.keys(this.form.controls).map(key => this.form.controls[key]).every((control: FormGroup, page: number) => {
 				Object.keys(control.controls).forEach(controlKey => control.get(controlKey).markAsTouched());
 				if (!control.valid) this.carousel.go(page);
 				return control.valid;

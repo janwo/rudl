@@ -23,7 +23,7 @@ export class SearchService {
 		this.onSearchEvent = this.searchEventSubject.asObservable().share();
 		
 		// Changes that occur as soon as query changes.
-		this.onQueryChangedDebounced = this.onSearchEvent.filter(expedition => expedition.state == SearchState.OPENED).map(expedition => expedition.query).distinctUntilChanged().debounceTime(500).do(query => {
+		this.onQueryChangedDebounced = this.onSearchEvent.filter(event => event.state == SearchState.OPENED).map(event => event.query).distinctUntilChanged().debounceTime(500).do(query => {
 			this.router.navigate(['/search', query || '']);
 		}).share();
 	}
