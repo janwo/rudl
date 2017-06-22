@@ -1,6 +1,9 @@
 @import '../../variables.scss';
 
-$rudel-item-emoji-size: 2.5rem;
+$rudel-item-list-emoji-size: 2.5rem;
+$rudel-item-block-emoji-size: 3rem;
+$rudel-item-list-likee-emoji-size: 2.5rem;
+$rudel-item-block-likee-emoji-size: 1.5rem;
 
 :host {
   display: block;
@@ -28,33 +31,36 @@ $rudel-item-emoji-size: 2.5rem;
 
     slots {
       flex: 0 0 auto;
-      margin-right: map_get($base-padding, 'small');
     }
 
     emoji {
       flex: 0 0 auto;
-      height: $rudel-item-emoji-size;
-      width: $rudel-item-emoji-size;
+      height: $rudel-item-list-emoji-size;
+      width: $rudel-item-list-emoji-size;
     }
 
-    ul {
-      list-style: none;
-      color: map_get($base-colors, 'secondary-text');
-      font-size: map_get($base-font-size, 'small');
-      flex: 0 0 auto;
+    .likees {
+      display: flex;
+      align-items: center;
 
-      li {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
+      span {
+        color: map_get($base-colors, 'secondary-text');
+        font-size: map_get($base-font-size, 'small');
+        flex: 0 0 auto;
+      }
+    }
 
-        &:not(:first-child) {
-          margin-top: map_get($base-padding, 'smallest');
-        }
+    &.block {
+      flex-direction: column;
 
-        i {
-          width: map_get($base-padding, 'smaller');
-        }
+      slots {
+        margin-top: map_get($base-padding, 'small');
+      }
+    }
+
+    &.list {
+      slots {
+        margin-right: map_get($base-padding, 'small');
       }
     }
 

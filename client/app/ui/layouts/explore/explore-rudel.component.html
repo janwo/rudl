@@ -1,7 +1,7 @@
 <ng-container *ngIf="suggestedRudel && suggestedRudel.length > 0; else loadingSuggestedRudel">
     <h1>Empfohlende Rudel</h1>
     <item-wrapper [horizontal]="true" [columns]="1">
-        <rudel-item *ngFor="let suggestedRudelItem of suggestedRudel" [rudel]="suggestedRudelItem"></rudel-item>
+        <rudel-item [style]="rudelItemStyle" *ngFor="let suggestedRudelItem of suggestedRudel" [rudel]="suggestedRudelItem"></rudel-item>
     </item-wrapper>
 </ng-container>
 
@@ -12,7 +12,7 @@
 <ng-container *ngIf="popularRudel && popularRudel.length > 0; else loadingPopularRudel">
     <h1>Beliebte Rudel</h1>
     <item-wrapper [horizontal]="true" [columns]="1">
-        <rudel-item *ngFor="let popularRudelItem of popularRudel" [rudel]="popularRudelItem"></rudel-item>
+        <rudel-item [style]="rudelItemStyle" *ngFor="let popularRudelItem of popularRudel" [rudel]="popularRudelItem"></rudel-item>
     </item-wrapper>
 </ng-container>
 
@@ -23,7 +23,7 @@
 <ng-container *ngIf="recentRudel && recentRudel.length > 0; else loadingRecentRudel">
     <h1>Neue Rudel</h1>
     <item-wrapper [horizontal]="true" [columns]="1">
-        <rudel-item *ngFor="let recentRudelItem of recentRudel" [rudel]="recentRudelItem"></rudel-item>
+        <rudel-item [style]="rudelItemStyle" *ngFor="let recentRudelItem of recentRudel" [rudel]="recentRudelItem"></rudel-item>
     </item-wrapper>
 </ng-container>
 

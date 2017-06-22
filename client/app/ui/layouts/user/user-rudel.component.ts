@@ -5,6 +5,7 @@ import {RudelService} from '../../../services/rudel.service';
 import {Rudel} from '../../../models/rudel';
 import {EmptyState} from '../../widgets/state/empty.component';
 import {ScrollService} from '../../../services/scroll.service';
+import {RudelItemStyles} from '../../widgets/rudel/rudel-item.component';
 
 @Component({
 	templateUrl: 'user-rudel.component.html',
@@ -14,6 +15,7 @@ export class UserRudelComponent implements OnInit, OnDestroy {
 	
 	rudelSubscription: Subscription;
 	rudel: Rudel[] = null;
+	rudelItemStyle: RudelItemStyles = RudelItemStyles.list;
 	emptyState: EmptyState = {
 		title: 'There are no Rudels',
 		image: require('../../../../assets/boarding/radar.png'),

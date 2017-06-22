@@ -1,5 +1,5 @@
 <item-wrapper *ngIf="rudel && rudel.length > 0; else loading">
-    <rudel-item *ngFor="let rudel of rudel" [rudel]="rudel"></rudel-item>
+    <rudel-item [style]="rudelItemStyle" *ngFor="let rudel of rudel" [rudel]="rudel"></rudel-item>
 </item-wrapper>
 
 <ng-template #loading>

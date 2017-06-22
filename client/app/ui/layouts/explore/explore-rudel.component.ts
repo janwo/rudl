@@ -4,6 +4,7 @@ import {RudelService} from '../../../services/rudel.service';
 import {Subscription} from 'rxjs/Subscription';
 import {ExpeditionService} from '../../../services/expedition.service';
 import {Expedition} from '../../../models/expedition';
+import {RudelItemStyles} from '../../widgets/rudel/rudel-item.component';
 
 @Component({
 	templateUrl: 'explore-rudel.component.html',
@@ -17,6 +18,7 @@ export class ExploreRudelComponent implements OnInit, OnDestroy {
 	recentRudel: Rudel[];
 	popularRudelSubscription: Subscription;
 	popularRudel: Rudel[];
+	rudelItemStyle: RudelItemStyles = RudelItemStyles.block;
 	
 	constructor(private rudelService: RudelService) {}
 	

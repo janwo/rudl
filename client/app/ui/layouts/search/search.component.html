@@ -3,7 +3,7 @@
     <h1 i18n>Rudel</h1>
     <item-wrapper class="results">
         <li *ngFor="let rudel of rudel">
-            <rudel-item [highlight]="searchValue" [rudel]="rudel"></rudel-item>
+            <rudel-item [style]="rudelItemStyle" [highlight]="searchValue" [rudel]="rudel"></rudel-item>
         </li>
         <li class="card create" [ngClass]="{expanded: expandedRudel, collapsed: collapsedRudel}">
             <div class="title" (click)="rudelAnimationState = true">

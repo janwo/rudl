@@ -9,6 +9,7 @@ import {SearchService} from '../../../services/search.service';
 import {ActivatedRoute} from '@angular/router';
 import {ListService} from '../../../services/list.service';
 import {RudelService} from '../../../services/rudel.service';
+import {RudelItemStyles} from '../../widgets/rudel/rudel-item.component';
 
 @Component({
 	templateUrl: 'search.component.html',
@@ -35,6 +36,7 @@ export class SearchComponent implements OnDestroy, OnInit {
 	collapsedRudel: boolean = true;
 	expandedRudel: boolean = false;
 	rudelAnimationState: boolean = false;
+	rudelItemStyle: RudelItemStyles = RudelItemStyles.list;
 	
 	lists: List[] = null;
 	

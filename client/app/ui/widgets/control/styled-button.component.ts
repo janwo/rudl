@@ -32,30 +32,41 @@ export class StyledButtonComponent {
 	
 	constructor() {}
 	
-	getStyleClass() {
+	getStyleClass(): string {
 		switch (this.style) {
 			case ButtonStyles.facebook:
 				return 'filled facebook shadowed';
+				
 			case ButtonStyles.google:
 				return 'filled google shadowed';
+				
 			case ButtonStyles.filled:
 				return 'filled';
+				
 			case ButtonStyles.filledShadowed:
 				return 'filled shadowed';
+				
 			case ButtonStyles.filledInverse:
 				return 'filled-inverse';
+				
 			case ButtonStyles.filledInverseShadowed:
 				return 'filled-inverse shadowed';
+				
 			case ButtonStyles.outlined:
 				return 'outlined';
+				
 			case ButtonStyles.outlinedShadowed:
 				return 'outlined shadowed';
+				
 			case ButtonStyles.outlinedInverse:
 				return 'outlined-inverse';
+				
 			case ButtonStyles.outlinedInverseShadowed:
 				return 'outlined-inverse shadowed';
+				
 			case ButtonStyles.like:
 				return 'filled-inverse shadowed like';
+				
 			case ButtonStyles.dislike:
 				return 'filled-inverse shadowed dislike';
 		}
