@@ -1,9 +1,12 @@
 @import '../../variables.scss';
+@import '../../mixins.scss';
 
 $rudel-item-list-emoji-size: 2.5rem;
-$rudel-item-block-emoji-size: 3rem;
-$rudel-item-list-likee-emoji-size: 2.5rem;
-$rudel-item-block-likee-emoji-size: 1.5rem;
+$rudel-item-block-emoji-size: 4rem;
+$rudel-item-block-user-avatar-size: 2rem;
+$rudel-item-block-user-avatar-size-mobile: 1.5rem;
+$rudel-item-list-user-avatar-size: 2rem;
+$rudel-item-list-user-avatar-size-mobile: 1.5rem;
 
 :host {
   display: block;
@@ -14,64 +17,109 @@ $rudel-item-block-likee-emoji-size: 1.5rem;
     display: flex;
     flex-direction: row;
     align-items: center;
+    position: relative;
 
-    .name {
-      flex: 1 1 auto;
-      font-family: $base-heading-font-family;
-      font-weight: $base-heading-font-weight;
-      font-size: map_get($base-heading-font-size, 'h3');
-      display: block;
-      margin-right: map_get($base-padding, 'smaller');
-      margin-left: map_get($base-padding, 'smaller');
-
-      /deep/ .highlight {
-        color: map_get($base-colors, 'primary');
+    .description {
+      h2 {
+        /deep/ .highlight {
+          color: map_get($base-colors, 'primary');
+        }
       }
     }
 
-    slots {
-      flex: 0 0 auto;
-    }
-
-    emoji {
-      flex: 0 0 auto;
-      height: $rudel-item-list-emoji-size;
-      width: $rudel-item-list-emoji-size;
-    }
-
-    .likees {
+    footer {
       display: flex;
       align-items: center;
 
       span {
         color: map_get($base-colors, 'secondary-text');
         font-size: map_get($base-font-size, 'small');
-        flex: 0 0 auto;
-      }
-    }
-
-    &.block {
-      flex-direction: column;
-
-      slots {
-        margin-top: map_get($base-padding, 'small');
-      }
-    }
-
-    &.list {
-      slots {
-        margin-right: map_get($base-padding, 'small');
+        white-space: nowrap;
       }
     }
 
     .overflow {
-      position: relative;
+      position: absolute;
+      top: 0;
+      right: 0;
       pointer-events: none;
       display: flex;
       flex-direction: row;
 
       & /deep/ > * {
         pointer-events: auto;
+      }
+    }
+
+    &.block {
+      flex-direction: column;
+
+      emoji {
+        height: $rudel-item-block-emoji-size;
+        width: $rudel-item-block-emoji-size;
+      }
+
+      .description {
+        margin-top: map_get($base-padding, 'default');
+
+        h2 {
+          text-align: center;
+        }
+      }
+
+      footer {
+        flex-direction: row;
+
+        user-avatar {
+          height: $rudel-item-block-user-avatar-size;
+          width: $rudel-item-block-user-avatar-size;
+          margin-right: map_get($base-padding, 'small');
+
+          @include breakpoint(null, 'small') {
+            height: $rudel-item-block-user-avatar-size-mobile;
+            width: $rudel-item-block-user-avatar-size-mobile;
+          }
+        }
+      }
+    }
+
+    &.list {
+      emoji {
+        height: $rudel-item-list-emoji-size;
+        width: $rudel-item-list-emoji-size;
+      }
+
+      .description {
+        margin-left: map_get($base-padding, 'smaller');
+        margin-right: map_get($base-padding, 'smaller');
+
+        h2 {
+          margin-bottom: 0;
+        }
+      }
+
+      footer {
+        margin-left: auto;
+
+        @include breakpoint(null, 'small') {
+          flex-direction: column;
+          align-items: flex-end;
+        }
+
+        user-avatar {
+          height: $rudel-item-list-user-avatar-size;
+          width: $rudel-item-list-user-avatar-size;
+
+          @include breakpoint('small') {
+            margin-right: map_get($base-padding, 'small');
+          }
+
+          @include breakpoint(null, 'small') {
+            height: $rudel-item-list-user-avatar-size-mobile;
+            width: $rudel-item-list-user-avatar-size-mobile;
+            margin-bottom: map_get($base-padding, 'smallest');
+          }
+        }
       }
     }
   }

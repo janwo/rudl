@@ -1,58 +1,55 @@
 @import '../../variables.scss';
+@import '../../mixins.scss';
+
+$expedition-item-list-emoji-size: 2.5rem;
+$expedition-item-block-emoji-size: 4rem;
 
 :host {
   display: block;
 
   .card {
     cursor: pointer;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
-    emoji {
-      margin: map_get($base-padding, 'smaller') auto;
-    }
+    .description {
+      width: 100%;
 
-    h2 {
-      text-align: center;
-    }
-
-    p {
-      color: map_get($base-colors, 'secondary-text');
-      margin-left: map_get($base-padding, 'smaller');
-      margin-right: map_get($base-padding, 'smaller');
+      span {
+        display: block;
+        color: map_get($base-colors, 'secondary-text');
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
 
     footer {
-      margin-top: map_get($base-padding, 'default');
-      flex: 0 0 auto;
       display: flex;
       flex-direction: row;
       align-items: center;
 
-      slots {
-        flex: 0 0 auto;
-        margin-right: map_get($base-padding, 'small');
-      }
-
       ul {
         list-style: none;
-        flex: 0 0 auto;
         color: map_get($base-colors, 'secondary-text');
         font-size: map_get($base-font-size, 'small');
-
-        &:first-of-type {
-          flex: 1 1 auto;
-
-          li {
-            justify-content: flex-start;
-          }
-        }
 
         li {
           display: flex;
           flex-direction: row;
           justify-content: flex-end;
+          white-space: nowrap;
 
           &:not(:first-child) {
             margin-top: map_get($base-padding, 'smallest');
+          }
+
+          span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
 
           i {
@@ -60,17 +57,18 @@
           }
         }
       }
+    }
 
-      .overflow {
-        flex: 0 0 auto;
-        position: relative;
-        pointer-events: none;
-        display: flex;
-        flex-direction: row;
+    .overflow {
+      position: absolute;
+      top: 0;
+      right: 0;
+      pointer-events: none;
+      display: flex;
+      flex-direction: row;
 
-        & /deep/ > * {
-          pointer-events: auto;
-        }
+      & /deep/ > * {
+        pointer-events: auto;
       }
     }
 
@@ -84,6 +82,73 @@
 
     .material-icons {
       font-size: map_get($base-font-size, 'default');
+    }
+
+    &.block {
+      flex-direction: column;
+
+      emoji {
+        height: $expedition-item-block-emoji-size;
+        width: $expedition-item-block-emoji-size;
+      }
+
+      .description {
+        margin-top: map_get($base-padding, 'default');
+
+        h2 {
+          text-align: center;
+        }
+
+        span {
+          text-align: center;
+        }
+      }
+
+      footer {
+        margin-top: map_get($base-padding, 'default');
+        width: 100%;
+
+        ul {
+          width: 50%;
+
+          &:first-of-type {
+            li {
+              justify-content: flex-start;
+            }
+          }
+        }
+      }
+    }
+
+    &.list {
+      emoji {
+        height: $expedition-item-list-emoji-size;
+        width: $expedition-item-list-emoji-size;
+      }
+
+      .description {
+        margin-left: map_get($base-padding, 'smaller');
+        margin-right: map_get($base-padding, 'smaller');
+
+        h2 {
+          margin-bottom: map_get($base-padding, 'smallest');
+        }
+      }
+
+      footer {
+        margin-left: auto;
+
+        @include breakpoint(null, 'small') {
+          flex-direction: column;
+          align-items: flex-end;
+        }
+
+        ul {
+          &:first-of-type {
+            display: none;
+          }
+        }
+      }
     }
   }
 }

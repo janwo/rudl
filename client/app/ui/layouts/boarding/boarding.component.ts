@@ -30,7 +30,7 @@ export class BoardingComponent implements OnInit, OnDestroy {
 	constructor(private userService: UserService,
 	            private router: Router,
 	            title: Title) {
-		title.setTitle('rudl.me - Boarding in Progress');
+		title.setTitle('rudl.me - Boarding'); //rudl.me - Boarding
 	}
 	
 	carouselIndex: number = 0;

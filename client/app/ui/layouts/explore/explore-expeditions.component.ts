@@ -4,6 +4,7 @@ import {RudelService} from '../../../services/rudel.service';
 import {Subscription} from 'rxjs/Subscription';
 import {ExpeditionService} from '../../../services/expedition.service';
 import {Expedition} from '../../../models/expedition';
+import {ExpeditionItemStyles} from '../../widgets/expedition/expedition-item.component';
 
 @Component({
 	templateUrl: 'explore-expeditions.component.html',
@@ -17,6 +18,8 @@ export class ExploreExpeditionsComponent implements OnInit, OnDestroy {
 	recentExpeditions: Expedition[];
 	popularExpeditionsSubscription: Subscription;
 	popularExpeditions: Expedition[];
+	rudelItemButtonStyle2: ExpeditionItemStyles = ExpeditionItemStyles.list;
+	rudelItemButtonStyle: ExpeditionItemStyles = ExpeditionItemStyles.block;
 	
 	constructor(private expeditionService: ExpeditionService) {}
 	

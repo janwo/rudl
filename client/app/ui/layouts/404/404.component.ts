@@ -12,7 +12,7 @@ export class NotFoundComponent implements OnInit {
 	
 	constructor(private route: ActivatedRoute,
 	            title: Title) {
-		title.setTitle('rudl.me - Page not found');
+		title.setTitle('rudl.me - Seite nicht gefunden'); //rudl.me - Page not found
 	}
 	
 	ngOnInit() {

@@ -14,6 +14,7 @@ export class ExpeditionItemComponent implements OnInit {
 	formattedDate: string;
 	formattedLocation: string;
 	formattedAwaitingApproval: string;
+	@Input() style: ExpeditionItemStyles = ExpeditionItemStyles.list;
 	
 	constructor(private userService: UserService) {}
 	
@@ -40,4 +41,20 @@ export class ExpeditionItemComponent implements OnInit {
 				break;
 		}
 	}
+	
+	
+	getStyleClass(): string {
+		switch (this.style) {
+			case ExpeditionItemStyles.block:
+				return 'card block';
+			
+			case ExpeditionItemStyles.list:
+				return 'card list';
+		}
+	}
+}
+
+export enum ExpeditionItemStyles {
+	list,
+	block
 }

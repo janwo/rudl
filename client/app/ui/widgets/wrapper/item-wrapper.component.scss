@@ -3,6 +3,7 @@
 
 $list-margin: map_get($base-padding, 'smaller');
 $list-horizontal-glimpse: map_get($base-padding, 'default');
+$list-horizontal-item-width: 12.5rem;
 
 :host {
   display: block;
@@ -28,8 +29,8 @@ $list-horizontal-glimpse: map_get($base-padding, 'default');
       overflow: scroll;
 
       & > /deep/ * {
+        width: $list-horizontal-item-width;
         margin-right: $list-margin;
-        width: calc(50% - #{$list-margin * 2}) !important;
 
         &:last-child {
           margin-right: 0;

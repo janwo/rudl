@@ -12,7 +12,13 @@
 <ng-container *ngIf="popularRudel && popularRudel.length > 0; else loadingPopularRudel">
     <h1>Beliebte Rudel</h1>
     <item-wrapper [horizontal]="true" [columns]="1">
-        <rudel-item [style]="rudelItemStyle" *ngFor="let popularRudelItem of popularRudel" [rudel]="popularRudelItem"></rudel-item>
+        <rudel-item [style]="rudelItemStyle" *ngFor="let popularRudelItem of popularRudel" [rudel]="popularRudelItem">
+            <styled-button [style]="rudelItemButtonStyle" [icon]="'more_vert'" (click)="popularRudelItemDropdown.toggle()"></styled-button>
+            <dropdown-menu #popularRudelItemDropdown [arrowAlignment]="'right'">
+                <menu-item [icon]="'check'" [title]="'Beitreten'"></menu-item>
+                <menu-item [icon]="'visibility_off'" [title]="'Verbergen'"></menu-item>
+            </dropdown-menu>
+        </rudel-item>
     </item-wrapper>
 </ng-container>
 

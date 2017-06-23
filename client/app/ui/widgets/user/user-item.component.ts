@@ -11,6 +11,7 @@ export class UserItemComponent implements OnInit {
 	@Input() user: User = null;
 	@Input() highlight: string = null;
 	@Input() info: string;
+	@Input() style: UserItemStyles = UserItemStyles.list;
 	
 	constructor() {}
 	
@@ -30,4 +31,15 @@ export class UserItemComponent implements OnInit {
 			this.info = choices[Math.trunc(choices.length * Math.random())];
 		}
 	}
+	
+	getStyleClass(): string {
+		switch (this.style) {
+			case UserItemStyles.list:
+				return 'card list';
+		}
+	}
+}
+
+export enum UserItemStyles {
+	list
 }

@@ -5,6 +5,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {ExpeditionService} from '../../../services/expedition.service';
 import {Expedition} from '../../../models/expedition';
 import {RudelItemStyles} from '../../widgets/rudel/rudel-item.component';
+import {ButtonStyles} from "../../widgets/control/styled-button.component";
 
 @Component({
 	templateUrl: 'explore-rudel.component.html',
@@ -19,6 +20,7 @@ export class ExploreRudelComponent implements OnInit, OnDestroy {
 	popularRudelSubscription: Subscription;
 	popularRudel: Rudel[];
 	rudelItemStyle: RudelItemStyles = RudelItemStyles.block;
+	rudelItemButtonStyle: ButtonStyles = ButtonStyles.filledInverse;
 	
 	constructor(private rudelService: RudelService) {}
 	

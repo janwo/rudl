@@ -1,4 +1,4 @@
-<div class="card" [routerLink]="['/people', user.username]">
+<div [routerLink]="['/people', user.username]" class="{{getStyleClass()}}">
     <user-avatar [user]="user"></user-avatar>
     <div class="meta">
         <span class="name"

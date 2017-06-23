@@ -1,10 +1,10 @@
-<div class="card" [routerLink]="['/expeditions', expedition.id]"
-        [ngClass]="{applicant: expedition.relations.isAttendee}">
+<div [routerLink]="['/expeditions', expedition.id]" class="{{getStyleClass()}}" [ngClass]="{applicant: expedition.relations.isAttendee}">
     <emoji [emoji]="expedition.links.icon"></emoji>
-    <h2>{{expedition.title}}</h2>
-    <p>{{expedition.description}}</p>
+    <div class="description">
+        <h2>{{expedition.title}}</h2>
+        <span>{{expedition.description}}</span>
+    </div>
     <footer>
-        <slots [users]="[expedition.owner]" [slots]="expedition.statistics.attendees"></slots>
         <ul>
             <li class="owner">
                 <span>{{expedition.owner.firstName + ' ' + expedition.owner.lastName}}</span>
@@ -24,8 +24,8 @@
                 <span>{{formattedDate}}</span>
             </li>
         </ul>
-        <div class="overflow" (click)="$event.stopPropagation()">
-            <ng-content></ng-content>
-        </div>
     </footer>
+    <aside class="overflow" (click)="$event.stopPropagation()">
+        <ng-content></ng-content>
+    </aside>
 </div>

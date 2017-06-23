@@ -1,6 +1,8 @@
 @import '../../variables.scss';
+@import '../../mixins.scss';
 
 $slot-avatar-size: 2rem;
+$slot-avatar-size-mobile: 1.5rem;
 
 :host {
   display: block;
@@ -16,25 +18,40 @@ $slot-avatar-size: 2rem;
 
       &:not(:first-child) {
         margin-left: - $slot-avatar-size / 2;
+
+        @include breakpoint(null, 'small') {
+          margin-left: - $slot-avatar-size-mobile / 2;
+        }
       }
 
       user-avatar {
         width: $slot-avatar-size;
         height: $slot-avatar-size;
+
+        @include breakpoint(null, 'small') {
+          width: $slot-avatar-size-mobile;
+          height: $slot-avatar-size-mobile;
+        }
       }
 
       .statistics {
         display: flex;
-        width: $slot-avatar-size;
-        height: $slot-avatar-size;
         justify-content: center;
         align-items: center;
         border: map_get($base-line-widths, 'default') map_get($base-colors, 'primary') solid;
         background-color: map_get($base-colors, 'background');
+        padding: map_get($base-padding, 'smallest');
+        height: $slot-avatar-size;
         border-radius: $slot-avatar-size / 2;
+
+        @include breakpoint(null, 'small') {
+          height: $slot-avatar-size-mobile;
+          border-radius: $slot-avatar-size-mobile / 2;
+        }
 
         span {
           flex: 0 0 auto;
+          font-size: map_get($base-font-size, 'small');
           color: map_get($base-colors, 'secondary-text');
         }
       }
