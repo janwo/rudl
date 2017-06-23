@@ -8,6 +8,7 @@
     display: flex;
     width: 100%;
     align-items: center;
+    position: relative;
 
     user-avatar {
       cursor: pointer;
@@ -44,7 +45,9 @@
     }
 
     .overflow {
-      position: relative;
+      position: absolute;
+      top: 0;
+      right: 0;
       pointer-events: none;
       display: flex;
       flex-direction: row;

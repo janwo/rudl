@@ -1,7 +1,13 @@
 <ng-container *ngIf="suggestedRudel && suggestedRudel.length > 0; else loadingSuggestedRudel">
     <h1>Empfohlende Rudel</h1>
-    <item-wrapper [horizontal]="true" [columns]="1">
-        <rudel-item [style]="rudelItemStyle" *ngFor="let suggestedRudelItem of suggestedRudel" [rudel]="suggestedRudelItem"></rudel-item>
+    <item-wrapper [horizontal]="true">
+        <rudel-item [style]="rudelItemStyle" *ngFor="let suggestedRudelItem of suggestedRudel" [rudel]="suggestedRudelItem">
+            <styled-button [style]="rudelItemButtonStyle" [icon]="'more_vert'" (click)="suggestedRudelItemDropdown.toggle()"></styled-button>
+            <dropdown-menu #suggestedRudelItemDropdown [arrowAlignment]="'right'">
+                <menu-item [icon]="'check'" [title]="'Beitreten'"></menu-item>
+                <menu-item [icon]="'visibility_off'" [title]="'Verbergen'"></menu-item>
+            </dropdown-menu>
+        </rudel-item>
     </item-wrapper>
 </ng-container>
 
@@ -11,7 +17,7 @@
 
 <ng-container *ngIf="popularRudel && popularRudel.length > 0; else loadingPopularRudel">
     <h1>Beliebte Rudel</h1>
-    <item-wrapper [horizontal]="true" [columns]="1">
+    <item-wrapper [horizontal]="true">
         <rudel-item [style]="rudelItemStyle" *ngFor="let popularRudelItem of popularRudel" [rudel]="popularRudelItem">
             <styled-button [style]="rudelItemButtonStyle" [icon]="'more_vert'" (click)="popularRudelItemDropdown.toggle()"></styled-button>
             <dropdown-menu #popularRudelItemDropdown [arrowAlignment]="'right'">
@@ -28,8 +34,14 @@
 
 <ng-container *ngIf="recentRudel && recentRudel.length > 0; else loadingRecentRudel">
     <h1>Neue Rudel</h1>
-    <item-wrapper [horizontal]="true" [columns]="1">
-        <rudel-item [style]="rudelItemStyle" *ngFor="let recentRudelItem of recentRudel" [rudel]="recentRudelItem"></rudel-item>
+    <item-wrapper [horizontal]="true">
+        <rudel-item [style]="rudelItemStyle" *ngFor="let recentRudelItem of recentRudel" [rudel]="recentRudelItem">
+            <styled-button [style]="rudelItemButtonStyle" [icon]="'more_vert'" (click)="recentRudelItemDropdown.toggle()"></styled-button>
+            <dropdown-menu #recentRudelItemDropdown [arrowAlignment]="'right'">
+                <menu-item [icon]="'check'" [title]="'Beitreten'"></menu-item>
+                <menu-item [icon]="'visibility_off'" [title]="'Verbergen'"></menu-item>
+            </dropdown-menu>
+        </rudel-item>
     </item-wrapper>
 </ng-container>
 

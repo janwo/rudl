@@ -1,6 +1,6 @@
 <ng-container *ngIf="suggestedExpeditions && suggestedExpeditions.length > 0; else loadingSuggestedExpeditions">
     <h1>Empfohlende Streifzüge</h1>
-    <item-wrapper [horizontal]="true" [columns]="1">
+    <item-wrapper [horizontal]="true">
         <expedition-item [style]="rudelItemButtonStyle" *ngFor="let suggestedExpeditionItem of suggestedExpeditions" [expedition]="suggestedExpeditionItem"></expedition-item>
     </item-wrapper>
 </ng-container>
@@ -11,8 +11,8 @@
 
 <ng-container *ngIf="popularExpeditions && popularExpeditions.length > 0; else loadingPopularExpeditions">
     <h1>Beliebte Streifzüge</h1>
-    <item-wrapper [horizontal]="true" [columns]="1">
-        <expedition-item [style]="rudelItemButtonStyle2" *ngFor="let popularExpeditionItem of popularExpeditions" [expedition]="popularExpeditionItem"></expedition-item>
+    <item-wrapper [horizontal]="true">
+        <expedition-item [style]="rudelItemButtonStyle" *ngFor="let popularExpeditionItem of popularExpeditions" [expedition]="popularExpeditionItem"></expedition-item>
     </item-wrapper>
 </ng-container>
 
@@ -22,7 +22,7 @@
 
 <ng-container *ngIf="recentExpeditions && recentExpeditions.length > 0; else loadingRecentExpeditions">
     <h1>Neue Streifzüge</h1>
-    <item-wrapper [horizontal]="true" [columns]="1">
+    <item-wrapper [horizontal]="true">
         <expedition-item [style]="rudelItemButtonStyle" *ngFor="let recentExpeditionItem of recentExpeditions" [expedition]="recentExpeditionItem"></expedition-item>
     </item-wrapper>
 </ng-container>

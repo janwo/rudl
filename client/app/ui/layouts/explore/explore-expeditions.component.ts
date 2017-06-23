@@ -18,7 +18,6 @@ export class ExploreExpeditionsComponent implements OnInit, OnDestroy {
 	recentExpeditions: Expedition[];
 	popularExpeditionsSubscription: Subscription;
 	popularExpeditions: Expedition[];
-	rudelItemButtonStyle2: ExpeditionItemStyles = ExpeditionItemStyles.list;
 	rudelItemButtonStyle: ExpeditionItemStyles = ExpeditionItemStyles.block;
 	
 	constructor(private expeditionService: ExpeditionService) {}
