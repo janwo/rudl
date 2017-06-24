@@ -15,7 +15,7 @@
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/widgets/rudel/rudel-item.component.ts</context>
-          <context context-type="linenumber">6</context>
+          <context context-type="linenumber">8</context>
         </context-group>
       </trans-unit>
       <trans-unit id="073a3f169b30a9c2028b9f4ea4ef0fe02e956fb6" datatype="html">
@@ -123,7 +123,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="boardingLocationPermissionDescription" datatype="html">
-        <source>In order to show you all relevant rudels and events near you, rudl needs to access your location.</source>
+        <source>In order to show you all relevant rudel and events near you, rudl needs to access your location.</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
@@ -188,6 +188,22 @@
           <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="170cf1faf122500e428d4fe4052c18e49294c6ce" datatype="html">
+        <source><x id="INTERPOLATION"/></source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/expedition/expedition-item.component.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3353a33022d16886356deeea164a4b507a12fdae" datatype="html">
+        <source>Du bist Teilnehmer</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/expedition/expedition-item.component.ts</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="536d85794ae0693762ecdec78fae0f92cc278207" datatype="html">
         <source>Rudl durchsuchen</source>
         <target/>
@@ -227,22 +243,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/widgets/control/form/datetime.component.ts</context>
           <context context-type="linenumber">34</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="170cf1faf122500e428d4fe4052c18e49294c6ce" datatype="html">
-        <source><x id="INTERPOLATION"/></source>
-        <target/>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/widgets/expedition/expedition-item.component.ts</context>
-          <context context-type="linenumber">13</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3353a33022d16886356deeea164a4b507a12fdae" datatype="html">
-        <source>Du bist Teilnehmer</source>
-        <target/>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/widgets/expedition/expedition-item.component.ts</context>
-          <context context-type="linenumber">14</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7972c16edbffd2d23f66e0d5999b1d5dc94af4c3" datatype="html">

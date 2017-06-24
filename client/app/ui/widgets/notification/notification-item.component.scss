@@ -17,6 +17,7 @@ $notification-avatar-size: 2.5rem;
       margin-left: map_get($base-padding, 'smaller');
       display: flex;
       flex-direction: row;
+      flex: 1 1 auto;
 
       @include breakpoint(null, 'small') {
         flex-direction: column;
@@ -36,6 +37,7 @@ $notification-avatar-size: 2.5rem;
       .date {
         font-size: map_get($base-font-size, 'small');
         color: map_get($base-colors, 'secondary-text');
+        white-space: nowrap;
 
         @include breakpoint('small') {
           margin-left: auto;

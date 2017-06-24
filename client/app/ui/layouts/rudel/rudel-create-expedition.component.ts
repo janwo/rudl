@@ -58,6 +58,13 @@ export class RudelCreateExpeditionComponent implements OnInit {
 					]
 				]
 			}),
+			location: this.fb.group({
+				location: [
+					this.rudel.defaultLocation, [
+						Validators.required
+					]
+				]
+			}),
 			time: this.fb.group({
 				fuzzyTime: [
 					false, [
@@ -66,13 +73,6 @@ export class RudelCreateExpeditionComponent implements OnInit {
 				],
 				date: [
 					null, [
-						Validators.required
-					]
-				]
-			}),
-			location: this.fb.group({
-				location: [
-					this.rudel.defaultLocation, [
 						Validators.required
 					]
 				]

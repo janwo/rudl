@@ -10,6 +10,14 @@
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="rudelItemLikees" datatype="html">
+        <source>{VAR_PLURAL, plural, =1 {1 member} other {<x id="INTERPOLATION"/> members} }</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/rudel/rudel-item.component.ts</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="073a3f169b30a9c2028b9f4ea4ef0fe02e956fb6" datatype="html">
         <source>Rudel</source>
         <target/>
@@ -51,7 +59,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="2ndBoardingHeader" datatype="html">
-        <source>Entdecke Rudel</source>
+        <source>Explore rudel</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
@@ -59,7 +67,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="2ndBoardingDescription" datatype="html">
-        <source>Auf Rudl werden dir Interessen und Aktivitäten in Form von Rudel angezeigt. Du kannst Rudel beitreten und nicht vorhandene gründen.</source>
+        <source>On our platform new interests and activities are shown as a rudel (german: wolfpack). You can join or create a rudel.</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
@@ -67,7 +75,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3rdBoardingHeader" datatype="html">
-        <source>Erstelle Events</source>
+        <source>Create expeditions</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
@@ -75,7 +83,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="3rdBoardingDescription" datatype="html">
-        <source>In jedem Rudel kannst du Streifzüge erstellen oder beitreten. Die nächste Grillparty, Happening oder ein spontanes Event in deiner Nachbarschaft.</source>
+        <source>In every rudel you can join or plan an expedition, e.g. the next barbecue party, happening or any other spontaneous event in your neighborhood.</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
@@ -83,7 +91,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="4thBoardingHeader" datatype="html">
-        <source>Treffe Menschen</source>
+        <source>Get out</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
@@ -91,11 +99,35 @@
         </context-group>
       </trans-unit>
       <trans-unit id="4thBoardingDescription" datatype="html">
-        <source>Bald wird dir Rudl auch ähnliche Menschen mit deinen Interessen empfehlen können.</source>
+        <source>Meet people who are members of the same rudel and join an expedition. Get out and meet each other.</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
           <context context-type="linenumber">27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5thBoardingHeader" datatype="html">
+        <source>Grant permission</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="boardingLocationPermissionDenied" datatype="html">
+        <source>Seems like you denied the permission, please check your browser settings to enable location sharing!</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="boardingLocationPermissionDescription" datatype="html">
+        <source>In order to show you all relevant rudel and events near you, rudl needs to access your location.</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8779938b420da2d2faae8c3cc1d43b9794b373c0" datatype="html">
@@ -156,6 +188,22 @@
           <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="170cf1faf122500e428d4fe4052c18e49294c6ce" datatype="html">
+        <source><x id="INTERPOLATION"/></source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/expedition/expedition-item.component.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3353a33022d16886356deeea164a4b507a12fdae" datatype="html">
+        <source>Du bist Teilnehmer</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/expedition/expedition-item.component.ts</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="536d85794ae0693762ecdec78fae0f92cc278207" datatype="html">
         <source>Rudl durchsuchen</source>
         <target/>
@@ -195,22 +243,6 @@
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/widgets/control/form/datetime.component.ts</context>
           <context context-type="linenumber">34</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="170cf1faf122500e428d4fe4052c18e49294c6ce" datatype="html">
-        <source><x id="INTERPOLATION"/></source>
-        <target/>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/widgets/expedition/expedition-item.component.ts</context>
-          <context context-type="linenumber">13</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3353a33022d16886356deeea164a4b507a12fdae" datatype="html">
-        <source>Du bist Teilnehmer</source>
-        <target/>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/widgets/expedition/expedition-item.component.ts</context>
-          <context context-type="linenumber">14</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7972c16edbffd2d23f66e0d5999b1d5dc94af4c3" datatype="html">

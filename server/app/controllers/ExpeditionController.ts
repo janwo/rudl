@@ -566,7 +566,7 @@ export module ExpeditionController {
 	}
 	
 	export function recent(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WHERE e.createdAt > $now WITH e ORDER BY e.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(e) as e`, {
+		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH e WHERE e.createdAt > $now WITH e ORDER BY e.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(e) as e`, {
 			location: {
 				latitude: user.location.lat,
 				longitude: user.location.lng

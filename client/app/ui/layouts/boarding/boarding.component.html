@@ -32,7 +32,7 @@
             <div class="image"></div>
             <h1 i18n="@@5thBoardingHeader">Grant permission</h1>
             <span *ngIf="permissionStatus == 'denied'" i18n="@@boardingLocationPermissionDenied">Seems like you denied the permission, please check your browser settings to enable location sharing!</span>
-            <span *ngIf="permissionStatus != 'denied'" i18n="@@boardingLocationPermissionDescription">In order to show you all relevant rudels and events near you, rudl needs to access your location.</span>
+            <span *ngIf="permissionStatus != 'denied'" i18n="@@boardingLocationPermissionDescription">In order to show you all relevant rudel and events near you, rudl needs to access your location.</span>
             <styled-button *ngIf="permissionStatus != 'denied'" [style]="ButtonStyles.filled"
                     [text]="permissionStatus == 'granted' ? 'Thank you!' : (permissionStatus == 'granting' ? 'Please wait...' : 'Grant Permission')"
                     [disabled]="permissionStatus != 'ungranted'" (click)="grantPermission()"></styled-button>
