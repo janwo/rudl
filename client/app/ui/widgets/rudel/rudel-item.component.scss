@@ -24,6 +24,10 @@ $rudel-item-list-user-avatar-size-mobile: 1.5rem;
     }
 
     .description {
+      width: 100%;
+      flex: 1 1 auto;
+      min-width: 0;
+
       h2 {
         /deep/ .highlight {
           color: map_get($base-colors, 'primary');
