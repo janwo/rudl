@@ -10,7 +10,7 @@
                 <menu-item [makeRoomIfSmall]="true" [icon]="'grain'" [title]="'Entdecken'"
                         [link]="['/explore']"></menu-item>
                 <menu-item [makeRoomIfSmall]="true" [icon]="'notifications_none'" [title]="'Meldungen'"
-                        [link]="['/notifications']"></menu-item>
+                        [link]="['/notifications']" [notification]="userStatus.user.unreadNotifications > 0"></menu-item>
                 <menu-item class="search-menu-item" [icon]="'search'" [title]="'Suche'"
                         [link]="['/search']"></menu-item>
             </menu>

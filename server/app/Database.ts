@@ -187,6 +187,14 @@ export class DatabaseManager {
 			indices: [
 				'createdAt'
 			]
+		},
+		settings: {
+			name: 'Settings',
+			isRelationship: false
+		},
+		userSettings: {
+			name: 'USER_SETTINGS',
+			isRelationship: true
 		}
 	};
 	
@@ -196,9 +204,9 @@ export class DatabaseManager {
 				if (record instanceof Array) return record.map((record => DatabaseManager.neo4jFunctions.unflatten(record, returnVariable)));
 				let $return = record.get(returnVariable) as any;
 				if (typeof $return == 'object') {
+					// Convert integers already.
 					for (let v in $return) {
 						if (!$return.hasOwnProperty(v)) continue;
-						
 						if (typeof $return[v] == 'object') {
 							// Convert integers already.
 							if ($return[v] instanceof Integer) {

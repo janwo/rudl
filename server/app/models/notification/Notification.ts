@@ -5,6 +5,7 @@ export interface Notification {
 	type: NotificationType;
 	sender: User;
 	subject: Node,
+	unread: boolean;
 	createdAt: number
 }
 

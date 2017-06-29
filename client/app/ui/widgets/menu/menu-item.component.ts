@@ -38,6 +38,7 @@ export class MenuItemComponent implements OnInit, OnDestroy, AfterViewChecked {
 	@Input() icon: string;
 	@Input() title: string;
 	@Input() link: string[];
+	@Input() notification: boolean;
 	routerChanges: Subscription;
 	checkRoom = (mql: MediaQueryList): void => {
 		this.makeRoom = !mql.matches;

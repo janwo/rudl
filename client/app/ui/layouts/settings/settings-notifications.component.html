@@ -1,0 +1,7 @@
+<form [formGroup]="form">
+    <form-control-wrapper>
+        <checkbox formControlName="emailNotifications" [text]="'Email-Benachrichtigungen'"></checkbox>
+    </form-control-wrapper>
+    <styled-button [style]="settingsSubmitButtonStyle" [text]="'Änderungen übernehmen'" (click)="submit()" [disabled]="pendingSettingsUpdate"></styled-button>
+</form>
+

@@ -6,6 +6,7 @@ import {User} from '../models/user/User';
 import {DatabaseManager, TransactionSession} from '../Database';
 import {AccountController} from './AccountController';
 import {UtilController} from './UtilController';
+import {UserStatistics} from '../../../client/app/models/user';
 
 export module UserController {
 	
@@ -88,18 +89,12 @@ export module UserController {
 	export function getPublicUser(transaction: Transaction, user: User | User[], relatedUser: User, preview = false): Promise<any | any[]> {
 		let createPublicUser = (user: User) => {
 			// Gather user information.
-			let promise = ((): Promise<UserStatistics[]> => {
-				if(!preview) {
-					let userStatistics = UserController.getStatistics(transaction, user, relatedUser);
-					return Promise.all([
-						userStatistics
-					]);
-				}
-				return Promise.resolve([]);
-			})();
+			let promises: Promise<UserStatistics | number>[] = [];
+			if(!preview) promises.push(UserController.getStatistics(transaction, user, relatedUser));
+			if (user.id == relatedUser.id) promises.push(AccountController.NotificationController.countUnread(transaction, user));
 			
 			// Modify user information.
-			return promise.then(values => {
+			return Promise.all(promises).then((values: [UserStatistics, number]) => {
 				// Add default links.
 				let links: any = {
 					likers: `${Config.backend.domain}/api/users/${user.username}/likers`,
@@ -156,11 +151,20 @@ export module UserController {
 				}
 				
 				// Emit private information.
-				if (user.id == relatedUser.id) transformationRecipe = Object.assign(transformationRecipe, {
-					'user.location': 'location',
-					'user.onBoard': 'onBoard',
-					'user.languages': 'languages',
-				});
+				if (user.id == relatedUser.id) {
+					// Extend transformation recipe.
+					transformationRecipe = Object.assign(transformationRecipe, {
+						'user.location': 'location',
+						'user.onBoard': 'onBoard',
+						'user.languages': 'languages',
+						'unreadNotifications': 'unreadNotifications',
+					});
+					
+					// Extend transformation object.
+					transformationObject = Object.assign(transformationObject, {
+						unreadNotifications: values[1]
+					});
+				}
 				
 				return dot.transform(transformationRecipe, transformationObject) as any;
 			});

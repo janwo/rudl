@@ -2,7 +2,7 @@ import {DataService, JsonResponse} from './data.service';
 import {Router} from '@angular/router';
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
-import {AuthenticatedUser, User, UserRecipe} from '../models/user';
+import {AuthenticatedUser, User, UserRecipe, UserSettings, UserSettingsRecipe} from '../models/user';
 import {Location} from '../models/location';
 import {Notification} from '../models/notification';
 
@@ -41,18 +41,17 @@ export class UserService {
 				console.log(`authenticatedProfile was set to: username = ${authenticatedUser.user.username}, language = ${authenticatedUser.user.languages ? authenticatedUser.user.languages[0] : 'none'}.`);
 				
 				// Request position updates immediately if user is boarded.
-				if (authenticatedUser.user.onBoard && this.watchPositionCallerId === false) {
-					console.log('Resume position updates...');
-					this.resumePositionUpdates();
-				}
-			} else
+				if (authenticatedUser.user.onBoard) this.resumePositionUpdates();
+			} else {
 				console.log(`authenticatedProfile got removed.`);
+				this.pausePositionUpdates();
+			}
 		});
 		
 		// Listen on token expeditions in data service and redirect it to the authenticatedProfile observer.
-		this.dataService.getTokenObservable().flatMap((tokenString: string) => {
-			return tokenString ? this.get() : Observable.of(null);
-		}).subscribe((user: AuthenticatedUser) => {
+		this.dataService.getTokenObservable().switchMap((tokenString: string) => {
+			return tokenString ? this.get().repeatWhen(notifications => notifications.delay(300000)) : Observable.of(null);
+		}).distinctUntilChanged((user: AuthenticatedUser) => !!user).subscribe((user: AuthenticatedUser) => {
 			this.authenticatedProfile.next({
 				loggedIn: !!user,
 				user: user
@@ -84,7 +83,8 @@ export class UserService {
 	}
 	
 	resumePositionUpdates(): void {
-		this.pausePositionUpdates();
+		if(this.watchPositionCallerId !== false) return;
+		console.log('Resume position updates...');
 		this.watchPositionCallerId = navigator.geolocation.watchPosition((position: Position) => {
 			this.currentLocation.next(position);
 		}, (error: PositionError) => {
@@ -98,6 +98,7 @@ export class UserService {
 	
 	pausePositionUpdates(): void {
 		if (this.watchPositionCallerId !== false) {
+			console.log('Pause position updates...');
 			navigator.geolocation.clearWatch(this.watchPositionCallerId);
 			this.watchPositionCallerId = false;
 		}
@@ -165,6 +166,16 @@ export class UserService {
 		})).share();
 	}
 	
+	settings(): Observable<UserSettings> {
+		return this.dataService.get(`/api/account/settings`, true).map((json: JsonResponse) => json.data).share();
+	}
+	
+	updateSettings(recipe: UserSettingsRecipe): Observable<UserSettings> {
+		return this.dataService.post(`/api/account/settings`, `${JSON.stringify({
+			settings: recipe
+		})}`, true).map((json: JsonResponse) => json.data).share();
+	}
+	
 	suggested(offset = 0, limit = 25): Observable<User[]> {
 		return this.dataService.get(`/api/users/suggested?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
 	}
@@ -185,6 +196,8 @@ export class UserService {
 	}
 	
 	notifications(offset = 0, limit = 25): Observable<Notification[]> {
-		return this.dataService.get(`/api/account/notifications?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
+		return this.dataService.get(`/api/account/notifications?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).do(() => {
+			this.getAuthenticatedUser().user.unreadNotifications = 0;
+		}).share();
 	}
 }

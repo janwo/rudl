@@ -105,6 +105,7 @@ import {LegalTermsComponent} from './ui/layouts/legal/legal-terms.component';
 import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component';
 import {ExploreRudelComponent} from './ui/layouts/explore/explore-rudel.component';
 import {ExploreExpeditionsComponent} from './ui/layouts/explore/explore-expeditions.component';
+import {SettingsNotificationsComponent} from './ui/layouts/settings/settings-notifications.component';
 
 @NgModule({
 	declarations: [
@@ -146,6 +147,7 @@ import {ExploreExpeditionsComponent} from './ui/layouts/explore/explore-expediti
 		RudelExpeditionsComponent,
 		RudelLikersComponent,
 		RudelAddToListComponent,
+		SettingsNotificationsComponent,
 		LegalAboutComponent,
 		LegalTermsComponent,
 		LegalPrivacyComponent,

@@ -5,7 +5,7 @@ import * as Path from 'path';
 export class DecoratorsBinder {
 	
 	public static bind(server: Server): void {
-		let decorators: any[] = [];
+		let decorators: DecoratorsConfiguration = [];
 		Glob.sync(Path.resolve(__dirname, `../decorators/**/*.ts`)).forEach(file => {
 			decorators = decorators.concat(require(file).DecoratorsConfig);
 		});
@@ -17,7 +17,7 @@ export class DecoratorsBinder {
 }
 
 export interface DecoratorsConfiguration extends Array<{
-	type: string;
+	type: 'request' | 'reply' | 'server';
 	property: string;
 	method: Function;
 }> {

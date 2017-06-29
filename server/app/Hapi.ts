@@ -10,6 +10,8 @@ import * as Path from 'path';
 import {Server} from 'hapi';
 import 'vision';
 import {MailManager} from './Mail';
+import {Schedule} from './Schedule';
+import {AccountController} from './controllers/AccountController';
 
 export function hapiServer(): Promise<Server> {
 	// Create dirs.
@@ -110,16 +112,23 @@ export function hapiServer(): Promise<Server> {
 			engines: {
 				handlebars: require('handlebars')
 			},
-			path: Path.resolve(__dirname, './templates/views')
+			path: Path.resolve(__dirname, './templates')
 		});
 		
 		// Close database on exit.
 		server.on('stop', () => DatabaseManager.disconnect());
 		
 		// Connect to database + create collections.
-		return DatabaseManager.connect().then(() => DatabaseManager.createNeo4jData());
-	}).then(() => server.start()).then(() => {
-		console.log(`Server is running...`);
-		return server;
+		return DatabaseManager.connect().then(() => {
+			return DatabaseManager.createNeo4jData();
+		});
+	}).then(() => {
+		console.log(`Setting up schedules...`);
+		Schedule.start();
+		
+		return server.start().then(() => {
+			console.log(`Server is running...`);
+			return server;
+		});
 	});
 }

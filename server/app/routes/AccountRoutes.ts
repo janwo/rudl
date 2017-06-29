@@ -1,4 +1,4 @@
-import {UserRoles, UserValidation} from '../models/user/User';
+import {UserRoles, UserSettingsValidation, UserValidation} from '../models/user/User';
 import {RoutesConfiguration} from '../binders/RoutesBinder';
 import {Config} from '../../../run/config';
 import {AccountController} from '../controllers/AccountController';
@@ -77,6 +77,35 @@ export const RoutesConfig: RoutesConfiguration = {
 						lat: Joi.number().min(-90).max(90),
 						lng: Joi.number().min(-180).max(180)
 					}
+				}
+			}
+		},
+		{
+			path: '/api/account/settings',
+			method: 'POST',
+			handler: AccountController.RouteHandlers.updateSettings,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					payload: {
+						settings: UserSettingsValidation
+					}
+				}
+			}
+		},
+		{
+			path: '/api/account/settings',
+			method: 'GET',
+			handler: AccountController.RouteHandlers.settings,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
 				}
 			}
 		},

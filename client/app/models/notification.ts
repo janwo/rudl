@@ -8,5 +8,6 @@ import {ExpeditionPreview} from './expedition';
 export interface Notification extends Document {
 	type: NotificationType;
 	sender: UserPreview;
+	unread: boolean;
 	subject: UserPreview | RudelPreview | ListPreview | ExpeditionPreview
 }

@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {UserService, UserStatus} from '../../../services/user.service';
 import {Form, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {User} from "../../../models/user";
+import {AuthenticatedUser, User} from "../../../models/user";
 import {ButtonStyles} from '../../widgets/control/styled-button.component';
 import {Subscription} from 'rxjs/Subscription';
 
@@ -52,23 +52,28 @@ export class SettingsProfileComponent implements OnInit, OnDestroy {
 	
 	ngOnInit() {
 		this.authenticatedUserSubscription = this.userService.getAuthenticatedUserObservable().subscribe((userStatus: UserStatus) => {
-			this.user = userStatus.user;
+			this.form.setValue({
+				firstName: userStatus.user.firstName,
+				lastName: userStatus.user.lastName,
+				profileText: userStatus.user.profileText
+			});
 		});
+		
 		this.form = this.fb.group({
 			firstName: [
-				this.user.firstName, [
+				null, [
 					Validators.required,
 					Validators.maxLength(24)
 				]
 			],
 			lastName: [
-				this.user.lastName, [
+				null, [
 					Validators.required,
 					Validators.maxLength(24)
 				]
 			],
 			profileText: [
-				this.user.profileText, [
+				null, [
 					Validators.maxLength(60)
 				]
 			]
@@ -87,8 +92,13 @@ export class SettingsProfileComponent implements OnInit, OnDestroy {
 		this.pendingProfileUpdate = true;
 		
 		// Fire and remove pending state when done.
-		this.userService.update(this.form.value).subscribe(() => {
+		this.userService.update(this.form.value).subscribe((user: AuthenticatedUser) => {
 			this.pendingProfileUpdate = false;
+			this.form.setValue({
+				firstName: user.firstName,
+				lastName: user.lastName,
+				profileText: user.profileText
+			});
 		}, error => {
 			this.pendingProfileUpdate = false;
 			alert(error.message);

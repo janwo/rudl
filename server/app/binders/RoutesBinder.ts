@@ -7,7 +7,7 @@ import {Config} from '../../../run/config';
 export class RoutesBinder {
 	
 	public static bind(server: Server): void {
-		let routes: any[] = [];
+		let routes: RouteConfiguration[] = [];
 		Glob.sync(Path.resolve(__dirname, `../routes/**/*.ts`)).forEach(file => {
 			let config = require(file).RoutesConfig;
 			if(!_.includes(Config.backend.excludeRoutes, config.name)) {

@@ -135,15 +135,12 @@ export const Config: {
 				callbackURL: string
 			}
 		},
-		mail: {
-			host: string,
-			port: number,
-			secure: boolean,
-			requireTLS: boolean,
-			auth: {
-				user: string,
-				pass: string
-			}
+		ses: {
+			accessKeyId: string,
+			secretAccessKey: string,
+			from: string,
+			rateLimit?: number,
+			region?: string
 		}
 	}
 } = (() => {

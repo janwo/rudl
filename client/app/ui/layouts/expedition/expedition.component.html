@@ -20,7 +20,8 @@
                         [style]="expedition.getValue().relations.isAttendee || expedition.getValue().relations.isApplicant ? buttonStyleActivated : buttonStyleDefault"
                         [disabled]="pendingAttendanceRequest" (click)="onToggleAttendance(true)"
                         [text]="attendanceStatus"></styled-button>
-                <styled-button [icon]="'edit'" *ngIf="expedition.getValue().relations.isOwned"></styled-button>
+                <!--TODO Add edit button
+                <styled-button [icon]="'edit'" *ngIf="expedition.getValue().relations.isOwned"></styled-button>-->
             </div>
         </div>
     </header>

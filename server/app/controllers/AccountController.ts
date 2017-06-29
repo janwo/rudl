@@ -1,7 +1,7 @@
 import * as Boom from 'boom';
 import * as Path from 'path';
 import {Config} from '../../../run/config';
-import {User, UserRoles} from '../models/user/User';
+import {User, UserRoles, UserSettings} from '../models/user/User';
 import {Node} from '../models/Node';
 import {Notification, NotificationType} from '../models/notification/Notification';
 import {DatabaseManager, TransactionSession} from '../Database';
@@ -17,6 +17,8 @@ import {ExpeditionController} from './ExpeditionController';
 import {RudelController} from './RudelController';
 import {Rudel} from '../models/rudel/Rudel';
 import {UtilController} from './UtilController';
+import Integer from 'neo4j-driver/lib/v1/integer';
+import {MailManager} from '../Mail';
 
 export module AccountController {
 	
@@ -69,7 +71,11 @@ export module AccountController {
 				},
 				password: AuthController.hashPassword(recipe.password)
 			};
-			return this.save(transaction, user).then(() => user);
+			return this.save(transaction, user).then(() => {
+				return UserSettingsController.update(transaction, user, {
+					emailNotifications: true
+				});
+			}).then(() => user);
 		});
 	}
 	
@@ -138,15 +144,48 @@ export module AccountController {
 		});
 	}
 	
-	
+	export namespace UserSettingsController {
+		export function update(transaction: Transaction, user: User, settings: UserSettings): Promise<UserSettings> {
+			return transaction.run("MATCH (u:User { id: $userId }) MERGE (u)-[:USER_SETTINGS]->(s:Settings) ON CREATE SET s = $flattenSettings ON MATCH SET s = apoc.map.merge(s, $flattenSettings) RETURN properties(s) as s", {
+				userId: user.id,
+				flattenSettings: DatabaseManager.neo4jFunctions.flatten(settings)
+			}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 's').pop());
+		}
+		
+		export function get(transaction: Transaction, user: User): Promise<UserSettings> {
+			return transaction.run("MATCH (:User { id: $userId })-[:USER_SETTINGS]->(s:Settings) RETURN properties(s) as s", {
+				userId: user.id
+			}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 's').pop());
+		}
+		
+		export function getPublicUserSettings(transaction: Transaction, settings: UserSettings): Promise<any | any[]> {
+			return Promise.resolve(dot.transform({
+				'settings.emailNotifications': 'emailNotifications'
+			}, {
+				settings: settings
+			}));
+		}
+	}
 	
 	export namespace NotificationController {
 		export function get(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Notification[]> {
-			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n ORDER BY n.createdAt SKIP $skip LIMIT $limit MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User), (n)-[:NOTIFICATION_SUBJECT]->(subject) WITH apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)) as n RETURN COALESCE(n, []) as n`, {
+			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n, u ORDER BY n.createdAt SKIP $skip LIMIT $limit MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User), (n)-[:NOTIFICATION_SUBJECT]->(subject) WITH subject, sender, n, u OPTIONAL MATCH (n)<-[nur:NOTIFICATION_UNREAD]-(u) WITH apoc.map.setKey( apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)), 'unread', COUNT(nur) > 0) as n RETURN COALESCE(n, []) as n`, {
 				userId: user.id,
 				limit: limit,
 				skip: skip
 			}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'n'));
+		}
+		
+		export function markAsRead(transaction: Transaction, user: User): Promise<void> {
+			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[nur:NOTIFICATION_UNREAD]->(:Notification) DETACH DELETE nur`, {
+				userId: user.id
+			}).then(() => {});
+		}
+		
+		export function countUnread(transaction: Transaction, user: User): Promise<number> {
+			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[nur:NOTIFICATION_UNREAD]->(:Notification) RETURN COUNT(nur) as unread`, {
+				userId: user.id
+			}).then(results => Integer.toNumber(results.records.pop().get('unread') as any as Integer));
 		}
 		
 		export function remove(transaction: Transaction, subject: Node): Promise<void> {
@@ -198,6 +237,7 @@ export module AccountController {
 						'notification.type': 'type',
 						'sender': 'sender',
 						'subject': 'subject',
+						'notification.unread': 'unread',
 						'createdAt': 'createdAt'
 					}, {
 						notification: notification,
@@ -219,13 +259,13 @@ export module AccountController {
 		export function set(transaction: Transaction, type: NotificationType, recipient: User, subject: Node, sender: User): Promise<void> {
 			//TODO Label alles als NODE
 			let query = `MATCH(subject {id : $subjectId }), (recipient:User {id: $recipientId}), (sender:User {id: $senderId})
-				CREATE UNIQUE (sender)<-[:NOTIFICATION_SENDER]-(n:Notification {type: $type, createdAt: $now})-[:NOTIFICATION_SUBJECT]->(subject), (n)-[:NOTIFICATION_RECIPIENT]->(recipient)`;
+				CREATE UNIQUE (sender)<-[:NOTIFICATION_SENDER]-(n:Notification {type: $type, createdAt: $now})-[:NOTIFICATION_SUBJECT]->(subject), (n)<-[:NOTIFICATION_UNREAD]-(recipient), (n)-[:NOTIFICATION_RECIPIENT]->(recipient)`;
 			return transaction.run(query, {
 				type: type,
 				recipientId: recipient.id,
 				subjectId: subject.id,
 				senderId: sender.id,
-				now: new Date().getTime() / 1000
+				now: Math.trunc(new Date().getTime() / 1000)
 			}).then(() => {});
 		}
 	}
@@ -245,7 +285,9 @@ export module AccountController {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = AccountController.NotificationController.get(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((notifications: Notification[]) => {
-				return AccountController.NotificationController.getPublicNotification(transaction, notifications, request.auth.credentials);
+				return AccountController.NotificationController.markAsRead(transaction, request.auth.credentials).then(() => {
+					return AccountController.NotificationController.getPublicNotification(transaction, notifications, request.auth.credentials);
+				});
 			});
 			
 			reply.api(promise, transactionSession);
@@ -269,7 +311,7 @@ export module AccountController {
 			if (request.payload.profileText) request.auth.credentials.profileText = request.payload.profileText;
 			if (request.payload.firstName) request.auth.credentials.firstName = request.payload.firstName;
 			if (request.payload.lastName) request.auth.credentials.lastName = request.payload.lastName;
-			
+			//TODO boarding und location auch hierüber laufen lassen
 			let promise = AccountController.save(transaction, request.auth.credentials).then(() => {
 				return UserController.getPublicUser(transaction, request.auth.credentials, request.auth.credentials);
 			});
@@ -386,6 +428,41 @@ export module AccountController {
 			let transaction = transactionSession.beginTransaction();
 			let promise = AccountController.save(transaction, user).then(() => {
 				return UserController.getPublicUser(transaction, user, user);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [POST] /api/account/settings
+		 * @param request Request-Object
+		 * @param request.payload.settings settings
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function updateSettings(request: any, reply: any): void {
+			// Save user.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise = AccountController.UserSettingsController.update(transaction, request.auth.credentials, request.payload.settings).then((settings: UserSettings) => {
+				return AccountController.UserSettingsController.getPublicUserSettings(transaction, settings);
+			});
+			
+			reply.api(promise, transactionSession);
+		}
+		
+		/**
+		 * Handles [GET] /api/account/settings
+		 * @param request Request-Object
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function settings(request: any, reply: any): void {
+			// Save user.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise = AccountController.UserSettingsController.get(transaction, request.auth.credentials).then((settings: UserSettings) => {
+				return AccountController.UserSettingsController.getPublicUserSettings(transaction, settings);
 			});
 			
 			reply.api(promise, transactionSession);

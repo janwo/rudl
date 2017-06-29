@@ -43,6 +43,7 @@ import {LegalTermsComponent} from './ui/layouts/legal/legal-terms.component';
 import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component';
 import {ExploreExpeditionsComponent} from './ui/layouts/explore/explore-expeditions.component';
 import {ExploreRudelComponent} from './ui/layouts/explore/explore-rudel.component';
+import {SettingsNotificationsComponent} from './ui/layouts/settings/settings-notifications.component';
 
 const appRoutes: Routes = [
 	{
@@ -187,7 +188,8 @@ const appRoutes: Routes = [
 			
 			{path: 'settings', component: SettingsComponent, children: [
 				{path: '', redirectTo: 'profile', pathMatch: 'full'},
-				{path: 'profile', component: SettingsProfileComponent}
+				{path: 'profile', component: SettingsProfileComponent},
+				{path: 'notifications', component: SettingsNotificationsComponent}
 			]
 			},
 			{

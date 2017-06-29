@@ -221,15 +221,12 @@ export default {
 				callbackURL: '/oauth/google'
 			}
 		},
-		mail: {
-			host: 'alkaid.uberspace.de',
-			port: 587,
-			secure: false,
-			requireTLS: true,
-			auth: {
-				user: 'noreply@rudl.me',
-				pass: '*jh9ER_QD_"nbGNs'
-			}
+		ses: {
+			accessKeyId: process.env.AWS_ID,
+			secretAccessKey: process.env.AWS_SECRET,
+			from: 'noreply@rudl.me',
+			rateLimit: 14,
+			region: 'eu-west-1'
 		}
 	}
 };

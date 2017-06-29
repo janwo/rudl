@@ -1,5 +1,6 @@
 import * as Joi from 'joi';
 import {Node} from '../Node';
+import {Locale} from '../Translations';
 
 export class UserRoles {
 	static user = 'user';
@@ -28,7 +29,7 @@ export interface User extends Node {
 		lng: number,
 		lat: number,
 	};
-	languages: Array<string>;
+	languages: Locale[];
 	mails: {
 		primary: {
 			verified: boolean;
@@ -41,3 +42,13 @@ export interface User extends Node {
 	}
 	password: string;
 }
+
+export interface UserSettings {
+	emailNotifications?: boolean;
+	lastEmailNotification?: number;
+	welcomeMailSent?: boolean;
+}
+
+export const UserSettingsValidation = {
+	emailNotifications: Joi.boolean().optional()
+};
