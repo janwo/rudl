@@ -21,15 +21,15 @@ export class SettingsNotificationsComponent implements OnInit, OnDestroy {
 	            private fb: FormBuilder ) {}
 	
 	ngOnInit() {
-		this.settingsSubscription = this.userService.settings().subscribe((settings: UserSettings) => {
-			this.form.setValue(settings);
-		});
-		
 		this.form = this.fb.group({
 			emailNotifications: [
 				true, [
 				]
 			]
+		});
+		
+		this.settingsSubscription = this.userService.settings().subscribe((settings: UserSettings) => {
+			this.form.setValue(settings);
 		});
 	}
 	

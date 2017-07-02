@@ -51,14 +51,6 @@ export class SettingsProfileComponent implements OnInit, OnDestroy {
 	}
 	
 	ngOnInit() {
-		this.authenticatedUserSubscription = this.userService.getAuthenticatedUserObservable().subscribe((userStatus: UserStatus) => {
-			this.form.setValue({
-				firstName: userStatus.user.firstName,
-				lastName: userStatus.user.lastName,
-				profileText: userStatus.user.profileText
-			});
-		});
-		
 		this.form = this.fb.group({
 			firstName: [
 				null, [
@@ -77,6 +69,14 @@ export class SettingsProfileComponent implements OnInit, OnDestroy {
 					Validators.maxLength(60)
 				]
 			]
+		});
+		
+		this.authenticatedUserSubscription = this.userService.getAuthenticatedUserObservable().subscribe((userStatus: UserStatus) => {
+			this.form.setValue({
+				firstName: userStatus.user.firstName,
+				lastName: userStatus.user.lastName,
+				profileText: userStatus.user.profileText
+			});
 		});
 	}
 	

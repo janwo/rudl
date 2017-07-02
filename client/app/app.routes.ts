@@ -47,17 +47,9 @@ import {SettingsNotificationsComponent} from './ui/layouts/settings/settings-not
 
 const appRoutes: Routes = [
 	{
-		path: 'sign_up',
-		component: LandingComponent,
-		pathMatch: 'full'
-	},
-	{
 		path: 'sign-up',
 		component: LandingComponent,
-		pathMatch: 'full',
-		data: {
-			login: true
-		}
+		pathMatch: 'full'
 	},
 	{
 		path: 'legal',

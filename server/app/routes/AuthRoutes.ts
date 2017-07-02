@@ -2,7 +2,6 @@ import {Config} from '../../../run/config';
 import {RoutesConfiguration} from '../binders/RoutesBinder';
 import {UserRoles, UserValidation} from '../models/user/User';
 import {AuthController} from '../controllers/AuthController';
-import * as TwitterStrategy from '../strategies/TwitterStrategy';
 import * as FacebookStrategy from '../strategies/FacebookStrategy';
 import * as GoogleStrategy from '../strategies/GoogleStrategy';
 
@@ -49,16 +48,6 @@ export const RoutesConfig: RoutesConfiguration = {
 			config: {
 				auth: {
 					strategies: ['facebook']
-				}
-			}
-		},
-		{
-			path: Config.backend.providers.twitter.callbackURL,
-			method: ['GET', 'POST'],
-			handler: TwitterStrategy.handleTwitter,
-			config: {
-				auth: {
-					strategies: ['twitter']
 				}
 			}
 		},

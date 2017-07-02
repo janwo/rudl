@@ -1,7 +1,7 @@
 <div *ngIf="expedition.getValue()" class="card" [ngClass]="{applicant: expedition.getValue().relations.isAttendee}">
     <aside [routerLink]="['/rudel', expedition.getValue().rudel.id]">
         <emoji [emoji]="expedition.getValue().rudel.links.icon"></emoji>
-        <span i18n>Streifzug des Rudels "{{expedition.getValue().rudel.name}}"</span>
+        <span i18n="@@expeditionRudelInfo">Expedition of rudel "{{expedition.getValue().rudel.name}}"</span>
     </aside>
     <header>
         <div class="title">

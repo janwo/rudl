@@ -10,8 +10,8 @@
                 <span>{{expedition.owner.firstName + ' ' + expedition.owner.lastName}}</span>
             </li>
             <li class="approval-status">
-                <span *ngIf="!expedition.relations.isAttendee" i18n>{{formattedAwaitingApproval}}</span>
-                <span *ngIf="expedition.relations.isAttendee" i18n>Du bist Teilnehmer</span>
+                <span *ngIf="!expedition.relations.isAttendee">{{formattedAwaitingApproval}}</span>
+                <span *ngIf="expedition.relations.isAttendee" i18n="@@expeditionItemAttending">Attending</span>
             </li>
         </ul>
         <ul>

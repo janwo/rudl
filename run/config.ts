@@ -122,12 +122,6 @@ export const Config: {
 				clientSecret: string,
 				callbackURL: string
 			},
-			twitter: {
-				password: string,
-				clientID: string,
-				clientSecret: string,
-				callbackURL: string
-			},
 			google: {
 				password: string,
 				clientID: string,

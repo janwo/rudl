@@ -8,6 +8,7 @@ import * as faker from 'faker';
 import {TransactionSession} from '../Database';
 import {UserAuthProvider} from '../models/user/UserAuthProvider';
 import * as shortid from 'shortid';
+import {MailManager, WelcomeMailOptions} from '../Mail';
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -47,7 +48,10 @@ export function handleGoogle(request: any, reply: any): void {
 	let transaction = transactionSession.beginTransaction();
 	let promise = AuthController.authByProvider(provider).then((user: User) => {
 		// Create User?
-		return user ? user : AccountController.availableUsername(transaction, profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then((username: string) => {
+		return user ? {
+			mail: null,
+			user: user
+		} : AccountController.availableUsername(transaction, profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then((username: string) => {
 			return AccountController.create(transaction, {
 				id: shortid.generate(),
 				firstName: profile.name.given_name,
@@ -55,20 +59,36 @@ export function handleGoogle(request: any, reply: any): void {
 				username: username,
 				password: AuthController.hashPassword(faker.internet.password(10)),
 				mail: profile.email
+			}).then(user => {
+				return {
+					mail: {
+						to: user.mails.primary.mail,
+						name: user.firstName,
+						locale: user.languages.pop(),
+						provider: 'Google'
+					},
+					user: user
+				};
 			});
 		});
-	}).then((user: User) => Promise.all([
-		AuthController.addAuthProvider(transaction, user.username, provider),
-		AuthController.signToken(user)
+	}).then((result: {
+		mail: WelcomeMailOptions,
+		user: User
+	}) => Promise.all([
+		AuthController.addAuthProvider(transaction, result.user.username, provider),
+		AuthController.signToken(result.user),
+	    result.mail
 	]));
 	
-	transactionSession.finishTransaction(promise).then((values: [void, string]) => {
-		reply.view('message', {
-			title: 'Authentication',
-			domain: Config.backend.domain,
-			token: values[1],
-			type: Config.frontend.messageTypes.oauth
-		}).header("Authorization", values[1]);
+	transactionSession.finishTransaction(promise).then((values: [void, string, WelcomeMailOptions]) => {
+		return MailManager.sendWelcomeMail(values[2]).then(() => {
+			reply.view('message', {
+				title: 'Authentication',
+				domain: Config.backend.domain,
+				token: values[1],
+				type: Config.frontend.messageTypes.oauth
+			}).header("Authorization", values[1]);
+		});
 	}).catch((err: any) => {
 		reply(Boom.badRequest(err));
 	});

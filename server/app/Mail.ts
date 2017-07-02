@@ -62,6 +62,7 @@ export class MailManager {
 		
 		return (template.render({
 			name: options.name,
+			provider: options.provider,
 			notificationSettingsLink: 'https://rudl.me/settings/notifications',
 			address: [
 				'rudl // Jan Wolf',
@@ -107,6 +108,7 @@ export class MailManager {
 export interface WelcomeMailOptions {
 	to: string;
 	name: string;
+	provider: string;
 	locale: Locale;
 }
 

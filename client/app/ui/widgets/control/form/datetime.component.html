@@ -6,7 +6,7 @@
 
 <ul class="day" [@datetime]="state == 'day'" *ngIf="state == 'day'">
     <li class="header">
-        <span i18n>Datum</span>
+        <span i18n="@@dateTimeDate">Date</span>
     </li>
     <li *ngFor="let legend of legends.weekdays" class="legend">
         <span>{{legend}}</span>
@@ -20,7 +20,7 @@
 
 <ul class="hour" [@datetime]="state == 'hour'" *ngIf="state == 'hour'">
     <li class="header">
-        <span i18n>Uhrzeit (Stunde)</span>
+        <span i18n="@@dateTimeHour">Time (Hour)</span>
     </li>
     <li *ngFor="let hour of items.hours" [ngClass]="{selected: hour.selected, inactive: hour.inactive}">
         <div class="inner" (click)="hour.inactive || set(hour.value, 'hours') || nextState()">
@@ -31,7 +31,7 @@
 
 <ul class="minute" [@datetime]="state == 'minute'" *ngIf="state == 'minute'">
     <li class="header">
-        <span i18n>Uhrzeit (Minute)</span>
+        <span i18n="@@dateTimeMinute">Time (Minute)</span>
     </li>
     <li *ngFor="let minute of items.minutes" [ngClass]="{selected: minute.selected, inactive: minute.inactive}">
         <div class="inner" (click)="minute.inactive || set(minute.value, 'minutes') || nextState()">

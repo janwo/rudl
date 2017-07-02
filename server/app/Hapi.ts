@@ -110,7 +110,7 @@ export function hapiServer(): Promise<Server> {
 		// Register views.
 		server.views({
 			engines: {
-				handlebars: require('handlebars')
+				hbs: require('handlebars')
 			},
 			path: Path.resolve(__dirname, './templates')
 		});

@@ -46,7 +46,6 @@ export interface User extends Node {
 export interface UserSettings {
 	emailNotifications?: boolean;
 	lastEmailNotification?: number;
-	welcomeMailSent?: boolean;
 }
 
 export const UserSettingsValidation = {

@@ -2,8 +2,8 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template">
     <body>
-      <trans-unit id="3254af9acb61fe6a3c6577be47bbe5c382890ce1" datatype="html">
-        <source>Einstellungen</source>
+      <trans-unit id="settingsTitle" datatype="html">
+        <source>Settings</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/settings/settings.component.ts</context>
@@ -18,7 +18,7 @@
           <context context-type="linenumber">8</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="073a3f169b30a9c2028b9f4ea4ef0fe02e956fb6" datatype="html">
+      <trans-unit id="rudel" datatype="html">
         <source>Rudel</source>
         <target/>
         <context-group purpose="location">
@@ -26,16 +26,24 @@
           <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="16b8ee1865f8f2e319cbb09b70a812a3321cf619" datatype="html">
-        <source>Bilde ein neues Rudel</source>
+      <trans-unit id="searchNothingFound" datatype="html">
+        <source>Found nothing?</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/search/search.component.ts</context>
           <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="4ee30b9285d5bf3610118b8b01d1731e0c4fed05" datatype="html">
-        <source>People</source>
+      <trans-unit id="searchCreateRudel" datatype="html">
+        <source>Settle a rudel</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/search/search.component.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="user" datatype="html">
+        <source>User</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/search/search.component.ts</context>
@@ -130,33 +138,47 @@
           <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8779938b420da2d2faae8c3cc1d43b9794b373c0" datatype="html">
-        <source>Im Sommer geht&apos;s los!</source>
+      <trans-unit id="landingTitle" datatype="html">
+        <source>Be part of the community and connect now!</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/landing/landing.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="f62d08bdabf57ea986abb4b561a3f0225f712875" datatype="html">
-        <source>Zusammen mit der Community empfiehlt dir rudl neue Aktivitäten, ganz nach deinem Geschmack. Du
-            hinterlegst all jene Aktivitäten, von denen du träumst, schwärmst oder die du noch heute beginnst. Komm mit
-            ins Team, joine uns im Sommer hier auf rudl.me :)</source>
+      <trans-unit id="landingDescription" datatype="html">
+        <source>In conjunction with the growing community, rudl recommends you interesting activities that match your taste. You let us know of things you dream of or such activities you start today. Join the team, connect with us now! :)</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/landing/landing.component.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="e50aed3b68d3f2bcbb54413092ae714191be52ba" datatype="html">
-        <source>Streifzug des Rudels &quot;<x id="INTERPOLATION"/>&quot;</source>
+      <trans-unit id="landingBigTitle" datatype="html">
+        <source>I´ve visited a new city and already met great people. Check!</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/landing/landing.component.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landingBigDescription" datatype="html">
+        <source>At rudl you get in touch with new, like-minded people to organize your free time more transparent and efficiently.</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/landing/landing.component.ts</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="expeditionRudelInfo" datatype="html">
+        <source>Expedition of rudel &quot;<x id="INTERPOLATION"/>&quot;</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/expedition/expedition.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="f01274281b49b1c319ede7c42a9a2d36199b2817" datatype="html">
+      <trans-unit id="imageSizeError" datatype="html">
         <source>File is not an image or exceeds the maximal file size.</source>
         <target/>
         <context-group purpose="location">
@@ -164,56 +186,122 @@
           <context context-type="linenumber">22</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="4b604f1bb0160e6ac1cd499030aaaf3b8f046261" datatype="html">
-        <source>Verantwortlicher</source>
+      <trans-unit id="legalAbout" datatype="html">
+        <source>
+    <x id="START_HEADING_LEVEL1" ctype="x-h1"/>Verantwortlicher<x id="CLOSE_HEADING_LEVEL1" ctype="x-h1"/>
+    <x id="START_PARAGRAPH" ctype="x-p"/>rudl.me ist ein Service von<x id="CLOSE_PARAGRAPH" ctype="x-p"/>
+    <x id="START_PARAGRAPH" ctype="x-p"/>
+        <x id="START_TAG_SPAN" ctype="x-span"/>Angaben gemäß § 5 TMG<x id="CLOSE_TAG_SPAN" ctype="x-span"/>
+        <x id="START_TAG_SPAN" ctype="x-span"/>Jan Wolf<x id="CLOSE_TAG_SPAN" ctype="x-span"/>
+        <x id="START_TAG_SPAN" ctype="x-span"/>Kleine Helle 41<x id="CLOSE_TAG_SPAN" ctype="x-span"/>
+        <x id="START_TAG_SPAN" ctype="x-span"/>28195 Bremen<x id="CLOSE_TAG_SPAN" ctype="x-span"/>
+        <x id="START_TAG_SPAN" ctype="x-span"/>we@rudl.me<x id="CLOSE_TAG_SPAN" ctype="x-span"/>
+    <x id="CLOSE_PARAGRAPH" ctype="x-p"/>
+</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/legal/legal-about.component.ts</context>
-          <context context-type="linenumber">2</context>
+          <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="816ffabe6995460c3c6542e6fb63ae42c7693fe4" datatype="html">
-        <source>Nutzungsbedingungen</source>
+      <trans-unit id="legalTerms" datatype="html">
+        <source>
+    <x id="START_HEADING_LEVEL1" ctype="x-h1"/>Nutzungsbedingungen<x id="CLOSE_HEADING_LEVEL1" ctype="x-h1"/>
+    <x id="START_PARAGRAPH" ctype="x-p"/>
+        Die nachfolgenden Nutzungsbedingungen regeln die kostenlose Nutzung des Webdienstes &quot;rudl.me&quot; (nachfolgend &quot;Rudl&quot;) und registrierter Nutzer (nachfolgend &quot;Mitgliedschaft&quot;).
+    <x id="CLOSE_PARAGRAPH" ctype="x-p"/>
+    
+    <x id="START_HEADING_LEVEL2" ctype="x-h2"/>Mitgliedschaft<x id="CLOSE_HEADING_LEVEL2" ctype="x-h2"/>
+    <x id="START_UNORDERED_LIST" ctype="x-ul"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Die Mitgliedschaft kommt durch die Bestätigung deiner Mitgliedschaft zustande.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Die während der Anmeldung gemachten Angaben müssen wahrheitsgetreu angegebegen werden.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Du darfst keine doppelten Konten auf Rudl unterhalten.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Die Zugangsdaten musst du stets geheim halten. Wir werden dich niemals nach deinem Passwort fragen. Bei Missbrauch kontaktiere uns frühzeitig.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Die unbefristete Mitgliedschaft kann von dir und uns jederzeit gekündigt werden.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+    <x id="CLOSE_UNORDERED_LIST" ctype="x-ul"/>
+    
+    <x id="START_HEADING_LEVEL2" ctype="x-h2"/>Nutzung<x id="CLOSE_HEADING_LEVEL2" ctype="x-h2"/>
+    <x id="START_UNORDERED_LIST" ctype="x-ul"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Während der Nutzung von Rudl verpflichtest du dich, die geltenden gesetzlichen Vorschriften einzuhalten, einschließlich der Beachtung von Persönlichkeitsrechten von Nutzern und dem Urheberrecht von Fotos und anderen schutzwürdigen Inhalten.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Du bleibst der Inhaber deiner eigenen Inhalte auf Rudl. Sofern an deinen Inhalten ein Schutzrecht besteht, gewährst du Rudl mit deiner Nutzung ein nicht-exklusives, zeitlich-unbeschränktes, räumlich-unbeschränktes und, sofern erforderlich, übertragbares Recht, deinen Inhalt zum Betrieb von Rudl zu verwenden.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Eine gewerbliche Nutzung von Rudl ist untersagt.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Die Inhalte von Nutzern werden von Rudl nicht vorab geprüft und behalten es uns vor, Inhalte und Mitgliedschaften jederzeit zu sperren und zu löschen, insbesondere bei Kenntnissetzung des Rechtsverstoßes an Rudl.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+    <x id="CLOSE_UNORDERED_LIST" ctype="x-ul"/>
+    
+    <x id="START_HEADING_LEVEL2" ctype="x-h2"/>Sonstige Bestimmungen<x id="CLOSE_HEADING_LEVEL2" ctype="x-h2"/>
+    <x id="START_UNORDERED_LIST" ctype="x-ul"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Rudl kann jederzeit und ohne Vorankündigung dessen Datenschutzrichtlinien und Nutzungsbedingungen ändern. Eine Änderung wird mit der Veröffentlichung auf dieser Seite wirksam. Mitglieder werden zusätzlich über die vom Mitglied bekanntgegebene Email-Adresse informiert. Es gelten die jeweils beim Besuch der Websites gültigen Bedingungen.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Die Nutzung und der Betrieb von Rudl untersteht deutschem Recht.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Sollten einzelne Bestimmungen der Nutzungsbedingungen und Datenschutzrichtlinien unwirksam sein, so treten an deren Stelle Bestimmungen, die deren Zweck am nächsten sind. Bei einzelnen unwirksamen Bestimmungen bleibt der Rest wirksam.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+    <x id="CLOSE_UNORDERED_LIST" ctype="x-ul"/>
+</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/legal/legal-terms.component.ts</context>
-          <context context-type="linenumber">2</context>
+          <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3ecf19494d5eab73385144dd995087858338766d" datatype="html">
-        <source>Datenschutzbestimmungen</source>
+      <trans-unit id="legalPrivacy" datatype="html">
+        <source>
+    <x id="START_HEADING_LEVEL1" ctype="x-h1"/>Datenschutzbestimmungen<x id="CLOSE_HEADING_LEVEL1" ctype="x-h1"/>
+    <x id="START_PARAGRAPH" ctype="x-p"/>
+        Die nachfolgenden Datenschutzbestimmungen informieren über die Erhebung, Verarbeitung und Nutzung persönlicher Daten von registrierten Nutzern (nachfolgend &quot;Mitglieder&quot;) durch den Webdienst &quot;rudl.me&quot; (nachfolgend &quot;Rudl&quot;), die sich entschlossen haben, Rudl zu nutzen. Der Schutz deiner Daten ist uns sehr wichtig, bei etwaigen Fragen kontaktiere uns gerne über die am Seitenanfang angegebene Email-Adresse. Die Erhebung, Verarbeitung und Nutzung der Daten von Mitgliedern erfolgt selbstverständlich unter Beachtung der Vorschriften des einschlägigen deutschen und europäischen Datenschutzrechtes.
+    <x id="CLOSE_PARAGRAPH" ctype="x-p"/>
+    
+    <x id="START_HEADING_LEVEL2" ctype="x-h2"/>Verschlüsselte Übertragung und Datensicherheit<x id="CLOSE_HEADING_LEVEL2" ctype="x-h2"/>
+    <x id="START_UNORDERED_LIST" ctype="x-ul"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Jeglicher Datentransfer zwischen dir und Rudl erfolgt ausschließlich in verschlüsselter Form. Als Verschlüsselungstechnik nutzen wir den weitverbreiteten und annerkannten Secure Socket Layer (SSL) - Standard.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Es wurden entsprechende technische Vorkehrung getroffen, um deine Daten in einer sicheren Umgebung zu speichern.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Auf deinem Computer wird bei erfolgreicher Anmeldung im LocalStorage deines Browsers eine Zeichenkette hinterlegt, die das erneute Anmelden für den jeweiligen Browser unnötig macht. Stelle auf einem fremden Computer daher unbedingt sicher, dass du dich von Rudl abmeldest.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+    <x id="CLOSE_UNORDERED_LIST" ctype="x-ul"/>
+    
+    <x id="START_HEADING_LEVEL2" ctype="x-h2"/>Anmeldung über Facebook und Google<x id="CLOSE_HEADING_LEVEL2" ctype="x-h2"/>
+    <x id="START_UNORDERED_LIST" ctype="x-ul"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Die Anmeldung auf Rudl erfolgt freiwillig über dein Profil auf Google oder Facebook. Beide Firmen stellen einen Anmelde- und Authentifizierungsdienst zur Verfügung, der mit dem jeweiligen Profil des Dienstes verbunden ist. Dabei werden von beiden Firmen personenbezogene Daten erhoben und in den USA verarbeitet. Weitere Informationen erhälst du in der Datenschutzerklärung von <x id="START_LINK" ctype="x-a"/>Google<x id="CLOSE_LINK" ctype="x-a"/> und <x id="START_LINK_1" ctype="x-a"/>Facebook<x id="CLOSE_LINK" ctype="x-a"/>.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Wir nutzen die jeweils hinterlegte Email-Adresse und deinen Vor- und Nachnamen zur automatischen Generierung deines Profils auf Rudl. Diese Daten sind in deinem Google- oder Facebookprofil hinterlegt.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Solltest du bei der Anmeldung die Freigabe auf ein entsprechendes Google- oder Facebookprofil nicht autorisieren, werden keine persönlichen Daten an uns weitergeben. Eine automatische Generierung deines Profils auf Rudl ist damit für uns nicht möglich und eine Mitgliedschaft kommt nicht zustande.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+    <x id="CLOSE_UNORDERED_LIST" ctype="x-ul"/>
+    
+    <x id="START_HEADING_LEVEL2" ctype="x-h2"/>Sichtbarkeit deiner Daten<x id="CLOSE_HEADING_LEVEL2" ctype="x-h2"/>
+    <x id="START_UNORDERED_LIST" ctype="x-ul"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Nach der Anmeldung ist dein Vor- und Nachname für alle Mitglieder einsehbar.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Aus deinem Vor- und Nachnamen generieren wir deinen Benutzernamen. Der Benutzername ist für alle Mitglieder einsehbar.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Du kannst deinen Vor- und Nachnamen nach der Anmeldung über die Profileinstellungen jederzeit ändern, sollten diese Angaben nicht stimmen.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+    <x id="CLOSE_UNORDERED_LIST" ctype="x-ul"/>
+    
+    <x id="START_HEADING_LEVEL2" ctype="x-h2"/>Personenbezogene Datenverwendung<x id="CLOSE_HEADING_LEVEL2" ctype="x-h2"/>
+    <x id="START_PARAGRAPH" ctype="x-p"/>Wir verwenden die personenbezogenen Daten, die du uns aktiv mitteilst. Dies schließt alle etwaigen Eingaben innerhalb eines Rudels, Streifzugs, Kommentars, Eingaben in der Suche und einem Nutzerprofil ein. Die freigegebenen Profilinformationen deines Google- oder Facebookkontos werden ebenfalls miteinbezogen, siehe &quot;Anmeldung über Facebook und Google&quot;.<x id="CLOSE_PARAGRAPH" ctype="x-p"/>
+    
+    <x id="START_HEADING_LEVEL2" ctype="x-h2"/>Nicht personenbezogene Datenverwendung<x id="CLOSE_HEADING_LEVEL2" ctype="x-h2"/>
+    <x id="START_UNORDERED_LIST" ctype="x-ul"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Zur Verbesserung und Auswertung unserer Dienste nutzen wir die Nutzungsprofile unter Pseudonymnamen im Rahmen der gesetzlichen Bestimmungen.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Die pseudonymisierten Daten werden im Rahmen der vom verantwortlichen Seitebetreiber laufenden Masterarbeit an der Universität Bremen ausgewertet.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>Zu keiner Zeit werden nicht anonymisierte Daten an Dritte weitergegeben.<x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+    <x id="CLOSE_UNORDERED_LIST" ctype="x-ul"/>
+</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/legal/legal-privacy.component.ts</context>
-          <context context-type="linenumber">2</context>
+          <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="170cf1faf122500e428d4fe4052c18e49294c6ce" datatype="html">
-        <source><x id="INTERPOLATION"/></source>
-        <target/>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/widgets/expedition/expedition-item.component.ts</context>
-          <context context-type="linenumber">13</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3353a33022d16886356deeea164a4b507a12fdae" datatype="html">
-        <source>Du bist Teilnehmer</source>
+      <trans-unit id="expeditionItemAttending" datatype="html">
+        <source>Attending</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/widgets/expedition/expedition-item.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="536d85794ae0693762ecdec78fae0f92cc278207" datatype="html">
-        <source>Rudl durchsuchen</source>
+      <trans-unit id="searchBarPlaceholder" datatype="html">
+        <source>Search Rudl</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/widgets/search/search-bar.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <note priority="1" from="description">Rudl durchsuchen</note>
       </trans-unit>
-      <trans-unit id="744bb513038ef779df0aa9e50122db4a5cddb9e8" datatype="html">
+      <trans-unit id="logoTitle" datatype="html">
         <source>rudl</source>
         <target/>
         <context-group purpose="location">
@@ -221,31 +309,31 @@
           <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1470eabded471793a7ef2271e2a1dc30a1a3265f" datatype="html">
-        <source>Datum</source>
+      <trans-unit id="dateTimeDate" datatype="html">
+        <source>Date</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/widgets/control/form/datetime.component.ts</context>
           <context context-type="linenumber">9</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="051d2e768e3113af47747139eeca269c599286a2" datatype="html">
-        <source>Uhrzeit (Stunde)</source>
+      <trans-unit id="dateTimeHour" datatype="html">
+        <source>Time (Hour)</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/widgets/control/form/datetime.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="a41efb735da227da81772b9b1e49c56110f9a5f7" datatype="html">
-        <source>Uhrzeit (Minute)</source>
+      <trans-unit id="dateTimeMinute" datatype="html">
+        <source>Time (Minute)</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/widgets/control/form/datetime.component.ts</context>
           <context context-type="linenumber">34</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7972c16edbffd2d23f66e0d5999b1d5dc94af4c3" datatype="html">
+      <trans-unit id="footer" datatype="html">
         <source>Made with <x id="START_ITALIC_TEXT" ctype="x-i"/>local_pizza<x id="CLOSE_ITALIC_TEXT" ctype="x-i"/> in Bremen</source>
         <target/>
         <context-group purpose="location">
@@ -253,8 +341,8 @@
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="140d9a7d0795beace6491c45566f6dd295e94999" datatype="html">
-        <source>Impressum</source>
+      <trans-unit id="footerLink" datatype="html">
+        <source>Legal</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/widgets/footer/footer.component.ts</context>

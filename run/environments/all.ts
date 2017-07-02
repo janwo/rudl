@@ -208,12 +208,6 @@ export default {
 				clientSecret: process.env.FACEBOOK_SECRET,
 				callbackURL: '/oauth/facebook'
 			},
-			twitter: {
-				password: 'oqbK@by0%#uoqbfdfby0%#uoqbK@by0%#u',
-				clientID: process.env.TWITTER_ID || 'cVJWo8A0jf3WyG0ufbmDXVXwN',
-				clientSecret: process.env.TWITTER_SECRET || 'vTyr3SLCUJU2EIEa3h9ZADZLh2ZUkomsmk1liSnG8649qnyIgo',
-				callbackURL: '/oauth/twitter'
-			},
 			google: {
 				password: process.env.GOOGLE_PASSWORD,
 				clientID: process.env.GOOGLE_ID,

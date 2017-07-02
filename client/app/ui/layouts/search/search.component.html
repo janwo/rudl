@@ -1,13 +1,13 @@
 <loading *ngIf="searching"></loading>
 <section *ngIf="searchValue">
-    <h1 i18n>Rudel</h1>
+    <h1 i18n="@@rudel">Rudel</h1>
     <item-wrapper class="results">
         <li *ngFor="let rudel of rudel">
             <rudel-item [style]="rudelItemStyle" [highlight]="searchValue" [rudel]="rudel"></rudel-item>
         </li>
         <li class="card create" [ngClass]="{expanded: expandedRudel, collapsed: collapsedRudel}">
             <div class="title" (click)="rudelAnimationState = true">
-                <span *ngIf="collapsedRudel">Nichts gefunden?</span> <span i18n>Bilde ein neues Rudel</span> <span *ngIf="collapsedRudel" class="highlight">{{searchValue}}</span>
+                <span *ngIf="collapsedRudel" i18n="@@searchNothingFound">Found nothing?</span> <span i18n="@@searchCreateRudel">Settle a rudel</span> <span *ngIf="collapsedRudel" class="highlight">{{searchValue}}</span>
             </div>
             <create-rudel *ngIf="rudelAnimationState" [@container]="rudelAnimationState"
                     (@container.start)="$event.toState == 'void' ? onShrinkRudelStarted(): onExpandRudelStarted()"
@@ -34,7 +34,7 @@
     </item-wrapper>-->
 </section>
 <section *ngIf="users && users.length > 0">
-    <h1 i18n>People</h1>
+    <h1 i18n="@@user">User</h1>
     <item-wrapper class="results">
         <li *ngFor="let user of users">
             <user-item [highlight]="searchValue" [user]="user"></user-item>

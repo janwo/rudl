@@ -8,8 +8,6 @@ import {UserService, UserStatus} from '../../../services/user.service';
 })
 export class LandingComponent implements OnInit {
 	
-	showLogin: boolean;
-	
 	constructor(private route: ActivatedRoute,
 	            private router: Router,
 	            private userService: UserService) {}
@@ -19,7 +17,6 @@ export class LandingComponent implements OnInit {
 	}
 	
 	ngOnInit(): void {
-		this.showLogin = this.route.snapshot.data['login'];
 		this.userService.getAuthenticatedUserObservable().subscribe(((user: UserStatus) => {
 			if (user.loggedIn) this.router.navigate(['/']);
 		}));
