@@ -148,7 +148,7 @@
       </trans-unit>
       <trans-unit id="landingDescription" datatype="html">
         <source>In conjunction with the growing community, rudl recommends you interesting activities that match your taste. You let us know of things you dream of or such activities you start today. Join the team, connect with us now! :)</source>
-        <target>Zusammen mit der Community empfiehlt dir rudl neue Aktivitäten, ganz nach deinem Geschmack. Du hinterlegst all jene Aktivitäten, von denen du träumst, schwärmst oder die du noch heute beginnst. Komm mit ins Team, joine uns jetzt! :)
+        <target>Zusammen mit der Community empfiehlt dir rudl neue Aktivitäten, ganz nach deinem Geschmack. Du hinterlegst all jene Aktivitäten, von denen du träumst, schwärmst oder die du noch heute beginnst. Komm mit ins Team, joine uns jetzt! :)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/landing/landing.component.ts</context>
           <context context-type="linenumber">5</context>
