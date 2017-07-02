@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserService, UserStatus} from '../../../services/user.service';
+import {Title} from '@angular/platform-browser';
 
 @Component({
 	templateUrl: 'landing.component.html',
@@ -10,7 +11,10 @@ export class LandingComponent implements OnInit {
 	
 	constructor(private route: ActivatedRoute,
 	            private router: Router,
-	            private userService: UserService) {}
+	            title: Title,
+	            private userService: UserService) {
+			title.setTitle('rudl.me - Entdecke deine Stadt!');
+		}
 	
 	openExternalLink(link: string): void {
 		window.open(link);

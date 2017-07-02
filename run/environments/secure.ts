@@ -4,7 +4,7 @@ import {AotPlugin} from '@ngtools/webpack';
 import {root} from '../config';
 
 export default {
-	name: 'rudl - Secure Production Environment',
+	name: 'rudl - ',
 	frontend: {
 		metadata: {
 			"google-site-verification": process.env.GOOGLE_SITE_VERIFICATION

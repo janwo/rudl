@@ -31,7 +31,6 @@ export const StrategyConfig: StrategyConfiguration = {
 export function handleFacebook(request: any, reply: any): void {
 	// Authenticated successful?
 	if (!request.auth.isAuthenticated) reply(Boom.badRequest('Authentication failed: ' + request.auth.error.message));
-	
 	let profile: any = request.auth.credentials.profile;
 	
 	// Create provider.
@@ -81,14 +80,14 @@ export function handleFacebook(request: any, reply: any): void {
 	]));
 	
 	transactionSession.finishTransaction(promise).then((values: [void, string, WelcomeMailOptions]) => {
-		return MailManager.sendWelcomeMail(values[2]).then(() => {
-			reply.view('message', {
-				title: 'Authentication',
-				domain: Config.backend.domain,
-				token: values[1],
-				type: Config.frontend.messageTypes.oauth
-			}).header("Authorization", values[1]);
-		});
+		reply.view('message', {
+			title: 'Authentication',
+			domain: Config.backend.domain,
+			token: values[1],
+			type: Config.frontend.messageTypes.oauth
+		}).header("Authorization", values[1]);
+		
+		if(values[2]) return MailManager.sendWelcomeMail(values[2]);
 	}).catch((err: any) => {
 		reply(Boom.badRequest(err));
 	});

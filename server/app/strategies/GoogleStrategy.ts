@@ -81,14 +81,14 @@ export function handleGoogle(request: any, reply: any): void {
 	]));
 	
 	transactionSession.finishTransaction(promise).then((values: [void, string, WelcomeMailOptions]) => {
-		return MailManager.sendWelcomeMail(values[2]).then(() => {
-			reply.view('message', {
-				title: 'Authentication',
-				domain: Config.backend.domain,
-				token: values[1],
-				type: Config.frontend.messageTypes.oauth
-			}).header("Authorization", values[1]);
-		});
+		reply.view('message', {
+			title: 'Authentication',
+			domain: Config.backend.domain,
+			token: values[1],
+			type: Config.frontend.messageTypes.oauth
+		}).header("Authorization", values[1]);
+		
+		if(values[2]) return MailManager.sendWelcomeMail(values[2]);
 	}).catch((err: any) => {
 		reply(Boom.badRequest(err));
 	});

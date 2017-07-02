@@ -9,7 +9,7 @@ export const RoutesConfig: RoutesConfiguration = {
 	name: 'auth-routes',
 	routes: [
 		{
-			path: '/api/sign_up',
+			path: '/api/sign-up',
 			method: 'POST',
 			handler: AuthController.RouteHandlers.signUp,
 			config: {
@@ -20,7 +20,7 @@ export const RoutesConfig: RoutesConfiguration = {
 			}//TODO VALIDATE
 		},
 		{
-			path: '/api/sign_in',
+			path: '/api/sign-in',
 			method: 'POST',
 			handler: AuthController.RouteHandlers.signIn,
 			config: {
@@ -30,7 +30,7 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
-			path: '/api/sign_out',
+			path: '/api/sign-out',
 			method: 'GET',
 			handler: AuthController.RouteHandlers.signOut,
 			config: {

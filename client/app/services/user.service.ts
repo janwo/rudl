@@ -64,7 +64,7 @@ export class UserService {
 	
 	getUsersDistance(location: Location): number {
 		let userStatus = this.getAuthenticatedUser();
-		if (!userStatus.user || !userStatus.user.location) return NaN;
+		if (!userStatus || !userStatus.user || !userStatus.user.location) return NaN;
 		
 		// Calculate distance.
 		let pi = Math.PI / 180;
@@ -117,11 +117,11 @@ export class UserService {
 	}
 	
 	signOut(): void {
-		this.dataService.get('/api/sign_out', true).subscribe(response => {
+		this.dataService.get('/api/sign-out', true).subscribe(response => {
 			if (response.statusCode == 200) {
 				this.dataService.removeToken();
 				this.authenticatedProfile.next(null);
-				this.router.navigate(['/sign_up']);
+				this.router.navigate(['/sign-up']);
 			}
 		});
 	}

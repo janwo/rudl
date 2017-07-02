@@ -72,7 +72,8 @@ export class SettingsProfileComponent implements OnInit, OnDestroy {
 		});
 		
 		this.authenticatedUserSubscription = this.userService.getAuthenticatedUserObservable().subscribe((userStatus: UserStatus) => {
-			this.form.setValue({
+				this.user = userStatus.user;
+				this.form.setValue({
 				firstName: userStatus.user.firstName,
 				lastName: userStatus.user.lastName,
 				profileText: userStatus.user.profileText

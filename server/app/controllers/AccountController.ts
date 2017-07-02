@@ -71,6 +71,7 @@ export module AccountController {
 				},
 				password: AuthController.hashPassword(recipe.password)
 			};
+			
 			return this.save(transaction, user).then(() => {
 				return UserSettingsController.update(transaction, user, {
 					emailNotifications: true

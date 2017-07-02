@@ -30,7 +30,7 @@ export function hapiServer(): Promise<Server> {
 	let server = new Server({
 		cache: [
 			{
-				name: 'redisCache',
+				name: 'redis',
 				engine: require('catbox-redis'),
 				host: Config.backend.db.redis.host,
 				port: Config.backend.db.redis.port,

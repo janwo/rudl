@@ -116,7 +116,7 @@ export module UserController {
 					'user.firstName': 'firstName',
 					'user.lastName': 'lastName',
 					'hasAvatar': 'hasAvatar',
-					'user.profileText': 'profileText',
+					'profileText': 'profileText',
 					'createdAt': 'createdAt',
 					'updatedAt': 'updatedAt',
 					'links': 'links'
@@ -124,6 +124,7 @@ export module UserController {
 				
 				let transformationObject = {
 					user: user,
+					profileText: user.profileText || null,
 					createdAt: UtilController.isoDate(user.createdAt),
 					updatedAt: UtilController.isoDate(user.updatedAt),
 					hasAvatar: !!user.avatarId,

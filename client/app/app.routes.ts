@@ -85,6 +85,21 @@ const appRoutes: Routes = [
 			{path: 'notifications', component: NotificationsComponent, pathMatch: 'full', canActivate: [BoardingGuard]},
 			
 			{
+				path: 'people/not-found', component: NotFoundComponent, data: {
+				title: 'Invalid username!',
+				image: require('../assets/boarding/radar.png'),
+				description: 'The requested user does not exist!'
+			}
+			},
+			{
+				path: 'people/deleted-message', component: NotFoundComponent, data: {
+				title: 'User deleted!',
+				image: require('../assets/boarding/radar.png'),
+				description: 'We deleted the user.'
+			}
+			},
+			
+			{
 				path: 'people/:username', resolve: {
 				user: UserResolver
 			}, component: UserComponent, canActivate: [BoardingGuard], children: [
