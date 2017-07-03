@@ -18,7 +18,7 @@ export class RudelPastExpeditionsComponent implements OnInit, OnDestroy {
 	expeditions: Expedition[];
 	emptyState: EmptyState = {
 		title: 'Newbie!',
-		image: require('../../../../assets/boarding/radar.png'),
+		image: require('../../../../assets/illustrations/welcome.png'),
 		description: 'We couldn\'t find any expeditions you attended to!'
 	};
 	

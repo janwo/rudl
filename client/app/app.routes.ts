@@ -87,14 +87,14 @@ const appRoutes: Routes = [
 			{
 				path: 'people/not-found', component: NotFoundComponent, data: {
 				title: 'Invalid username!',
-				image: require('../assets/boarding/radar.png'),
+				image: require('../assets/illustrations/welcome.png'),
 				description: 'The requested user does not exist!'
 			}
 			},
 			{
 				path: 'people/deleted-message', component: NotFoundComponent, data: {
 				title: 'User deleted!',
-				image: require('../assets/boarding/radar.png'),
+				image: require('../assets/illustrations/welcome.png'),
 				description: 'We deleted the user.'
 			}
 			},
@@ -114,14 +114,14 @@ const appRoutes: Routes = [
 			{
 				path: 'lists/not-found', component: NotFoundComponent, data: {
 				title: 'Invalid list id!',
-				image: require('../assets/boarding/radar.png'),
+				image: require('../assets/illustrations/welcome.png'),
 				description: 'The requested list does not exist!'
 			}
 			},
 			{
 				path: 'lists/deleted-message', component: NotFoundComponent, data: {
 				title: 'List deleted!',
-				image: require('../assets/boarding/radar.png'),
+				image: require('../assets/illustrations/welcome.png'),
 				description: 'We deleted the list as no likers remained.'
 			}
 			},
@@ -141,14 +141,14 @@ const appRoutes: Routes = [
 			{
 				path: 'rudel/not-found', component: NotFoundComponent, data: {
 				title: 'Invalid rudel id!',
-				image: require('../assets/boarding/radar.png'),
+				image: require('../assets/illustrations/welcome.png'),
 				description: 'The requested rudel does not exist!'
 			}
 			},
 			{
 				path: 'rudel/deleted-message', component: NotFoundComponent, data: {
 				title: 'Rudel deleted!',
-				image: require('../assets/boarding/radar.png'),
+				image: require('../assets/illustrations/welcome.png'),
 				description: 'We deleted the rudel as no likers remained.'
 			}
 			},
@@ -168,14 +168,14 @@ const appRoutes: Routes = [
 			{
 				path: 'expeditions/not-found', component: NotFoundComponent, data: {
 				title: 'Invalid expedition id!',
-				image: require('../assets/boarding/radar.png'),
+				image: require('../assets/illustrations/welcome.png'),
 				description: 'The requested expedition does not exist!'
 			}
 			},
 			{
 				path: 'expeditions/deleted-message', component: NotFoundComponent, data: {
 				title: 'Expedition deleted!',
-				image: require('../assets/boarding/radar.png'),
+				image: require('../assets/illustrations/welcome.png'),
 				description: 'We deleted the expedition as you requested.'
 			}
 			},
@@ -190,8 +190,8 @@ const appRoutes: Routes = [
 			]
 			},
 			
-			// No boarding required.
-			{path: 'boarding', component: BoardingComponent},
+			// No illustrations required.
+			{path: 'illustrations', component: BoardingComponent},
 			
 			{path: 'settings', component: SettingsComponent, children: [
 				{path: '', redirectTo: 'profile', pathMatch: 'full'},
@@ -202,7 +202,7 @@ const appRoutes: Routes = [
 			{
 				path: '404', component: NotFoundComponent, data: {
 				title: 'Oops, nothing here!',
-				image: require('../assets/boarding/radar.png'),
+				image: require('../assets/illustrations/welcome.png'),
 				description: 'The requested page does not exist!'
 			}
 			},
@@ -212,7 +212,7 @@ const appRoutes: Routes = [
 	{
 		path: '404', component: NotFoundComponent, data: {
 		title: 'Oops, nothing here!',
-		image: require('../assets/boarding/radar.png'),
+		image: require('../assets/illustrations/welcome.png'),
 		description: 'The requested page does not exist!'
 	}
 	},

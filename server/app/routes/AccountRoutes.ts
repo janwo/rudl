@@ -110,7 +110,7 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
-			path: '/api/account/boarding',
+			path: '/api/account/illustrations',
 			method: 'POST',
 			handler: AccountController.RouteHandlers.updateBoarding,
 			config: {

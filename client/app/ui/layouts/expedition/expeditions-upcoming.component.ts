@@ -18,7 +18,7 @@ export class ExpeditionsUpcomingComponent implements OnInit {
 	expeditions: Expedition[];
 	emptyState: EmptyState = {
 		title: 'Keine künftigen Streifzüge bisher',
-		image: require('../../../../assets/boarding/radar.png'),
+		image: require('../../../../assets/illustrations/welcome.png'),
 		description: 'We couldn\'t find any expeditions you are going to!'
 	};
 	

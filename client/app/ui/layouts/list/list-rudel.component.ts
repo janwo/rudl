@@ -18,7 +18,7 @@ export class ListRudelComponent implements OnInit, OnDestroy {
 	rudel: Rudel[] = null;
 	emptyState: EmptyState = {
 		title: 'List is empty',
-		image: require('..//../../../assets/boarding/radar.png'),
+		image: require('..//../../../assets/illustrations/welcome.png'),
 		description: 'There are no rudels in the list yet.'
 	};
 	

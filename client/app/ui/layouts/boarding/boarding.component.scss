@@ -30,20 +30,15 @@ $boarding-size: 18rem;
 
         .image {
           width: 100%;
-          padding-bottom: 50%;
+          padding-bottom: 75%;
           flex: 0 0 auto;
           background: no-repeat top center;
           background-size: contain;
         }
 
-        &:nth-child(1) .image,
-        &:nth-child(2) .image,
-        &:nth-child(3) .image,
-        &:nth-child(4) .image,
-        &:nth-child(5) .image {
-          background-image: url(../../../../assets/boarding/radar.png);
+        h1 {
+          margin-top: map_get($base-padding, 'smaller');
         }
-
 
         span {
           hyphens: auto;
@@ -55,6 +50,26 @@ $boarding-size: 18rem;
         styled-button {
           margin-top: map_get($base-padding, 'default');
         }
+      }
+
+      &:nth-child(1) .card .image {
+        background-image: url(../../../../assets/illustrations/welcome.png);
+      }
+
+      &:nth-child(2) .card .image {
+        background-image: url(../../../../assets/illustrations/welcome.png);
+      }
+
+      &:nth-child(3) .card .image {
+        background-image: url(../../../../assets/illustrations/expeditions.png);
+      }
+
+      &:nth-child(4) .card .image {
+        background-image: url(../../../../assets/illustrations/welcome.png);
+      }
+
+      &:nth-child(5) .card .image {
+        background-image: url(../../../../assets/illustrations/welcome.png);
       }
     }
   }

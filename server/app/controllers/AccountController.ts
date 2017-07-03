@@ -312,7 +312,7 @@ export module AccountController {
 			if (request.payload.profileText) request.auth.credentials.profileText = request.payload.profileText;
 			if (request.payload.firstName) request.auth.credentials.firstName = request.payload.firstName;
 			if (request.payload.lastName) request.auth.credentials.lastName = request.payload.lastName;
-			//TODO boarding und location auch hierüber laufen lassen
+			//TODO illustrations und location auch hierüber laufen lassen
 			let promise = AccountController.save(transaction, request.auth.credentials).then(() => {
 				return UserController.getPublicUser(transaction, request.auth.credentials, request.auth.credentials);
 			});
@@ -413,7 +413,7 @@ export module AccountController {
 		}
 		
 		/**
-		 * Handles [POST] /api/account/boarding
+		 * Handles [POST] /api/account/illustrations
 		 * @param request Request-Object
 		 * @param request.payload.boarded boarded
 		 * @param request.auth.credentials

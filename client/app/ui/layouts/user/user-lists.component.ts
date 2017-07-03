@@ -16,7 +16,7 @@ export class UserListsComponent implements OnInit, OnDestroy {
 	lists: List[] = null;
 	emptyState: EmptyState = {
 		title: 'You have no lists',
-		image: require('../../../../assets/boarding/radar.png'),
+		image: require('../../../../assets/illustrations/welcome.png'),
 		description: 'You have no lists created yet. Use them to group your Rudels! Others can follow them.'
 	};
 	
