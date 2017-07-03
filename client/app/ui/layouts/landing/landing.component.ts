@@ -13,7 +13,7 @@ export class LandingComponent implements OnInit {
 	            private router: Router,
 	            title: Title,
 	            private userService: UserService) {
-			title.setTitle('rudl.me - Entdecke deine Stadt!');
+			title.setTitle('rudl.me - Entdecke den Puls deiner Stadt!');
 		}
 	
 	openExternalLink(link: string): void {

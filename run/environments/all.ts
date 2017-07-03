@@ -130,7 +130,7 @@ export default {
 							new HtmlWebpackPlugin({
 								filename: Config.paths.public.filename,
 								template: root('client/index.ejs'),
-								title: Config.name,
+								title: 'rudl.me - Entdecke den Puls deiner Stadt!'/*Config.name*/,
 								baseUrl: '/',
 								metadata: Config.frontend.metadata
 							}),

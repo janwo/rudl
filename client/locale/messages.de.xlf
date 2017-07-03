@@ -236,7 +236,7 @@
       </trans-unit>
       <trans-unit id="footer" datatype="html">
         <source>Made with <x id="START_ITALIC_TEXT" ctype="x-i"/>local_pizza<x id="CLOSE_ITALIC_TEXT" ctype="x-i"/> in Bremen</source>
-        <target/>
+        <target>Konzipiert bei <x id="START_ITALIC_TEXT" ctype="x-i"/>local_pizza<x id="CLOSE_ITALIC_TEXT" ctype="x-i"/> in Bremen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/widgets/footer/footer.component.ts</context>
           <context context-type="linenumber">1</context>
