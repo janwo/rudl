@@ -6,14 +6,14 @@
                         [takenTranslations]="form.controls.translations"></translation-list>
             </div>
             <div class="content info">
-                <h2>Benenne das Rudel</h2>
-                <p>Jedes Rudel ist eine Interessensgemeinschaft, z.B. "Joggen gehen" oder "Treffen im Café".</p>
+                <h2 i18n="@@createRudelTranslationTitle">Name of rudel</h2>
+                <p i18n="@@createRudelTranslationDescription">Each rudel is an individual interest group, e.g. "Go Running" or "Meetup at the café".</p>
             </div>
         </carousel-slide>
         <carousel-slide class="split">
             <div class="content info">
-                <h2>Füge ein Icon hinzu!</h2>
-                <p>Das Icon erhöht den Wiedererkennnungswert deines Rudels!</p>
+                <h2 i18n="@@createRudelIconTitle">Add an icon!</h2>
+                <p i18n="@@createRudelIconDescription">The icon increases the memorability of your rudel!</p>
             </div>
             <div class="content">
                 <form-control-wrapper>
@@ -25,12 +25,12 @@
     <footer>
         <styled-button class="back" *ngIf="carouselIndex == 0" [style]="cancelButtonStyle" [text]="'Abbrechen'"
                 (click)="cancel()"></styled-button>
-        <styled-button class="back" *ngIf="carouselIndex > 0" [disabled]="submitPending" [text]="'Go back'"
+        <styled-button class="back" *ngIf="carouselIndex > 0" [disabled]="submitPending" [text]="'Zurück'"
                 (click)="carousel.back()"></styled-button>
-        <styled-button class="next" *ngIf="carouselIndex < 2 - 1" [disabled]="submitPending" [text]="'Continue'"
+        <styled-button class="next" *ngIf="carouselIndex < 2 - 1" [disabled]="submitPending" [text]="'Weiter'"
                 (click)="carousel.next()"></styled-button>
         <styled-button class="done" *ngIf="carouselIndex == 2 - 1" [disabled]="submitPending" (click)="submit()"
-                [text]="'Create Expedition'"></styled-button>
+                [text]="'Rudel erstellen'"></styled-button>
         <indicator [steps]="2" [selectedStep]="carouselIndex"></indicator>
     </footer>
 </form>

@@ -4,7 +4,7 @@
 :host {
   line-height: map_get($base-line-height, 'multiline');
 
-  p {
+  .address {
     display: flex;
     flex-direction: column;
 
@@ -12,7 +12,11 @@
       font-weight: $base-font-weight-bold;
     }
   }
-  
+
+  a {
+    font-weight: $base-font-weight-bold;
+  }
+
   li {
     list-style: circle inside;
     margin-bottom: map_get($base-padding, 'smallest');

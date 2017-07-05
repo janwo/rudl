@@ -313,6 +313,38 @@
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="createRudelTranslationTitle" datatype="html">
+        <source>Name of rudel</source>
+        <target>Benenne das Rudel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/rudel/create-rudel.component.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="createRudelTranslationDescription" datatype="html">
+        <source>Each rudel is an individual interest group, e.g. &quot;Go Running&quot; or &quot;Meetup at the café&quot;.</source>
+        <target>Jedes Rudel ist eine Interessensgemeinschaft, z.B. "Joggen gehen" oder "Treffen im Café".</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/rudel/create-rudel.component.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="createRudelIconTitle" datatype="html">
+        <source>Add an icon!</source>
+          <target>Füge ein Icon hinzu!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/rudel/create-rudel.component.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="createRudelIconDescription" datatype="html">
+        <source>The icon increases the memorability of your rudel!</source>
+        <target>Das Icon erhöht den Wiedererkennnungswert deines Rudels!</target>
+          <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/rudel/create-rudel.component.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="logoTitle" datatype="html">
         <source>rudl</source>
         <target>rudl</target>
