@@ -29,6 +29,7 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 
     private map: L.Map;
     private marker: L.Marker;
+    private indicatorMarkers: L.Marker[];
 
 	constructor(@Optional() ngControl: NgControl) {
 		if (ngControl) ngControl.valueAccessor = this;
@@ -79,7 +80,7 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 		}).addTo(this.map);
 		
 		let icon = L.icon({
-			iconUrl: require('../../../../../assets/map-marker.png') as string,
+			iconUrl: require('../../../../../assets/marker/large.png') as string,
 			className: 'leaflet-icon'
 		});
 		
@@ -106,8 +107,23 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 	}
 
     private setIndicators(locations: Location[]): void {
-        if (this.marker) this.marker.setLatLng(new L.LatLng(this.location.latitude, this.location.longitude));
-        if (this.map) this.map.panTo(new L.LatLng(this.location.latitude, this.location.longitude));
+        if (!this.map) return;
+
+        if (this.indicatorMarkers) this.indicatorMarkers.forEach(indicator => {
+            this.map.removeLayer(indicator);
+        });
+
+        let icon = L.icon({
+            iconUrl: require('../../../../../assets/marker/small.png') as string,
+            className: 'leaflet-small-icon'
+        });
+
+        this.indicatorMarkers = locations.map(location => {
+            return L.marker(new L.LatLng(location.latitude, location.longitude), {
+                icon: icon,
+                clickable: false
+            }).addTo(this.map);
+        });
     }
 	
 	writeValue(value: Location): void {

@@ -19,7 +19,7 @@ import {VagueLocation} from '../../../models/location';
 })
 export class MapComponent implements AfterViewInit, OnChanges {
 	
-	private static iconUrl = require('../../../../assets/map-marker.png') as string;
+	private static iconUrl = require('../../../../assets/marker/large.png') as string;
 	private static source = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 	private static quotas: any = {
 		red: 21,
