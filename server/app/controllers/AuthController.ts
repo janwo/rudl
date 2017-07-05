@@ -22,7 +22,7 @@ export module AuthController {
 			provider: provider
 		}).then((results: any) => {
 			session.close();
-			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop();
+			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift();
 		}, (err: any) => {
 			session.close();
 			return Promise.reject(err);
@@ -50,7 +50,7 @@ export module AuthController {
 			password: this.hashPassword(password)
 		}).then((results: any) => {
 			session.close();
-			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop();
+			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift();
 		}, (err: any) => {
 			session.close();
 			return Promise.reject(err);
@@ -64,7 +64,7 @@ export module AuthController {
 				userId: token.userId
 			}).then((results: any) => {
 				session.close();
-				return DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop();
+				return DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift();
 			}, (err: any) => {
 				session.close();
 				return Promise.reject(err);

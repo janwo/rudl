@@ -110,7 +110,7 @@ export module ListController {
 		return transaction.run<any, any>(queries.join(' '), {
 			listId: list.id,
 			relatedUserId: relatedUser.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 0).pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 0).shift());
 	}
 	
 	export function findByUser(transaction: Transaction, user: User, ownsOnly = false, skip = 0, limit = 25): Promise<List[]> {
@@ -145,13 +145,13 @@ export module ListController {
 	export function getOwner(transaction: Transaction, list: List): Promise<User> {
 		return transaction.run<User, any>(`MATCH(:List {id: $listId})<-[:OWNS_LIST]-(owner:User) RETURN COALESCE(properties(owner), []) as owner LIMIT 1`, {
 			listId: list.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'owner').pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'owner').shift());
 	}
 	
 	export function get(transaction: Transaction, listId: string): Promise<List> {
 		return transaction.run<List, any>(`MATCH(l:List {id: $listId}) RETURN COALESCE(properties(l), []) as l LIMIT 1`, {
 			listId: listId
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'l').pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'l').shift());
 	}
 	
 	export function findByFulltext(transaction: Transaction, query: string, skip = 0, limit = 25): Promise<List[]> {
@@ -210,7 +210,7 @@ export module ListController {
 				if(likers.length > 0) return transaction.run("MATCH(l:List {id: $listId}), (u:User {id: $newOwnerId}) CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
 					listId: list.id,
 					now: new Date().getTime() / 1000,
-					newOwnerId: likers.pop().id
+					newOwnerId: likers.shift().id
 				});
 				
 				// Delete list, because it's an orphan node.

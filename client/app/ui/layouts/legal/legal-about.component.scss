@@ -12,4 +12,13 @@
       font-weight: $base-font-weight-bold;
     }
   }
+  
+  li {
+    list-style: circle inside;
+    margin-bottom: map_get($base-padding, 'smallest');
+  }
+
+  .card:not(:first-child) {
+    margin-top: map_get($base-padding, 'default');
+  }
 }

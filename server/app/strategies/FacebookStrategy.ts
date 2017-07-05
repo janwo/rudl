@@ -63,7 +63,7 @@ export function handleFacebook(request: any, reply: any): void {
 					mail: {
 						to: user.mails.primary.mail,
 						name: user.firstName,
-						locale: user.languages.pop(),
+						locale: user.languages.shift(),
 						provider: 'Facebook'
 					},
 					user: user

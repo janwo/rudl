@@ -150,13 +150,13 @@ export module AccountController {
 			return transaction.run("MATCH (u:User { id: $userId }) MERGE (u)-[:USER_SETTINGS]->(s:Settings) ON CREATE SET s = $flattenSettings ON MATCH SET s = apoc.map.merge(s, $flattenSettings) RETURN properties(s) as s", {
 				userId: user.id,
 				flattenSettings: DatabaseManager.neo4jFunctions.flatten(settings)
-			}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 's').pop());
+			}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 's').shift());
 		}
 		
 		export function get(transaction: Transaction, user: User): Promise<UserSettings> {
 			return transaction.run("MATCH (:User { id: $userId })-[:USER_SETTINGS]->(s:Settings) RETURN properties(s) as s", {
 				userId: user.id
-			}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 's').pop());
+			}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 's').shift());
 		}
 		
 		export function getPublicUserSettings(transaction: Transaction, settings: UserSettings): Promise<any | any[]> {
@@ -186,7 +186,7 @@ export module AccountController {
 		export function countUnread(transaction: Transaction, user: User): Promise<number> {
 			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[nur:NOTIFICATION_UNREAD]->(:Notification) RETURN COUNT(nur) as unread`, {
 				userId: user.id
-			}).then(results => Integer.toNumber(results.records.pop().get('unread') as any as Integer));
+			}).then(results => Integer.toNumber(results.records.shift().get('unread') as any as Integer));
 		}
 		
 		export function remove(transaction: Transaction, subject: Node): Promise<void> {

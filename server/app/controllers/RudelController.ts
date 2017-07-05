@@ -127,7 +127,7 @@ export module RudelController {
 	export function get(transaction: Transaction, rudelId: string): Promise<Rudel> {
 		return transaction.run("MATCH(r:Rudel {id: $rudelId}) RETURN COALESCE(properties(r), []) as r LIMIT 1", {
 			rudelId: rudelId
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r').pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r').shift());
 	}
 	
 	export function findByFulltext(transaction: Transaction, query: string, skip = 0, limit = 25): Promise<Rudel[]> {
@@ -168,13 +168,13 @@ export module RudelController {
 		return transaction.run<any, any>(queries.join(' '), {
 			rudelId: rudel.id,
 			relatedUserId: relatedUser.id
-		}).then(result => DatabaseManager.neo4jFunctions.unflatten(result.records, 0).pop());
+		}).then(result => DatabaseManager.neo4jFunctions.unflatten(result.records, 0).shift());
 	}
 	
 	export function getOwner(transaction: Transaction, rudel: Rudel): Promise<User> {
 		return transaction.run<User, any>(`MATCH(:Rudel {id: $rudelId})<-[:OWNS_RUDEL]-(owner:User) RETURN COALESCE(properties(owner), []) as owner LIMIT 1`, {
 			rudelId: rudel.id
-		}).then(result => DatabaseManager.neo4jFunctions.unflatten(result.records, 'owner').pop());
+		}).then(result => DatabaseManager.neo4jFunctions.unflatten(result.records, 'owner').shift());
 	}
 
 	export function like(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
@@ -211,7 +211,7 @@ export module RudelController {
 				if(likers.length > 0) return transaction.run("MATCH(r:Rudel {id: $rudelId}), (u:User {id: $newOwnerId}) WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
 					rudelId: rudel.id,
 					now: new Date().getTime() / 1000,
-					newOwnerId: likers.pop().id
+					newOwnerId: likers.shift().id
 				});
 				
 				// Delete rudel, because it's an orphan node.

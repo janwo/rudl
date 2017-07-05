@@ -21,7 +21,7 @@ export const ScheduleConfig = {
 				return MailManager.sendNotificationMail({
 					name: user.firstName,
 					to: user.mails.primary.mail,
-					locale: user.languages.pop(),
+					locale: user.languages.shift(),
 					unread: Integer.toNumber(record.get('unread') as any as Integer)
 				});
 			});

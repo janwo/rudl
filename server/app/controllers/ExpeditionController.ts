@@ -175,7 +175,7 @@ export module ExpeditionController {
 		return transaction.run(queries.join(' '), {
 			expeditionId: expedition.id,
 			relatedUserId: relatedUser ? relatedUser.id : null
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 0).pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 0).shift());
 	}
 	
 	export function findUpcomingByUser(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
@@ -225,7 +225,7 @@ export module ExpeditionController {
 	export function get(transaction: Transaction, expeditionId: string): Promise<Expedition> {
 		return transaction.run<Expedition, any>(`MATCH(e:Expedition {id: $expeditionId}) RETURN COALESCE(properties(e), []) as e LIMIT 1`, {
 			expeditionId: expeditionId
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e').pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e').shift());
 	}
 	
 	export function findByFulltext(transaction: Transaction, query: string, limit = 0, skip = 25): Promise<Expedition[]> {
@@ -356,7 +356,7 @@ export module ExpeditionController {
 				RETURN {applied: applied, joined: joined} as deleted`, {
 					expeditionId: expedition.id,
 					userId: user.id
-				}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'deleted').pop()).then((deleted: any) => {
+				}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'deleted').shift()).then((deleted: any) => {
 					if(deleted.joined || deleted.applied) return AccountController.NotificationController.set(
 						transaction,
 						deleted.joined ? NotificationType.REJECTED_FROM_EXPEDITION : NotificationType.REJECTED_APPLICATION_FOR_EXPEDITION,
@@ -379,7 +379,7 @@ export module ExpeditionController {
 				RETURN {invited: invited, joined: joined} as deleted`, {
 					expeditionId: expedition.id,
 					userId: user.id
-				}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'deleted').pop()).then((deleted: any) => {
+				}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'deleted').shift()).then((deleted: any) => {
 					if(deleted.joined || deleted.invited) return AccountController.NotificationController.set(
 						transaction,
 						deleted.joined ? NotificationType.LEFT_EXPEDITION : NotificationType.REJECTED_INVITATION_FOR_EXPEDITION,
@@ -402,7 +402,7 @@ export module ExpeditionController {
 		return transaction.run(`MATCH (e:Expedition {id: $expeditionId}), (u:User {id: $userId}) WITH u, e OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) RETURN {isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0} as as`, {
 			expeditionId: expedition.id,
 			userId: user.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'as').pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'as').shift());
 	}
 	
 	export function removeExpeditions(transaction: Transaction, rudel: Rudel, user: User = null): Promise<void> {
@@ -491,7 +491,7 @@ export module ExpeditionController {
 	export function getOwner(transaction: Transaction, expedition: Expedition): Promise<User> {
 		return transaction.run<User, any>("MATCH(:Expedition {id : $expeditionId })<-[:OWNS_EXPEDITION]-(u:User) RETURN COALESCE(properties(u), []) as u LIMIT 1", {
 			expeditionId: expedition.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift());
 	}
 	
 	export function getAttendees(transaction: Transaction, expedition: Expedition, skip = 0, limit = 25): Promise<{
@@ -528,14 +528,14 @@ export module ExpeditionController {
 	export function getRudel(transaction: Transaction, expedition: Expedition): Promise<Rudel> {
 		return transaction.run<Rudel, any>("MATCH(:Expedition {id : $expeditionId })-[:BELONGS_TO_RUDEL]->(r:Rudel) RETURN COALESCE(properties(r), []) as r LIMIT 1", {
 			expeditionId: expedition.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r').pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r').shift());
 	}
 	
 	export function isAttendee(transaction: Transaction, expedition: Expedition, user: User): Promise<boolean> {
 		return transaction.run<Expedition, any>("MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) OPTIONAL MATCH (e)<-[je:JOINS_EXPEDITION]-(u) RETURN COUNT(je) > 0 as je", {
 			expeditionId: expedition.id,
 			userId: user.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'je').pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'je').shift());
 	}
 	
 	export function nearby(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {

@@ -32,7 +32,7 @@ $base-heading-font-size: (
 );
 
 @function inactive($color) {
-  @return transparentize(desaturate($color, 100%), 0.75);
+  @return transparentize(desaturate($color, 100%), 0.5);
 }
 
 $base-line-widths: (

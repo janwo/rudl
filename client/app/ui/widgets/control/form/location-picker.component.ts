@@ -86,7 +86,8 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 		
 		this.marker = L.marker(new L.LatLng(this.location.latitude, this.location.longitude), {
 			icon: icon,
-			clickable: false
+			clickable: false,
+            zIndexOffset: 50
 		}).addTo(this.map);
 		
 		this.map.on('click', (e: any) => {
@@ -121,7 +122,8 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
         this.indicatorMarkers = locations.map(location => {
             return L.marker(new L.LatLng(location.latitude, location.longitude), {
                 icon: icon,
-                clickable: false
+                clickable: false,
+                zIndexOffset: 5
             }).addTo(this.map);
         });
     }

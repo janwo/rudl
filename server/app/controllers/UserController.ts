@@ -21,13 +21,13 @@ export module UserController {
 	export function findByUsername(transaction: Transaction, username: string): Promise<User> {
 		return transaction.run<User, any>('MATCH(u:User {username: $username}) RETURN COALESCE(properties(u), []) as u LIMIT 1', {
 			username: username
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift());
 	}
 	
 	export function findByMail(transaction: Transaction, mail: string): Promise<User> {
 		return transaction.run<User, any>('MATCH(u:User) WHERE (u.mails_primary_mail = $mail AND u.mails_primary_verified) OR (u.mails_secondary_mail = $mail AND u.mails_secondary_verified) RETURN COALESCE(properties(u), []) as u LIMIT 1', {
 			mail: mail
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift());
 	}
 	
 	export interface UserStatistics {
@@ -83,7 +83,7 @@ export module UserController {
 		return transaction.run<any, any>(queries.join(' '), {
 			userId: user.id,
 			relatedUserId: relatedUser.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 0).pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 0).shift());
 	}
 	
 	export function getPublicUser(transaction: Transaction, user: User | User[], relatedUser: User, preview = false): Promise<any | any[]> {

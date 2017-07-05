@@ -204,6 +204,25 @@
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="legalCopyright" datatype="html">
+        <source>
+    <x id="START_HEADING_LEVEL1" ctype="x-h1"/>Copyright Notices<x id="CLOSE_HEADING_LEVEL1" ctype="x-h1"/>
+    <x id="START_PARAGRAPH" ctype="x-p"/>rudl.me uses Open Source Software. The following list contains all attributions for software that requires a several attribution.<x id="CLOSE_PARAGRAPH" ctype="x-p"/>
+    <x id="START_UNORDERED_LIST" ctype="x-ul"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>
+            Emoji artwork is provided by <x id="START_LINK" ctype="x-a"/>EmojiOne<x id="CLOSE_LINK" ctype="x-a"/> and is licensed under <x id="START_LINK_1" ctype="x-a"/>CC-BY 4.0<x id="CLOSE_LINK" ctype="x-a"/>.
+        <x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>
+            The illustrations of wolf-paintings had been designed by Marie Kollarczyk.
+        <x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+    <x id="CLOSE_UNORDERED_LIST" ctype="x-ul"/>
+</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/legal/legal-about.component.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="legalTerms" datatype="html">
         <source>
     <x id="START_HEADING_LEVEL1" ctype="x-h1"/>Nutzungsbedingungen<x id="CLOSE_HEADING_LEVEL1" ctype="x-h1"/>

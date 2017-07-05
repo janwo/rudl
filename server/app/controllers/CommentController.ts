@@ -74,7 +74,7 @@ export module CommentController {
 	export function get(transaction: Transaction, commentId: string): Promise<any> {
 		return transaction.run(`MATCH(c:Comment {id: $commentId}) RETURN COALESCE(properties(c), []) as c LIMIT 1`, {
 			commentId: commentId
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'c').pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'c').shift());
 	}
 	
 	export function getPublicComment(transaction: Transaction, comment: Comment | Comment[], relatedUser: User): Promise<any | any[]> {
@@ -117,7 +117,7 @@ export module CommentController {
 	export function getOwner(transaction: Transaction, comment: Comment): Promise<User> {
 		return transaction.run<User, any>(`MATCH(c:Comment {id: $commentId})<-[:OWNS_COMMENT]-(u:User) RETURN COALESCE(properties(u), []) as u LIMIT 1`, {
 			commentId: comment.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift());
 	}
 	
 	export function ofNode<T extends Node>(transaction: Transaction, node: T, skip = 0, limit = 25): Promise<Comment[]> {
