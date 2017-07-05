@@ -48,8 +48,8 @@ export module AccountController {
 				id: recipe.id,
 				scope: [UserRoles.user],
 				location: {
-					lng: null,
-					lat: null
+					longitude: null,
+					latitude: null
 				},
 				languages: [
 					//TODO: dynamic language
@@ -356,7 +356,7 @@ export module AccountController {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			// Create sharp instance.
-			let transformer = sharp().png();
+			let transformer = sharp().rotate().png();
 			request.payload.file.pipe(transformer);
 			
 			// Make paths retrievable.
@@ -388,8 +388,8 @@ export module AccountController {
 		/**
 		 * Handles [POST] /api/account/location
 		 * @param request Request-Object
-		 * @param request.payload.lng longitude
-		 * @param request.payload.lat latitude
+		 * @param request.payload.longitude longitude
+		 * @param request.payload.latitude latitude
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
@@ -398,8 +398,8 @@ export module AccountController {
 			let user = request.auth.credentials;
 			
 			user.location = {
-				lat: request.payload.lat,
-				lng: request.payload.lng
+				latitude: request.payload.latitude,
+				longitude: request.payload.longitude
 			};
 			
 			// Save user.

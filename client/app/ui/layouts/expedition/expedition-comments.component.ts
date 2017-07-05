@@ -23,12 +23,12 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 	
 	emptyState: EmptyState = {
 		title: 'Start the conversation!',
-		image: require('../../../../assets/illustrations/welcome.png'),
+		image: require('../../../../assets/illustrations/no-comments.png'),
 		description: 'Make plans some plans, chat and smile!'
 	};
 	restrictedState: EmptyState = {
 		title: 'Restricted Area',
-		image: require('../../../../assets/illustrations/welcome.png'),
+		image: require('../../../../assets/illustrations/no-comments.png'),
 		description: 'You have to become an attendee in order to join the discussion.'
 	};
 	

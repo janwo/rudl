@@ -16,8 +16,8 @@ export class GeocodeService {
 			return {
 				label: feature.properties.label,
 				location: {
-					lng: feature.geometry.coordinates[0],
-					lat: feature.geometry.coordinates[1]
+					longitude: feature.geometry.coordinates[0],
+					latitude: feature.geometry.coordinates[1]
 				}
 			};
 		});
@@ -25,7 +25,7 @@ export class GeocodeService {
 	
 	private static buildQuery(text: string, location: Location | false = false, size: number | false = false): string {
 		let query = `api_key=${GeocodeService.apiKey}&text=${text}`;
-		if (location) query += `&focus.point.lat=${location.lat}&focus.point.lon=${location.lng}`;
+		if (location) query += `&focus.point.lat=${location.latitude}&focus.point.lon=${location.longitude}`;
 		if (size) query += `&size=${size}`;
 		return query;
 	}

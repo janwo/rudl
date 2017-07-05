@@ -52,7 +52,6 @@
     "@types/redis": "^0.12.36",
     "@types/sharp": "^0.17.1",
     "@types/shortid": "^0.0.29",
-    "@types/uuid": "^2.0.29",
     "@types/vision": "^4.1.0",
     "@types/webfontloader": "^1.6.28",
     "@types/webpack": "^2.2.15",
@@ -77,6 +76,7 @@
     "faker": "^4.1.0",
     "file-loader": "^0.11.1",
     "forever": "^0.15.3",
+    "geolib": "https://github.com/manuelbieh/Geolib",
     "glob": "^7.1.1",
     "good": "^7.1.0",
     "good-console": "^6.4.0",
@@ -92,7 +92,6 @@
     "html-loader": "^0.4.5",
     "html-webpack-plugin": "^2.28.0",
     "inert": "^4.1.0",
-    "jasmine-core": "^2.5.2",
     "joi": "^10.3.1",
     "jsonwebtoken": "^7.3.0",
     "leaflet": "^1.0.3",
@@ -101,6 +100,7 @@
     "mocha": "^3.2.0",
     "moment": "^2.18.1",
     "neo4j-driver": "https://github.com/SnappyCroissant/neo4j-javascript-driver.git#type-definitions",
+    "ng2-device-detector": "^1.0.0",
     "ngx-infinite-scroll": "^0.5.1",
     "node-sass": "^4.5.1",
     "node-schedule": "^1.2.3",
@@ -121,10 +121,8 @@
     "style-loader": "^0.16.0",
     "to-string-loader": "^1.1.5",
     "ts-node": "^3.0.6",
-    "tsc-node": "^0.0.3",
     "typescript": "^2.2.2",
     "url-loader": "^0.5.8",
-    "uuid": "^3.0.1",
     "vision": "^4.1.1",
     "web-app-manifest-loader": "^0.1.1",
     "web-push": "^3.2.2",
@@ -136,11 +134,10 @@
     "white-out": "^2.0.0",
     "zone.js": "^0.8.5"
   },
-  "description": "Description coming soon",
   "repository": {
     "type": "git",
     "url": "https://git.jan-wolf.de/janwolf/rudl.git"
   },
-  "author": "Jan Wolf <info@jan-wolf.de>",
+  "author": "Jan Wolf <mail@jan-wolf.de>",
   "license": "SEE LICENSE IN LICENSE"
 }

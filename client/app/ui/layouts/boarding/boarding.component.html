@@ -33,20 +33,18 @@
             <h1 i18n="@@5thBoardingHeader">Grant permission</h1>
             <span *ngIf="permissionStatus == 'denied'" i18n="@@boardingLocationPermissionDenied">Seems like you denied the permission, please check your browser settings to enable location sharing!</span>
             <span *ngIf="permissionStatus != 'denied'" i18n="@@boardingLocationPermissionDescription">In order to show you all relevant rudel and events near you, rudl needs to access your location.</span>
-            <styled-button *ngIf="permissionStatus != 'denied'" [style]="ButtonStyles.filled"
-                    [text]="permissionStatus == 'granted' ? 'Danke!' : (permissionStatus == 'granting' ? 'Bitte warten...' : 'Berechtigung geben')"
-                    [disabled]="permissionStatus != 'ungranted'" (click)="grantPermission()"></styled-button>
-            <styled-button *ngIf="permissionStatus == 'denied'" [style]="ButtonStyles.filledInverse" [text]="'Brauchst du Hilfe?'"
-                    (click)="openHelpTopic()"></styled-button>
+            <styled-button [style]="permissionButtonStyle" [text]="permissionStatus == 'denied' ? 'Nochmal versuchen' : ( permissionStatus == 'granted' ? 'Danke!' : (permissionStatus == 'granting' ? 'Bitte warten...' : 'Berechtigung geben'))"
+                           [disabled]="permissionStatus == 'granted' || permissionStatus == 'granting' " (click)="grantPermission()"></styled-button>
+            <styled-button *ngIf="permissionStatus == 'denied' && getHelpLink()" [style]="helpButtonStyle" [text]="'Brauchst du Hilfe?'" (click)="openHelpLink()"></styled-button>
         </div>
     </carousel-slide>
 </carousel>
 <footer>
-    <styled-button class="back" *ngIf="carouselIndex > 0" [style]="ButtonStyles.filled" [text]="'Go back'"
-            (click)="carousel.back()"></styled-button>
-    <styled-button class="next" *ngIf="carouselIndex < 5 - 1" [style]="ButtonStyles.filled"
+    <styled-button class="back" *ngIf="carouselIndex > 0" [style]="navigationButtonStyle" [text]="'Go back'"
+                   (click)="carousel.back()"></styled-button>
+    <styled-button class="next" *ngIf="carouselIndex < 5 - 1" [style]="navigationButtonStyle"
             [text]="'Continue'" (click)="carousel.next()"></styled-button>
     <styled-button class="done" *ngIf="carouselIndex == 5 - 1" [disabled]="permissionStatus != 'granted'"
-            [style]="ButtonStyles.filled" [text]="'Finish'" (click)="finishBoarding()"></styled-button>
+                   [style]="navigationButtonStyle" [text]="'Finish'" (click)="finishBoarding()"></styled-button>
     <indicator [steps]="5" [selectedStep]="carouselIndex"></indicator>
 </footer>

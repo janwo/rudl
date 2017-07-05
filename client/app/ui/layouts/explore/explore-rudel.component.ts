@@ -6,6 +6,7 @@ import {ExpeditionService} from '../../../services/expedition.service';
 import {Expedition} from '../../../models/expedition';
 import {RudelItemStyles} from '../../widgets/rudel/rudel-item.component';
 import {ButtonStyles} from "../../widgets/control/styled-button.component";
+import {EmptyState} from "../../widgets/state/empty.component";
 
 @Component({
 	templateUrl: 'explore-rudel.component.html',
@@ -21,6 +22,11 @@ export class ExploreRudelComponent implements OnInit, OnDestroy {
 	popularRudel: Rudel[];
 	rudelItemStyle: RudelItemStyles = RudelItemStyles.block;
 	rudelItemButtonStyle: ButtonStyles = ButtonStyles.filledInverse;
+	emptyState: EmptyState = {
+		title: 'Keine Streifzüge gefunden',
+		image: require('../../../../assets/illustrations/no-expeditions.png'),
+		description: 'We couldn\'t find any expeditions!'
+	};
 	
 	constructor(private rudelService: RudelService) {}
 	

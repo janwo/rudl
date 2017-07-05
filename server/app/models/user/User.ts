@@ -26,8 +26,8 @@ export interface User extends Node {
 	id: string;
 	scope: Array<string>;
 	location: {
-		lng: number,
-		lat: number,
+		longitude: number,
+		latitude: number,
 	};
 	languages: Locale[];
 	mails: {

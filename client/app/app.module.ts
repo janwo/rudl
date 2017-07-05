@@ -77,8 +77,8 @@ import {UtilService} from './services/util.service';
 import {KeysPipe} from './pipes/keys.pipe';
 import {SafePipe} from './pipes/safe.pipe';
 import {RudelEditComponent} from './ui/layouts/rudel/rudel-edit.component';
-import {RudelExpeditionsComponent} from './ui/layouts/rudel/rudel-expeditions.component';
-import {RudelPastExpeditionsComponent} from './ui/layouts/rudel/rudel-past-expeditions.component';
+import {RudelUpcomingExpeditionsComponent} from './ui/layouts/rudel/rudel-upcoming-expeditions.component';
+import {RudelDoneExpeditionsComponent} from './ui/layouts/rudel/rudel-done-expeditions.component';
 import {RudelCreateExpeditionComponent} from './ui/layouts/rudel/rudel-create-expedition.component';
 import {RudelAddToListComponent} from './ui/layouts/rudel/rudel-add-to-list.component';
 import {RudelLikersComponent} from './ui/layouts/rudel/rudel-likers.component';
@@ -106,6 +106,7 @@ import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component'
 import {ExploreRudelComponent} from './ui/layouts/explore/explore-rudel.component';
 import {ExploreExpeditionsComponent} from './ui/layouts/explore/explore-expeditions.component';
 import {SettingsNotificationsComponent} from './ui/layouts/settings/settings-notifications.component';
+import {Ng2DeviceDetectorModule} from "ng2-device-detector";
 
 @NgModule({
 	declarations: [
@@ -115,7 +116,7 @@ import {SettingsNotificationsComponent} from './ui/layouts/settings/settings-not
 		CarouselComponent,
 		CarouselSlideComponent,
 		DropdownMenuComponent,
-		RudelPastExpeditionsComponent,
+		RudelDoneExpeditionsComponent,
 		RudelItemComponent,
 		ItemWrapperComponent,
 		ListComponent,
@@ -144,7 +145,7 @@ import {SettingsNotificationsComponent} from './ui/layouts/settings/settings-not
 		DashboardComponent,
 		RudelEditComponent,
 		RudelCreateExpeditionComponent,
-		RudelExpeditionsComponent,
+		RudelUpcomingExpeditionsComponent,
 		RudelLikersComponent,
 		RudelAddToListComponent,
 		SettingsNotificationsComponent,
@@ -223,6 +224,7 @@ import {SettingsNotificationsComponent} from './ui/layouts/settings/settings-not
 		HttpModule,
 		InfiniteScrollModule,
 		JsonpModule,
+		Ng2DeviceDetectorModule.forRoot(),
 		BrowserModule,
 		routing
 	],

@@ -6,6 +6,7 @@ import {Rudel, RudelRecipe} from '../models/rudel';
 import {Locale} from '../models/locale';
 import {UserService} from './user.service';
 import {User} from '../models/user';
+import {Location} from '../models/location';
 import Translations = Locale.Translations;
 
 @Injectable()
@@ -47,7 +48,7 @@ export class RudelService {
 			return rudel;
 		}).share();
 	}
-	
+
 	search(query: string, offset = 0, limit = 25): Observable<Rudel[]> {
 		return this.dataService.get(`/api/rudel/search/${query}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => {
 			return json.data.map((rudel: Rudel) => {
@@ -55,6 +56,10 @@ export class RudelService {
 				return rudel;
 			});
 		}).share();
+	}
+
+	locations(rudel: string): Observable<Location[]> {
+		return this.dataService.get(`/api/rudel/=/${rudel}/locations`, true).map((json: JsonResponse) => json.data as Location[]).share();
 	}
 	
 	lists(rudel: string, offset = 0, limit = 25): Observable<List[]> {

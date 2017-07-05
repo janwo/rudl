@@ -45,7 +45,7 @@ export class ExpeditionComponent implements OnInit {
 	
 	ngOnInit() {
 		// Define expedition subscription.
-		this.expedition.filter(expedition => !!expedition).subscribe((expedition: Expedition) => {
+		this.expedition.asObservable().filter((expedition: Expedition) => !!expedition).subscribe((expedition: Expedition) => {
 			let humanizedDate = moment.duration(moment().diff(expedition.date.isoString)).humanize();
 			this.formattedDate = expedition.date.accuracy > 0 ? `in about ${humanizedDate}` : `in ${humanizedDate}`;
 			

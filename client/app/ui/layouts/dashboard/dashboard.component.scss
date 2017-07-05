@@ -132,7 +132,7 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
   section {
     display: flex;
     flex-direction: column;
-    overflow: scroll;
+    overflow: auto;
     position: relative;
     height: calc(100vh - #{$header-vertical-padding-mobile * 2 + $header-content-size});
 

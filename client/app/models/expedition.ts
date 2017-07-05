@@ -44,8 +44,8 @@ export interface ExpeditionRecipe {
 	date: string,
 	icon: string,
 	location: {
-		lat: number,
-		lng: number
+		latitude: number,
+		longitude: number
 	}
 }
 

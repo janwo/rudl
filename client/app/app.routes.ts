@@ -24,7 +24,7 @@ import {ExpeditionResolver} from './resolver/expedition';
 import {ExpeditionComponent} from './ui/layouts/expedition/expedition.component';
 import {RudelCreateExpeditionComponent} from './ui/layouts/rudel/rudel-create-expedition.component';
 import {RudelLikersComponent} from './ui/layouts/rudel/rudel-likers.component';
-import {RudelExpeditionsComponent} from './ui/layouts/rudel/rudel-expeditions.component';
+import {RudelUpcomingExpeditionsComponent} from './ui/layouts/rudel/rudel-upcoming-expeditions.component';
 import {RudelEditComponent} from './ui/layouts/rudel/rudel-edit.component';
 import {RudelAddToListComponent} from './ui/layouts/rudel/rudel-add-to-list.component';
 import {ListRudelComponent} from './ui/layouts/list/list-rudel.component';
@@ -33,7 +33,7 @@ import {NotFoundComponent} from './ui/layouts/404/404.component';
 import {ExpeditionMapComponent} from './ui/layouts/expedition/expedition-map.component';
 import {ExpeditionAttendeesComponent} from './ui/layouts/expedition/expedition-attendees.component';
 import {ExpeditionCommentsComponent} from './ui/layouts/expedition/expedition-comments.component';
-import {RudelPastExpeditionsComponent} from './ui/layouts/rudel/rudel-past-expeditions.component';
+import {RudelDoneExpeditionsComponent} from './ui/layouts/rudel/rudel-done-expeditions.component';
 import {SettingsProfileComponent} from './ui/layouts/settings/settings-profile.component';
 import {NotificationsComponent} from './ui/layouts/notification/notifications.component';
 import {ExpeditionsDoneComponent} from './ui/layouts/expedition/expeditions-done.component';
@@ -87,14 +87,14 @@ const appRoutes: Routes = [
 			{
 				path: 'people/not-found', component: NotFoundComponent, data: {
 				title: 'Invalid username!',
-				image: require('../assets/illustrations/welcome.png'),
+				image: require('../assets/illustrations/user-not-found.png'),
 				description: 'The requested user does not exist!'
 			}
 			},
 			{
 				path: 'people/deleted-message', component: NotFoundComponent, data: {
 				title: 'User deleted!',
-				image: require('../assets/illustrations/welcome.png'),
+				image: require('../assets/illustrations/user-not-found.png'),
 				description: 'We deleted the user.'
 			}
 			},
@@ -114,14 +114,14 @@ const appRoutes: Routes = [
 			{
 				path: 'lists/not-found', component: NotFoundComponent, data: {
 				title: 'Invalid list id!',
-				image: require('../assets/illustrations/welcome.png'),
+				image: require('../assets/illustrations/no-list-found.png'),
 				description: 'The requested list does not exist!'
 			}
 			},
 			{
 				path: 'lists/deleted-message', component: NotFoundComponent, data: {
 				title: 'List deleted!',
-				image: require('../assets/illustrations/welcome.png'),
+				image: require('../assets/illustrations/no-list-found.png'),
 				description: 'We deleted the list as no likers remained.'
 			}
 			},
@@ -141,14 +141,14 @@ const appRoutes: Routes = [
 			{
 				path: 'rudel/not-found', component: NotFoundComponent, data: {
 				title: 'Invalid rudel id!',
-				image: require('../assets/illustrations/welcome.png'),
+				image: require('../assets/illustrations/rudel-not-found.png'),
 				description: 'The requested rudel does not exist!'
 			}
 			},
 			{
 				path: 'rudel/deleted-message', component: NotFoundComponent, data: {
 				title: 'Rudel deleted!',
-				image: require('../assets/illustrations/welcome.png'),
+				image: require('../assets/illustrations/rudel-not-found.png'),
 				description: 'We deleted the rudel as no likers remained.'
 			}
 			},
@@ -156,9 +156,9 @@ const appRoutes: Routes = [
 				path: 'rudel/:rudel', component: RudelComponent, resolve: {
 				rudel: RudelResolver
 			}, canActivate: [BoardingGuard], children: [
-				{path: '', redirectTo: 'expeditions', pathMatch: 'full'},
-				{path: 'expeditions', component: RudelExpeditionsComponent},
-				{path: 'past-expeditions', component: RudelPastExpeditionsComponent},
+				{path: '', redirectTo: 'upcoming-expeditions', pathMatch: 'full'},
+				{path: 'upcoming-expeditions', component: RudelUpcomingExpeditionsComponent},
+				{path: 'done-expeditions', component: RudelDoneExpeditionsComponent},
 				{path: 'edit', component: RudelEditComponent},
 				{path: 'add-to-list', component: RudelAddToListComponent},
 				{path: 'likers', component: RudelLikersComponent},
@@ -168,14 +168,14 @@ const appRoutes: Routes = [
 			{
 				path: 'expeditions/not-found', component: NotFoundComponent, data: {
 				title: 'Invalid expedition id!',
-				image: require('../assets/illustrations/welcome.png'),
+				image: require('../assets/illustrations/expedition-not-found.png'),
 				description: 'The requested expedition does not exist!'
 			}
 			},
 			{
 				path: 'expeditions/deleted-message', component: NotFoundComponent, data: {
 				title: 'Expedition deleted!',
-				image: require('../assets/illustrations/welcome.png'),
+				image: require('../assets/illustrations/expedition-not-found.png'),
 				description: 'We deleted the expedition as you requested.'
 			}
 			},
@@ -190,8 +190,8 @@ const appRoutes: Routes = [
 			]
 			},
 			
-			// No illustrations required.
-			{path: 'illustrations', component: BoardingComponent},
+			// No boarding required.
+			{path: 'boarding', component: BoardingComponent},
 			
 			{path: 'settings', component: SettingsComponent, children: [
 				{path: '', redirectTo: 'profile', pathMatch: 'full'},
@@ -202,7 +202,7 @@ const appRoutes: Routes = [
 			{
 				path: '404', component: NotFoundComponent, data: {
 				title: 'Oops, nothing here!',
-				image: require('../assets/illustrations/welcome.png'),
+				image: require('../assets/illustrations/not-found.png'),
 				description: 'The requested page does not exist!'
 			}
 			},
@@ -212,7 +212,7 @@ const appRoutes: Routes = [
 	{
 		path: '404', component: NotFoundComponent, data: {
 		title: 'Oops, nothing here!',
-		image: require('../assets/illustrations/welcome.png'),
+		image: require('../assets/illustrations/not-found.png'),
 		description: 'The requested page does not exist!'
 	}
 	},

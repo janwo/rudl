@@ -1,4 +1,4 @@
-import * as Uuid from 'uuid';
+import * as shortid from 'shortid';
 import * as jwt from 'jsonwebtoken';
 import {Config} from '../../../run/config';
 import {User} from '../models/user/User';
@@ -133,7 +133,7 @@ export module AuthController {
 	export function signToken(user: User): Promise<string> {
 		// Define token.
 		let token: DecodedToken = {
-			tokenId: Uuid.v4(),
+			tokenId: shortid.generate(),
 			userId: user.id
 		};
 		
@@ -202,7 +202,7 @@ export module AuthController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = AccountController.create(transaction, {
 				username: request.payload.username,
-				id: Uuid.v4(),
+				id: shortid.generate(),
 				mail: request.payload.mail,
 				password: AuthController.hashPassword(request.payload.password),
 				firstName: request.payload.firstname,

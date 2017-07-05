@@ -5,6 +5,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {ExpeditionService} from '../../../services/expedition.service';
 import {Expedition} from '../../../models/expedition';
 import {ExpeditionItemStyles} from '../../widgets/expedition/expedition-item.component';
+import {EmptyState} from "../../widgets/state/empty.component";
 
 @Component({
 	templateUrl: 'explore-expeditions.component.html',
@@ -19,6 +20,11 @@ export class ExploreExpeditionsComponent implements OnInit, OnDestroy {
 	popularExpeditionsSubscription: Subscription;
 	popularExpeditions: Expedition[];
 	rudelItemButtonStyle: ExpeditionItemStyles = ExpeditionItemStyles.block;
+	emptyState: EmptyState = {
+		title: 'Keine Rudel gefunden',
+		image: require('../../../../assets/illustrations/no-rudel.png'),
+		description: 'We couldn\'t find any rudel!'
+	};
 	
 	constructor(private expeditionService: ExpeditionService) {}
 	

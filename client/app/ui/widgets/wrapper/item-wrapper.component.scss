@@ -25,7 +25,7 @@ $list-horizontal-item-width: 12.5rem;
 
     &.horizontal-layout {
       flex-wrap: nowrap;
-      overflow: scroll;
+      overflow: auto;
 
       & > /deep/ * {
         width: $list-horizontal-item-width;

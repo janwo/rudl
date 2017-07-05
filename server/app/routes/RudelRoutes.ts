@@ -126,6 +126,23 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
+			path: '/api/rudel/=/{id}/locations',
+			method: 'GET',
+			handler: RudelController.RouteHandlers.locations,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					params: {
+						id: Joi.string()
+					}
+				}
+			}
+		},
+		{
 			path: '/api/rudel/like/{id}',
 			method: 'POST',
 			handler: RudelController.RouteHandlers.like,

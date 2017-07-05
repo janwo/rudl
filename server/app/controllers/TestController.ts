@@ -39,8 +39,8 @@ export module TestController {
 				UserRoles.user
 			],
 			location: {
-				lat: Number.parseFloat(faker.address.latitude()),
-				lng: Number.parseFloat(faker.address.longitude())
+				latitude: Number.parseFloat(faker.address.latitude()),
+				longitude: Number.parseFloat(faker.address.longitude())
 			},
 			avatarId: null,
 			onBoard: true,
@@ -59,10 +59,6 @@ export module TestController {
 		].sort();
 		let rudel: Rudel = {
 			id: shortid.generate(),
-			defaultLocation: {
-				lat: Number.parseFloat(faker.address.latitude()),
-				lng: Number.parseFloat(faker.address.longitude())
-			},
 			translations: {},
 			icon: faker.random.arrayElement(Object.keys(faker.random.objectElement<any>(Config.backend.icons).icons)),
 			createdAt: date[0],

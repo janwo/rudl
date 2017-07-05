@@ -73,8 +73,8 @@ export class DatabaseManager {
 				'id'
 			],
 			spatial: {
-				longitude: 'location_lng',
-				latitude: 'location_lat'
+				longitude: 'location_longitude',
+				latitude: 'location_latitude'
 			},
 			fulltext: {
 				Expedition: [

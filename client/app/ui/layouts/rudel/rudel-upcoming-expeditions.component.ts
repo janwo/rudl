@@ -8,18 +8,18 @@ import {EmptyState} from '../../widgets/state/empty.component';
 import {ScrollService} from '../../../services/scroll.service';
 
 @Component({
-	templateUrl: 'rudel-past-expeditions.component.html',
-	styleUrls: ['rudel-past-expeditions.component.scss']
+	templateUrl: 'rudel-upcoming-expeditions.component.html',
+	styleUrls: ['rudel-upcoming-expeditions.component.scss']
 })
-export class RudelPastExpeditionsComponent implements OnInit, OnDestroy {
+export class RudelUpcomingExpeditionsComponent implements OnInit, OnDestroy {
 	
 	rudel: Rudel;
 	expeditionsSubscription: Subscription;
 	expeditions: Expedition[];
 	emptyState: EmptyState = {
-		title: 'Newbie!',
-		image: require('../../../../assets/illustrations/welcome.png'),
-		description: 'We couldn\'t find any expeditions you attended to!'
+		title: 'That\'s sad',
+		image: require('../../../../assets/illustrations/no-upcoming-expeditions.png'),
+		description: 'We couldn\'t find any expeditions around here. Create one and make your locals happy!'
 	};
 	
 	constructor(private expeditionService: ExpeditionService,
@@ -31,7 +31,7 @@ export class RudelPastExpeditionsComponent implements OnInit, OnDestroy {
 		this.expeditionsSubscription = this.route.parent.data.flatMap((data: { rudel: Rudel }) => {
 			this.rudel = data.rudel;
 			return this.scrollService.hasScrolledToBottom().map(() => this.expeditions ? this.expeditions.length : 0).startWith(0).distinct().flatMap((offset: number) => {
-				return this.expeditionService.doneByRudel(this.rudel.id, offset, 25);
+				return this.expeditionService.upcomingByRudel(this.rudel.id, offset, 25);
 			});
 		}).subscribe((expeditions: Expedition[]) => {
 			if (expeditions.length < 25) this.expeditionsSubscription.unsubscribe();

@@ -5,7 +5,8 @@ import {Router} from '@angular/router';
 import {ButtonStyles} from '../../widgets/control/styled-button.component';
 import {UserService} from '../../../services/user.service';
 import {Title} from '@angular/platform-browser';
-import {CarouselComponent} from "../../widgets/wrapper/carousel.component";
+import {Ng2DeviceService } from "ng2-device-detector";
+import {Observable} from "rxjs/Observable";
 
 @Component({
 	templateUrl: 'boarding.component.html',
@@ -25,34 +26,35 @@ import {CarouselComponent} from "../../widgets/wrapper/carousel.component";
 		])
 	]
 })
-export class BoardingComponent implements OnInit, OnDestroy {
-	
-	constructor(private userService: UserService,
+export class BoardingComponent implements OnDestroy, OnInit {
+
+    constructor(private userService: UserService,
 	            private router: Router,
+                private deviceService: Ng2DeviceService,
 	            title: Title) {
 		title.setTitle('rudl.me - Boarding'); //rudl.me - Boarding
 	}
 	
 	carouselIndex: number = 0;
-	permissionStatus: 'ungranted' | 'granting' | 'granted' | 'denied' = 'ungranted';
+    permissionStatus: 'ungranted' | 'granting' | 'granted' | 'denied' = 'ungranted';
 	locationSubscription: Subscription;
-	ButtonStyles = ButtonStyles;
-	
-	ngOnInit() {
-		// Subscribe to permissions.
-		this.locationSubscription = this.userService.getCurrentPosition().subscribe(() => {
-			this.permissionStatus = 'granted';
-		}, error => {
-			this.permissionStatus = 'denied';
-		});
-	}
+    navigationButtonStyle = ButtonStyles.filled;
+    permissionButtonStyle = ButtonStyles.filledShadowed;
+    helpButtonStyle = ButtonStyles.filledInverseShadowed;
+
+    ngOnInit(): void {
+        // Subscribe to permissions.
+        this.locationSubscription = this.userService.getCurrentPosition().subscribe(location => {
+            this.permissionStatus = location ? 'granted' : 'denied';
+        });
+    }
 	
 	setCarouselIndex(index: number): void {
 		this.carouselIndex = index;
 	}
 	
 	grantPermission(): void {
-		this.permissionStatus = 'granting';
+        this.permissionStatus = 'granting';
 		this.userService.resumePositionUpdates();
 	}
 	
@@ -61,9 +63,54 @@ export class BoardingComponent implements OnInit, OnDestroy {
 			this.router.navigate(['/']);
 		});
 	}
+
+	openHelpLink(): void {
+	    let link = this.getHelpLink();
+	    if(link) window.open(link);
+    }
 	
-	openHelpTopic() {
-	
+	getHelpLink(): string {
+	    let deviceInfo = this.deviceService.getDeviceInfo();
+	    let isMobile = this.deviceService.isMobile();
+	    let language = this.userService.getAuthenticatedUser().user.languages[0];
+	    switch(deviceInfo.browser) {
+            case 'chrome':
+                let platform = 'Android';
+                if(deviceInfo.os == 'ios') platform = 'iOS';
+                if(!isMobile) platform = 'Desktop';
+                return `https://support.google.com/chrome/answer/142065?co=GENIE.Platform%3D${platform}&hl=${language}`;
+
+            case 'safari':
+                let id = isMobile ? 'HT201357' : 'HT5403';
+                return `https://support.apple.com/${language}-${language}/${id}`;
+
+            case 'firefox':
+                switch(deviceInfo.os) {
+                    case 'android':
+                        switch (language) {
+                            case 'de':
+                                return `https://support.mozilla.org/de/kb/mozilla-standortdienst-location-service-verbessern`;
+
+                            case 'es':
+                                return`https://support.mozilla.org/es/kb/mejora-los-servicios-de-localizacion-de-mozilla-ha`;
+
+                            case 'fr':
+                                return `https://support.mozilla.org/fr/kb/ameliorer-le-service-de-localisation-de-mozilla-en`;
+
+                            default:
+                                return `https://support.mozilla.org/en-US/kb/improve-mozilla-location-services-turning-location`;
+                        }
+
+                    default:
+                        return null;
+                }
+
+            case 'windows':
+                return `https://privacy.microsoft.com/en-us/windows-10-location-and-privacy`;
+
+            default:
+                return null;
+        }
 	}
 	
 	ngOnDestroy() {

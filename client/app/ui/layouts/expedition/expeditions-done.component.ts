@@ -18,7 +18,7 @@ export class ExpeditionsDoneComponent implements OnInit, OnDestroy {
 	expeditions: Expedition[];
 	emptyState: EmptyState = {
 		title: 'Keine Streifzüge vollendet',
-		image: require('../../../../assets/illustrations/welcome.png'),
+		image: require('../../../../assets/illustrations/no-done-expeditions.png'),
 		description: 'We couldn\'t find any expeditions you attended to!'
 	};
 	

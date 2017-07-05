@@ -16,7 +16,7 @@ export class UserLikeesComponent implements OnInit, OnDestroy {
 	likees: User[] = null;
 	emptyState: EmptyState = {
 		title: 'No Likees',
-		image: require('../../../../assets/illustrations/welcome.png'),
+		image: require('../../../../assets/illustrations/no-users.png'),
 		description: 'You are not following anyone. Why not change that?'
 	};
 	

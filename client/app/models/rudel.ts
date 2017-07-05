@@ -8,7 +8,6 @@ export interface RudelPreview extends Document {
 	icon: string;
 	links: RudelLinks;
 	translations: Locale.Translations;
-	defaultLocation: Location;
 }
 
 export interface Rudel extends RudelPreview {

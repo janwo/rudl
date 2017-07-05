@@ -19,6 +19,6 @@ export class ExpeditionMapComponent implements OnInit {
 		this.title.setTitle(`rudl.me - Streifzug "${this.parent.expedition.getValue().title}" - Karte`);
 		
 		// Define changed params subscription.
-		this.externalMapLink = `https://maps.google.com/?q=${this.parent.expedition.getValue().location.lat},${this.parent.expedition.getValue().location.lng}`;
+		this.externalMapLink = `https://maps.google.com/?q=${this.parent.expedition.getValue().location.latitude},${this.parent.expedition.getValue().location.longitude}`;
 	}
 }

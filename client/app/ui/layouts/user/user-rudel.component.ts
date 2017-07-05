@@ -18,7 +18,7 @@ export class UserRudelComponent implements OnInit, OnDestroy {
 	rudelItemStyle: RudelItemStyles = RudelItemStyles.list;
 	emptyState: EmptyState = {
 		title: 'There are no Rudels',
-		image: require('../../../../assets/illustrations/no-rudel-found.png'),
+		image: require('../../../../assets/illustrations/no-rudel.png'),
 		description: 'Why not search for new Rudels that you like?'
 	};
 	

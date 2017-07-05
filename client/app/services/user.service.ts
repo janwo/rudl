@@ -1,6 +1,7 @@
 import {DataService, JsonResponse} from './data.service';
 import {Router} from '@angular/router';
 import {Injectable} from '@angular/core';
+import * as geolib from 'geolib';
 import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
 import {AuthenticatedUser, User, UserRecipe, UserSettings, UserSettingsRecipe} from '../models/user';
 import {Location} from '../models/location';
@@ -17,10 +18,13 @@ export class UserService {
 	private authenticatedProfile: BehaviorSubject<UserStatus> = new BehaviorSubject<UserStatus>(null);
 	private authenticatedProfileObservable: Observable<UserStatus> = this.authenticatedProfile.asObservable().filter(user => !!user);
 	private currentLocation: ReplaySubject<Position> = new ReplaySubject(1);
+
 	private locationUpdates: Observable<Location> = this.currentLocation.asObservable().flatMap((position: Position) => {
-		let location: Location = {
-			lat: position.coords.latitude,
-			lng: position.coords.longitude
+		if(!position) return Observable.of(null).delay(1000);
+
+	    let location: Location = {
+			latitude: position.coords.latitude,
+			longitude: position.coords.longitude
 		};
 		
 		// Just return current location, if new location is less than 100 meters away.
@@ -67,11 +71,7 @@ export class UserService {
 		if (!userStatus || !userStatus.user || !userStatus.user.location) return NaN;
 		
 		// Calculate distance.
-		let pi = Math.PI / 180;
-		let R = 6378137; // Earth’s radius
-		let a = 0.5 - Math.cos((userStatus.user.location.lat - location.lat) * pi) / 2 + Math.cos(location.lng * pi)
-			* Math.cos(userStatus.user.location.lat * pi) * (1 - Math.cos((userStatus.user.location.lng - location.lng) * pi)) / 2;
-		return Math.floor(R * Math.asin(Math.sqrt(a)) * 2);
+        return geolib.getDistance(userStatus.user.location, location);
 	}
 	
 	getAuthenticatedUser(): UserStatus {
@@ -88,7 +88,8 @@ export class UserService {
 		this.watchPositionCallerId = navigator.geolocation.watchPosition((position: Position) => {
 			this.currentLocation.next(position);
 		}, (error: PositionError) => {
-			this.currentLocation.error(error);
+            this.pausePositionUpdates();
+			this.currentLocation.next(null);
 		}, {
 			enableHighAccuracy: false,
 			maximumAge: 1000 * 60,

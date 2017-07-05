@@ -1,11 +1,11 @@
 @import '../../variables.scss';
 @import "../../mixins.scss";
 
-$boarding-size: 18rem;
+$boarding-size: map_get($base-breakpoints, 'small') / 2;
+$boarding-image-max-size: $boarding-size * 2 / 3;
 
 :host {
   min-height: 100%;
-  min-width: $boarding-size;
   display: flex;
   flex-direction: column;
   @include setup-max-width();
@@ -25,15 +25,25 @@ $boarding-size: 18rem;
         width: 100%;
         max-width: $boarding-size - 2 * map_get($base-padding, 'smaller');
         flex: 1 1 auto;
-        display: block;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
         padding: map_get($base-padding, 'smaller');
 
         .image {
           width: 100%;
-          padding-bottom: 75%;
+          max-width: $boarding-image-max-size;
           flex: 0 0 auto;
-          background: no-repeat top center;
-          background-size: contain;
+
+          &:after {
+            content: '';
+            width: 100%;
+            display: block;
+            padding-bottom: 100%;
+            background: no-repeat center;
+            background-size: contain;
+          }
         }
 
         h1 {
@@ -49,27 +59,31 @@ $boarding-size: 18rem;
 
         styled-button {
           margin-top: map_get($base-padding, 'default');
+
+          &:last-of-type:not(:first-of-type) {
+            margin-top: 0;
+          }
         }
       }
 
-      &:nth-child(1) .card .image {
+      &:nth-child(1) .card .image:after {
         background-image: url(../../../../assets/illustrations/welcome.png);
       }
 
-      &:nth-child(2) .card .image {
-        background-image: url(../../../../assets/illustrations/welcome.png);
+      &:nth-child(2) .card .image:after {
+        background-image: url(../../../../assets/illustrations/explore-rudel.png);
       }
 
-      &:nth-child(3) .card .image {
-        background-image: url(../../../../assets/illustrations/expeditions.png);
+      &:nth-child(3) .card .image:after {
+        background-image: url(../../../../assets/illustrations/create-expeditions.png);
       }
 
-      &:nth-child(4) .card .image {
-        background-image: url(../../../../assets/illustrations/welcome.png);
+      &:nth-child(4) .card .image:after {
+        background-image: url(../../../../assets/illustrations/get-out.png);
       }
 
-      &:nth-child(5) .card .image {
-        background-image: url(../../../../assets/illustrations/welcome.png);
+      &:nth-child(5) .card .image:after {
+        background-image: url(../../../../assets/illustrations/grant-permission.png);
       }
     }
   }

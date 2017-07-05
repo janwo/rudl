@@ -18,7 +18,7 @@ $location-search-border-color: map_get($base-colors, 'secondary');
 
   .results {
     list-style: none;
-    overflow: scroll;
+    overflow: auto;
     flex: 1 1 auto;
 
     li {

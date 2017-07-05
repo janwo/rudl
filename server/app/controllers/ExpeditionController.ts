@@ -21,7 +21,7 @@ export module ExpeditionController {
 	
 	export const FUZZY_HOURS = 3;
 	export const FUZZY_METERS = 500;
-	export const REGIONAL_RADIUS_METERS = 30000;
+	export const SEARCH_RADIUS_METERS = 30000;
 	
 	export function getPublicExpedition(transaction: Transaction, expedition: Expedition | Expedition[], relatedUser: User, preview = false): Promise<any | any[]> {
 		let createPublicExpedition = (expedition: Expedition): Promise<any> => {
@@ -90,10 +90,10 @@ export module ExpeditionController {
 						let distance = randomSeed.intBetween(-FUZZY_METERS, FUZZY_METERS);
 						let pi = Math.PI;
 						let R = 6378137; // Earth’s radius
-						let dLat = distance / R;
-						let dLng = distance / ( R * Math.cos(pi * expedition.location.lng / 180) );
-						expedition.location.lat = expedition.location.lat + ( dLat * 180 / pi );
-						expedition.location.lng = expedition.location.lng + ( dLng * 180 / pi );
+						let dlatitude = distance / R;
+						let dlongitude = distance / ( R * Math.cos(pi * expedition.location.longitude / 180) );
+						expedition.location.latitude = expedition.location.latitude + ( dlatitude * 180 / pi );
+						expedition.location.longitude = expedition.location.longitude + ( dlongitude * 180 / pi );
 					}
 					
 					// Extend transformation recipe.
@@ -197,11 +197,11 @@ export module ExpeditionController {
 	}
 	
 	export function findUpcomingByRudel(transaction: Transaction, rudel: Rudel, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) AND e.date > $after WITH e ORDER BY e.date SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
+		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) AND e.date > $after WITH e ORDER BY e.date SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
 			rudelId: rudel.id,
 			location: {
-				latitude: user.location.lat,
-				longitude: user.location.lng
+				latitude: user.location.latitude,
+				longitude: user.location.longitude
 			},
 			limit: limit,
 			skip: skip,
@@ -210,11 +210,11 @@ export module ExpeditionController {
 	}
 	
 	export function findDoneByRudel(transaction: Transaction, rudel: Rudel, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) AND e.date < $before WITH e ORDER BY e.date DESC SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
+		return transaction.run<Expedition, any>(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) AND e.date < $before WITH e ORDER BY e.date DESC SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
 			rudelId: rudel.id,
 			location: {
-				latitude: user.location.lat,
-				longitude: user.location.lng
+				latitude: user.location.latitude,
+				longitude: user.location.longitude
 			},
 			limit: limit,
 			skip: skip,
@@ -539,10 +539,10 @@ export module ExpeditionController {
 	}
 	
 	export function nearby(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
+		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
 			location: {
-				latitude: user.location.lat,
-				longitude: user.location.lng
+				latitude: user.location.latitude,
+				longitude: user.location.longitude
 			},
 			limit: limit,
 			skip: skip
@@ -552,10 +552,10 @@ export module ExpeditionController {
 	}
 	
 	export function popular(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH e RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
+		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH e RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
 			location: {
-				latitude: user.location.lat,
-				longitude: user.location.lng
+				latitude: user.location.latitude,
+				longitude: user.location.longitude
 			},
 			now: Date.now() / 1000,
 			limit: limit,
@@ -566,10 +566,10 @@ export module ExpeditionController {
 	}
 	
 	export function recent(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e WITH e WHERE e.createdAt > $now WITH e ORDER BY e.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(e) as e`, {
+		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH e WHERE e.createdAt > $now WITH e ORDER BY e.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(e) as e`, {
 			location: {
-				latitude: user.location.lat,
-				longitude: user.location.lng
+				latitude: user.location.latitude,
+				longitude: user.location.longitude
 			},
 			now: Date.now() / 1000,
 			limit: limit,
@@ -580,10 +580,10 @@ export module ExpeditionController {
 	}
 	
 	export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${REGIONAL_RADIUS_METERS / 1000}) YIELD node as e RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
+		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
 			location: {
-				latitude: user.location.lat,
-				longitude: user.location.lng
+				latitude: user.location.latitude,
+				longitude: user.location.longitude
 			},
 			now: Date.now() / 1000,
 			limit: limit,

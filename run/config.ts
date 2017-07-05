@@ -38,7 +38,7 @@ export const Config: {
 		},
 		webpack: {
 			config: {
-				devtool: string,
+				devtool: any,
 				resolve: {
 					extensions: Array<string>,
 					modules: Array<string>,

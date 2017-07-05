@@ -4,9 +4,12 @@ import {Rudel} from '../../../models/rudel';
 import {ExpeditionService} from '../../../services/expedition.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../../../services/user.service';
+import {Location} from '../../../models/location';
 import {Locale} from '../../../models/locale';
+import * as geolib from 'geolib';
 import {ExpeditionRecipe} from '../../../models/expedition';
 import {CarouselComponent} from '../../widgets/wrapper/carousel.component';
+import {RudelService} from "../../../services/rudel.service";
 
 @Component({
 	templateUrl: 'rudel-create-expedition.component.html',
@@ -15,14 +18,16 @@ import {CarouselComponent} from '../../widgets/wrapper/carousel.component';
 export class RudelCreateExpeditionComponent implements OnInit {
 	
 	rudel: Rudel;
-	form: FormGroup;
+    form: FormGroup;
+    locations: Location[];
 	carouselIndex: number;
 	submitPending: boolean;
 	@ViewChild(CarouselComponent) carousel: CarouselComponent;
 	
 	constructor(private router: Router,
 	            private route: ActivatedRoute,
-	            private userService: UserService,
+				private rudelService: RudelService,
+				private userService: UserService,
 	            private expeditionService: ExpeditionService,
 	            private fb: FormBuilder) {}
 	
@@ -60,7 +65,7 @@ export class RudelCreateExpeditionComponent implements OnInit {
 			}),
 			location: this.fb.group({
 				location: [
-					this.rudel.defaultLocation, [
+					null, [
 						Validators.required
 					]
 				]
@@ -77,6 +82,15 @@ export class RudelCreateExpeditionComponent implements OnInit {
 					]
 				]
 			})
+		});
+
+		// Load nearby locations.
+		this.rudelService.locations(this.rudel.id).subscribe(locations => {
+		    this.locations = locations;
+			if(!this.form.value.location.location) {
+                let center = geolib.getCenterOfBounds(locations) || this.userService.getAuthenticatedUser().user.location;
+			    this.form.get('location').get('location').setValue(center);
+            }
 		});
 	}
 	

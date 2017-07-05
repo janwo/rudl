@@ -65,7 +65,7 @@ $modal-close-button-size: map_get($base-padding, 'smaller');
 
       div {
         flex: 1 1 auto;
-        overflow: scroll;
+        overflow: auto;
         padding-left: $modal-horizontal-padding;
         padding-right: $modal-horizontal-padding;
         padding-bottom: $modal-horizontal-padding;
