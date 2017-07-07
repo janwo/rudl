@@ -20,13 +20,13 @@ export class UserItemComponent implements OnInit {
 		if(!this.info) {
 			// Choose default message.
 			if (!this.user.relations) {
-				this.info = `This is you!`;
+				this.info = `Das bist du!`;
 				return;
 			}
 			
 			let choices = [
-				`You have ${this.user.relations.mutualLikers} mutual likers`,
-				`You have ${this.user.relations.mutualLikees} mutual likees`
+				`Du hast ${this.user.relations.mutualLikers} gemeinsame Anhänger`,
+				`Ihr beide folgt gemeinsam ${this.user.relations.mutualLikees} Nutzer`
 			];
 			this.info = choices[Math.trunc(choices.length * Math.random())];
 		}

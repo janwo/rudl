@@ -17,9 +17,9 @@ export class ExpeditionsUpcomingComponent implements OnInit {
 	expeditionsSubscription: Subscription;
 	expeditions: Expedition[];
 	emptyState: EmptyState = {
-		title: 'Keine künftigen Streifzüge bisher',
+		title: 'Keine künftigen Streifzüge',
 		image: require('../../../../assets/illustrations/no-upcoming-expeditions.png'),
-		description: 'We couldn\'t find any expeditions you are going to!'
+		description: 'Du hast dich noch keinem Streifzug angeschlossen.'
 	};
 	
 	constructor(private expeditionService: ExpeditionService,
@@ -27,7 +27,7 @@ export class ExpeditionsUpcomingComponent implements OnInit {
 	            private title: Title) {}
 	
 	ngOnInit() {
-		this.title.setTitle(`rudl.me - Streifzug "Zukünftige Streifzüge"`);
+		this.title.setTitle(`rudl.me | Streifzug "Zukünftige Streifzüge"`);
 		
 		// Expeditions.
 		this.expeditionsSubscription = this.scrollService.hasScrolledToBottom().map(() => this.expeditions.length).startWith(0).distinct().flatMap((offset: number) => {

@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {UserService} from '../../../services/user.service';
 import * as moment from 'moment';
 import {Expedition} from '../../../models/expedition';
+import {Locale} from "../../../../../server/app/models/Translations";
 
 @Component({
 	templateUrl: 'expedition-item.component.html',
@@ -11,16 +12,17 @@ import {Expedition} from '../../../models/expedition';
 export class ExpeditionItemComponent implements OnInit {
 	
 	@Input() expedition: Expedition;
+	@Input() style: ExpeditionItemStyles = ExpeditionItemStyles.list;
+
 	formattedDate: string;
 	formattedLocation: string;
 	formattedAwaitingApproval: string;
-	@Input() style: ExpeditionItemStyles = ExpeditionItemStyles.list;
 	
 	constructor(private userService: UserService) {}
 	
 	ngOnInit(): void {
-		let humanizedDate = moment.duration(moment().diff(this.expedition.date.isoString)).humanize();
-		this.formattedDate = this.expedition.date.accuracy > 0 ? `in ca. ${humanizedDate}` : `in ${humanizedDate}`;
+		let date = moment.duration(moment().diff(this.expedition.date.isoString)).humanize();
+		this.formattedDate = this.expedition.date.accuracy > 0 ? `in ca. ${date}` : `in ${date}`;
 		
 		let distance = this.userService.getUsersDistance(this.expedition.location);
 		distance = distance <= 10000 ? Math.ceil(distance / 100) / 10 : Math.ceil(distance / 1000);

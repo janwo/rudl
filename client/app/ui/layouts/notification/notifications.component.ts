@@ -14,9 +14,9 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 	notificationSubscription: Subscription;
 	notifications: Notification[];
 	emptyState: EmptyState = {
-		title: 'No Messages!',
+		title: 'Keine Meldungen!',
 		image: require('../../../../assets/illustrations/no-notifications.png'),
-		description: 'There are no notifications yet.'
+		description: 'Bisher haben wir keine Meldungen für dich.'
 	};
 	
 	constructor(private userService: UserService,

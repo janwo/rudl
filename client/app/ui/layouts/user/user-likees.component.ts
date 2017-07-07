@@ -14,10 +14,17 @@ export class UserLikeesComponent implements OnInit, OnDestroy {
 	
 	likeesSubscription: Subscription;
 	likees: User[] = null;
+	isAuthenticatedUser: boolean;
+
 	emptyState: EmptyState = {
-		title: 'No Likees',
+		title: 'Folgt keine Nutzer',
 		image: require('../../../../assets/illustrations/no-users.png'),
-		description: 'You are not following anyone. Why not change that?'
+		description: 'Nutzer können ihre Anhänger in Streifzüge einladen.'
+	};
+	emptyStateAuthenticatedProfile: EmptyState = {
+		title: 'Folge andere Nutzer',
+		image: require('../../../../assets/illustrations/no-users.png'),
+		description: 'Leute, denen du folgst, können dich in Streifzüge einladen.'
 	};
 	
 	constructor(private userService: UserService,
@@ -25,11 +32,12 @@ export class UserLikeesComponent implements OnInit, OnDestroy {
 	            private scrollService: ScrollService) {}
 	
 	ngOnInit() {
-		this.likeesSubscription = this.route.parent.params.map(params => params['username']).do(() => {
-			this.likees = null;
-		}).flatMap(username => {
+		this.likeesSubscription = this.route.parent.data.do((data: { user: User }) => {
+            this.likees = null;
+			this.isAuthenticatedUser = data.user.id == this.userService.getAuthenticatedUser().user.id;
+		}).flatMap((data: { user: User }) => {
 			return this.scrollService.hasScrolledToBottom().map(() => this.likees ? this.likees.length : 0).startWith(0).distinct().flatMap((offset: number) => {
-				return this.userService.likees(username, offset, 25);
+				return this.userService.likees(data.user.username, offset, 25);
 			});
 		}).subscribe((likees: User[]) => {
 			if (likees.length < 25) this.likeesSubscription.unsubscribe();

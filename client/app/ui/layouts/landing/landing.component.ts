@@ -13,15 +13,12 @@ export class LandingComponent implements OnInit {
 	            private router: Router,
 	            title: Title,
 	            private userService: UserService) {
-			title.setTitle('rudl.me - Entdecke den Puls deiner Stadt!');
+			title.setTitle('rudl.me | Entdecke den Puls deiner Stadt!');
 		}
-	
-	openExternalLink(link: string): void {
-		window.open(link);
-	}
 	
 	ngOnInit(): void {
 		this.userService.getAuthenticatedUserObservable().subscribe(((user: UserStatus) => {
+		    debugger
 			if (user.loggedIn) this.router.navigate(['/']);
 		}));
 	}

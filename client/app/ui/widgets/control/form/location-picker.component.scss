@@ -24,5 +24,13 @@
       margin-left: -$width / 2;
       margin-top: -$height;
     }
+
+    /deep/ .leaflet-control-attribution{
+      margin-left: 55px;
+
+      a {
+        color: map_get($base-colors, 'secondary');
+      }
+    }
   }
 }

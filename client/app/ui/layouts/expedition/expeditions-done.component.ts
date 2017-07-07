@@ -17,9 +17,9 @@ export class ExpeditionsDoneComponent implements OnInit, OnDestroy {
 	expeditionsSubscription: Subscription;
 	expeditions: Expedition[];
 	emptyState: EmptyState = {
-		title: 'Keine Streifzüge vollendet',
+		title: 'Keine vollendete Streifzüge',
 		image: require('../../../../assets/illustrations/no-done-expeditions.png'),
-		description: 'We couldn\'t find any expeditions you attended to!'
+		description: 'Du hast bisher an keinem Streifzug teilgenommen.'
 	};
 	
 	constructor(private expeditionService: ExpeditionService,
@@ -27,7 +27,7 @@ export class ExpeditionsDoneComponent implements OnInit, OnDestroy {
 	            private title: Title) {}
 	
 	ngOnInit() {
-		this.title.setTitle(`rudl.me - Streifzug "Bisherige Streifzüge"`);
+		this.title.setTitle(`rudl.me | Streifzug "Bisherige Streifzüge"`);
 		
 		// Expeditions.
 		this.expeditionsSubscription = this.scrollService.hasScrolledToBottom().map(() => this.expeditions.length).startWith(0).distinct().flatMap((offset: number) => {

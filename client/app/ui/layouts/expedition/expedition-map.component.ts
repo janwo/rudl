@@ -16,7 +16,7 @@ export class ExpeditionMapComponent implements OnInit {
 	            public parent: ExpeditionComponent) {}
 	
 	ngOnInit() {
-		this.title.setTitle(`rudl.me - Streifzug "${this.parent.expedition.getValue().title}" - Karte`);
+		this.title.setTitle(`rudl.me | Streifzug "${this.parent.expedition.getValue().title}" - Karte`);
 		
 		// Define changed params subscription.
 		this.externalMapLink = `https://maps.google.com/?q=${this.parent.expedition.getValue().location.latitude},${this.parent.expedition.getValue().location.longitude}`;

@@ -40,11 +40,11 @@
     </carousel-slide>
 </carousel>
 <footer>
-    <styled-button class="back" *ngIf="carouselIndex > 0" [style]="navigationButtonStyle" [text]="'Go back'"
+    <styled-button class="back" *ngIf="carouselIndex > 0" [style]="navigationButtonStyle" [text]="'Zurück'"
                    (click)="carousel.back()"></styled-button>
     <styled-button class="next" *ngIf="carouselIndex < 5 - 1" [style]="navigationButtonStyle"
-            [text]="'Continue'" (click)="carousel.next()"></styled-button>
+            [text]="'Weiter'" (click)="carousel.next()"></styled-button>
     <styled-button class="done" *ngIf="carouselIndex == 5 - 1" [disabled]="permissionStatus != 'granted'"
-                   [style]="navigationButtonStyle" [text]="'Finish'" (click)="finishBoarding()"></styled-button>
+                   [style]="navigationButtonStyle" [text]="'Los geht´s!'" (click)="finishBoarding()"></styled-button>
     <indicator [steps]="5" [selectedStep]="carouselIndex"></indicator>
 </footer>

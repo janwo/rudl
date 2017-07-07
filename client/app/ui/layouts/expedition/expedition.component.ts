@@ -46,8 +46,11 @@ export class ExpeditionComponent implements OnInit {
 	ngOnInit() {
 		// Define expedition subscription.
 		this.expedition.asObservable().filter((expedition: Expedition) => !!expedition).subscribe((expedition: Expedition) => {
-			let humanizedDate = moment.duration(moment().diff(expedition.date.isoString)).humanize();
-			this.formattedDate = expedition.date.accuracy > 0 ? `in about ${humanizedDate}` : `in ${humanizedDate}`;
+
+			let localizedMoment = moment.duration(moment().diff(expedition.date.isoString));
+			let languages = this.userService.getAuthenticatedUser().user.languages;
+			if(languages) localizedMoment.locale(languages);
+			this.formattedDate = expedition.date.accuracy > 0 ? `in ca. ${localizedMoment.humanize()}` : `in ${localizedMoment.humanize()}`;
 			
 			let distance = this.userService.getUsersDistance(expedition.location);
 			distance = distance <= 10000 ? Math.ceil(distance / 100) / 10 : Math.ceil(distance / 1000);

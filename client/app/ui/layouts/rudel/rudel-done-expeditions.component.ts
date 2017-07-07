@@ -17,9 +17,9 @@ export class RudelDoneExpeditionsComponent implements OnInit, OnDestroy {
 	expeditionsSubscription: Subscription;
 	expeditions: Expedition[];
 	emptyState: EmptyState = {
-		title: 'Newbie!',
+		title: 'Keine Streifzüge abgeschlossen',
 		image: require('../../../../assets/illustrations/no-done-expeditions.png'),
-		description: 'We couldn\'t find any expeditions you attended to!'
+		description: 'In deiner Nähe wurden bisher keine Streifzüge in diesem Rudel abgeschlossen.'//We couldn\'t find any expeditions you attended to
 	};
 	
 	constructor(private expeditionService: ExpeditionService,

@@ -12,8 +12,8 @@
         <div class="statistics">
             <statistics [statistics]="[
 			{value: expedition.getValue().statistics.attendees, subject: 'Teilnehmer', link: ['attendees']},
-			{value: formattedLocation, subject: 'Entfernung', link: ['attendes']},
-			{value: formattedDate, subject: expedition.getValue().date.accuracy > 0 ? 'Grober Zeitpunkt' : 'Zeitpunkt', link: ['attendes']}
+			{value: formattedLocation, subject: 'Entfernung'},
+			{value: formattedDate, subject: expedition.getValue().date.accuracy > 0 ? 'Grober Zeitpunkt' : 'Zeitpunkt'}
 		]"></statistics>
             <div class="cta">
                 <styled-button
@@ -32,7 +32,7 @@
     <menu-item [makeRoomIfSmall]="true" [icon]="'people_outline'" [title]="'Teilnehmer'" [link]="['attendees']"></menu-item>
 </menu>
 <router-outlet></router-outlet>
-<modal #removeModal [title]="'Are you sure to remove expedition?'">
+<modal #removeModal [title]="'Streifzug wirklich absagen?'">
     <question [choices]="modalChoices"
             [description]='"Möchtest du diesen Streifzug wirklich absagen? Diese Aktion kann nicht rückgängig gemacht werden."'></question>
 </modal>

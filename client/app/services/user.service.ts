@@ -2,6 +2,7 @@ import {DataService, JsonResponse} from './data.service';
 import {Router} from '@angular/router';
 import {Injectable} from '@angular/core';
 import * as geolib from 'geolib';
+import * as moment from 'moment';
 import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
 import {AuthenticatedUser, User, UserRecipe, UserSettings, UserSettingsRecipe} from '../models/user';
 import {Location} from '../models/location';
@@ -46,6 +47,10 @@ export class UserService {
 				
 				// Request position updates immediately if user is boarded.
 				if (authenticatedUser.user.onBoard) this.resumePositionUpdates();
+
+				// Set moment language.
+                moment.locale(authenticatedUser.user.languages);
+
 			} else {
 				console.log(`authenticatedProfile got removed.`);
 				this.pausePositionUpdates();

@@ -1,5 +1,5 @@
 <ng-container *ngIf="suggestedExpeditions && suggestedExpeditions.length > 0; else loadingSuggestedExpeditions">
-    <h1>Empfohlende Streifzüge</h1>
+    <h1 i18n="@@suggestedExpeditions">Suggested Expeditions</h1>
     <item-wrapper [horizontal]="true">
         <expedition-item [style]="rudelItemButtonStyle" *ngFor="let suggestedExpeditionItem of suggestedExpeditions" [expedition]="suggestedExpeditionItem"></expedition-item>
     </item-wrapper>
@@ -10,7 +10,7 @@
 </ng-template>
 
 <ng-container *ngIf="popularExpeditions && popularExpeditions.length > 0; else loadingPopularExpeditions">
-    <h1>Beliebte Streifzüge</h1>
+    <h1 i18n="@@popularExpeditions">Popular Expeditions</h1>
     <item-wrapper [horizontal]="true">
         <expedition-item [style]="rudelItemButtonStyle" *ngFor="let popularExpeditionItem of popularExpeditions" [expedition]="popularExpeditionItem"></expedition-item>
     </item-wrapper>
@@ -21,7 +21,7 @@
 </ng-template>
 
 <ng-container *ngIf="recentExpeditions && recentExpeditions.length > 0; else loadingRecentExpeditions">
-    <h1>Neue Streifzüge</h1>
+    <h1 i18n="@@recentExpeditions">Recent Expeditions</h1>
     <item-wrapper [horizontal]="true">
         <expedition-item [style]="rudelItemButtonStyle" *ngFor="let recentExpeditionItem of recentExpeditions" [expedition]="recentExpeditionItem"></expedition-item>
     </item-wrapper>
@@ -30,3 +30,7 @@
 <ng-template #loadingRecentExpeditions>
     <loading *ngIf="recentExpeditions == null"></loading>
 </ng-template>
+
+<ng-container *ngIf="(!suggestedExpeditions || suggestedExpeditions.length == 0) && (!popularExpeditions || popularExpeditions.length == 0) && (!recentExpeditions || recentExpeditions.length == 0)">
+    <empty [emptyState]="emptyState"></empty>
+</ng-container>

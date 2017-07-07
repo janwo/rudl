@@ -10,7 +10,7 @@ import {Meta, Title} from '@angular/platform-browser';
 export class AppComponent {
 	
 	constructor(meta: Meta, title: Title) {
-		title.setTitle('rudl.me - Folge dem Puls der Stadt');
+		title.setTitle('rudl.me | Folge dem Puls der Stadt');
 		meta.addTags([
 			{
 				name: 'description',

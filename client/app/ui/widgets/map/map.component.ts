@@ -53,7 +53,6 @@ export class MapComponent implements AfterViewInit, OnChanges {
 			boxZoom: false,
 			tap: true,
 			keyboard: false,
-			attributionControl: false,
 			zoom: this.zoom
 		});
 		
@@ -64,7 +63,8 @@ export class MapComponent implements AfterViewInit, OnChanges {
 		
 		// Add map layer.
 		new L.TileLayer(MapComponent.source, {
-			crossOrigin: true
+			crossOrigin: true,
+			attribution: 'Maps provided by © <a target="_blank" href="https://openstreetmap.org/copyright">OpenStreetMap</a> Contributors via <a target="_blank" href="http://leafletjs.com">Leaflet</a>'
 		}).on('tileload', (e: L.TileEvent) => {
 			if (e.tile.getAttribute('data-grayscaled')) return;
 			

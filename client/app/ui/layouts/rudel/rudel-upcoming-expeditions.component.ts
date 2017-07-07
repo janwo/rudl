@@ -17,9 +17,9 @@ export class RudelUpcomingExpeditionsComponent implements OnInit, OnDestroy {
 	expeditionsSubscription: Subscription;
 	expeditions: Expedition[];
 	emptyState: EmptyState = {
-		title: 'That\'s sad',
+		title: 'Organisiere einen Streifzug in deiner Region!',
 		image: require('../../../../assets/illustrations/no-upcoming-expeditions.png'),
-		description: 'We couldn\'t find any expeditions around here. Create one and make your locals happy!'
+		description: 'Wir konnten in deiner Region keine bevorstehenden Streifzüge in diesem Rudel finden. Werde jetzt Organisator!'//We couldn\'t find any expeditions around here. Create one and make your locals happy!
 	};
 	
 	constructor(private expeditionService: ExpeditionService,

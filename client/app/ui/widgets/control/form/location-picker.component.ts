@@ -50,7 +50,6 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 			boxZoom: true,
 			tap: true,
 			keyboard: false,
-			attributionControl: false,
 			zoom: this.zoom
 		});
 		
@@ -61,8 +60,9 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 		
 		// Add map layer.
 		new L.TileLayer(LocationPickerComponent.source, {
-			crossOrigin: true
-		}).on('tileload', (e: L.TileEvent) => {
+			crossOrigin: true,
+            attribution: 'Maps provided by © <a target="_blank" href="https://openstreetmap.org/copyright">OpenStreetMap</a> Contributors via <a target="_blank" href="http://leafletjs.com">Leaflet</a>'
+        }).on('tileload', (e: L.TileEvent) => {
 			if (e.tile.getAttribute('data-grayscaled')) return;
 			
 			let canvas = document.createElement("canvas");

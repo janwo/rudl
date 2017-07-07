@@ -5,13 +5,13 @@
     </div>
     <div class="statistics">
         <statistics [statistics]="[
-		{value: rudel.statistics.expeditions, subject: 'Expeditions', link: ['expeditions']},
-		{value: rudel.statistics.likers, subject: 'Liker', link: ['likers']}
+		{value: rudel.statistics.expeditions, subject: 'Streifzüge', link: ['expeditions']},
+		{value: rudel.statistics.likers, subject: 'Befürworter', link: ['likers']}
 	]"></statistics>
         <div class="cta">
             <styled-button [style]="rudel.relations.isLiked ? buttonStyleActivated : buttonStyleDefault"
                     (click)="onToggleFollow(true)" [disabled]="pendingFollowRequest"
-                    [text]="'Interested'"></styled-button>
+                    [text]="'Interessiert'"></styled-button>
             <styled-button [icon]="'more_vert'" (click)="dropdownMenu.toggle()"></styled-button>
             <dropdown-menu #dropdownMenu [arrowAlignment]="'right'">
                 <!--<menu-item [icon]="'edit'" [title]="'Rudel bearbeiten'" [link]="['edit']"
@@ -33,7 +33,7 @@
             [link]="['likers']"></menu-item>
 </menu>
 <router-outlet></router-outlet>
-<modal #unfollowModal [title]="'Are you sure to unfollow rudel?'">
+<modal #unfollowModal [title]="'Bist du wirklich nicht interessiert?'">
     <question [choices]="modalChoices"
-            [description]='"Du bist der Ersteller dieser Aktivität. Durch das Entfolgen geht die Aktivität in den Besitz eines anderen Likers über. Aktivitäten ohne andere Liker werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."'></question>
+            [description]='"Du bist der Ersteller dieses Rudels. Durch diese Aktion geht das Rudel in den Besitz eines anderen Nutzers über. Rudel ohne Befürworter werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."'></question>
 </modal>

@@ -16,23 +16,23 @@
         </li>
     </item-wrapper>
 </section>
-<section *ngIf="searchValue">
-    <!--<h1 i18n>Lists</h1>
-    <item-wrapper class="results">
-        <li class="card create" [ngClass]="{expanded: expandedListCreation}">
-            <div class="title" (click)="expandedListCreation = true">
-                <span i18n>Create new list</span> <span #highlightedList class="highlight">{{searchValue}}</span>
-            </div>
-            <create-list *ngIf="expandedListCreation" [@container]="expandedListCreation"
-                    (@container.start)="$event.toState && highlightedList.style.display = 'none'"
-                    (@container.done)="$event.toState == 'void' && highlightedList.style.display = 'inline'"
-                    [defaultName]="searchValue" (onCanceled)="expandedListCreation = false"></create-list>
-        </li>
-        <li *ngFor="let list of lists">
-            <list-item [highlight]="searchValue" [list]="list"></list-item>
-        </li>
-    </item-wrapper>-->
-</section>
+<!--<section *ngIf="searchValue">
+  <h1 i18n>Lists</h1>
+   <item-wrapper class="results">
+       <li class="card create" [ngClass]="{expanded: expandedListCreation}">
+           <div class="title" (click)="expandedListCreation = true">
+               <span i18n>Create new list</span> <span #highlightedList class="highlight">{{searchValue}}</span>
+           </div>
+           <create-list *ngIf="expandedListCreation" [@container]="expandedListCreation"
+                   (@container.start)="$event.toState && highlightedList.style.display = 'none'"
+                   (@container.done)="$event.toState == 'void' && highlightedList.style.display = 'inline'"
+                   [defaultName]="searchValue" (onCanceled)="expandedListCreation = false"></create-list>
+       </li>
+       <li *ngFor="let list of lists">
+           <list-item [highlight]="searchValue" [list]="list"></list-item>
+       </li>
+   </item-wrapper>
+</section>-->
 <section *ngIf="users && users.length > 0">
     <h1 i18n="@@user">User</h1>
     <item-wrapper class="results">

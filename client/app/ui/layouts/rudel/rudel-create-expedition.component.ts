@@ -88,7 +88,7 @@ export class RudelCreateExpeditionComponent implements OnInit {
 		this.rudelService.locations(this.rudel.id).subscribe(locations => {
 		    this.locations = locations;
 			if(!this.form.value.location.location) {
-                let center = geolib.getCenterOfBounds(locations) || this.userService.getAuthenticatedUser().user.location;
+                let center = locations.length > 0 ? geolib.getCenterOfBounds(locations) : this.userService.getAuthenticatedUser().user.location;
 			    this.form.get('location').get('location').setValue(center);
             }
 		});
@@ -135,6 +135,6 @@ export class RudelCreateExpeditionComponent implements OnInit {
 	}
 	
 	formControlCount(value: string, maxChars: number = 0): (value: string) => {} {
-		return (value: string) => `${value ? value.length : 0} of ${maxChars} characters used`;
+		return (value: string) => `${value ? value.length : 0} von ${maxChars} Buchstaben verwendet`;
 	}
 }

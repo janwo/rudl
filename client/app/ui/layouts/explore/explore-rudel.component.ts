@@ -23,9 +23,9 @@ export class ExploreRudelComponent implements OnInit, OnDestroy {
 	rudelItemStyle: RudelItemStyles = RudelItemStyles.block;
 	rudelItemButtonStyle: ButtonStyles = ButtonStyles.filledInverse;
 	emptyState: EmptyState = {
-		title: 'Keine Streifzüge gefunden',
+		title: 'Keine regionale Streifzüge gefunden.',
 		image: require('../../../../assets/illustrations/no-expeditions.png'),
-		description: 'We couldn\'t find any expeditions!'
+		description: 'Wir konnten dir keine Streifzüge in deiner Region vorstellen. Sei Organisator!'
 	};
 	
 	constructor(private rudelService: RudelService) {}

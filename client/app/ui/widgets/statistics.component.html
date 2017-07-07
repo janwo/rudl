@@ -1,5 +1,5 @@
 <ul>
-    <li *ngFor="let statistic of statistics" (click)="onClick(statistic)">
+    <li *ngFor="let statistic of statistics" (click)="onClick(statistic)" [ngClass]="{clickable: !!statistic.link}">
         <span class="value">{{statistic.value}}</span>
         <span class="subject">{{statistic.subject}}</span>
     </li>

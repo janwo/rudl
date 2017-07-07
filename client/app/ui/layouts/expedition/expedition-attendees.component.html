@@ -1,5 +1,5 @@
 <ng-container *ngIf="parent.expedition.getValue().relations.isOwned">
-    <input class="add-invitee" placeholder="Search or invite users..."
+    <input class="add-invitee" placeholder="Nutzer suchen oder einladen..."
             (keyup)="searchUser.next($event.target.value)">
     <item-wrapper class="invitees-like" [columns]="2" *ngIf="inviteesLike; else loadingInviteesLike"
             [ngClass]="{empty: inviteesLike.length == 0}">

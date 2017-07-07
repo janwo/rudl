@@ -3,16 +3,16 @@
                         required: 'Gebe einen Vornamen an.'
                     }" [infoMessage]="formControlCount(form.get('firstName').value, 24)">
         <input maxlength="24" formControlName="firstName" type="text"
-                placeholder="Set your first name...">
+                placeholder="Gebe einen Vornamen an...">
     </form-control-wrapper>
     <form-control-wrapper [errorMessages]="{
                         required: 'Gebe einen Nachnamen an.'
                     }" [infoMessage]="formControlCount(form.get('lastName').value, 24)">
         <input maxlength="24" formControlName="lastName" type="text"
-                placeholder="Set your last name...">
+                placeholder="Gebe einen Nachnamen an...">
     </form-control-wrapper>
     <form-control-wrapper [errorMessages]="{}" [infoMessage]="formControlCount(form.get('profileText').value, 60)">
-        <textarea maxlength="60" formControlName="profileText" placeholder="Enter a short description of you..."></textarea>
+        <textarea maxlength="60" formControlName="profileText" placeholder="Gebe einen Profiltext an..."></textarea>
     </form-control-wrapper>
     <styled-button [style]="profileSubmitButtonStyle" [text]="'Änderungen übernehmen'" (click)="submit()" [disabled]="pendingProfileUpdate"></styled-button>
 </form>

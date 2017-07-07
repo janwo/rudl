@@ -19,9 +19,9 @@ export class LoginComponent implements OnInit {
 	facebookButtonStyle: ButtonStyles = ButtonStyles.facebook;
 	@ViewChild(IndicatorComponent) indicatorComponent: IndicatorComponent;
 	placeholders = {
-		username: `What about ${faker.internet.userName().toLowerCase().replace(/[^0-9a-z_-]/, '-')}?`,
-		password: `Be creative!`,
-		firstName: `Let me guess, ${faker.name.firstName()}?`,
+		username: `Wie wäre es mit ${faker.internet.userName().toLowerCase().replace(/[^0-9a-z_-]/, '-')}?`,
+		password: `Sei kreativ!`,
+		firstName: `Lass mich raten, ${faker.name.firstName()}?`,
 		lastName: `...${faker.name.lastName()}?`,
 		mail: faker.internet.exampleEmail()
 	};

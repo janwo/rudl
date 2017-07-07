@@ -34,7 +34,9 @@ export default {
 			'apple-mobile-web-app-title': 'Rudl',
 			'apple-mobile-web-app-capable': 'yes',
 			'apple-mobile-web-app-status-bar-style': '#50E3C2',
-			'msapplication-navbutton-color': '#50E3C2'
+			'msapplication-navbutton-color': '#50E3C2',
+			'robots': 'follow,index',
+			'description': 'Bei rudl einfach und entspannt die eigene Stadt kennenlernen, gleichgesinnte Menschen finden und die Freizeitgestaltung transparenter und einfach planbar gestalten.'
 		},
 		messageTypes: {
 			oauth: 'OAUTH_TOKEN_MESSAGE'
@@ -132,6 +134,7 @@ export default {
 								template: root('client/index.ejs'),
 								title: 'rudl.me - Entdecke den Puls deiner Stadt!'/*Config.name*/,
 								baseUrl: '/',
+                                domain: Config.backend.domain,
 								metadata: Config.frontend.metadata
 							}),
 							new Webpack.optimize.CommonsChunkPlugin({

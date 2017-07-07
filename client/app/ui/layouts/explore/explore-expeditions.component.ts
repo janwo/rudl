@@ -23,7 +23,7 @@ export class ExploreExpeditionsComponent implements OnInit, OnDestroy {
 	emptyState: EmptyState = {
 		title: 'Keine Rudel gefunden',
 		image: require('../../../../assets/illustrations/no-rudel.png'),
-		description: 'We couldn\'t find any rudel!'
+		description: 'Wir konnten dir keine Rudel vorstellen. Erstelle ein Rudel, indem du den Titel deines Rudels in die Suche eingibst.'
 	};
 	
 	constructor(private expeditionService: ExpeditionService) {}

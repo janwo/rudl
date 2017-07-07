@@ -12,9 +12,8 @@ import {ButtonStyles} from '../../widgets/control/styled-button.component';
 export class UserComponent implements OnInit, OnDestroy {
 	
 	user: User;
-	paramsChangedSubscription: Subscription;
-	changeFollowStateSubject: Subject<boolean> = new Subject();
-	changeFollowStateSubscription: Subscription;
+	changeLikeStateSubject: Subject<boolean> = new Subject();
+	changeLikeStateSubscription: Subscription;
 	
 	pendingFollowRequest: boolean = false;
 	buttonStyleDefault: ButtonStyles = ButtonStyles.filled;
@@ -30,7 +29,7 @@ export class UserComponent implements OnInit, OnDestroy {
 		});
 		
 		// Define changed follow state subscription.
-		this.changeFollowStateSubscription = this.changeFollowStateSubject.asObservable().distinctUntilChanged().flatMap(follow => {
+		this.changeLikeStateSubscription = this.changeLikeStateSubject.asObservable().distinctUntilChanged().flatMap(follow => {
 			this.pendingFollowRequest = true;
 			return follow ? this.userService.like(this.user.username) : this.userService.dislike(this.user.username);
 		}).subscribe((updatedUser: User) => {
@@ -40,10 +39,10 @@ export class UserComponent implements OnInit, OnDestroy {
 	}
 	
 	ngOnDestroy(): void {
-		this.changeFollowStateSubscription.unsubscribe();
+		this.changeLikeStateSubscription.unsubscribe();
 	}
 	
 	onToggleFollow(): void {
-		this.changeFollowStateSubject.next(!this.user.relations.isLikee);
+		this.changeLikeStateSubject.next(!this.user.relations.isLikee);
 	}
 }

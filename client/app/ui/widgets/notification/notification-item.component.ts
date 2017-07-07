@@ -4,6 +4,7 @@ import {NotificationType} from '../../../../../server/app/models/notification/No
 import {ExpeditionPreview} from '../../../models/expedition';
 import {RudelPreview} from '../../../models/rudel';
 import * as moment from 'moment';
+import {Locale} from "../../../../../server/app/models/Translations";
 
 @Component({
 	templateUrl: 'notification-item.component.html',
@@ -13,6 +14,7 @@ import * as moment from 'moment';
 export class NotificationItemComponent implements OnChanges, OnInit {
 	
 	@Input() notification: Notification;
+
 	message: string;
 	formattedDate: string;
 	link: string[];
@@ -28,8 +30,8 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 	
 	updateNotification(): void {
 		// Define notification date.
-		let humanizedDate = moment.duration(moment().diff(this.notification.createdAt)).humanize();
-		this.formattedDate = `${humanizedDate} ago`;
+		let date = moment.duration(moment().diff(this.notification.createdAt)).humanize();
+		this.formattedDate = `vor ${date}`;
 		
 		// Define subject type.
 		switch(this.notification.type) {

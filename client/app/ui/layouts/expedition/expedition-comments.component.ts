@@ -8,6 +8,8 @@ import {ButtonStyles} from '../../widgets/control/styled-button.component';
 import {ScrollService} from '../../../services/scroll.service';
 import {ExpeditionComponent} from './expedition.component';
 import {Title} from '@angular/platform-browser';
+import {Locale} from "../../../../../server/app/models/Translations";
+import {UserService} from "../../../services/user.service";
 
 @Component({
 	templateUrl: 'expedition-comments.component.html',
@@ -22,14 +24,14 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 	commentButtonStyle: ButtonStyles = ButtonStyles.filledShadowed;
 	
 	emptyState: EmptyState = {
-		title: 'Start the conversation!',
+		title: 'Fragen?',//Start the conversation!
 		image: require('../../../../assets/illustrations/no-comments.png'),
-		description: 'Make plans some plans, chat and smile!'
+		description: 'Muss noch was organisiert werden? Tausche dich mit den anderen Teilnehmern aus.'
 	};
 	restrictedState: EmptyState = {
-		title: 'Restricted Area',
+		title: 'Eingeschränkter Bereich',//Restricted Area
 		image: require('../../../../assets/illustrations/no-comments.png'),
-		description: 'You have to become an attendee in order to join the discussion.'
+		description: 'Du musst Teilnehmer sein, um sich der Diskussion anzuschließen.'//You have to become an attendee in order to join the discussion.
 	};
 	
 	constructor(private fb: FormBuilder,
@@ -39,7 +41,7 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 	            private title: Title) {}
 	
 	ngOnInit() {
-		this.title.setTitle(`rudl.me - Streifzug "${this.parent.expedition.getValue().title}" - Diskussion`);
+		this.title.setTitle(`rudl.me | Streifzug "${this.parent.expedition.getValue().title}" - Diskussion`);
 		
 		// Define changed params subscription.
 		this.commentsSubscription = this.scrollService.hasScrolledToBottom().map(() => this.comments ? this.comments.length : 0).startWith(0).distinct().flatMap((offset: number) => {
@@ -96,6 +98,6 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 	}
 	
 	formControlCount(value: string, maxChars: number = 0): (value: string) => {} {
-		return (value: string) => `${value ? value.length : 0} of ${maxChars} characters used`;
+		return (value: string) => `${value ? value.length : 0} von ${maxChars} Buchstaben verwendet`;//characters used
 	}
 }
