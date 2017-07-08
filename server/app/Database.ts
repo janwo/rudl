@@ -316,9 +316,7 @@ export class DatabaseManager {
 						" CALL db.indexes() YIELD description RETURN 'Number of Indexes: ' + COUNT(*) AS output UNION" +
 						" CALL dbms.procedures() YIELD name RETURN 'Number of Procedures: ' + COUNT(*) AS output"
 					).then((result: any) => {
-						DatabaseManager.neo4jFunctions.unflatten(result.records, 'output').forEach((summary: string) => {
-							console.log(summary);
-						});
+						DatabaseManager.neo4jFunctions.unflatten(result.records, 'output').forEach((summary: string) => console.log(summary));
 						session.close();
 					});
 					

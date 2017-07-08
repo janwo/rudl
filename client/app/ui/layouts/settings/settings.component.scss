@@ -13,10 +13,6 @@
       padding-top: map_get($base-padding, 'smaller');
       padding-bottom: map_get($base-padding, 'smaller');
       margin-bottom: map_get($base-padding, 'default');
-
-      .coming-soon {
-        opacity: 0.25;
-      }
     }
   }
 }

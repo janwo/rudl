@@ -25,6 +25,7 @@
         width: 1rem;
         height: 1rem;
         margin-right: map_get($base-padding, 'smallest');
+        flex: 0 0 auto;
       }
 
       span {
@@ -62,6 +63,7 @@
 
         h1 {
           margin: 0;
+          hyphens: auto;
 
           @include breakpoint(null, 'small') {
             margin-top: map_get($base-padding, 'smaller');
@@ -72,6 +74,7 @@
       .description {
         margin-top: map_get($base-padding, 'smaller');
         margin-bottom: map_get($base-padding, 'smaller');
+        hyphens: auto;
 
         @include breakpoint(null, 'small') {
           text-align: center;

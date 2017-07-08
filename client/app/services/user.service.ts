@@ -114,22 +114,38 @@ export class UserService {
 		return this.locationUpdates;
 	}
 	
-	signUp(username: string, password: string): void {
-	
+	signUp(username: string, password: string): Observable<void> {
+        return;
 	}
+
+    signIn(username: string, password: string): Observable<void> {
+        return;
+    }
+
+    terminate(): Observable<boolean> {
+        return this.dataService.post('/api/account/terminate', JSON.stringify({
+            username: this.getAuthenticatedUser().user.username
+        }), true).map(response => {
+            if (response.statusCode == 200) {
+                this.dataService.removeToken();
+                this.authenticatedProfile.next(null);
+                return true;
+            }
+
+            return false;
+        }).share();
+    }
 	
-	signIn(username: string, password: string): void {
-	
-	}
-	
-	signOut(): void {
-		this.dataService.get('/api/sign-out', true).subscribe(response => {
+	signOut(): Observable<boolean> {
+		return this.dataService.get('/api/sign-out', true).map(response => {
 			if (response.statusCode == 200) {
 				this.dataService.removeToken();
 				this.authenticatedProfile.next(null);
-				this.router.navigate(['/sign-up']);
+				return true;
 			}
-		});
+
+			return false;
+		}).share();
 	}
 	
 	get(username: string = 'me'): Observable<User | AuthenticatedUser> {

@@ -15,7 +15,7 @@
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/widgets/rudel/rudel-item.component.ts</context>
-          <context context-type="linenumber">8</context>
+          <context context-type="linenumber">6</context>
         </context-group>
       </trans-unit>
       <trans-unit id="rudel" datatype="html">
@@ -250,12 +250,20 @@
           <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="profileSettings" datatype="html">
+        <source>Profile Settings</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/settings/settings-profile.component.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="imageSizeError" datatype="html">
         <source>File is not an image or exceeds the maximal file size.</source>
         <target/>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/settings/settings-profile.component.ts</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
       <trans-unit id="legalAbout" datatype="html">
@@ -457,6 +465,46 @@
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/explore/explore-rudel.component.ts</context>
           <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="mailsettings" datatype="html">
+        <source>Mail Settings</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/settings/settings-notifications.component.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="otherProfileSettings" datatype="html">
+        <source>Tools</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/settings/settings-other.component.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="deleteAccountTitle" datatype="html">
+        <source>Terminate Membership</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/settings/settings-other.component.ts</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="deleteAccountDescription" datatype="html">
+        <source>You want to terminate your membership? Enter your username in the input field and click on &quot;Terminate membership&quot; to terminate your membership irreversibly.</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/settings/settings-other.component.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="deleteAccountPlaceholder" datatype="html">
+        <source>Confirm your username...</source>
+        <target/>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/settings/settings-other.component.ts</context>
+          <context context-type="linenumber">6</context>
         </context-group>
       </trans-unit>
       <trans-unit id="searchBarPlaceholder" datatype="html">

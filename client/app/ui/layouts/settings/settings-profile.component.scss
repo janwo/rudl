@@ -4,50 +4,54 @@
 $settings-profile-component-avatar-size: 7.5rem;
 
 :host {
-  display: flex;
-  flex-direction: row;
+  display: block;
 
-  @include breakpoint(null, 'small') {
-    flex-direction: column-reverse;
-  }
-
-  & > * {
-    flex: 0 0 50%;
+  section {
+    display: flex;
+    flex-direction: row;
 
     @include breakpoint(null, 'small') {
-      flex: 0 0 auto;
+      flex-direction: column-reverse;
     }
 
-    &.avatar-content {
-      align-items: center;
-      justify-content: center;
-      display: flex;
-      flex-direction: column;
-
-      user-avatar {
-        width: $settings-profile-component-avatar-size;
-        height: $settings-profile-component-avatar-size;
-        margin-bottom: map_get($base-padding, 'smaller');
-      }
-
-      .error {
-        color: map_get($base-colors, 'warning');
-        font-size: map_get($base-font-size, 'small');
-        margin-bottom: map_get($base-padding, 'small');
-      }
-    }
-
-    &.profile-content {
-      styled-button {
-        margin-top: map_get($base-padding, 'smaller') - map_get($base-padding, 'small');
-      }
+    & > * {
+      flex: 0 0 50%;
 
       @include breakpoint(null, 'small') {
-        margin-top: map_get($base-padding, 'default');
-        
+        flex: 0 0 auto;
+      }
+
+      &.avatar-content {
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+
+        user-avatar {
+          width: $settings-profile-component-avatar-size;
+          height: $settings-profile-component-avatar-size;
+          margin-bottom: map_get($base-padding, 'smaller');
+        }
+
+        .error {
+          color: map_get($base-colors, 'warning');
+          font-size: map_get($base-font-size, 'small');
+          margin-bottom: map_get($base-padding, 'small');
+        }
+      }
+
+      &.profile-content {
         styled-button {
-          margin-right: auto;
-          margin-left: auto;
+          margin-top: map_get($base-padding, 'smaller') - map_get($base-padding, 'small');
+        }
+
+        @include breakpoint(null, 'small') {
+          margin-top: map_get($base-padding, 'default');
+
+          styled-button {
+            margin-right: auto;
+            margin-left: auto;
+          }
         }
       }
     }

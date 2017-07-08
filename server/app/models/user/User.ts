@@ -44,10 +44,12 @@ export interface User extends Node {
 }
 
 export interface UserSettings {
-	emailNotifications?: boolean;
-	lastEmailNotification?: number;
+	newsletterMails?: boolean;
+	notificationMails?: boolean;
+	lastNotificationMail?: number;
 }
 
 export const UserSettingsValidation = {
-	emailNotifications: Joi.boolean().optional()
+	newsletterMails: Joi.boolean().optional(),
+	notificationMails: Joi.boolean().optional()
 };

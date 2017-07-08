@@ -11,17 +11,27 @@
     display: flex;
     flex-direction: row;
 
+    @include breakpoint(null, 'small') {
+      flex-direction: column;
+    }
+
     .about {
       flex: 1 1 auto;
       display: flex;
       flex-direction: row;
       align-items: center;
 
+      @include breakpoint(null, 'small') {
+        margin-bottom: map_get($base-padding, 'smaller');
+      }
+
       emoji {
         margin-right: map_get($base-padding, 'smaller');
+        flex: 0 0 auto;
       }
 
       h1 {
+        hyphens: auto;
         margin: 0;
       }
     }

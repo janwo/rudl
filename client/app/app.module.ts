@@ -107,6 +107,7 @@ import {ExploreRudelComponent} from './ui/layouts/explore/explore-rudel.componen
 import {ExploreExpeditionsComponent} from './ui/layouts/explore/explore-expeditions.component';
 import {SettingsNotificationsComponent} from './ui/layouts/settings/settings-notifications.component';
 import {Ng2DeviceDetectorModule} from "ng2-device-detector";
+import {SettingsOtherComponent} from "./ui/layouts/settings/settings-other.component";
 
 @NgModule({
 	declarations: [
@@ -161,6 +162,7 @@ import {Ng2DeviceDetectorModule} from "ng2-device-detector";
 		ExploreComponent,
 		ExpeditionsComponent,
 		StackComponent,
+		SettingsOtherComponent,
 		UserItemComponent,
 		CommentItemComponent,
 		RedirectComponent,

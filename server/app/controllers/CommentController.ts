@@ -46,31 +46,15 @@ export module CommentController {
 	}
 	
 	export function removeById(transaction: Transaction, comment: Comment): Promise<any> {
-		return AccountController.NotificationController.remove(transaction, comment).then(() => {
-			return transaction.run(`MATCH(c:Comment {id: $commentId}) DETACH DELETE c`, {
-				commentId: comment.id
-			}).then(() => {});
-		});
+		return transaction.run(`MATCH(c:Comment {id: $commentId}) DETACH DELETE c`, {
+			commentId: comment.id
+		}).then(() => AccountController.NotificationController.removeDetachedNotifications(transaction));
 	}
-	
-	export function remove(transaction: Transaction, node: Node): Promise<void> {
-		return this.removeAll(transaction, `MATCH(nodes {id: $nodeId})`, {
-			nodeId: node.id
-		}).then(() => {});
+
+	export function removeDetachedComments(transaction: Transaction): Promise<void> {
+		return transaction.run(`MATCH (c:Comment) WHERE NOT ()<-[:BELONGS_TO_NODE]-(c) DETACH DELETE c`).then(() => {});
 	}
-	
-	/**
-	 * Deletes comments of all matching nodes
-	 * @param transaction transaction
-	 * @param query Query that returns `nodes` that matches all subjects
-	 * @param params params for query
-	 * @returns {Promise<void>}
-	 */
-	export function removeAll(transaction: Transaction, query: string, params: {[key: string]: string}): Promise<void> {
-		return AccountController.NotificationController.removeAll(transaction, `${query} WITH nodes OPTIONAL MATCH(nodes)<-[:BELONGS_TO_NODE]-(subjects:Comment)`, params).then(() => {
-			return transaction.run(`${query} WITH nodes OPTIONAL MATCH (nodes)<-[:BELONGS_TO_NODE]-(c:Comment) DETACH DELETE c`, params).then(() => {});
-		}).then(() => {});}
-	
+
 	export function get(transaction: Transaction, commentId: string): Promise<any> {
 		return transaction.run(`MATCH(c:Comment {id: $commentId}) RETURN COALESCE(properties(c), []) as c LIMIT 1`, {
 			commentId: commentId

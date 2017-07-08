@@ -7,6 +7,7 @@ import {Expedition} from '../../../models/expedition';
 import {RudelItemStyles} from '../../widgets/rudel/rudel-item.component';
 import {ButtonStyles} from "../../widgets/control/styled-button.component";
 import {EmptyState} from "../../widgets/state/empty.component";
+import {Title} from "@angular/platform-browser";
 
 @Component({
 	templateUrl: 'explore-rudel.component.html',
@@ -23,12 +24,15 @@ export class ExploreRudelComponent implements OnInit, OnDestroy {
 	rudelItemStyle: RudelItemStyles = RudelItemStyles.block;
 	rudelItemButtonStyle: ButtonStyles = ButtonStyles.filledInverse;
 	emptyState: EmptyState = {
-		title: 'Keine regionale Streifzüge gefunden.',
+		title: 'Keine regionalen Streifzüge gefunden.',
 		image: require('../../../../assets/illustrations/no-expeditions.png'),
 		description: 'Wir konnten dir keine Streifzüge in deiner Region vorstellen. Sei Organisator!'
 	};
 	
-	constructor(private rudelService: RudelService) {}
+	constructor(private rudelService: RudelService,
+				title: Title) {
+		title.setTitle('Entdecke Rudel | rudl.me');
+	}
 	
 	ngOnInit(): void {
 		this.suggestedRudelSubscription = this.rudelService.suggested().subscribe((rudel: Rudel[]) => {

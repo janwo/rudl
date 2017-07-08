@@ -73,7 +73,7 @@
         <styled-button class="next" *ngIf="carouselIndex < 4 - 1" [disabled]="submitPending" [text]="'Weiter'"
                 (click)="carousel.next()"></styled-button>
         <styled-button class="done" *ngIf="carouselIndex == 4 - 1" [disabled]="submitPending" (click)="submit()"
-                [text]="'Streifzug erstellen'"></styled-button>
+                [text]="'Erstellen'"></styled-button>
         <indicator [steps]="4" [selectedStep]="carouselIndex"></indicator>
     </footer>
 </form>

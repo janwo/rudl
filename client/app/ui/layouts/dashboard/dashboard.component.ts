@@ -46,7 +46,7 @@ export class DashboardComponent implements OnInit {
 	}
 	
 	signOut(): void {
-		this.userService.signOut();
+		this.userService.signOut().subscribe(() => this.router.navigate(['/sign-up']));
 	}
 	
 	ngOnDestroy(): void {

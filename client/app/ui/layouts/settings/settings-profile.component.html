@@ -1,26 +1,28 @@
-<form class="profile-content" [formGroup]="form">
-    <form-control-wrapper [errorMessages]="{
-                        required: 'Gebe einen Vornamen an.'
-                    }" [infoMessage]="formControlCount(form.get('firstName').value, 24)">
-        <input maxlength="24" formControlName="firstName" type="text"
-                placeholder="Gebe einen Vornamen an...">
-    </form-control-wrapper>
-    <form-control-wrapper [errorMessages]="{
-                        required: 'Gebe einen Nachnamen an.'
-                    }" [infoMessage]="formControlCount(form.get('lastName').value, 24)">
-        <input maxlength="24" formControlName="lastName" type="text"
-                placeholder="Gebe einen Nachnamen an...">
-    </form-control-wrapper>
-    <form-control-wrapper [errorMessages]="{}" [infoMessage]="formControlCount(form.get('profileText').value, 60)">
-        <textarea maxlength="60" formControlName="profileText" placeholder="Gebe einen Profiltext an..."></textarea>
-    </form-control-wrapper>
-    <styled-button [style]="profileSubmitButtonStyle" [text]="'Änderungen übernehmen'" (click)="submit()" [disabled]="pendingProfileUpdate"></styled-button>
-</form>
-<div class="avatar-content">
-    <user-avatar [size]="'medium'" [user]="user" [loading]="pendingAvatarUpload"></user-avatar>
-    <input #uploadAvatar type="file" class="hide" max accept="{{uploadMimeTypes.join('|')}}" (change)="onChangedAvatar($event.target)">
-    <span *ngIf="!validAvatar" i18n="@@imageSizeError" class="error">File is not an image or exceeds the maximal file size.</span>
-    <styled-button [disabled]="pendingAvatarUpload" [style]="avatarSubmitButtonStyle" [text]="'Profilbild setzen'" (click)="uploadAvatar.click()"></styled-button>
-    <styled-button [disabled]="pendingAvatarUpload" [style]="avatarSubmitButtonStyle" *ngIf="user.hasAvatar" (click)="onDeleteAvatar()" [text]="'Profilbild löschen'"></styled-button>
-</div>
-
+<h2 i18n="@@profileSettings">Profile Settings</h2>
+<section>
+    <form class="profile-content" [formGroup]="form">
+        <form-control-wrapper [errorMessages]="{
+                            required: 'Gebe einen Vornamen an.'
+                        }" [infoMessage]="formControlCount(form.get('firstName').value, 24)">
+            <input maxlength="24" formControlName="firstName" type="text"
+                   placeholder="Gebe einen Vornamen an...">
+        </form-control-wrapper>
+        <form-control-wrapper [errorMessages]="{
+                            required: 'Gebe einen Nachnamen an.'
+                        }" [infoMessage]="formControlCount(form.get('lastName').value, 24)">
+            <input maxlength="24" formControlName="lastName" type="text"
+                   placeholder="Gebe einen Nachnamen an...">
+        </form-control-wrapper>
+        <form-control-wrapper [errorMessages]="{}" [infoMessage]="formControlCount(form.get('profileText').value, 60)">
+            <textarea maxlength="60" formControlName="profileText" placeholder="Gebe einen Profiltext an..."></textarea>
+        </form-control-wrapper>
+        <styled-button [style]="profileSubmitButtonStyle" [text]="'Änderungen übernehmen'" (click)="submit()" [disabled]="pendingProfileUpdate"></styled-button>
+    </form>
+    <div class="avatar-content">
+        <user-avatar [size]="'medium'" [user]="user" [loading]="pendingAvatarUpload"></user-avatar>
+        <input #uploadAvatar type="file" class="hide" max accept="{{uploadMimeTypes.join('|')}}" (change)="onChangedAvatar($event.target)">
+        <span *ngIf="!validAvatar" i18n="@@imageSizeError" class="error">File is not an image or exceeds the maximal file size.</span>
+        <styled-button [disabled]="pendingAvatarUpload" [style]="avatarSubmitButtonStyle" [text]="'Profilbild setzen'" (click)="uploadAvatar.click()"></styled-button>
+        <styled-button [disabled]="pendingAvatarUpload" [style]="avatarSubmitButtonStyle" *ngIf="user.hasAvatar" (click)="onDeleteAvatar()" [text]="'Profilbild löschen'"></styled-button>
+    </div>
+</section>

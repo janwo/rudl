@@ -27,7 +27,7 @@ export class ExpeditionsUpcomingComponent implements OnInit {
 	            private title: Title) {}
 	
 	ngOnInit() {
-		this.title.setTitle(`rudl.me | Streifzug "Zukünftige Streifzüge"`);
+		this.title.setTitle(`Streifzug "Zukünftige Streifzüge" | rudl.me`);
 		
 		// Expeditions.
 		this.expeditionsSubscription = this.scrollService.hasScrolledToBottom().map(() => this.expeditions.length).startWith(0).distinct().flatMap((offset: number) => {

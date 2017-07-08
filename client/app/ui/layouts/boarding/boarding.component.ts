@@ -32,7 +32,7 @@ export class BoardingComponent implements OnDestroy, OnInit {
 	            private router: Router,
                 private deviceService: Ng2DeviceService,
 	            title: Title) {
-		title.setTitle('rudl.me | Boarding'); //rudl.me - Boarding
+		title.setTitle('Boarding | rudl.me'); //rudl.me - Boarding
 	}
 	
 	carouselIndex: number = 0;

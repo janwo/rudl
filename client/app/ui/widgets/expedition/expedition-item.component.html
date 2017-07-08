@@ -1,6 +1,6 @@
 <div [routerLink]="['/expeditions', expedition.id]" class="{{getStyleClass()}}" [ngClass]="{applicant: expedition.relations.isAttendee}">
     <emoji [emoji]="expedition.links.icon"></emoji>
-    <div class="description">
+    <div class="about">
         <h2>{{expedition.title}}</h2>
         <span>{{expedition.description}}</span>
     </div>

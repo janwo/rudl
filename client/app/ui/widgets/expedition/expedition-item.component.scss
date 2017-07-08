@@ -18,10 +18,14 @@ $expedition-item-block-emoji-size: 4rem;
       flex: 0 0 auto;
     }
 
-    .description {
+    .about {
       width: 100%;
       flex: 1 1 auto;
       min-width: 0;
+
+      h2 {
+        hyphens: auto;
+      }
 
       span {
         display: block;
@@ -98,7 +102,7 @@ $expedition-item-block-emoji-size: 4rem;
         width: $expedition-item-block-emoji-size;
       }
 
-      .description {
+      .about {
         margin-top: map_get($base-padding, 'default');
 
         h2 {
@@ -132,7 +136,7 @@ $expedition-item-block-emoji-size: 4rem;
         width: $expedition-item-list-emoji-size;
       }
 
-      .description {
+      .about {
         margin-left: map_get($base-padding, 'smaller');
         margin-right: map_get($base-padding, 'smaller');
 

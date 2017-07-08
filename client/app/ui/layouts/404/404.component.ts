@@ -11,12 +11,11 @@ export class NotFoundComponent implements OnInit {
 	emptyState: EmptyState;
 	
 	constructor(private route: ActivatedRoute,
-	            title: Title) {
-		title.setTitle('Seite nicht gefunden | rudl.me'); //rudl.me - Page not found
-	}
+	            private title: Title) {}
 	
 	ngOnInit() {
 		this.route.data.subscribe(data => {
+			this.title.setTitle(`${data.title} | rudl.me`);
 			this.emptyState = {
 				title: data.title,
 				image: data.image,

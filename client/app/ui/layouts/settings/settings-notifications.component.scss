@@ -4,10 +4,14 @@
 $settings-profile-component-avatar-size: 7.5rem;
 
 :host {
-  display: flex;
-  flex-direction: column;
+  display: block;
 
-  styled-button {
-    margin-top: map_get($base-padding, 'smaller') - map_get($base-padding, 'small');
+  section {
+    display: flex;
+    flex-direction: column;
+
+    styled-button {
+      margin-top: map_get($base-padding, 'smaller') - map_get($base-padding, 'small');
+    }
   }
 }

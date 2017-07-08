@@ -1,7 +1,12 @@
-<form [formGroup]="form">
-    <form-control-wrapper>
-        <checkbox formControlName="emailNotifications" [text]="'Email-Benachrichtigungen'"></checkbox>
-    </form-control-wrapper>
-    <styled-button [style]="settingsSubmitButtonStyle" [text]="'Änderungen übernehmen'" (click)="submit()" [disabled]="pendingSettingsUpdate"></styled-button>
-</form>
-
+<h2 i18n="@@mailsettings">Mail Settings</h2>
+<section>
+    <form [formGroup]="form">
+        <form-control-wrapper>
+            <checkbox formControlName="notificationMails" [text]="'Benachrichtigungen erhalten'"></checkbox>
+        </form-control-wrapper>
+        <form-control-wrapper>
+            <checkbox formControlName="newsletterMails" [text]="'Neuankündigungen abonnieren'"></checkbox>
+      </form-control-wrapper>
+        <styled-button [style]="settingsSubmitButtonStyle" [text]="'Änderungen übernehmen'" (click)="submit()" [disabled]="pendingSettingsUpdate"></styled-button>
+    </form>
+</section>

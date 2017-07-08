@@ -1,0 +1,44 @@
+@import '../../variables.scss';
+@import "../../mixins.scss";
+
+$settings-profile-component-avatar-size: 7.5rem;
+
+:host {
+  display: block;
+
+  section {
+    display: flex;
+    flex-direction: column;
+
+    .delete-account {
+      display: flex;
+      flex-direction: column;
+
+      & > * {
+        flex: 1 1 auto;
+      }
+
+      @include breakpoint('small') {
+        flex-direction: row;
+        align-items: center;
+
+        & > * {
+          flex: 1 1 50%;
+        }
+      }
+
+      input {
+        @include setup-input();
+        @include setup-input-borders();
+      }
+
+      styled-button {
+        margin: map_get($base-padding, 'small') 0 0 0;
+
+        @include breakpoint('small') {
+          margin: 0 0 0 map_get($base-padding, 'smaller');
+        }
+      }
+    }
+  }
+}

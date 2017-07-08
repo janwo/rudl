@@ -6,6 +6,7 @@ import {ExpeditionService} from '../../../services/expedition.service';
 import {Expedition} from '../../../models/expedition';
 import {ExpeditionItemStyles} from '../../widgets/expedition/expedition-item.component';
 import {EmptyState} from "../../widgets/state/empty.component";
+import {Title} from "@angular/platform-browser";
 
 @Component({
 	templateUrl: 'explore-expeditions.component.html',
@@ -26,7 +27,10 @@ export class ExploreExpeditionsComponent implements OnInit, OnDestroy {
 		description: 'Wir konnten dir keine Rudel vorstellen. Erstelle ein Rudel, indem du den Titel deines Rudels in die Suche eingibst.'
 	};
 	
-	constructor(private expeditionService: ExpeditionService) {}
+	constructor(private expeditionService: ExpeditionService,
+				title: Title) {
+		title.setTitle('Entdecke Streifzüge | rudl.me');
+	}
 	
 	ngOnInit(): void {
 		this.suggestedExpeditionsSubscription = this.expeditionService.suggested().subscribe((expeditions: Expedition[]) => {

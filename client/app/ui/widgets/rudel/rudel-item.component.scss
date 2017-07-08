@@ -23,15 +23,16 @@ $rudel-item-list-user-avatar-size-mobile: 1.5rem;
       flex: 0 0 auto;
     }
 
-    .description {
+    h2 {
+      display: block;
       width: 100%;
+      margin-left: map_get($base-padding, 'smaller');
+      margin-right: map_get($base-padding, 'smaller');
       flex: 1 1 auto;
       min-width: 0;
 
-      h2 {
-        /deep/ .highlight {
-          color: map_get($base-colors, 'primary');
-        }
+      & /deep/ .highlight {
+        color: map_get($base-colors, 'primary');
       }
     }
 
@@ -71,12 +72,10 @@ $rudel-item-list-user-avatar-size-mobile: 1.5rem;
         width: $rudel-item-block-emoji-size;
       }
 
-      .description {
+      h2 {
+        margin-bottom: 0;
         margin-top: map_get($base-padding, 'default');
-
-        h2 {
-          text-align: center;
-        }
+        text-align: center;
       }
 
       footer {
@@ -101,13 +100,8 @@ $rudel-item-list-user-avatar-size-mobile: 1.5rem;
         width: $rudel-item-list-emoji-size;
       }
 
-      .description {
-        margin-left: map_get($base-padding, 'smaller');
-        margin-right: map_get($base-padding, 'smaller');
-
-        h2 {
-          margin-bottom: 0;
-        }
+      h2 {
+        margin: 0 map_get($base-padding, 'smaller');
       }
 
       footer {

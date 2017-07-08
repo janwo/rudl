@@ -1,8 +1,6 @@
 <div [routerLink]="['/rudel', rudel.id]" class="{{getStyleClass()}}">
     <emoji [emoji]="rudel.links.icon"></emoji>
-    <div class="description">
-        <h2 [innerHTML]="highlight ? (rudel.name | highlight: highlight) : rudel.name"></h2>
-    </div>
+    <h2 [innerHTML]="highlight ? (rudel.name | highlight: highlight) : rudel.name"></h2>
     <footer>
         <user-avatar [user]="rudel.owner"></user-avatar>
         <span i18n="@@rudelItemLikees">{rudel.statistics.likers, plural, =1 {1 member} other {{{rudel.statistics.likers}} members}}</span>

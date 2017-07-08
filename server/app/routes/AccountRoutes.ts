@@ -5,6 +5,8 @@ import {AccountController} from '../controllers/AccountController';
 import * as Joi from 'joi';
 import {UserController} from '../controllers/UserController';
 
+const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.string().regex(/^me$/));
+
 export const RoutesConfig: RoutesConfiguration = {
 	name: 'account-routes',
 	routes: [
@@ -157,5 +159,22 @@ export const RoutesConfig: RoutesConfiguration = {
 				}
 			}
 		},
+		{
+			path: '/api/account/terminate',
+			method: 'POST',
+			handler: AccountController.RouteHandlers.terminate,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					payload: {
+						username: UserValidation.username
+					}
+				}
+			}
+		}
 	]
 };

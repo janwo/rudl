@@ -215,16 +215,11 @@ export module RudelController {
 				});
 				
 				// Delete rudel, because it's an orphan node.
-				let removeExpeditions = ExpeditionController.removeExpeditions(transaction, rudel);
-				let removeNotifications = AccountController.NotificationController.remove(transaction, rudel);
-				return Promise.all([
-					removeExpeditions,
-					removeNotifications
-				]).then(() => {
-					return transaction.run("MATCH(r:Rudel {id: $rudelId}) OPTIONAL MATCH (r)<-[:NOTIFICATION_SUBJECT]-(n:Notification) CALL apoc.index.removeNodeByName('Rudel', r) DETACH DELETE r ", {
-						rudelId: rudel.id
-					});
-				});
+				return ExpeditionController.removeExpeditions(transaction, rudel).then(() => {
+                    return transaction.run("MATCH(r:Rudel {id: $rudelId}) CALL apoc.index.removeNodeByName('Rudel', r) DETACH DELETE r", {
+                        rudelId: rudel.id
+                    }).then(() => AccountController.NotificationController.removeDetachedNotifications(transaction));
+                });
 			}).then(() => {});
 		});
 	}
@@ -348,7 +343,6 @@ export module RudelController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = RudelController.get(transaction, request.params.id).then((rudel: Rudel) => {
 				if (!rudel) return Promise.reject(Boom.notFound('Rudel not found.'));
-debugger
 				return RudelController.locations(transaction, rudel, request.auth.credentials).then(locations => {
 					return locations;
 				});

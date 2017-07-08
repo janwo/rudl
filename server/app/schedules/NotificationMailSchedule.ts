@@ -13,7 +13,7 @@ export const ScheduleConfig = {
 	job: () => {
 		// Send notification mails.
 		let session = DatabaseManager.neo4jClient.session();
-		return session.run(`MATCH(ns:NotificationSettings)<-[:NOTIFICATION_SETTINGS]-(u:User)-[:NOTIFICATION_UNREAD]->(n:Notification) WHERE ns.emailNotifications AND n.createdAt > ns.lastEmailNotification SET ns.lastEmailNotification = $now WITH u MATCH (u)-[:NOTIFICATION_UNREAD]->(n:Notification) RETURN count(n) as unread, properties(u) as u`, {
+		return session.run(`MATCH(ns:NotificationSettings)<-[:NOTIFICATION_SETTINGS]-(u:User)-[:NOTIFICATION_UNREAD]->(n:Notification) WHERE ns.notificationMails AND n.createdAt > ns.lastNotificationMail SET ns.lastNotificationMail = $now WITH u MATCH (u)-[:NOTIFICATION_UNREAD]->(n:Notification) RETURN count(n) as unread, properties(u) as u`, {
 			now: Math.trunc(Date.now() / 1000)
 		}).then((results: any) => {
 			let mailJobs = results.records.map((record: any)  => {

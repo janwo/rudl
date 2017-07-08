@@ -74,7 +74,8 @@ export module AccountController {
 			
 			return this.save(transaction, user).then(() => {
 				return UserSettingsController.update(transaction, user, {
-					emailNotifications: true
+					notificationMails: true,
+					newsletterMails: true
 				});
 			}).then(() => user);
 		});
@@ -96,19 +97,29 @@ export module AccountController {
 		
 		return nextAvailableUsername(username);
 	}
-	
-	export function save(transaction: Transaction, user: User): Promise<void> {
-		// Set timestamps.
-		let now = Date.now() / 1000;
-		if (!user.createdAt) user.createdAt = now;
-		user.updatedAt = now;
-		
-		// Save.
-		return transaction.run("MERGE (u:User { username: $user.username }) ON CREATE SET u = $flattenUser ON MATCH SET u = $flattenUser", {
-			user: user,
-			flattenUser: DatabaseManager.neo4jFunctions.flatten(user)
-		}).then(() => {});
-	}
+
+    export function save(transaction: Transaction, user: User): Promise<void> {
+        // Set timestamps.
+        let now = Date.now() / 1000;
+        if (!user.createdAt) user.createdAt = now;
+        user.updatedAt = now;
+
+        // Save.
+        return transaction.run("MERGE (u:User { username: $user.username }) ON CREATE SET u = $flattenUser ON MATCH SET u = $flattenUser", {
+            user: user,
+            flattenUser: DatabaseManager.neo4jFunctions.flatten(user)
+        }).then(() => {});
+    }
+
+    export function terminate(transaction: Transaction, user: User): Promise<void> {
+	    //TODO
+
+        // Save.
+        return transaction.run("MERGE (u:User { username: $user.username }) ON CREATE SET u = $flattenUser ON MATCH SET u = $flattenUser", {
+            user: user,
+            flattenUser: DatabaseManager.neo4jFunctions.flatten(user)
+        }).then(() => {});
+    }
 	
 	export enum AvatarSizes {
 		small = 100, medium = 400, large = 700
@@ -152,16 +163,17 @@ export module AccountController {
 				flattenSettings: DatabaseManager.neo4jFunctions.flatten(settings)
 			}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 's').shift());
 		}
-		
+
 		export function get(transaction: Transaction, user: User): Promise<UserSettings> {
 			return transaction.run("MATCH (:User { id: $userId })-[:USER_SETTINGS]->(s:Settings) RETURN properties(s) as s", {
 				userId: user.id
 			}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 's').shift());
 		}
-		
+
 		export function getPublicUserSettings(transaction: Transaction, settings: UserSettings): Promise<any | any[]> {
 			return Promise.resolve(dot.transform({
-				'settings.emailNotifications': 'emailNotifications'
+				'settings.notificationMails': 'notificationMails',
+				'settings.newsletterMails': 'newsletterMails'
 			}, {
 				settings: settings
 			}));
@@ -189,21 +201,8 @@ export module AccountController {
 			}).then(results => Integer.toNumber(results.records.shift().get('unread') as any as Integer));
 		}
 		
-		export function remove(transaction: Transaction, subject: Node): Promise<void> {
-			return this.removeAll(transaction, `MATCH(subjects {id: $subjectId})`, {
-				subjectId: subject.id
-			}).then(() => {});
-		}
-		
-		/**
-		 * Deletes notifications of all matching subjects
-		 * @param transaction transaction
-		 * @param query Query that returns `subjects` that matches all subjects
-		 * @param params params for query
-		 * @returns {Promise<void>}
-		 */
-		export function removeAll(transaction: Transaction, query: string, params: {[key: string]: string}): Promise<void> {
-			return transaction.run<Notification, any>(`${query} WITH subjects OPTIONAL MATCH (subjects)<-[:NOTIFICATION_SUBJECT]-(n:Notification) DETACH DELETE n`, params).then(() => {});
+		export function removeDetachedNotifications(transaction: Transaction): Promise<void> {
+			return transaction.run(`MATCH (n:Notification) WHERE NOT ()<-[:NOTIFICATION_SUBJECT]-(n) DETACH DELETE n`).then(() => {});
 		}
 		
 		export function getPublicNotification(transaction: Transaction, notification: Notification | Notification[], relatedUser: User): Promise<any | any[]> {
@@ -319,7 +318,26 @@ export module AccountController {
 			
 			reply.api(promise, transactionSession);
 		}
-		
+
+		/**
+		 * Handles [POST] /api/account/terminate
+		 * @param request Request-Object
+		 * @param request.payload.username username
+		 * @param request.auth.credentials
+		 * @param reply Reply-Object
+		 */
+		export function terminate(request: any, reply: any): void {
+			// Create promise.
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = Promise.resolve(request.payload.username).then(username => {
+                if (username != request.auth.credentials.username) return Promise.reject(Boom.notFound('Username does not match.'));
+                return AccountController.terminate(transaction, request.auth.credentials).then(() => {});
+            });
+
+			reply.api(promise, transactionSession);
+		}
+
 		/**
 		 * Handles [POST] /api/account/delete-avatar
 		 * @param request Request-Object

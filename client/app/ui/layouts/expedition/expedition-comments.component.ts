@@ -41,7 +41,7 @@ export class ExpeditionCommentsComponent implements OnInit, OnDestroy {
 	            private title: Title) {}
 	
 	ngOnInit() {
-		this.title.setTitle(`rudl.me | Streifzug "${this.parent.expedition.getValue().title}" - Diskussion`);
+		this.title.setTitle(`Streifzug "${this.parent.expedition.getValue().title}" - Diskussion | rudl.me`);
 		
 		// Define changed params subscription.
 		this.commentsSubscription = this.scrollService.hasScrolledToBottom().map(() => this.comments ? this.comments.length : 0).startWith(0).distinct().flatMap((offset: number) => {

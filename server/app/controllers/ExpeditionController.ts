@@ -406,44 +406,30 @@ export module ExpeditionController {
 	}
 	
 	export function removeExpeditions(transaction: Transaction, rudel: Rudel, user: User = null): Promise<void> {
-		// Delete all expeditions of an rudel.
-		let removeCommentsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(nodes:Expedition)`;
-		let removeNotificationsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(subjects:Expedition)`;
-		let removeExpeditionsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e`;
-		
-		// Delete all expeditions of an user within an rudel?
-		if(user) {
-			removeCommentsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(nodes:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId})`;
-			removeNotificationsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(subjects:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId})`;
-			removeExpeditionsQuery = `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId}) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e`;
-		}
-		
-		let params = {
-			rudelId: rudel.id,
-			userId: user.id
-		};
-		
-		let removeComments = CommentController.removeAll(transaction, removeCommentsQuery, params);
-		let removeNotifications = AccountController.NotificationController.removeAll(transaction, removeNotificationsQuery, params);
-		return Promise.all([
-			removeComments,
-			removeNotifications
-		]).then(() => {
-			return transaction.run(removeExpeditionsQuery, params).then(() => {});
-		});
+		let query = user ?
+			`MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId}) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e` :
+			`MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e`;
+
+		let params: any = {
+            rudelId: rudel.id
+        };
+		if(user) params.userId = user.id;
+
+        return transaction.run(query, params).then(() => {
+            return CommentController.removeDetachedComments(transaction);
+        }).then(() => {
+            return AccountController.NotificationController.removeDetachedNotifications(transaction);
+        });
 	}
 	
 	export function removeExpedition(transaction: Transaction, expedition: Expedition): Promise<void> {
-		let removeComments = CommentController.remove(transaction, expedition);
-		let removeNotifications = AccountController.NotificationController.remove(transaction, expedition);
-		return Promise.all([
-			removeComments,
-			removeNotifications
-		]).then(() => {
-			return transaction.run(`MATCH(e:Expedition {id: $expeditionId}) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e`, {
-				expeditionId: expedition.id
-			});
-		}).then(() => {});
+		return transaction.run(`MATCH(e:Expedition {id: $expeditionId}) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e`, {
+            expeditionId: expedition.id
+        }).then(() => {
+            return CommentController.removeDetachedComments(transaction);
+        }).then(() => {
+		    return AccountController.NotificationController.removeDetachedNotifications(transaction);
+        });
 	}
 	
 	export function create(transaction: Transaction, recipe: ExpeditionRecipe): Promise<Expedition> {

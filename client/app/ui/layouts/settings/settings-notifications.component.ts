@@ -22,7 +22,11 @@ export class SettingsNotificationsComponent implements OnInit, OnDestroy {
 	
 	ngOnInit() {
 		this.form = this.fb.group({
-			emailNotifications: [
+			notificationMails: [
+				true, [
+				]
+			],
+			newsletterMails: [
 				true, [
 				]
 			]

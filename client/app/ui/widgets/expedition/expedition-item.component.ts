@@ -21,9 +21,8 @@ export class ExpeditionItemComponent implements OnInit {
 	constructor(private userService: UserService) {}
 	
 	ngOnInit(): void {
-		let date = moment.duration(moment().diff(this.expedition.date.isoString)).humanize();
-		this.formattedDate = this.expedition.date.accuracy > 0 ? `in ca. ${date}` : `in ${date}`;
-		
+		this.formattedDate = `${this.expedition.date.accuracy > 0 ? 'ca.' : ''}${moment(this.expedition.date.isoString).fromNow()}`;
+
 		let distance = this.userService.getUsersDistance(this.expedition.location);
 		distance = distance <= 10000 ? Math.ceil(distance / 100) / 10 : Math.ceil(distance / 1000);
 		this.formattedLocation = this.expedition.location.accuracy > 0 ? `ca. ${distance} km` : `${distance} km`;

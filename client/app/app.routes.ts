@@ -44,6 +44,7 @@ import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component'
 import {ExploreExpeditionsComponent} from './ui/layouts/explore/explore-expeditions.component';
 import {ExploreRudelComponent} from './ui/layouts/explore/explore-rudel.component';
 import {SettingsNotificationsComponent} from './ui/layouts/settings/settings-notifications.component';
+import {SettingsOtherComponent} from "./ui/layouts/settings/settings-other.component";
 
 const appRoutes: Routes = [
 	{
@@ -86,16 +87,16 @@ const appRoutes: Routes = [
 			
 			{
 				path: 'people/not-found', component: NotFoundComponent, data: {
-				title: 'Invalid username!',
+				title: 'Nutzer existiert nicht',
 				image: require('../assets/illustrations/user-not-found.png'),
-				description: 'The requested user does not exist!'
+				description: 'Der angeforderte Nutzer existiert nicht.'
 			}
 			},
 			{
 				path: 'people/deleted-message', component: NotFoundComponent, data: {
-				title: 'User deleted!',
+				title: 'Konto entfernt',
 				image: require('../assets/illustrations/user-not-found.png'),
-				description: 'We deleted the user.'
+				description: 'Wir haben dein Konto entfernt.'
 			}
 			},
 			
@@ -113,16 +114,16 @@ const appRoutes: Routes = [
 			
 			{
 				path: 'lists/not-found', component: NotFoundComponent, data: {
-				title: 'Invalid list id!',
+				title: 'Liste existiert nicht',
 				image: require('../assets/illustrations/no-list-found.png'),
-				description: 'The requested list does not exist!'
+				description: 'Die angeforderte Liste existiert nicht.'
 			}
 			},
 			{
 				path: 'lists/deleted-message', component: NotFoundComponent, data: {
-				title: 'List deleted!',
+				title: 'Liste gelöscht',
 				image: require('../assets/illustrations/no-list-found.png'),
-				description: 'We deleted the list as no likers remained.'
+				description: 'Die Liste wurde gelöscht, da es keine Anhänger mehr gab.'
 			}
 			},
 			{
@@ -140,16 +141,16 @@ const appRoutes: Routes = [
 			
 			{
 				path: 'rudel/not-found', component: NotFoundComponent, data: {
-				title: 'Invalid rudel id!',
+				title: 'Rudel existiert nicht',
 				image: require('../assets/illustrations/rudel-not-found.png'),
-				description: 'The requested rudel does not exist!'
+				description: 'Das angeforderte Rudel existiert nicht.'
 			}
 			},
 			{
 				path: 'rudel/deleted-message', component: NotFoundComponent, data: {
-				title: 'Rudel deleted!',
+				title: 'Rudel gelöscht',
 				image: require('../assets/illustrations/rudel-not-found.png'),
-				description: 'We deleted the rudel as no likers remained.'
+				description: 'Das Rudel wurde gelöscht, da es keine Anhänger mehr gab.'
 			}
 			},
 			{
@@ -167,16 +168,16 @@ const appRoutes: Routes = [
 			},
 			{
 				path: 'expeditions/not-found', component: NotFoundComponent, data: {
-				title: 'Invalid expedition id!',
+				title: 'Streifzug existiert nicht',
 				image: require('../assets/illustrations/expedition-not-found.png'),
-				description: 'The requested expedition does not exist!'
+				description: 'Der angeforderte Streifzug existiert nicht.'
 			}
 			},
 			{
 				path: 'expeditions/deleted-message', component: NotFoundComponent, data: {
-				title: 'Expedition deleted!',
+				title: 'Streifzug abgesagt',
 				image: require('../assets/illustrations/expedition-not-found.png'),
-				description: 'We deleted the expedition as you requested.'
+				description: 'Der Streifzug wurde abgesagt.'
 			}
 			},
 			{
@@ -196,14 +197,15 @@ const appRoutes: Routes = [
 			{path: 'settings', component: SettingsComponent, children: [
 				{path: '', redirectTo: 'profile', pathMatch: 'full'},
 				{path: 'profile', component: SettingsProfileComponent},
+				{path: 'other', component: SettingsOtherComponent},
 				{path: 'notifications', component: SettingsNotificationsComponent}
 			]
 			},
 			{
 				path: '404', component: NotFoundComponent, data: {
-				title: 'Oops, nothing here!',
+				title: 'Oops, hier ist nichts!',
 				image: require('../assets/illustrations/not-found.png'),
-				description: 'The requested page does not exist!'
+				description: 'Die angeforderte Seite existiert nicht.'
 			}
 			},
 			{path: '**', redirectTo: '404'}
@@ -211,9 +213,9 @@ const appRoutes: Routes = [
 	},
 	{
 		path: '404', component: NotFoundComponent, data: {
-		title: 'Oops, nothing here!',
+		title: 'Oops, hier ist nichts!', //Oops, nothing here!
 		image: require('../assets/illustrations/not-found.png'),
-		description: 'The requested page does not exist!'
+		description: 'Die angeforderte Seite existiert nicht.'//The requested page does not exist!
 	}
 	},
 	{path: '**', redirectTo: '404'}
