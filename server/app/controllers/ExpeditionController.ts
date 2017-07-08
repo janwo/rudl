@@ -538,7 +538,7 @@ export module ExpeditionController {
 	}
 
     export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-        return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $user.location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH e WHERE (e)-[:BELONGS_TO_RUDEL]->(:Rudel)<-[:LIKES_RUDEL]-(u:User {id: $user.id}) WITH e SKIP $skip LIMIT $limit RETURN properties(e) as e`, {
+        return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $user.location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH e WHERE (e)-[:BELONGS_TO_RUDEL]->(:Rudel)<-[:LIKES_RUDEL]-(:User {id: $user.id}) WITH e SKIP $skip LIMIT $limit RETURN properties(e) as e`, {
             user: user,
             now: Date.now() / 1000,
             limit: limit,

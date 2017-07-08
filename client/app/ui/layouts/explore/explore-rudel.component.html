@@ -2,10 +2,10 @@
     <h1 i18n="@@suggestedRudel">Suggested Rudel</h1>
     <item-wrapper [horizontal]="true">
         <rudel-item [style]="rudelItemStyle" *ngFor="let suggestedRudelItem of suggestedRudel" [rudel]="suggestedRudelItem">
-            <styled-button [style]="rudelItemButtonStyle" [icon]="'more_vert'" (click)="suggestedRudelItemDropdown.toggle()"></styled-button>
+            <styled-button [disabled]="pendingRequest" [style]="rudelItemButtonStyle" [icon]="'more_vert'" (click)="suggestedRudelItemDropdown.toggle()"></styled-button>
             <dropdown-menu #suggestedRudelItemDropdown [arrowAlignment]="'right'">
-                <menu-item [icon]="'check'" [title]="'Beitreten'"></menu-item>
-                <menu-item [icon]="'visibility_off'" [title]="'Verbergen'"></menu-item>
+                <menu-item *ngIf="!suggestedRudelItem.relations.isLiked" [icon]="'check'" [title]="'Interessiert'" (click)="like(suggestedRudelItem)"></menu-item>
+                <menu-item [icon]="'visibility_off'" [title]="'Nicht Interessiert'" (click)="dislike(suggestedRudelItem)"></menu-item>
             </dropdown-menu>
         </rudel-item>
     </item-wrapper>
@@ -19,10 +19,10 @@
     <h1 i18n="@@PopularRudel">Popular Rudel</h1>
     <item-wrapper [horizontal]="true">
         <rudel-item [style]="rudelItemStyle" *ngFor="let popularRudelItem of popularRudel" [rudel]="popularRudelItem">
-            <styled-button [style]="rudelItemButtonStyle" [icon]="'more_vert'" (click)="popularRudelItemDropdown.toggle()"></styled-button>
+            <styled-button [disabled]="pendingRequest" [style]="rudelItemButtonStyle" [icon]="'more_vert'" (click)="popularRudelItemDropdown.toggle()"></styled-button>
             <dropdown-menu #popularRudelItemDropdown [arrowAlignment]="'right'">
-                <menu-item [icon]="'check'" [title]="'Beitreten'"></menu-item>
-                <menu-item [icon]="'visibility_off'" [title]="'Verbergen'"></menu-item>
+                <menu-item *ngIf="!popularRudelItem.relations.isLiked" [icon]="'check'" [title]="'Interessiert'" (click)="like(popularRudelItem)"></menu-item>
+                <menu-item [icon]="'visibility_off'" [title]="'Nicht Interessiert'" (click)="dislike(popularRudelItem)"></menu-item>
             </dropdown-menu>
         </rudel-item>
     </item-wrapper>
@@ -36,10 +36,10 @@
     <h1 i18n="@@RecentRudel">Recent Rudel</h1>
     <item-wrapper [horizontal]="true">
         <rudel-item [style]="rudelItemStyle" *ngFor="let recentRudelItem of recentRudel" [rudel]="recentRudelItem">
-            <styled-button [style]="rudelItemButtonStyle" [icon]="'more_vert'" (click)="recentRudelItemDropdown.toggle()"></styled-button>
+            <styled-button [disabled]="pendingRequest" [style]="rudelItemButtonStyle" [icon]="'more_vert'" (click)="recentRudelItemDropdown.toggle()"></styled-button>
             <dropdown-menu #recentRudelItemDropdown [arrowAlignment]="'right'">
-                <menu-item [icon]="'check'" [title]="'Beitreten'"></menu-item>
-                <menu-item [icon]="'visibility_off'" [title]="'Verbergen'"></menu-item>
+                <menu-item *ngIf="!recentRudelItem.relations.isLiked" [icon]="'check'" [title]="'Interessiert'" (click)="like(recentRudelItem)"></menu-item>
+                <menu-item [icon]="'visibility_off'" [title]="'Nicht Interessiert'" (click)="dislike(recentRudelItem)"></menu-item>
             </dropdown-menu>
         </rudel-item>
     </item-wrapper>
