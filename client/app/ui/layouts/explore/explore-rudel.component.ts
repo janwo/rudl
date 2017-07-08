@@ -23,12 +23,13 @@ export class ExploreRudelComponent implements OnInit, OnDestroy {
 	popularRudel: Rudel[];
 	rudelItemStyle: RudelItemStyles = RudelItemStyles.block;
 	rudelItemButtonStyle: ButtonStyles = ButtonStyles.filledInverse;
+
 	emptyState: EmptyState = {
-		title: 'Keine regionalen Streifzüge gefunden.',
-		image: require('../../../../assets/illustrations/no-expeditions.png'),
-		description: 'Wir konnten dir keine Streifzüge in deiner Region vorstellen. Sei Organisator!'
+		title: 'Keine Rudel gefunden',
+		image: require('../../../../assets/illustrations/no-rudel.png'),
+		description: 'Wir konnten dir keine Rudel vorstellen. Erstelle ein Rudel, indem du den Titel deines Rudels in die Suche eingibst.'
 	};
-	
+
 	constructor(private rudelService: RudelService,
 				title: Title) {
 		title.setTitle('Entdecke Rudel | rudl.me');

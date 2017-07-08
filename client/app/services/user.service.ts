@@ -97,8 +97,8 @@ export class UserService {
 			this.currentLocation.next(null);
 		}, {
 			enableHighAccuracy: false,
-			maximumAge: 1000 * 60,
-			timeout: 1000 * 60
+			maximumAge: 1000 * 30,
+			timeout: 1000 * 30
 		});
 	}
 	

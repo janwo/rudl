@@ -50,10 +50,14 @@
     }
 
     .overflow {
-      position: relative;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: auto;
       pointer-events: none;
       display: flex;
       flex-direction: row;
+      align-items: center;
 
       & /deep/ > * {
         pointer-events: auto;

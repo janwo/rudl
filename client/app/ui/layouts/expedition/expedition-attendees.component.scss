@@ -33,5 +33,9 @@
     styled-button {
       margin-bottom: 0;
     }
+
+    /deep/ .overflow {
+      bottom: 0 !important;
+    }
   }
 }

@@ -384,7 +384,7 @@
       </trans-unit>
       <trans-unit id="deleteAccountDescription" datatype="html">
         <source>You want to terminate your membership? Enter your username in the input field and click on &quot;Terminate membership&quot; to terminate your membership irreversibly.</source>
-        <target>Möchtest du deine Mitgliedschaft unwiederruflich beenden? Dann gebe bitte deinen Usernamen in das Eingabefeld ein und bestätige mit Klick auf "Mitgliedschaft unwiederruflich beenden".</target>
+        <target>Möchtest du deine Mitgliedschaft unwiederruflich beenden? Dann gebe bitte deinen Usernamen in das Eingabefeld ein und bestätige mit Klick auf "Mitgliedschaft beenden".</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/settings/settings-other.component.ts</context>
           <context context-type="linenumber">4</context>

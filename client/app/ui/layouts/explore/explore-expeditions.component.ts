@@ -21,10 +21,11 @@ export class ExploreExpeditionsComponent implements OnInit, OnDestroy {
 	popularExpeditionsSubscription: Subscription;
 	popularExpeditions: Expedition[];
 	rudelItemButtonStyle: ExpeditionItemStyles = ExpeditionItemStyles.block;
+
 	emptyState: EmptyState = {
-		title: 'Keine Rudel gefunden',
-		image: require('../../../../assets/illustrations/no-rudel.png'),
-		description: 'Wir konnten dir keine Rudel vorstellen. Erstelle ein Rudel, indem du den Titel deines Rudels in die Suche eingibst.'
+		title: 'Keine regionalen Streifzüge gefunden.',
+		image: require('../../../../assets/illustrations/no-expeditions.png'),
+		description: 'Wir konnten dir keine Streifzüge in deiner Region vorstellen. Sei Organisator!'
 	};
 	
 	constructor(private expeditionService: ExpeditionService,

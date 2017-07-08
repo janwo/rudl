@@ -536,13 +536,21 @@ export module ExpeditionController {
 			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e');
 		});
 	}
-	
+
+    export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
+        return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $user.location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH e WHERE (e)-[:BELONGS_TO_RUDEL]->(:Rudel)<-[:LIKES_RUDEL]-(u:User {id: $user.id}) WITH e SKIP $skip LIMIT $limit RETURN properties(e) as e`, {
+            user: user,
+            now: Date.now() / 1000,
+            limit: limit,
+            skip: skip
+        }).then(results => {
+            return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e');
+        });
+    }
+
 	export function popular(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH e RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
-			location: {
-				latitude: user.location.latitude,
-				longitude: user.location.longitude
-			},
+		return transaction.run<Expedition, any>(`MATCH (u:User {id: $user.id}) CALL spatial.closest("Expedition", $user.location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH e WHERE e.date > $now AND NOT (e)-[:BELONGS_TO_RUDEL]->(:Rudel)<-[:DISLIKES_RUDEL]-(u) WITH e, size((e)<-[:JOINS_EXPEDITION]-()) as popularity ORDER BY popularity DESC RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
+			user: user,
 			now: Date.now() / 1000,
 			limit: limit,
 			skip: skip
@@ -550,34 +558,17 @@ export module ExpeditionController {
 			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e');
 		});
 	}
-	
-	export function recent(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH e WHERE e.createdAt > $now WITH e ORDER BY e.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(e) as e`, {
-			location: {
-				latitude: user.location.latitude,
-				longitude: user.location.longitude
-			},
-			now: Date.now() / 1000,
-			limit: limit,
-			skip: skip
-		}).then(results => {
-			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e');
-		});
-	}
-	
-	export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
-			location: {
-				latitude: user.location.latitude,
-				longitude: user.location.longitude
-			},
-			now: Date.now() / 1000,
-			limit: limit,
-			skip: skip
-		}).then(results => {
-			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e');
-		});
-	}
+
+    export function recent(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
+        return transaction.run<Expedition, any>(`MATCH (u:User {id: $user.id}) CALL spatial.closest("Expedition", $user.location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH e, u WHERE e.date > $now AND NOT (e)-[:BELONGS_TO_RUDEL]->(:Rudel)<-[:DISLIKES_RUDEL]-(u) WITH e ORDER BY e.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(e) as e`, {
+            user: user,
+            now: Date.now() / 1000,
+            limit: limit,
+            skip: skip
+        }).then(results => {
+            return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e');
+        });
+    }
 	
 	export namespace RouteHandlers {
 		
