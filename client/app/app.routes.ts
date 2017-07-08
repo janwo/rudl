@@ -52,6 +52,15 @@ const appRoutes: Routes = [
 		component: LandingComponent,
 		pathMatch: 'full'
 	},
+
+    {
+        path: 'membership-terminated', component: NotFoundComponent, data: {
+        title: 'Konto entfernt',
+        image: require('../assets/illustrations/user-not-found.png'),
+        description: 'Wir haben dein Konto entfernt.'
+    }
+    },
+
 	{
 		path: 'legal',
 		component: LegalComponent,
@@ -62,6 +71,7 @@ const appRoutes: Routes = [
 			{path: 'privacy', component: LegalPrivacyComponent}
 		]
 	},
+
 	{
 		path: '',
 		component: DashboardComponent,
@@ -90,13 +100,6 @@ const appRoutes: Routes = [
 				title: 'Nutzer existiert nicht',
 				image: require('../assets/illustrations/user-not-found.png'),
 				description: 'Der angeforderte Nutzer existiert nicht.'
-			}
-			},
-			{
-				path: 'people/deleted-message', component: NotFoundComponent, data: {
-				title: 'Konto entfernt',
-				image: require('../assets/illustrations/user-not-found.png'),
-				description: 'Wir haben dein Konto entfernt.'
 			}
 			},
 			
@@ -211,6 +214,7 @@ const appRoutes: Routes = [
 			{path: '**', redirectTo: '404'}
 		]
 	},
+
 	{
 		path: '404', component: NotFoundComponent, data: {
 		title: 'Oops, hier ist nichts!', //Oops, nothing here!
@@ -218,6 +222,7 @@ const appRoutes: Routes = [
 		description: 'Die angeforderte Seite existiert nicht.'//The requested page does not exist!
 	}
 	},
+
 	{path: '**', redirectTo: '404'}
 ];
 

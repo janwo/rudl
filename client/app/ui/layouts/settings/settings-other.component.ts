@@ -20,15 +20,20 @@ export class SettingsOtherComponent implements OnInit, OnDestroy {
 	constructor(public userService: UserService,
                 private router: Router) {}
 
-	onUsernameConfirmationKeyUp(input: HTMLInputElement): void {
-		this.unlockTermination = input.value == this.user.username;
-	}
+    onUsernameConfirmationKeyUp(input: HTMLInputElement): void {
+        this.unlockTermination = input.value == this.user.username;
+    }
+
+    resetInput(input: HTMLInputElement): void {
+	    input.value = null;
+        this.unlockTermination = false;
+    }
 	
 	terminateMembership(): void {
 		this.pendingTermination = true;
 		this.userService.terminate().subscribe(() => {
 			this.pendingTermination = false;
-			this.router.navigate(['/']);
+			this.router.navigate(['/membership-terminated']);
 		});
 	}
 	

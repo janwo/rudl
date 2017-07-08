@@ -19,6 +19,7 @@ import {Rudel} from '../models/rudel/Rudel';
 import {UtilController} from './UtilController';
 import Integer from 'neo4j-driver/lib/v1/integer';
 import {MailManager} from '../Mail';
+import {CommentController} from "./CommentController";
 
 export module AccountController {
 	
@@ -112,12 +113,20 @@ export module AccountController {
     }
 
     export function terminate(transaction: Transaction, user: User): Promise<void> {
-	    //TODO
+	    let dislikeRudel = (): Promise<any> => RudelController.findByUser(transaction, user, false, 0, 100).then((rudel: Rudel[]) => {
+            let promises = rudel.map((rudel: Rudel) => RudelController.dislike(transaction, rudel, user));
+            if(promises.length > 0) return Promise.all(promises).then(() => dislikeRudel());
+        });
 
-        // Save.
-        return transaction.run("MERGE (u:User { username: $user.username }) ON CREATE SET u = $flattenUser ON MATCH SET u = $flattenUser", {
-            user: user,
-            flattenUser: DatabaseManager.neo4jFunctions.flatten(user)
+	    return dislikeRudel().then(() => {
+            return transaction.run("MATCH (u:User { id: $userId }) OPTIONAL MATCH (u)-[:USER_SETTINGS]->(s:Settings) OPTIONAL MATCH (u)-[:USES_AUTH_PROVIDER]->(uap:UserAuthProvider) DETACH DELETE u, s, uap", {
+                userId: user.id
+            });
+        }).then(() => {
+	        return Promise.all([
+                CommentController.removeDetachedComments(transaction),
+                AccountController.NotificationController.removeDetachedNotifications(transaction)
+            ]);
         }).then(() => {});
     }
 	
@@ -202,7 +211,7 @@ export module AccountController {
 		}
 		
 		export function removeDetachedNotifications(transaction: Transaction): Promise<void> {
-			return transaction.run(`MATCH (n:Notification) WHERE NOT ()<-[:NOTIFICATION_SUBJECT]-(n) DETACH DELETE n`).then(() => {});
+			return transaction.run(`MATCH (n:Notification) WHERE NOT ()<-[:NOTIFICATION_SUBJECT]-(n) OR NOT ()<-[:NOTIFICATION_SENDER]-(n) OR NOT ()<-[:NOTIFICATION_RECIPIENT]-(n) DETACH DELETE n`).then(() => {});
 		}
 		
 		export function getPublicNotification(transaction: Transaction, notification: Notification | Notification[], relatedUser: User): Promise<any | any[]> {

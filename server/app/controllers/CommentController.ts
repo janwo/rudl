@@ -44,15 +44,15 @@ export module CommentController {
 			commentId: comment.id
 		}).then(() => {});
 	}
-	
-	export function removeById(transaction: Transaction, comment: Comment): Promise<any> {
-		return transaction.run(`MATCH(c:Comment {id: $commentId}) DETACH DELETE c`, {
-			commentId: comment.id
-		}).then(() => AccountController.NotificationController.removeDetachedNotifications(transaction));
-	}
+
+    export function remove(transaction: Transaction, comment: Comment): Promise<any> {
+        return transaction.run(`MATCH(c:Comment {id: $commentId}) DETACH DELETE c`, {
+            commentId: comment.id
+        }).then(() => AccountController.NotificationController.removeDetachedNotifications(transaction));
+    }
 
 	export function removeDetachedComments(transaction: Transaction): Promise<void> {
-		return transaction.run(`MATCH (c:Comment) WHERE NOT ()<-[:BELONGS_TO_NODE]-(c) DETACH DELETE c`).then(() => {});
+		return transaction.run(`MATCH (c:Comment) WHERE NOT ()<-[:BELONGS_TO_NODE]-(c) OR NOT ()-[:OWNS_COMMENT]->(c) DETACH DELETE c`).then(() => {});
 	}
 
 	export function get(transaction: Transaction, commentId: string): Promise<any> {
@@ -193,7 +193,7 @@ export module CommentController {
 				if (!comment) return Promise.reject(Boom.notFound('Comment not found.'));
 				return CommentController.getOwner(transaction, comment).then((owner: User) => {
 					if (owner.id != request.auth.credentials.id) return Promise.reject(Boom.forbidden('You do not have enough privileges to update comment.'));
-					return CommentController.removeById(transaction, comment).then(() => {});
+					return CommentController.remove(transaction, comment).then(() => {});
 				});
 			});
 			

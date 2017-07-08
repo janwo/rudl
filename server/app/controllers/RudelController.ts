@@ -188,41 +188,41 @@ export module RudelController {
     export function locations(transaction: Transaction, rudel: Rudel, user: User): Promise<{
 		latitude: number,
 		longitude: number
-	}[]> {console.log(LOCATION_RADIUS_METERS)
+	}[]> {
         return transaction.run(`CALL spatial.closest("Expedition", $location, ${LOCATION_RADIUS_METERS / 1000}) YIELD node as e WHERE (e)-[:BELONGS_TO_RUDEL]->(:Rudel {id: $rudelId}) AND e.needsApproval = false RETURN {latitude: e.location_latitude, longitude: e.location_longitude} as l LIMIT 10`, {
             location: user.location,
             rudelId: rudel.id
 		}).then(result => DatabaseManager.neo4jFunctions.unflatten(result.records, 'l'));
     }
-	
-	export function dislike(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
-		let deleteExpeditions = ExpeditionController.removeExpeditions(transaction, rudel, user);
-		let deleteRelationships = transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:DISLIKES_RUDEL]->(r) WITH u, r CREATE UNIQUE (u)-[:DISLIKES_RUDEL {createdAt: $now}]->(r) WITH u, r OPTIONAL MATCH (u)-[or:OWNS_RUDEL]->(r) OPTIONAL MATCH (u)-[fr:LIKES_RUDEL]->(r) DETACH DELETE fr, or", {
-			userId: user.id,
-			rudelId: rudel.id,
-			now: new Date().getTime() / 1000
-		});
-		
-		return Promise.all([
-			deleteExpeditions,
-			deleteRelationships
-		]).then(() => {
-			return this.likers(transaction, rudel, 0, 1).then((likers: User[]) => {
-				if(likers.length > 0) return transaction.run("MATCH(r:Rudel {id: $rudelId}), (u:User {id: $newOwnerId}) WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
-					rudelId: rudel.id,
-					now: new Date().getTime() / 1000,
-					newOwnerId: likers.shift().id
-				});
-				
-				// Delete rudel, because it's an orphan node.
-				return ExpeditionController.removeExpeditions(transaction, rudel).then(() => {
+
+    export function dislike(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
+        let deleteExpeditions = ExpeditionController.removeExpeditions(transaction, rudel, user);
+        let deleteRelationships = transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:DISLIKES_RUDEL]->(r) WITH u, r CREATE UNIQUE (u)-[:DISLIKES_RUDEL {createdAt: $now}]->(r) WITH u, r OPTIONAL MATCH (u)-[or:OWNS_RUDEL]->(r) OPTIONAL MATCH (u)-[fr:LIKES_RUDEL]->(r) DETACH DELETE fr, or", {
+            userId: user.id,
+            rudelId: rudel.id,
+            now: new Date().getTime() / 1000
+        });
+
+        return Promise.all([
+            deleteExpeditions,
+            deleteRelationships
+        ]).then(() => {
+            return this.likers(transaction, rudel, 0, 1).then((likers: User[]) => {
+                if(likers.length > 0) return transaction.run("MATCH(r:Rudel {id: $rudelId}), (u:User {id: $newOwnerId}) WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
+                    rudelId: rudel.id,
+                    now: new Date().getTime() / 1000,
+                    newOwnerId: likers.shift().id
+                });
+
+                // Delete rudel, because it's an orphan node.
+                return ExpeditionController.removeExpeditions(transaction, rudel).then(() => {
                     return transaction.run("MATCH(r:Rudel {id: $rudelId}) CALL apoc.index.removeNodeByName('Rudel', r) DETACH DELETE r", {
                         rudelId: rudel.id
                     }).then(() => AccountController.NotificationController.removeDetachedNotifications(transaction));
                 });
-			}).then(() => {});
-		});
-	}
+            }).then(() => {});
+        });
+    }
 	
 	export function likers(transaction: Transaction, rudel: Rudel, skip = 0, limit = 25): Promise<User[]> {
 		return transaction.run<User, any>(`MATCH(:Rudel {id: $rudelId})<-[:LIKES_RUDEL]-(likers:User) RETURN COALESCE(properties(likers), []) as likers SKIP $skip LIMIT $limit`, {

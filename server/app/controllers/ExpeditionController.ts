@@ -404,23 +404,23 @@ export module ExpeditionController {
 			userId: user.id
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'as').shift());
 	}
-	
-	export function removeExpeditions(transaction: Transaction, rudel: Rudel, user: User = null): Promise<void> {
-		let query = user ?
-			`MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId}) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e` :
-			`MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e`;
 
-		let params: any = {
+    export function removeExpeditions(transaction: Transaction, rudel: Rudel, user: User = null): Promise<void> {
+        let query = user ?
+            `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition)<-[:OWNS_EXPEDITION]-(:User {id: $userId}) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e` :
+            `MATCH(:Rudel {id: $rudelId})<-[:BELONGS_TO_RUDEL]-(e:Expedition) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e`;
+
+        let params: any = {
             rudelId: rudel.id
         };
-		if(user) params.userId = user.id;
+        if(user) params.userId = user.id;
 
         return transaction.run(query, params).then(() => {
             return CommentController.removeDetachedComments(transaction);
         }).then(() => {
             return AccountController.NotificationController.removeDetachedNotifications(transaction);
         });
-	}
+    }
 	
 	export function removeExpedition(transaction: Transaction, expedition: Expedition): Promise<void> {
 		return transaction.run(`MATCH(e:Expedition {id: $expeditionId}) CALL apoc.index.removeNodeByName('Expedition', e) DETACH DELETE e`, {

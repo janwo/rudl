@@ -3,7 +3,7 @@
     <h3 i18n="@@deleteAccountTitle">Terminate Membership</h3>
     <p i18n="@@deleteAccountDescription">You want to terminate your membership? Enter your username in the input field and click on "Terminate membership" to terminate your membership irreversibly.</p>
     <div class="delete-account">
-        <input class="deleteInput" value (keyup)="onUsernameConfirmationKeyUp($event.target)" #deleteInput placeholder="Confirm your username..." i18n-placeholder="@@deleteAccountPlaceholder">
-        <styled-button [style]="terminationButtonStyle" [disabled]="!unlockTermination" [text]="'Mitgliedschaft beenden'" (click)="terminateMembership()"></styled-button>
+        <input class="deleteInput" (keyup)="onUsernameConfirmationKeyUp($event.target)" #deleteInput placeholder="Confirm your username..." i18n-placeholder="@@deleteAccountPlaceholder">
+        <styled-button [style]="terminationButtonStyle" [disabled]="!unlockTermination" [text]="'Mitgliedschaft beenden'" (click)="terminateMembership() || resetInput(deleteInput)"></styled-button>
     </div>
 </section>
