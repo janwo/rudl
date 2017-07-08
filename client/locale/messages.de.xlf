@@ -108,7 +108,7 @@
       </trans-unit>
       <trans-unit id="4thBoardingDescription" datatype="html">
         <source>Meet people who are members of the same rudel and join an expedition. Get out and meet each other.</source>
-        <target>Treffe Menschen, die in einem Rudel Mitglied sind und trete Streifzügen bei. Gehe raus und treffe dich.</target>
+        <target>Triff Menschen, die in einem Rudel Mitglied sind und tritt Streifzügen bei. Gehe raus und triff dich.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
           <context context-type="linenumber">27</context>
