@@ -41,7 +41,7 @@ export function handleFacebook(request: any, reply: any): void {
 		refreshBefore: request.auth.credentials.expiresIn ? Math.trunc(request.auth.credentials.expiresIn + Date.now() / 1000) : null,
 		refreshToken: request.auth.credentials.refreshToken || undefined
 	};
-	
+	console.log(profile);
 	// Start transaction.
 	let transactionSession = new TransactionSession();
 	let transaction = transactionSession.beginTransaction();
