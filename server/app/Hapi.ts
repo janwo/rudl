@@ -62,10 +62,10 @@ export function hapiServer(): Promise<Server> {
 				email: Config.backend.mails.admin,
 				agreeTos: true,
 				debug: Config.debug,
-				domains: [
+				domains: [[
                     domain,
                     `www.${domain}`
-				],
+				]],
 				ports: {
 					http: Config.backend.ports.http,
 					https: Config.backend.ports.https
