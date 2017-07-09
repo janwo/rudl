@@ -86,9 +86,8 @@ export function handleFacebook(request: any, reply: any): void {
 			token: values[1],
 			type: Config.frontend.messageTypes.oauth
 		}).header("Authorization", values[1]);
-		
 		if(values[2]) return MailManager.sendWelcomeMail(values[2]);
-	}).catch((err: any) => {
-		reply(Boom.badRequest(err));
-	});
+	}, (err: any) => {
+        reply(Boom.badRequest(err));
+    });
 }
