@@ -76,6 +76,10 @@ export class DatabaseManager {
 				longitude: 'location_longitude',
 				latitude: 'location_latitude'
 			},
+			indices: [
+				'date',
+				'needsApproval'
+			],
 			fulltext: {
 				Expedition: [
 					'title',

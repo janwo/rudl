@@ -3,7 +3,7 @@
 
 $list-margin: map_get($base-padding, 'smaller');
 $list-horizontal-glimpse: map_get($base-padding, 'default');
-$list-horizontal-item-width: 12.5rem;
+$list-horizontal-item-width: 15rem;
 
 :host {
   display: block;
