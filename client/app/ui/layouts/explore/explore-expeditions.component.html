@@ -52,6 +52,6 @@
     <loading *ngIf="recentExpeditions == null"></loading>
 </ng-template>
 
-<ng-container *ngIf="(!suggestedExpeditions || suggestedExpeditions.length == 0) && (!popularExpeditions || popularExpeditions.length == 0) && (!recentExpeditions || recentExpeditions.length == 0)">
+<ng-container *ngIf="suggestedExpeditions && suggestedExpeditions.length == 0 && popularExpeditions && popularExpeditions.length == 0 && recentExpeditions && recentExpeditions.length == 0">
     <empty [emptyState]="emptyState"></empty>
 </ng-container>
