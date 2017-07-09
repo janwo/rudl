@@ -57,7 +57,7 @@ export function hapiServer(): Promise<Server> {
 		
 		case 'secure':
 			// Load SSL key and certificate.
-			let domain = /^(https?:\/\/)?[\d.]*([\S][^\/]+)/i.exec(Config.backend.domain)[2];
+			/*let domain = /^(https?:\/\/)?[\d.]*([\S][^\/]+)/i.exec(Config.backend.domain)[2];
 			let autoSni = AutoSNI({
 				email: Config.backend.mails.admin,
 				agreeTos: true,
@@ -71,13 +71,35 @@ export function hapiServer(): Promise<Server> {
 					https: Config.backend.ports.https
 				}
 			});
-			
-			// Create server connection.
-			server.connection({
-				listener: autoSni as any, //TODO why needed?
-				tls: true,
-				autoListen: false
-			});
+
+
+             // Create server connection.
+             server.connection({
+             listener: autoSni as any, //TODO why needed?
+             tls: true,
+             autoListen: false
+             });
+             */
+
+            let DEFAULT_DIR = Path.join(require('os').homedir(), '/letsencrypt/etc');
+
+            server.connection({host: Config.backend.host, port: 443, tls: {
+                key: fs.readFileSync(`${DEFAULT_DIR}/live/rudl.me/privkey.pem`),
+                cert: fs.readFileSync(`${DEFAULT_DIR}/live/rudl.me/cert.pem`)
+            } });
+
+            let http = new Server({
+                connections: {
+                    router: {
+                        isCaseSensitive: true,
+                        stripTrailingSlash: true
+                    }
+                }
+            });
+            http.connection({host: Config.backend.host, port: 80 });
+            http.route({ method: '*', path: '/{path*}', handler: (req, reply) => {
+                reply.redirect('https://rudl.me/' + req.params.path);
+            }});
 			break;
 	}
 	
