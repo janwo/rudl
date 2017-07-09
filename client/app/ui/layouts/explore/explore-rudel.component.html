@@ -49,6 +49,6 @@
     <loading *ngIf="recentRudel == null"></loading>
 </ng-template>
 
-<ng-container *ngIf="(!suggestedRudel || suggestedRudel.length == 0) && (!popularRudel || popularRudel.length == 0) && (!recentRudel || recentRudel.length == 0)">
+<ng-container *ngIf="suggestedRudel && suggestedRudel.length == 0 && popularRudel && popularRudel.length == 0 && recentRudel && recentRudel.length == 0">
     <empty [emptyState]="emptyState"></empty>
 </ng-container>
