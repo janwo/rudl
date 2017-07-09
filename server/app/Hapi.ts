@@ -61,7 +61,7 @@ export function hapiServer(): Promise<Server> {
 			let autoSni = AutoSNI({
 				email: Config.backend.mails.admin,
 				agreeTos: true,
-				debug: true,
+				debug: Config.debug,
 				domains: [
                     domain,
                     `www.${domain}`
