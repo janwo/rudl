@@ -57,13 +57,15 @@ export function hapiServer(): Promise<Server> {
 		
 		case 'secure':
 			// Load SSL key and certificate.
+			let domain = /^(https?:\/\/)?[\d.]*([\S][^\/]+)/i.exec(Config.backend.domain)[2];
 			let autoSni = AutoSNI({
 				email: Config.backend.mails.admin,
 				agreeTos: true,
 				debug: Config.debug,
-				domains: [
-					/^(https?:\/\/)?[\d.]*([\S][^\/]+)/i.exec(Config.backend.domain)[2]
-				],
+				domains: [[
+                    domain,
+                    `www.${domain}`
+				]],
 				ports: {
 					http: Config.backend.ports.http,
 					https: Config.backend.ports.https

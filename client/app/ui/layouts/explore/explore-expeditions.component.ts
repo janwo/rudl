@@ -3,10 +3,11 @@ import {Rudel} from '../../../models/rudel';
 import {RudelService} from '../../../services/rudel.service';
 import {Subscription} from 'rxjs/Subscription';
 import {ExpeditionService} from '../../../services/expedition.service';
-import {Expedition} from '../../../models/expedition';
+import {Expedition, ExpeditionRequestResponse} from '../../../models/expedition';
 import {ExpeditionItemStyles} from '../../widgets/expedition/expedition-item.component';
 import {EmptyState} from "../../widgets/state/empty.component";
 import {Title} from "@angular/platform-browser";
+import {ButtonStyles} from "../../widgets/control/styled-button.component";
 
 @Component({
 	templateUrl: 'explore-expeditions.component.html',
@@ -20,7 +21,9 @@ export class ExploreExpeditionsComponent implements OnInit, OnDestroy {
 	recentExpeditions: Expedition[];
 	popularExpeditionsSubscription: Subscription;
 	popularExpeditions: Expedition[];
-	rudelItemButtonStyle: ExpeditionItemStyles = ExpeditionItemStyles.block;
+	expeditionItemStyle: ExpeditionItemStyles = ExpeditionItemStyles.block;
+	expeditionItemButtonStyle: ButtonStyles = ButtonStyles.filledInverse;
+	pendingRequest: boolean;
 
 	emptyState: EmptyState = {
 		title: 'Keine regionalen Streifzüge gefunden.',
@@ -29,6 +32,7 @@ export class ExploreExpeditionsComponent implements OnInit, OnDestroy {
 	};
 	
 	constructor(private expeditionService: ExpeditionService,
+				private rudelService: RudelService,
 				title: Title) {
 		title.setTitle('Entdecke Streifzüge | rudl.me');
 	}
@@ -44,6 +48,60 @@ export class ExploreExpeditionsComponent implements OnInit, OnDestroy {
 		
 		this.popularExpeditionsSubscription = this.expeditionService.popular().subscribe((expeditions: Expedition[]) => {
 			this.popularExpeditions = expeditions;
+		});
+	}
+
+	approve(expedition: Expedition): void {
+		this.pendingRequest = true;
+		this.expeditionService.approve(expedition.id).subscribe((expeditionRequestResponse: ExpeditionRequestResponse) => {
+			this.pendingRequest = false;
+            if(this.suggestedExpeditions) this.suggestedExpeditions = this.suggestedExpeditions.map(suggestedExpedition => {
+                return expeditionRequestResponse.expedition.id == suggestedExpedition.id ? expeditionRequestResponse.expedition : suggestedExpedition;
+            });
+
+            if(this.recentExpeditions) this.recentExpeditions = this.suggestedExpeditions.map(suggestedExpedition => {
+                return expeditionRequestResponse.expedition.id == suggestedExpedition.id ? expeditionRequestResponse.expedition : suggestedExpedition;
+            });
+
+            if(this.suggestedExpeditions) this.suggestedExpeditions = this.suggestedExpeditions.map(suggestedExpedition => {
+                return expeditionRequestResponse.expedition.id == suggestedExpedition.id ? expeditionRequestResponse.expedition : suggestedExpedition;
+            });
+		});
+	}
+
+    reject(expedition: Expedition): void {
+        this.pendingRequest = true;
+        this.expeditionService.reject(expedition.id).subscribe((expeditionRequestResponse: ExpeditionRequestResponse) => {
+            this.pendingRequest = false;
+            if(this.suggestedExpeditions) this.suggestedExpeditions = this.suggestedExpeditions.map(suggestedExpedition => {
+                return expeditionRequestResponse.expedition.id == suggestedExpedition.id ? expeditionRequestResponse.expedition : suggestedExpedition;
+            });
+
+            if(this.recentExpeditions) this.recentExpeditions = this.suggestedExpeditions.map(suggestedExpedition => {
+                return expeditionRequestResponse.expedition.id == suggestedExpedition.id ? expeditionRequestResponse.expedition : suggestedExpedition;
+            });
+
+            if(this.suggestedExpeditions) this.suggestedExpeditions = this.suggestedExpeditions.map(suggestedExpedition => {
+                return expeditionRequestResponse.expedition.id == suggestedExpedition.id ? expeditionRequestResponse.expedition : suggestedExpedition;
+            });
+        });
+    }
+
+	dislike(rudel: Rudel): void {
+		this.pendingRequest = true;
+		this.rudelService.dislike(rudel.id).subscribe(() => {
+			this.pendingRequest = false;
+			if(this.suggestedExpeditions) this.suggestedExpeditions = this.suggestedExpeditions.filter(suggestedExpedition => {
+                return suggestedExpedition.rudel.id != rudel.id;
+            });
+
+            if(this.recentExpeditions) this.recentExpeditions = this.recentExpeditions.filter(recentExpedition => {
+                return recentExpedition.rudel.id != rudel.id;
+            });
+
+            if(this.popularExpeditions) this.popularExpeditions = this.popularExpeditions.filter(popularExpedition => {
+                return popularExpedition.rudel.id != rudel.id;
+            });
 		});
 	}
 	

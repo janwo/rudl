@@ -1,7 +1,14 @@
 <ng-container *ngIf="suggestedExpeditions && suggestedExpeditions.length > 0; else loadingSuggestedExpeditions">
     <h1 i18n="@@suggestedExpeditions">Suggested Expeditions</h1>
     <item-wrapper [horizontal]="true">
-        <expedition-item [style]="rudelItemButtonStyle" *ngFor="let suggestedExpeditionItem of suggestedExpeditions" [expedition]="suggestedExpeditionItem"></expedition-item>
+        <expedition-item [style]="expeditionItemStyle" *ngFor="let suggestedExpeditionItem of suggestedExpeditions" [expedition]="suggestedExpeditionItem">
+            <styled-button [disabled]="pendingRequest" [style]="expeditionItemButtonStyle" [icon]="'more_vert'" (click)="suggestedExpeditionItemDropdown.toggle()"></styled-button>
+            <dropdown-menu #suggestedExpeditionItemDropdown [arrowAlignment]="'right'">
+                <menu-item *ngIf="!suggestedExpeditionItem.relations.isAttendee" [icon]="'event_available'" [title]="'Teilnehmen'" (click)="approve(suggestedExpeditionItem)"></menu-item>
+                <menu-item *ngIf="suggestedExpeditionItem.relations.isAttendee" [icon]="'event_busy'" [title]="'Nicht teilnehmen'" (click)="reject(suggestedExpeditionItem)"></menu-item>
+                <menu-item *ngIf="!suggestedExpeditionItem.relations.isAttendee" [icon]="'remove_circle_outline'" [title]="'Rudel verbergen'" (click)="dislike(suggestedExpeditionItem.rudel)"></menu-item>
+              </dropdown-menu>
+        </expedition-item>
     </item-wrapper>
 </ng-container>
 
@@ -12,7 +19,14 @@
 <ng-container *ngIf="popularExpeditions && popularExpeditions.length > 0; else loadingPopularExpeditions">
     <h1 i18n="@@popularExpeditions">Popular Expeditions</h1>
     <item-wrapper [horizontal]="true">
-        <expedition-item [style]="rudelItemButtonStyle" *ngFor="let popularExpeditionItem of popularExpeditions" [expedition]="popularExpeditionItem"></expedition-item>
+        <expedition-item [style]="expeditionItemStyle" *ngFor="let popularExpeditionItem of popularExpeditions" [expedition]="popularExpeditionItem">
+            <styled-button [disabled]="pendingRequest" [style]="expeditionItemButtonStyle" [icon]="'more_vert'" (click)="popularExpeditionItemDropdown.toggle()"></styled-button>
+            <dropdown-menu #popularExpeditionItemDropdown [arrowAlignment]="'right'">
+                <menu-item *ngIf="!popularExpeditionItem.relations.isAttendee" [icon]="'event_available'" [title]="'Teilnehmen'" (click)="approve(popularExpeditionItem)"></menu-item>
+                <menu-item *ngIf="popularExpeditionItem.relations.isAttendee" [icon]="'event_busy'" [title]="'Nicht teilnehmen'" (click)="reject(popularExpeditionItem)"></menu-item>
+                <menu-item *ngIf="!popularExpeditionItem.relations.isAttendee" [icon]="'remove_circle_outline'" [title]="'Rudel verbergen'" (click)="dislike(popularExpeditionItem.rudel)"></menu-item>
+            </dropdown-menu>
+        </expedition-item>
     </item-wrapper>
 </ng-container>
 
@@ -23,7 +37,14 @@
 <ng-container *ngIf="recentExpeditions && recentExpeditions.length > 0; else loadingRecentExpeditions">
     <h1 i18n="@@recentExpeditions">Recent Expeditions</h1>
     <item-wrapper [horizontal]="true">
-        <expedition-item [style]="rudelItemButtonStyle" *ngFor="let recentExpeditionItem of recentExpeditions" [expedition]="recentExpeditionItem"></expedition-item>
+        <expedition-item [style]="expeditionItemStyle" *ngFor="let recentExpeditionItem of recentExpeditions" [expedition]="recentExpeditionItem">
+            <styled-button [disabled]="pendingRequest" [style]="expeditionItemButtonStyle" [icon]="'more_vert'" (click)="recentExpeditionItemDropdown.toggle()"></styled-button>
+            <dropdown-menu #recentExpeditionItemDropdown [arrowAlignment]="'right'">
+                <menu-item *ngIf="!recentExpeditionItem.relations.isAttendee" [icon]="'event_available'" [title]="'Teilnehmen'" (click)="approve(recentExpeditionItem)"></menu-item>
+                <menu-item *ngIf="recentExpeditionItem.relations.isAttendee" [icon]="'event_busy'" [title]="'Nicht teilnehmen'" (click)="reject(recentExpeditionItem)"></menu-item>
+                <menu-item *ngIf="!recentExpeditionItem.relations.isAttendee" [icon]="'remove_circle_outline'" [title]="'Rudel verbergen'" (click)="dislike(recentExpeditionItem.rudel)"></menu-item>
+            </dropdown-menu>
+        </expedition-item>
     </item-wrapper>
 </ng-container>
 

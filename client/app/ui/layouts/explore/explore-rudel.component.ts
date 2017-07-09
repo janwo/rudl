@@ -54,20 +54,17 @@ export class ExploreRudelComponent implements OnInit, OnDestroy {
         this.pendingRequest = true;
         this.rudelService.like(rudel.id).subscribe((rudel: Rudel) => {
             this.pendingRequest = false;
-            if(this.suggestedRudel) {
-                let idx = this.suggestedRudel.findIndex(suggestedRudel => suggestedRudel.id == rudel.id);
-                if(idx >= 0) this.suggestedRudel[idx] = rudel;
-            }
+            if(this.suggestedRudel) this.suggestedRudel = this.suggestedRudel.map(suggestedRudel => {
+                return rudel.id == suggestedRudel.id ? rudel : suggestedRudel;
+            });
 
-            if(this.recentRudel) {
-                let idx = this.recentRudel.findIndex(recentRudel => recentRudel.id == rudel.id);
-                if(idx >= 0) this.recentRudel[idx] = rudel;
-            }
+            if(this.recentRudel) this.recentRudel = this.recentRudel.map(recentRudel => {
+                return rudel.id == recentRudel.id ? rudel : recentRudel;
+            });
 
-            if(this.popularRudel) {
-                let idx = this.popularRudel.findIndex(popularRudel => popularRudel.id == rudel.id);
-                if(idx >= 0) this.popularRudel[idx] = rudel;
-            }
+            if(this.popularRudel) this.popularRudel = this.popularRudel.map(popularRudel => {
+                return rudel.id == popularRudel.id ? rudel : popularRudel;
+            });
         });
     }
 
@@ -75,20 +72,11 @@ export class ExploreRudelComponent implements OnInit, OnDestroy {
         this.pendingRequest = true;
         this.rudelService.dislike(rudel.id).subscribe(() => {
             this.pendingRequest = false;
-            if(this.suggestedRudel) {
-                let idx = this.suggestedRudel.findIndex(suggestedRudel => suggestedRudel.id == rudel.id);
-                if(idx >= 0) this.suggestedRudel.splice(idx, 1);
-            }
+            if(this.suggestedRudel) this.suggestedRudel = this.suggestedRudel.filter(suggestedRudel => suggestedRudel.id != rudel.id);
 
-            if(this.recentRudel) {
-                let idx = this.recentRudel.findIndex(recentRudel => recentRudel.id == rudel.id);
-                if(idx >= 0) this.recentRudel.splice(idx, 1);
-            }
+            if(this.recentRudel) this.recentRudel = this.suggestedRudel.filter(suggestedRudel => suggestedRudel.id != rudel.id);
 
-            if(this.popularRudel) {
-                let idx = this.popularRudel.findIndex(popularRudel => popularRudel.id == rudel.id);
-                if(idx >= 0) this.popularRudel.splice(idx, 1);
-            }
+            if(this.popularRudel) this.popularRudel = this.suggestedRudel.filter(suggestedRudel => suggestedRudel.id != rudel.id);
         });
     }
 	
