@@ -30,8 +30,7 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 	
 	updateNotification(): void {
 		// Define notification date.
-		let date = moment.duration(moment().diff(this.notification.createdAt)).humanize();
-		this.formattedDate = `vor ${date}`;
+		this.formattedDate = moment(this.notification.createdAt).fromNow();
 		
 		// Define subject type.
 		switch(this.notification.type) {

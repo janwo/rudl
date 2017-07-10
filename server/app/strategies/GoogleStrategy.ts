@@ -51,7 +51,7 @@ export function handleGoogle(request: any, reply: any): void {
 		return user ? {
 			mail: null,
 			user: user
-		} : AccountController.availableUsername(transaction, profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then((username: string) => {
+		} : AccountController.availableUsername(transaction, profile.displayName.toLowerCase()).then((username: string) => {
 			return AccountController.create(transaction, {
 				id: shortid.generate(),
 				firstName: profile.name.given_name,

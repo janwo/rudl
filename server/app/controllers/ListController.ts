@@ -131,7 +131,7 @@ export module ListController {
 	
 	export function save(transaction: Transaction, list: List): Promise<void> {
 		// Set timestamps.
-		let now = Date.now() / 1000;
+		let now = Math.trunc(Date.now() / 1000);
 		if (!list.createdAt) list.createdAt = now;
 		list.updatedAt = now;
 		

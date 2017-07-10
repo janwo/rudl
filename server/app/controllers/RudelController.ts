@@ -29,7 +29,7 @@ export module RudelController {
 	
 	export function save(transaction: Transaction, rudel: Rudel): Promise<void> {
 		// Set timestamps.
-		let now = Date.now() / 1000;
+		let now = Math.trunc(Date.now() / 1000);
 		if (!rudel.createdAt) rudel.createdAt = now;
 		rudel.updatedAt = now;
 		

@@ -448,7 +448,7 @@ export module ExpeditionController {
 	
 	export function save(transaction: Transaction, expedition: Expedition): Promise<void> {
 		// Set timestamps.
-		let now = Date.now() / 1000;
+		let now = Math.trunc(Date.now() / 1000);
 		if (!expedition.createdAt) expedition.createdAt = now;
 		expedition.updatedAt = now;
 		
@@ -540,7 +540,7 @@ export module ExpeditionController {
     export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
         return transaction.run<Expedition, any>(`CALL spatial.closest("Expedition", $user.location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH e WHERE (e)-[:BELONGS_TO_RUDEL]->(:Rudel)<-[:LIKES_RUDEL]-(:User {id: $user.id}) AND e.date > $now AND e.date < $now + 604800 WITH e ORDER BY e.date SKIP $skip LIMIT $limit RETURN properties(e) as e`, {
             user: user,
-            now: Date.now() / 1000,
+            now: Math.trunc(Date.now() / 1000),
             limit: limit,
             skip: skip
         }).then(results => {
@@ -551,7 +551,7 @@ export module ExpeditionController {
 	export function popular(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
 		return transaction.run<Expedition, any>(`MATCH (u:User {id: $user.id}) CALL spatial.closest("Expedition", $user.location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH e WHERE e.date > $now AND NOT (e)-[:BELONGS_TO_RUDEL]->(:Rudel)<-[:DISLIKES_RUDEL]-(u) WITH e, size((e)<-[:JOINS_EXPEDITION]-()) as popularity ORDER BY popularity DESC RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
 			user: user,
-			now: Date.now() / 1000,
+			now: Math.trunc(Date.now() / 1000),
 			limit: limit,
 			skip: skip
 		}).then(results => {
@@ -562,7 +562,7 @@ export module ExpeditionController {
     export function recent(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
         return transaction.run<Expedition, any>(`MATCH (u:User {id: $user.id}) CALL spatial.closest("Expedition", $user.location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH e, u WHERE e.date > $now AND NOT (e)-[:BELONGS_TO_RUDEL]->(:Rudel)<-[:DISLIKES_RUDEL]-(u) WITH e ORDER BY e.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(e) as e`, {
             user: user,
-            now: Date.now() / 1000,
+            now: Math.trunc(Date.now() / 1000),
             limit: limit,
             skip: skip
         }).then(results => {

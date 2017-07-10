@@ -26,7 +26,7 @@ export module CommentController {
 	
 	export function save(transaction: Transaction, comment: Comment): Promise<void> {
 		// Set timestamps.
-		let now = Date.now() / 1000;
+		let now = Math.trunc(Date.now() / 1000);
 		if (!comment.createdAt) comment.createdAt = now;
 		comment.updatedAt = now;
 		

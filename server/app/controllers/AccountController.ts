@@ -11,6 +11,7 @@ import Transaction from 'neo4j-driver/lib/v1/transaction';
 import {AuthController} from './AuthController';
 import * as shortid from 'shortid';
 import * as dot from 'dot-object';
+import * as faker from 'faker';
 import * as fs from 'fs';
 import {Expedition} from '../models/expedition/Expedition';
 import {ExpeditionController} from './ExpeditionController';
@@ -81,18 +82,35 @@ export module AccountController {
 			}).then(() => user);
 		});
 	}
+
+	export function normalizeUsername(username: string, increment: boolean, min = 5, max = 16): string {
+        if(!username || username.length == 0) username = 'user';
+
+        if(username.length < min) {
+            increment = true;
+        } else if (username.length > max) {
+            username = username.substring(0, max);
+        }
+
+        if(increment) {
+            let matches = username.match(/^(.*?)(\d*)$/i);
+            let number = matches[2] ? parseInt(matches[2]) + 1 : 1;
+            let alphabetics = matches[1];
+            let missingDigits = Math.max(0, min - alphabetics.length - number.toString().length);
+            let stringifiedNumber = '0'.repeat(missingDigits) + number;
+            username = alphabetics.substring(0, max - stringifiedNumber.length) + stringifiedNumber;
+        }
+
+        return username;
+    }
 	
 	export function availableUsername(transaction: Transaction, username: string): Promise<string> {
-		let pad = (num: number) => {
-			let padNum: string = num.toString();
-			while (padNum.length < 2) padNum = "0" + padNum;
-			return padNum;
-		};
-		
-		let nextAvailableUsername = (username: string, suffix: number = 0): Promise<string> => {
-			let fullUsername = suffix > 0 ? username + pad(suffix) : username;
-			return UserController.findByUsername(transaction, fullUsername).then((user: User) => {
-				return user ? nextAvailableUsername(username, suffix + 1) : fullUsername;
+        username = username.replace(/[^a-z0-9_]/g, '');
+
+		let nextAvailableUsername = (username: string, increment = false): Promise<string> => {
+			username = this.normalizeUsername(username, increment);
+			return UserController.findByUsername(transaction, username).then((user: User) => {
+				return user ? nextAvailableUsername(username, true) : username;
 			});
 		};
 		
@@ -101,7 +119,7 @@ export module AccountController {
 
     export function save(transaction: Transaction, user: User): Promise<void> {
         // Set timestamps.
-        let now = Date.now() / 1000;
+        let now = Math.trunc(Date.now() / 1000);
         if (!user.createdAt) user.createdAt = now;
         user.updatedAt = now;
 
