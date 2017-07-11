@@ -82,7 +82,7 @@ const appRoutes: Routes = [
 			{path: '', redirectTo: 'explore', pathMatch: 'full'},
 			
 			{path: 'explore', component: ExploreComponent, canActivate: [BoardingGuard], children: [
-				{path: '', redirectTo: 'expeditions', pathMatch: 'full'},
+				{path: '', redirectTo: 'rudel', pathMatch: 'full'},
 				{path: 'rudel', component: ExploreRudelComponent},
 				{path: 'user', component: ExploreUserComponent},
 				{path: 'expeditions', component: ExploreExpeditionsComponent}
