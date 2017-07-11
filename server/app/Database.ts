@@ -209,6 +209,7 @@ export class DatabaseManager {
 				let $return = record.get(returnVariable) as any;
 				if (typeof $return == 'object') {
 					// Convert integers already.
+					let hasObject = false;
 					for (let v in $return) {
 						if (!$return.hasOwnProperty(v)) continue;
 						if (typeof $return[v] == 'object') {
@@ -217,17 +218,15 @@ export class DatabaseManager {
 								$return[v] = Integer.toNumber($return[v]);
 								continue;
 							}
-							
-							// Flatten, stop check.
-							$return = dot.dot($return);
-							break;
+
+                            hasObject = true;
 						}
 					}
-					
-					// Convert remaining numbers.
-					$return = _.mapValues($return, (v: any) => {
-						return v instanceof Integer ? Integer.toNumber(v) : v
-					}) as L;
+
+                    // Flatten, if contains object.
+                    if(hasObject) $return = dot.dot($return);
+
+                    // Unflatten.
 					dot.object($return);
 				}
 				

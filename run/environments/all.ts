@@ -223,7 +223,8 @@ export default {
 			secretAccessKey: process.env.AWS_SECRET,
 			from: 'noreply@rudl.me',
 			rateLimit: 14,
-			region: 'eu-west-1'
+			region: 'eu-west-1',
+			operational: false
 		}
 	}
 };

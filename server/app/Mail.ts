@@ -37,16 +37,24 @@ export class MailManager {
 		this.queue.process(job => {
 			// Send Mail.
 			return new Promise((resolve, reject) => {
-				MailManager.instance.transporter.sendMail({
-					from: Config.backend.ses.from,
-					to: job.data.to,
-					subject: job.data.subject,
-					html: job.data.html,
-					text: job.data.text
-				}, (error: Error, info: SentMessageInfo) => {
-					if (error) reject(error);
-					else resolve(info);
-				});
+			    let mailOptions = {
+                    from: Config.backend.ses.from,
+                    to: job.data.to,
+                    subject: job.data.subject,
+                    html: job.data.html,
+                    text: job.data.text
+                };
+
+				if(Config.backend.ses.operational) {
+                    MailManager.instance.transporter.sendMail(mailOptions, (error: Error, info: SentMessageInfo) => {
+                        if (error) reject(error);
+                        else resolve(info);
+                    });
+					return;
+				}
+
+				// Just debug mail.
+                console.log(mailOptions);
 			});
 		});
 	}

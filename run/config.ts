@@ -134,7 +134,8 @@ export const Config: {
 			secretAccessKey: string,
 			from: string,
 			rateLimit?: number,
-			region?: string
+			region?: string,
+			operational: boolean
 		}
 	}
 } = (() => {

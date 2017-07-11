@@ -53,6 +53,9 @@ export default {
 			file: {
 				enabled: true
 			}
+		},
+		ses: {
+			operational: true
 		}
 	}
 };
