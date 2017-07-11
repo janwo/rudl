@@ -13,7 +13,7 @@ export class UserResolver implements Resolve<User> {
 	resolve(route: ActivatedRouteSnapshot,
 	        state: RouterStateSnapshot): Observable<User> {
 		return this.userService.get(route.params['username']).catch(() => {
-			this.router.navigate(['/people/not-found']);
+			this.router.navigate(['/user/not-found']);
 			return Promise.resolve(null);
 		});
 	}

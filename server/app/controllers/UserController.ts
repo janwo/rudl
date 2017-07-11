@@ -7,6 +7,7 @@ import {DatabaseManager, TransactionSession} from '../Database';
 import {AccountController} from './AccountController';
 import {UtilController} from './UtilController';
 import {UserStatistics} from '../../../client/app/models/user';
+import {NotificationType} from "../models/notification/Notification";
 
 export module UserController {
 	
@@ -201,7 +202,9 @@ export module UserController {
 			userId: user.id,
 			followeeUserId: aimedUser.id,
 			now: new Date().getTime() / 1000
-		}).then(() => {});
+		}).then((result: any) => {
+			if(result.summary.counters.relationshipsCreated() > 0) return AccountController.NotificationController.set(transaction, NotificationType.LIKES_USER, aimedUser, aimedUser, user);
+		});
 	}
 	
 	export function dislike(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
@@ -212,7 +215,23 @@ export module UserController {
 			now: new Date().getTime() / 1000
 		}).then(() => {});
 	}
-	
+
+    export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<User[]> {
+        return transaction.run<User, any>('MATCH (u:User)<-[:LIKES_USER]-(u1:User {id: $userId}) WITH COUNT(u) as userLikes, u1 MATCH (u2:User)-[:LIKES_USER]->(u:User)<-[:LIKES_USER]-(u1) WHERE NOT u2 = u1 WITH u1, u2, toFloat(COUNT(DISTINCT u)) / userLikes as similarity WHERE similarity > 0.3 MATCH (u:User)<-[:LIKES_USER]-(u2) WHERE NOT (u)<-[:LIKES_USER]-(u1) AND NOT (u)<-[:DISLIKES_USER]-(u1) WITH DISTINCT u SKIP $skip LIMIT $limit RETURN properties(u) as u', {
+            userId: user.id,
+            skip: skip,
+            limit: limit
+        }).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));
+    }
+
+    export function recent(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<User[]> {
+        return transaction.run<User, any>('MATCH(ru:User), (u:User {id: $userId}) WHERE NOT ru = u AND NOT (ru)<-[:DISLIKES_USER]-(u) WITH ru ORDER BY ru.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(ru) as u', {
+            userId: user.id,
+            skip: skip,
+            limit: limit
+        }).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));
+    }
+
 	export namespace RouteHandlers {
 		
 		/**
@@ -332,52 +351,43 @@ export module UserController {
 			
 			reply.api(promise, transactionSession);
 		}
+
+        /**
+         * Handles [GET] /api/users/recent
+         * @param request Request-Object
+         * @param request.query.offset offset (optional, default=0)
+         * @param request.query.limit limit (optional, default=25)
+         * @param request.auth.credentials
+         * @param reply Reply-Object
+         */
+        export function recent(request: any, reply: any): void {
+            // Create promise.
+            let transactionSession = new TransactionSession();
+            let transaction = transactionSession.beginTransaction();
+            let promise: Promise<any> = UserController.recent(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((user: User[]) => {
+                return UserController.getPublicUser(transaction, user, request.auth.credentials);
+            });
+
+            reply.api(promise, transactionSession);
+        }
+
+        /**
+         * Handles [GET] /api/users/suggested
+         * @param request Request-Object
+         * @param request.query.offset offset (optional, default=0)
+         * @param request.query.limit limit (optional, default=25)
+         * @param request.auth.credentials
+         * @param reply Reply-Object
+         */
+        export function suggested(request: any, reply: any): void {
+            // Create promise.
+            let transactionSession = new TransactionSession();
+            let transaction = transactionSession.beginTransaction();
+            let promise: Promise<any> = UserController.suggested(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((user: User[]) => {
+                return UserController.getPublicUser(transaction, user, request.auth.credentials);
+            });
+
+            reply.api(promise, transactionSession);
+        }
 	}
 }
-
-/*
- var smtpTransport = Nodemailer.createTransport(Config.mailer.options);
- request.server.render('templates/reset-password-email', {
- name: user.displayName,
- appName: Config.app.title,
- url: 'http://' + request.headers.host + '/auth/reset/' + token
- }, function (err, emailHTML) {
- 
- var mailOptions = {
- to: user.email,
- from: Config.mailer.from,
- subject: 'Password Reset',
- html: emailHTML
- };
- smtpTransport.sendMail(mailOptions, function (err) {
- 
- if (!err) {
- reply({message: 'An email has been sent to ' + user.email + ' with further instructions.'});
- } else {
- return reply(Boom.badRequest('Failure sending email'));
- }
- 
- done(err);
- });
- });
- },
- */
-
-/*
- function (user, done) {
- request.server.render('templates/reset-password-confirm-email', {
- name: user.displayName,
- appName: Config.app.title
- }, function (err, emailHTML) {
- var mailOptions = {
- to: user.email,
- from: Config.mailer.from,
- subject: 'Your password has been changed',
- html: emailHTML
- };
- 
- smtpTransport.sendMail(mailOptions, function (err) {
- done(err, 'done');
- });
- });
- */

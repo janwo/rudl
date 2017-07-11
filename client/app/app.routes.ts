@@ -45,6 +45,7 @@ import {ExploreExpeditionsComponent} from './ui/layouts/explore/explore-expediti
 import {ExploreRudelComponent} from './ui/layouts/explore/explore-rudel.component';
 import {SettingsNotificationsComponent} from './ui/layouts/settings/settings-notifications.component';
 import {SettingsOtherComponent} from "./ui/layouts/settings/settings-other.component";
+import {ExploreUserComponent} from "./ui/layouts/explore/explore-user.component";
 
 const appRoutes: Routes = [
 	{
@@ -81,8 +82,9 @@ const appRoutes: Routes = [
 			{path: '', redirectTo: 'explore', pathMatch: 'full'},
 			
 			{path: 'explore', component: ExploreComponent, canActivate: [BoardingGuard], children: [
-				{path: '', redirectTo: 'rudel', pathMatch: 'full'},
+				{path: '', redirectTo: 'expeditions', pathMatch: 'full'},
 				{path: 'rudel', component: ExploreRudelComponent},
+				{path: 'user', component: ExploreUserComponent},
 				{path: 'expeditions', component: ExploreExpeditionsComponent}
 			]},
 			
@@ -96,7 +98,7 @@ const appRoutes: Routes = [
 			{path: 'notifications', component: NotificationsComponent, pathMatch: 'full', canActivate: [BoardingGuard]},
 			
 			{
-				path: 'people/not-found', component: NotFoundComponent, data: {
+				path: 'user/not-found', component: NotFoundComponent, data: {
 				title: 'Nutzer existiert nicht',
 				image: require('../assets/illustrations/user-not-found.png'),
 				description: 'Der angeforderte Nutzer existiert nicht.'
@@ -104,7 +106,7 @@ const appRoutes: Routes = [
 			},
 			
 			{
-				path: 'people/:username', resolve: {
+				path: 'user/:username', resolve: {
 				user: UserResolver
 			}, component: UserComponent, canActivate: [BoardingGuard], children: [
 				{path: '', redirectTo: 'rudel', pathMatch: 'full'},

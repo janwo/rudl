@@ -59,12 +59,12 @@ export class ExploreExpeditionsComponent implements OnInit, OnDestroy {
                 return expeditionRequestResponse.expedition.id == suggestedExpedition.id ? expeditionRequestResponse.expedition : suggestedExpedition;
             });
 
-            if(this.recentExpeditions) this.recentExpeditions = this.suggestedExpeditions.map(suggestedExpedition => {
-                return expeditionRequestResponse.expedition.id == suggestedExpedition.id ? expeditionRequestResponse.expedition : suggestedExpedition;
+            if(this.recentExpeditions) this.recentExpeditions = this.recentExpeditions.map(recentExpedition => {
+                return expeditionRequestResponse.expedition.id == recentExpedition.id ? expeditionRequestResponse.expedition : recentExpedition;
             });
 
-            if(this.suggestedExpeditions) this.suggestedExpeditions = this.suggestedExpeditions.map(suggestedExpedition => {
-                return expeditionRequestResponse.expedition.id == suggestedExpedition.id ? expeditionRequestResponse.expedition : suggestedExpedition;
+            if(this.popularExpeditions) this.popularExpeditions = this.popularExpeditions.map(popularExpedition => {
+                return expeditionRequestResponse.expedition.id == popularExpedition.id ? expeditionRequestResponse.expedition : popularExpedition;
             });
 		});
 	}
@@ -77,12 +77,12 @@ export class ExploreExpeditionsComponent implements OnInit, OnDestroy {
                 return expeditionRequestResponse.expedition.id == suggestedExpedition.id ? expeditionRequestResponse.expedition : suggestedExpedition;
             });
 
-            if(this.recentExpeditions) this.recentExpeditions = this.suggestedExpeditions.map(suggestedExpedition => {
-                return expeditionRequestResponse.expedition.id == suggestedExpedition.id ? expeditionRequestResponse.expedition : suggestedExpedition;
+            if(this.recentExpeditions) this.recentExpeditions = this.recentExpeditions.map(recentExpedition => {
+                return expeditionRequestResponse.expedition.id == recentExpedition.id ? expeditionRequestResponse.expedition : recentExpedition;
             });
 
-            if(this.suggestedExpeditions) this.suggestedExpeditions = this.suggestedExpeditions.map(suggestedExpedition => {
-                return expeditionRequestResponse.expedition.id == suggestedExpedition.id ? expeditionRequestResponse.expedition : suggestedExpedition;
+            if(this.popularExpeditions) this.popularExpeditions = this.popularExpeditions.map(popularExpedition => {
+                return expeditionRequestResponse.expedition.id == popularExpedition.id ? expeditionRequestResponse.expedition : popularExpedition;
             });
         });
     }

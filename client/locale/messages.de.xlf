@@ -186,7 +186,7 @@
           <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="DecideWhoAttendsTitle" datatype="html">
+      <trans-unit id="decideWhoAttendsTitle" datatype="html">
         <source>Did you know?</source>
         <target>Wusstest du schon?</target>
         <context-group purpose="location">
@@ -194,7 +194,7 @@
           <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="DecideWhoAttendsDescription" datatype="html">
+      <trans-unit id="decideWhoAttendsDescription" datatype="html">
         <source>You can decide, whether you want to approve new members of the expedition!</source>
         <target>Du kannst entscheiden, ob du neue Teilnehmer akzeptieren möchtest.</target>
         <context-group purpose="location">
@@ -218,7 +218,7 @@
           <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="WhereToGoTitle" datatype="html">
+      <trans-unit id="whereToGoTitle" datatype="html">
         <source>Where to go?</source>
         <target>Wo gehts hin?</target>
         <context-group purpose="location">
@@ -226,7 +226,7 @@
           <context context-type="linenumber">47</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="WhereToGoDescription" datatype="html">
+      <trans-unit id="whereToGoDescription" datatype="html">
         <source>Please mark the location of the expedition on the map.</source>
         <target>Bitte markiere den Standort des Streifzugs auf der Karte.</target>
         <context-group purpose="location">
@@ -342,7 +342,7 @@
           <context context-type="linenumber">2</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="PopularRudel" datatype="html">
+      <trans-unit id="popularRudel" datatype="html">
         <source>Popular Rudel</source>
         <target>Beliebte Rudel</target>
         <context-group purpose="location">
@@ -350,7 +350,7 @@
           <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="RecentRudel" datatype="html">
+      <trans-unit id="recentRudel" datatype="html">
         <source>Recent Rudel</source>
         <target>Neue Rudel</target>
         <context-group purpose="location">
@@ -391,11 +391,27 @@
         </context-group>
       </trans-unit>
       <trans-unit id="deleteAccountPlaceholder" datatype="html">
-        <source>&apos;Confirm your username...&apos;</source>
+        <source>Confirm your username...</source>
         <target>Bestätige deinen Nutzernamen...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/settings/settings-other.component.ts</context>
           <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="suggestedUsers" datatype="html">
+        <source>Suggested Users</source>
+        <target>Empfohlene Nutzer</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-user.component.ts</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="recentUsers" datatype="html">
+        <source>Recent Users</source>
+        <target>Neue Nutzer</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-user.component.ts</context>
+          <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="searchBarPlaceholder" datatype="html">

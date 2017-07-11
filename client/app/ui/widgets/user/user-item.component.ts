@@ -36,10 +36,13 @@ export class UserItemComponent implements OnInit {
 		switch (this.style) {
 			case UserItemStyles.list:
 				return 'card list';
+
+			case UserItemStyles.block:
+				return 'card block';
 		}
 	}
 }
 
 export enum UserItemStyles {
-	list
+	list, block
 }

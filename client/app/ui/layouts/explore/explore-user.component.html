@@ -1,0 +1,37 @@
+<ng-container *ngIf="suggestedUsers && suggestedUsers.length > 0; else loadingSuggestedUsers">
+    <h1 i18n="@@suggestedUsers">Suggested Users</h1>
+    <item-wrapper [horizontal]="true">
+        <user-item [style]="userItemStyle" *ngFor="let suggestedUserItem of suggestedUsers" [user]="suggestedUserItem">
+            <styled-button [disabled]="pendingRequest" [style]="userItemButtonStyle" [icon]="'more_vert'" (click)="suggestedUserItemDropdown.toggle()"></styled-button>
+            <dropdown-menu #suggestedUserItemDropdown [arrowAlignment]="'right'">
+                <menu-item *ngIf="!suggestedUserItem.relations.isLikee" [icon]="'check'" [title]="'Folgen'" (click)="like(suggestedUserItem)"></menu-item>
+                <menu-item [icon]="'visibility_off'" [title]="'Ausblenden'" (click)="dislike(suggestedUserItem)"></menu-item>
+            </dropdown-menu>
+        </user-item>
+    </item-wrapper>
+</ng-container>
+
+<ng-template #loadingSuggestedUsers>
+    <loading *ngIf="suggestedUsers == null"></loading>
+</ng-template>
+
+<ng-container *ngIf="recentUsers && recentUsers.length > 0; else loadingRecentUsers">
+    <h1 i18n="@@recentUsers">Recent Users</h1>
+    <item-wrapper [horizontal]="true">
+        <user-item [style]="userItemStyle" *ngFor="let recentUserItem of recentUsers" [user]="recentUserItem">
+            <styled-button [disabled]="pendingRequest" [style]="userItemButtonStyle" [icon]="'more_vert'" (click)="recentUserItemDropdown.toggle()"></styled-button>
+            <dropdown-menu #recentUserItemDropdown [arrowAlignment]="'right'">
+                <menu-item *ngIf="!recentUserItem.relations.isLikee" [icon]="'check'" [title]="'Folgen'" (click)="like(recentUserItem)"></menu-item>
+                <menu-item [icon]="'visibility_off'" [title]="'Ausblenden'" (click)="dislike(recentUserItem)"></menu-item>
+            </dropdown-menu>
+        </user-item>
+    </item-wrapper>
+</ng-container>
+
+<ng-template #loadingRecentUsers>
+    <loading *ngIf="recentUsers == null"></loading>
+</ng-template>
+
+<ng-container *ngIf="suggestedUsers && suggestedUsers.length == 0 && recentUsers && recentUsers.length == 0">
+    <empty [emptyState]="emptyState"></empty>
+</ng-container>

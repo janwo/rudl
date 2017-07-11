@@ -16,7 +16,7 @@
 </ng-template>
 
 <ng-container *ngIf="popularRudel && popularRudel.length > 0; else loadingPopularRudel">
-    <h1 i18n="@@PopularRudel">Popular Rudel</h1>
+    <h1 i18n="@@popularRudel">Popular Rudel</h1>
     <item-wrapper [horizontal]="true">
         <rudel-item [style]="rudelItemStyle" *ngFor="let popularRudelItem of popularRudel" [rudel]="popularRudelItem">
             <styled-button [disabled]="pendingRequest" [style]="rudelItemButtonStyle" [icon]="'more_vert'" (click)="popularRudelItemDropdown.toggle()"></styled-button>
@@ -33,7 +33,7 @@
 </ng-template>
 
 <ng-container *ngIf="recentRudel && recentRudel.length > 0; else loadingRecentRudel">
-    <h1 i18n="@@RecentRudel">Recent Rudel</h1>
+    <h1 i18n="@@recentRudel">Recent Rudel</h1>
     <item-wrapper [horizontal]="true">
         <rudel-item [style]="rudelItemStyle" *ngFor="let recentRudelItem of recentRudel" [rudel]="recentRudelItem">
             <styled-button [disabled]="pendingRequest" [style]="rudelItemButtonStyle" [icon]="'more_vert'" (click)="recentRudelItemDropdown.toggle()"></styled-button>

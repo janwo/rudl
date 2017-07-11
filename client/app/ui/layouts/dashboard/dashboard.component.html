@@ -19,10 +19,10 @@
     <user-avatar *ngIf="userStatus?.loggedIn" [user]="userStatus.user" (click)="dropdownMenu.toggle()"></user-avatar>
     <dropdown-menu #dropdownMenu [arrowAlignment]="'right'">
         <menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'person_outline'" [title]="'Dein Profil'"
-                [link]="['/people', userStatus.user.username, 'rudel']"></menu-item>
+                [link]="['/user', userStatus.user.username, 'rudel']"></menu-item>
         <menu-item [icon]="'event_available'" [title]="'Deine Streifzüge'" [link]="['/expeditions']"></menu-item>
        <!-- <menu-item *ngIf="userStatus.loggedIn && userStatus.user.onBoard" [icon]="'format_list_bulleted'"
-                [title]="'Deine Listen'" [link]="['/people', userStatus.user.username, 'lists']"></menu-item>-->
+                [title]="'Deine Listen'" [link]="['/user', userStatus.user.username, 'lists']"></menu-item>-->
         <menu-item [icon]="'settings'" [title]="'Einstellungen'" [link]="['/settings']"></menu-item>
         <menu-item [icon]="'exit_to_app'" [title]="'Abmelden'" (click)="signOut()"></menu-item>
     </dropdown-menu>

@@ -108,6 +108,7 @@ import {ExploreExpeditionsComponent} from './ui/layouts/explore/explore-expediti
 import {SettingsNotificationsComponent} from './ui/layouts/settings/settings-notifications.component';
 import {Ng2DeviceDetectorModule} from "ng2-device-detector";
 import {SettingsOtherComponent} from "./ui/layouts/settings/settings-other.component";
+import {ExploreUserComponent} from "./ui/layouts/explore/explore-user.component";
 
 @NgModule({
 	declarations: [
@@ -196,6 +197,7 @@ import {SettingsOtherComponent} from "./ui/layouts/settings/settings-other.compo
 		ListRudelComponent,
 		FanComponent,
 		LocationSearchComponent,
+		ExploreUserComponent,
 		SafePipe,
 		ArrayPipe,
 		TranslationListComponent,

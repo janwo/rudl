@@ -137,7 +137,7 @@ export module AccountController {
         });
 
 	    return dislikeRudel().then(() => {
-            return transaction.run("MATCH (u:User { id: $userId }) OPTIONAL MATCH (u)-[:USER_SETTINGS]->(s:Settings) OPTIONAL MATCH (u)-[:USES_AUTH_PROVIDER]->(uap:UserAuthProvider) DETACH DELETE u, s, uap", {
+            return transaction.run("MATCH (u:User { id: $userId }) OPTIONAL MATCH (u)-[:USER_SETTINGS]->(s:Settings) OPTIONAL MATCH (u)-[:USES_AUTH_PROVIDER]->(uap:UserAuthProvider) CALL apoc.index.removeNodeByName('User', u) DETACH DELETE u, s, uap", {
                 userId: user.id
             });
         }).then(() => {
@@ -209,7 +209,7 @@ export module AccountController {
 	
 	export namespace NotificationController {
 		export function get(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Notification[]> {
-			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n, u ORDER BY n.createdAt DESC SKIP $skip LIMIT $limit MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User), (n)-[:NOTIFICATION_SUBJECT]->(subject) WITH subject, sender, n, u OPTIONAL MATCH (n)<-[nur:NOTIFICATION_UNREAD]-(u) WITH apoc.map.setKey( apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)), 'unread', COUNT(nur) > 0) as n RETURN COALESCE(n, []) as n`, {
+			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n, u ORDER BY n.createdAt DESC SKIP $skip LIMIT $limit MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User), (n)-[:NOTIFICATION_SUBJECT]->(subject) WITH subject, sender, n, u OPTIONAL MATCH (n)<-[nur:NOTIFICATION_UNREAD]-(u) WITH apoc.map.setKey( apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)), 'unread', COUNT(nur) > 0) as n ORDER BY n.createdAt DESC RETURN COALESCE(n, []) as n`, {
 				userId: user.id,
 				limit: limit,
 				skip: skip
@@ -237,7 +237,8 @@ export module AccountController {
 				let userProfilePromise = UserController.getPublicUser(transaction, notification.sender, relatedUser, true);
 				let subjectProfilePromise;
 				switch(notification.type) {
-					case NotificationType.ADDED_EXPEDITION:
+                    case NotificationType.COMMENTED_EXPEDITION:
+                    case NotificationType.ADDED_EXPEDITION:
 					case NotificationType.JOINED_EXPEDITION:
 					case NotificationType.LEFT_EXPEDITION:
 					case NotificationType.REJECTED_FROM_EXPEDITION:
@@ -249,10 +250,14 @@ export module AccountController {
 					case NotificationType.REJECTED_APPLICATION_FOR_EXPEDITION:
 						subjectProfilePromise = ExpeditionController.getPublicExpedition(transaction, notification.subject as any as Expedition, relatedUser, true);
 						break;
-					
-					case NotificationType.LIKES_RUDEL:
-						subjectProfilePromise = RudelController.getPublicRudel(transaction, notification.subject as any as Rudel, relatedUser, true);
-						break;
+
+                    case NotificationType.LIKES_RUDEL:
+                        subjectProfilePromise = RudelController.getPublicRudel(transaction, notification.subject as any as Rudel, relatedUser, true);
+                        break;
+
+                    case NotificationType.LIKES_USER:
+                        subjectProfilePromise = UserController.getPublicUser(transaction, notification.subject as any as User, relatedUser, true);
+                        break;
 				}
 				
 				return Promise.all([
@@ -284,7 +289,6 @@ export module AccountController {
 		}
 		
 		export function set(transaction: Transaction, type: NotificationType, recipient: User, subject: Node, sender: User): Promise<void> {
-			//TODO Label alles als NODE
 			let query = `MATCH(subject {id : $subjectId }), (recipient:User {id: $recipientId}), (sender:User {id: $senderId})
 				CREATE UNIQUE (sender)<-[:NOTIFICATION_SENDER]-(n:Notification {type: $type, createdAt: $now})-[:NOTIFICATION_SUBJECT]->(subject), (n)<-[:NOTIFICATION_UNREAD]-(recipient), (n)-[:NOTIFICATION_RECIPIENT]->(recipient)`;
 			return transaction.run(query, {
@@ -535,50 +539,3 @@ export module AccountController {
 		}
 	}
 }
-
-/*
- var smtpTransport = Nodemailer.createTransport(Config.mailer.options);
- request.server.render('templates/reset-password-email', {
- name: user.displayName,
- appName: Config.app.title,
- url: 'http://' + request.headers.host + '/auth/reset/' + token
- }, function (err, emailHTML) {
- 
- var mailOptions = {
- to: user.email,
- from: Config.mailer.from,
- subject: 'Password Reset',
- html: emailHTML
- };
- smtpTransport.sendMail(mailOptions, function (err) {
- 
- if (!err) {
- reply({message: 'An email has been sent to ' + user.email + ' with further instructions.'});
- } else {
- return reply(Boom.badRequest('Failure sending email'));
- }
- 
- done(err);
- });
- });
- },
- */
-
-/*
- function (user, done) {
- request.server.render('templates/reset-password-confirm-email', {
- name: user.displayName,
- appName: Config.app.title
- }, function (err, emailHTML) {
- var mailOptions = {
- to: user.email,
- from: Config.mailer.from,
- subject: 'Your password has been changed',
- html: emailHTML
- };
- 
- smtpTransport.sendMail(mailOptions, function (err) {
- done(err, 'done');
- });
- });
- */

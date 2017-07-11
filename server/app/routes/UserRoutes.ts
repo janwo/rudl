@@ -121,6 +121,42 @@ export const RoutesConfig: RoutesConfiguration = {
 					}
 				}
 			}
+		},
+		{
+			path: '/api/users/recent',
+			method: 'GET',
+			handler: UserController.RouteHandlers.recent,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
+					}
+				}
+			}
+		},
+		{
+			path: '/api/users/suggested',
+			method: 'GET',
+			handler: UserController.RouteHandlers.suggested,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
+					}
+				}
+			}
 		}
 	]
 };

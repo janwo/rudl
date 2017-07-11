@@ -1,5 +1,5 @@
 <div class="card">
-    <div class="user" [routerLink]="['/people', list.owner.username]">
+    <div class="user" [routerLink]="['/user', list.owner.username]">
         <user-avatar [user]="list.owner"></user-avatar>
         <div>
             <span class="name">{{list.owner.firstName + ' ' + list.owner.lastName}}</span>

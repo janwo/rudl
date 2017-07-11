@@ -1,0 +1,17 @@
+@import '../../variables.scss';
+@import "../../mixins.scss";
+
+:host {
+  display: block;
+
+  user-item {
+    styled-button {
+      margin-bottom: 0;
+    }
+
+    dropdown-menu {
+      top: 100%;
+      right: 0;
+    }
+  }
+}

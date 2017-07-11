@@ -1,5 +1,8 @@
 @import '../../variables.scss';
 
+$user-item-avatar-list-size: map_get($base-heading-font-size, 'h2') * map_get($base-line-height, 'default') + map_get($base-padding, 'small') + map_get($base-font-size, 'default') * map_get($base-line-height, 'default') + map_get($base-padding, 'smallest') - map_get($base-padding, 'small') * 2;
+$user-item-avatar-block-size: $user-item-avatar-list-size * 1.5;
+
 :host {
   display: block;
 
@@ -13,14 +16,10 @@
     user-avatar {
       cursor: pointer;
       flex: 0 0 auto;
-      $size: map_get($base-heading-font-size, 'h2') * map_get($base-line-height, 'default') + map_get($base-padding, 'small') + map_get($base-font-size, 'default') * map_get($base-line-height, 'default') + map_get($base-padding, 'smallest') - map_get($base-padding, 'small') * 2;
-      width: $size;
-      height: $size;
     }
 
     .meta {
       flex: 1 1 auto;
-      margin-left: map_get($base-padding, 'smaller');
 
       .name {
         font-family: $base-heading-font-family;
@@ -41,6 +40,35 @@
         a {
           color: map_get($base-colors, 'primary-text');
         }
+      }
+    }
+
+    &.block {
+      flex-direction: column;
+
+      .meta {
+        margin-top: map_get($base-padding, 'smaller');
+        text-align: center;
+
+        .relation {
+          margin-top: map_get($base-padding, 'small');
+        }
+      }
+
+      user-avatar {
+        width: $user-item-avatar-block-size;
+        height: $user-item-avatar-block-size;
+      }
+    }
+
+    &.list {
+      user-avatar {
+        width: $user-item-avatar-list-size;
+        height: $user-item-avatar-list-size;
+      }
+
+      .meta {
+        margin-left: map_get($base-padding, 'smaller');
       }
     }
 

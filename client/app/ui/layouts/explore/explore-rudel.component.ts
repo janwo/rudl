@@ -74,9 +74,9 @@ export class ExploreRudelComponent implements OnInit, OnDestroy {
             this.pendingRequest = false;
             if(this.suggestedRudel) this.suggestedRudel = this.suggestedRudel.filter(suggestedRudel => suggestedRudel.id != rudel.id);
 
-            if(this.recentRudel) this.recentRudel = this.suggestedRudel.filter(suggestedRudel => suggestedRudel.id != rudel.id);
+            if(this.recentRudel) this.recentRudel = this.recentRudel.filter(recentRudel => recentRudel.id != rudel.id);
 
-            if(this.popularRudel) this.popularRudel = this.suggestedRudel.filter(suggestedRudel => suggestedRudel.id != rudel.id);
+            if(this.popularRudel) this.popularRudel = this.popularRudel.filter(popularRudel => popularRudel.id != rudel.id);
         });
     }
 	

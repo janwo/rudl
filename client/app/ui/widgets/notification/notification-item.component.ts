@@ -5,6 +5,7 @@ import {ExpeditionPreview} from '../../../models/expedition';
 import {RudelPreview} from '../../../models/rudel';
 import * as moment from 'moment';
 import {Locale} from "../../../../../server/app/models/Translations";
+import {UserPreview} from "../../../models/user";
 
 @Component({
 	templateUrl: 'notification-item.component.html',
@@ -43,15 +44,20 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 			case NotificationType.APPLIED_FOR_EXPEDITION:
 			case NotificationType.ACCEPTED_APPLICATION_FOR_EXPEDITION:
 			case NotificationType.REJECTED_APPLICATION_FOR_EXPEDITION:
-			case NotificationType.ADDED_EXPEDITION:
+            case NotificationType.ADDED_EXPEDITION:
+            case NotificationType.COMMENTED_EXPEDITION:
 				this.link = ['/expeditions', (this.notification.subject as ExpeditionPreview).id];
 				this.emoji = (this.notification.subject as ExpeditionPreview).links.icon;
 				break;
-			
-			case NotificationType.LIKES_RUDEL:
-				this.link = ['/rudel', (this.notification.subject as RudelPreview).id];
-				this.emoji = (this.notification.subject as RudelPreview).links.icon;
-				break;
+
+            case NotificationType.LIKES_RUDEL:
+                this.link = ['/rudel', (this.notification.subject as RudelPreview).id];
+                this.emoji = (this.notification.subject as RudelPreview).links.icon;
+                break;
+
+            case NotificationType.LIKES_USER:
+                this.link = ['/user', (this.notification.subject as UserPreview).username];
+                break;
 		}
 		
 		// Define message.
@@ -68,10 +74,19 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 			case NotificationType.ADDED_EXPEDITION:
 				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat **${(this.notification.subject as ExpeditionPreview).title}** erstellt.`;
 				break;
-			
-			case NotificationType.LIKES_RUDEL:
-				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} interessiert sich für **${(this.notification.subject as ExpeditionPreview).title}**.`;
-				break;
+
+            case NotificationType.LIKES_RUDEL:
+                this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} interessiert sich für **${(this.notification.subject as ExpeditionPreview).title}**.`;
+                break;
+
+            case NotificationType.LIKES_USER:
+                this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} folgt dir jetzt.`;
+                break;
+
+            case NotificationType.COMMENTED_EXPEDITION:
+                this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat etwas in die Diskussion für **${(this.notification.subject as ExpeditionPreview).title}** gepostet.`;
+                this.link.push('discussion');
+                break;
 			
 			case NotificationType.JOINED_EXPEDITION:
 				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} nimmt an **${(this.notification.subject as ExpeditionPreview).title}** teil.`;

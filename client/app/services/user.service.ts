@@ -198,10 +198,6 @@ export class UserService {
 		})}`, true).map((json: JsonResponse) => json.data).share();
 	}
 	
-	suggested(offset = 0, limit = 25): Observable<User[]> {
-		return this.dataService.get(`/api/users/suggested?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
-	}
-	
 	updateAvatar(file: File): Observable<AuthenticatedUser> {
 		let promise = file == null ? this.dataService.post(`/api/account/delete-avatar`, null, true) : this.dataService.multipart(`/api/account/avatar`, file, true);
 		return promise.map((json: JsonResponse) => json.data).do(user => this.authenticatedProfile.next({
@@ -221,5 +217,13 @@ export class UserService {
 		return this.dataService.get(`/api/account/notifications?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).do(() => {
 			this.getAuthenticatedUser().user.unreadNotifications = 0;
 		}).share();
+	}
+
+	suggested(offset = 0, limit = 25): Observable<User[]> {
+		return this.dataService.get(`/api/users/suggested?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
+	}
+
+	recent(offset = 0, limit = 25): Observable<User[]> {
+		return this.dataService.get(`/api/users/recent?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
 	}
 }
