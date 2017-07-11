@@ -11,7 +11,8 @@ import {auth, driver} from 'neo4j-driver/lib/v1';
 import Session from 'neo4j-driver/lib/v1/session';
 import Transaction from 'neo4j-driver/lib/v1/transaction';
 import Integer from 'neo4j-driver/lib/v1/integer';
-let dot = new Dot('_');
+const DOT_DELIMITER = '_';
+const dot = new Dot(DOT_DELIMITER);
 
 export class DatabaseManager {
 	
@@ -207,30 +208,25 @@ export class DatabaseManager {
 			unflatten: <L extends Node | Relationship | any, T extends { [key: string]: L }, K extends keyof T>(record: Record<T> | Record<T>[], returnVariable: K): L | L[] => {
 				if (record instanceof Array) return record.map((record => DatabaseManager.neo4jFunctions.unflatten(record, returnVariable)));
 				let $return = record.get(returnVariable) as any;
-				if (typeof $return == 'object') {
-					// Convert integers already.
-					let hasObject = false;
-					for (let v in $return) {
-						if (!$return.hasOwnProperty(v)) continue;
-						if (typeof $return[v] == 'object') {
-							// Convert integers already.
-							if ($return[v] instanceof Integer) {
-								$return[v] = Integer.toNumber($return[v]);
-								continue;
-							}
 
-                            hasObject = true;
-						}
-					}
 
-                    // Flatten, if contains object.
-                    if(hasObject) $return = dot.dot($return);
+				let convert = (obj: any) => {
+                    if (typeof obj == 'object') {
+                        if (obj instanceof Integer) return Integer.toNumber(obj);
+                        if (obj instanceof Array) return obj;
+                        for (let key in obj) {
+                            if (!obj.hasOwnProperty(key)) continue;
+                            obj[key] = convert(obj[key]);
+                            if(key.indexOf(DOT_DELIMITER) < 0) continue;
+                            dot.str(key, obj[key], obj);
+                            delete obj[key];
+                        }
+                    }
 
-                    // Unflatten.
-					dot.object($return);
-				}
-				
-				return $return;
+                    return obj;
+                };
+
+				return convert($return);
 			},
 			flatten: <T extends Node | Relationship>(document: T): any | any[] => {
 				if (document instanceof Array) return document.map((document => DatabaseManager.neo4jFunctions.flatten(document)));
