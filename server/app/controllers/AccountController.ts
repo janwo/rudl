@@ -124,7 +124,7 @@ export module AccountController {
         user.updatedAt = now;
 
         // Save.
-        return transaction.run("MERGE (u:User { username: $user.username }) ON CREATE SET u = $flattenUser ON MATCH SET u = $flattenUser", {
+        return transaction.run("MERGE (u:User { id: $user.id }) ON CREATE SET u = $flattenUser ON MATCH SET u = $flattenUser", {
             user: user,
             flattenUser: DatabaseManager.neo4jFunctions.flatten(user)
         }).then(() => {});
@@ -337,15 +337,20 @@ export module AccountController {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			
-			// Update user.
-			if (request.payload.profileText) request.auth.credentials.profileText = request.payload.profileText;
-			if (request.payload.firstName) request.auth.credentials.firstName = request.payload.firstName;
-			if (request.payload.lastName) request.auth.credentials.lastName = request.payload.lastName;
-			//TODO illustrations und location auch hierüber laufen lassen
-			let promise = AccountController.save(transaction, request.auth.credentials).then(() => {
-				return UserController.getPublicUser(transaction, request.auth.credentials, request.auth.credentials);
-			});
+
+            //TODO illustrations und location auch hierüber laufen lassen
+            let promise = Promise.resolve(request.payload).then(payload => {
+                // Update user.
+                if (payload.profileText != request.auth.credentials.profileText) request.auth.credentials.profileText = payload.profileText;
+                if (payload.firstName != request.auth.credentials.firstName) request.auth.credentials.firstName = payload.firstName;
+                if (payload.lastName != request.auth.credentials.lastName) request.auth.credentials.lastName = payload.lastName;
+                if (payload.username != request.auth.credentials.username) return UserController.findByUsername(transaction, payload.username).then(user => {
+                    if(user) return Promise.reject(Boom.badRequest('Username already exists.'));
+                    request.auth.credentials.username = payload.username;
+                });
+            }).then(() => AccountController.save(transaction, request.auth.credentials).then(() => {
+                return UserController.getPublicUser(transaction, request.auth.credentials, request.auth.credentials);
+            }));
 			
 			reply.api(promise, transactionSession);
 		}

@@ -1,4 +1,7 @@
-import {AfterContentInit, Component, ContentChild, HostBinding, Input, OnDestroy} from '@angular/core';
+import {
+    AfterContentInit, Component, ContentChild, HostBinding, Input, OnChanges, OnDestroy,
+    SimpleChanges
+} from '@angular/core';
 import {FormControlName} from '@angular/forms';
 import {Subscription} from 'rxjs/Subscription';
 
@@ -7,8 +10,8 @@ import {Subscription} from 'rxjs/Subscription';
 	styleUrls: ['form-control-wrapper.component.scss'],
 	selector: 'form-control-wrapper'
 })
-export class FormControlWrapper implements AfterContentInit, OnDestroy {
-	
+export class FormControlWrapper implements AfterContentInit, OnDestroy, OnChanges {
+
 	changes: Subscription;
 	@ContentChild(FormControlName) formControlName: FormControlName;
 	@Input() description: string;
@@ -40,6 +43,10 @@ export class FormControlWrapper implements AfterContentInit, OnDestroy {
 		this.updateValidationMessage();
 		this.changes = this.formControlName.statusChanges.subscribe(() => this.updateValidationMessage());
 	}
+
+    ngOnChanges(changes: SimpleChanges): void {
+	    if(changes.errorMessages) this.updateValidationMessage();
+    }
 	
 	updateValidationMessage(): void {
 		// Reset error message.

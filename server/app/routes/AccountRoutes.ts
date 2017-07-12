@@ -24,7 +24,8 @@ export const RoutesConfig: RoutesConfiguration = {
 					payload: {
 						profileText: UserValidation.profileText.optional(),
 						firstName: UserValidation.firstName.optional(),
-						lastName: UserValidation.lastName.optional()
+						lastName: UserValidation.lastName.optional(),
+						username: UserValidation.username.optional()
 					}
 				}
 			}

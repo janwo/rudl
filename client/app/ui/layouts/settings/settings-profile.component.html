@@ -2,16 +2,27 @@
 <section>
     <form class="profile-content" [formGroup]="form">
         <form-control-wrapper [errorMessages]="{
-                            required: 'Gebe einen Vornamen an.'
+                            required: 'Gebe einen Vornamen an.',
+                            pattern: 'Dein Vorname ist zu kurz.'
                         }" [infoMessage]="formControlCount(form.get('firstName').value, 24)">
             <input maxlength="24" formControlName="firstName" type="text"
                    placeholder="Gebe einen Vornamen an...">
         </form-control-wrapper>
         <form-control-wrapper [errorMessages]="{
-                            required: 'Gebe einen Nachnamen an.'
+                            required: 'Gebe einen Nachnamen an.',
+                            pattern: 'Dein Nachnamen ist zu kurz.'
                         }" [infoMessage]="formControlCount(form.get('lastName').value, 24)">
             <input maxlength="24" formControlName="lastName" type="text"
                    placeholder="Gebe einen Nachnamen an...">
+        </form-control-wrapper>
+        <form-control-wrapper [errorMessages]="{
+                            required: 'Gebe einen Usernamen an.',
+                            minlength: 'Dein Username ist zu kurz.',
+                            pattern: 'Dein Username enthält unerlaubte Zeichen.',
+                            taken: 'Der Nutzername ist vergeben. ' + usernameSuggestion + ' ist noch frei.'
+                        }" [infoMessage]="formControlCount(form.get('username').value, 16)">
+            <input maxlength="16" formControlName="username" type="text"
+                   placeholder="Gebe einen Usernamen an...">
         </form-control-wrapper>
         <form-control-wrapper [errorMessages]="{}" [infoMessage]="formControlCount(form.get('profileText').value, 60)">
             <textarea maxlength="60" formControlName="profileText" placeholder="Gebe einen Profiltext an..."></textarea>

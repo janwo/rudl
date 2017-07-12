@@ -8,12 +8,12 @@ export class UserRoles {
 }
 
 export const UserValidation = {
-	username: Joi.string().min(5).max(16).trim().regex(/^[a-z0-9_]*$/).required(),
+	username: Joi.string().trim().min(5).max(16).regex(/^[a-z0-9_]*$/).required(),
 	mail: Joi.string().email().trim().required(),
 	password: Joi.string().min(6).max(32).required(),
-	profileText: Joi.string().max(60).allow(null).optional(),
-	firstName: Joi.string().min(1).trim().max(24).required(),
-	lastName: Joi.string().min(1).trim().max(24).required()
+	profileText: Joi.string().trim().max(60).allow(null).optional(),
+	firstName: Joi.string().trim().min(1).max(24).required(),
+	lastName: Joi.string().trim().min(1).max(24).required()
 };
 
 export interface User extends Node {

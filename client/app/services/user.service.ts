@@ -9,8 +9,13 @@ import {Location} from '../models/location';
 import {Notification} from '../models/notification';
 
 export interface UserStatus {
-	loggedIn: boolean;
-	user: AuthenticatedUser
+    loggedIn: boolean;
+    user: AuthenticatedUser
+}
+
+export interface UsernameCheckResult {
+    available: boolean;
+    suggestion?: string
 }
 
 @Injectable()
@@ -226,4 +231,8 @@ export class UserService {
 	recent(offset = 0, limit = 25): Observable<User[]> {
 		return this.dataService.get(`/api/users/recent?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
 	}
+
+	checkUsername(username: string): Observable<UsernameCheckResult> {
+        return this.dataService.get(`/api/account/check-username/${username}`, false).map((json: JsonResponse) => json.data).share();
+    }
 }
