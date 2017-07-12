@@ -53,19 +53,22 @@ export class MenuItemComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 	
 	ngOnInit() {
-		this.routerChanges = this.router.events.filter((event: Event) => event instanceof NavigationEnd).subscribe(() => {
-			if (!this.link) {
-				this.isActive = false;
-				return;
-			}
-			
-			let urlTree = this.router.createUrlTree(this.link, {
-				relativeTo: this.route
-			});
-			
-			this.isActive = this.router.isActive(urlTree, false);
-		});
+        this.update();
+		this.routerChanges = this.router.events.filter((event: Event) => event instanceof NavigationEnd).subscribe(() => this.update());
 	}
+
+	update(): void {
+        if (!this.link) {
+            this.isActive = false;
+            return;
+        }
+
+        let urlTree = this.router.createUrlTree(this.link, {
+            relativeTo: this.route
+        });
+
+        this.isActive = this.router.isActive(urlTree, false);
+    }
 	
 	ngAfterViewChecked() {
 		if (this.makeRoomIfSmall) {
