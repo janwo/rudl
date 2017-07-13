@@ -48,8 +48,8 @@ export module UserController {
 			"MATCH (user:User {id: $userId})",
 			"OPTIONAL MATCH (user)-[fr:LIKES_RUDEL]->() WITH COUNT(fr) as rudelCount, user",
 			"OPTIONAL MATCH (user)-[fl:LIKES_LIST]->() WITH rudelCount, COUNT(fl) as listsCount, user",
-			"OPTIONAL MATCH (user)-[:LIKES_USER]->(fes:User) WITH rudelCount, listsCount, COLLECT(DISTINCT fes) as likees, COUNT(fes) as likeesCount, user",
-			"OPTIONAL MATCH (user)<-[:LIKES_USER]-(frs:User) WITH rudelCount, listsCount, likees, likeesCount, COLLECT(DISTINCT frs) as likers, COUNT(frs) as likersCount, user"
+			"OPTIONAL MATCH (user)-[:LIKES_USER]->(fes:User) WITH rudelCount, listsCount, COLLECT(fes) as likees, COUNT(fes) as likeesCount, user",
+			"OPTIONAL MATCH (user)<-[:LIKES_USER]-(frs:User) WITH rudelCount, listsCount, likees, likeesCount, COLLECT(frs) as likers, COUNT(frs) as likersCount, user"
 		];
 		
 		let transformations: string[] = [
