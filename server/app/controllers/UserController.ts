@@ -48,8 +48,8 @@ export module UserController {
 			"MATCH (user:User {id: $userId})",
 			"OPTIONAL MATCH (user)-[fr:LIKES_RUDEL]->() WITH COUNT(fr) as rudelCount, user",
 			"OPTIONAL MATCH (user)-[fl:LIKES_LIST]->() WITH rudelCount, COUNT(fl) as listsCount, user",
-			"OPTIONAL MATCH (user)-[:LIKES_USER]->(fes:User) WITH rudelCount, listsCount, fes as likees, COUNT(fes) as likeesCount, user",
-			"OPTIONAL MATCH (user)<-[:LIKES_USER]-(frs:User) WITH rudelCount, listsCount, likees, likeesCount, frs as likers, COUNT(frs) as likersCount, user"
+			"OPTIONAL MATCH (user)-[:LIKES_USER]->(fes:User) WITH rudelCount, listsCount, COLLECT(DISTINCT fes) as likees, COUNT(fes) as likeesCount, user",
+			"OPTIONAL MATCH (user)<-[:LIKES_USER]-(frs:User) WITH rudelCount, listsCount, likees, likeesCount, COLLECT(DISTINCT frs) as likers, COUNT(frs) as likersCount, user"
 		];
 		
 		let transformations: string[] = [
@@ -63,15 +63,15 @@ export module UserController {
 		if (user.id != relatedUser.id) {
 			queries = queries.concat([
 				"MATCH (relatedUser:User {id: $relatedUserId}) WITH rudelCount, listsCount, likees, likeesCount, likers, likersCount, user, relatedUser",
-				"OPTIONAL MATCH (relatedUser)-[mfes:LIKES_USER]->(likees) WITH rudelCount, listsCount, likeesCount, likersCount, COUNT(mfes) as mutualLikeesCount, user, relatedUser",
-				"OPTIONAL MATCH (relatedUser)<-[mfrs:LIKES_USER]-(likers) WITH rudelCount, listsCount, likeesCount, likersCount, mutualLikeesCount, COUNT(mfrs) as mutualLikersCount, user, relatedUser",
+				"OPTIONAL MATCH (relatedUser)-[mfes:LIKES_USER]->(u:User) WHERE ANY(l in likees WHERE l.id = u.id) WITH rudelCount, listsCount, likeesCount, likers, likersCount, COUNT(mfes) as mutualLikeesCount, user, relatedUser",
+				"OPTIONAL MATCH (relatedUser)<-[mfrs:LIKES_USER]-(u:User) WHERE ANY(l in likers WHERE l.id = u.id) WITH rudelCount, listsCount, likeesCount, likersCount, mutualLikeesCount, COUNT(mfrs) as mutualLikersCount, user, relatedUser",
 				"OPTIONAL MATCH (user)<-[fu:LIKES_USER]-(relatedUser) WITH rudelCount, listsCount, likeesCount, likersCount, mutualLikeesCount, mutualLikersCount, COUNT(fu) > 0 as isLikee, user, relatedUser",
 				"OPTIONAL MATCH (user)-[fu:LIKES_USER]->(relatedUser) WITH rudelCount, listsCount, likeesCount, likersCount, mutualLikeesCount, mutualLikersCount, isLikee, COUNT(fu) > 0 as isLiker"
 			]);
 			
 			transformations = transformations.concat([
-				"mutualLikers: mutualLikeesCount",
-				"mutualLikees: mutualLikersCount",
+				"mutualLikees: mutualLikeesCount",
+				"mutualLikers: mutualLikersCount",
 				"isLiker: isLiker",
 				"isLikee: isLikee"
 			]);
