@@ -203,40 +203,38 @@ export class DatabaseManager {
 		}
 	};
 	
-	static neo4jFunctions: any = (() => {
-		return {
-			unflatten: <L extends Node | Relationship | any, T extends { [key: string]: L }, K extends keyof T>(record: Record<T> | Record<T>[], returnVariable: K): L | L[] => {
-				if (record instanceof Array) return record.map((record => DatabaseManager.neo4jFunctions.unflatten(record, returnVariable)));
-				let $return = record.get(returnVariable) as any;
+	static neo4jFunctions: any = {
+        unflatten: <L extends Node | Relationship | any, T extends { [key: string]: L }, K extends keyof T>(record: Record<T> | Record<T>[], returnVariable: K): L | L[] => {
+            if (record instanceof Array) return record.map((record => DatabaseManager.neo4jFunctions.unflatten(record, returnVariable)));
+            let $return = record.get(returnVariable) as any;
 
 
-				let convert = (obj: any) => {
-                    if (typeof obj == 'object') {
-                        if (obj instanceof Integer) return Integer.toNumber(obj);
-                        if (obj instanceof Array) return obj;
-                        for (let key in obj) {
-                            if (!obj.hasOwnProperty(key)) continue;
-                            obj[key] = convert(obj[key]);
-                            if(key.indexOf(DOT_DELIMITER) < 0) continue;
-                            dot.str(key, obj[key], obj);
-                            delete obj[key];
-                        }
+            let convert = (obj: any) => {
+                if (typeof obj == 'object') {
+                    if (obj instanceof Integer) return Integer.toNumber(obj);
+                    if (obj instanceof Array) return obj;
+                    for (let key in obj) {
+                        if (!obj.hasOwnProperty(key)) continue;
+                        obj[key] = convert(obj[key]);
+                        if(key.indexOf(DOT_DELIMITER) < 0) continue;
+                        dot.str(key, obj[key], obj);
+                        delete obj[key];
                     }
+                }
 
-                    return obj;
-                };
+                return obj;
+            };
 
-				return convert($return);
-			},
-			flatten: <T extends Node | Relationship>(document: T): any | any[] => {
-				if (document instanceof Array) return document.map((document => DatabaseManager.neo4jFunctions.flatten(document)));
-				return (document ? dot.dot(document) : null) as any;
-			},
-			escapeLucene: (str: string) => {
-				return str.replace(/([\-\|\~\*\?\+\/\!\^\:\"\(\)\{\}\[\]\\&])/gi, match => '\\' + match);
-			}
-		};
-	})();
+            return convert($return);
+        },
+        flatten: <T extends Node | Relationship>(document: T): any | any[] => {
+            if (document instanceof Array) return document.map((document => DatabaseManager.neo4jFunctions.flatten(document)));
+            return (document ? dot.dot(document) : null) as any;
+        },
+        escapeLucene: (str: string) => {
+            return str.replace(/([\-\|\~\*\?\+\/\!\^\:\"\(\)\{\}\[\]\\&])/gi, match => '\\' + match);
+        }
+    };
 	
 	private static RETRY_MILLIS = 3000;
 	
