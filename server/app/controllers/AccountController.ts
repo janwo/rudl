@@ -227,9 +227,9 @@ export module AccountController {
 				userId: user.id
 			}).then(results => Integer.toNumber(results.records.shift().get('unread') as any as Integer));
 		}
-		
+
 		export function removeDetachedNotifications(transaction: Transaction): Promise<void> {
-			return transaction.run(`MATCH (n:Notification) WHERE NOT ()<-[:NOTIFICATION_SUBJECT]-(n) OR NOT ()<-[:NOTIFICATION_SENDER]-(n) OR NOT ()<-[:NOTIFICATION_RECIPIENT]-(n) DETACH DELETE n`).then(() => {});
+			return transaction.run(`MATCH (n:Notification) WHERE NOT ()<-[:NOTIFICATION_SUBJECT]-(n) OR (n.hasSender = false AND NOT ()<-[:NOTIFICATION_SENDER]-(n)) OR NOT ()<-[:NOTIFICATION_RECIPIENT]-(n) DETACH DELETE n`).then(() => {});
 		}
 		
 		export function getPublicNotification(transaction: Transaction, notification: Notification | Notification[], relatedUser: User): Promise<any | any[]> {
