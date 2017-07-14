@@ -14,10 +14,17 @@ export class UserLikersComponent implements OnInit, OnDestroy {
 	
 	likersSubscription: Subscription;
 	likers: User[] = null;
+	isAuthenticatedUser: boolean;
+
 	emptyState: EmptyState = {
-		title: 'No Likers',
-		image: require('../../../../assets/boarding/radar.png'),
-		description: 'Nobody follows you. Create expeditions to make yourself visible!'
+		title: 'Einsamer Wolf',
+		image: require('../../../../assets/illustrations/no-users.png'),
+		description: 'Keiner folgt diesem Nutzer. Sei der Erste!'//Nobody follows you. Create expeditions to make yourself visible!
+	};
+	emptyStateAuthenticatedProfile: EmptyState = {
+		title: 'Einsamer Wolf',
+		image: require('../../../../assets/illustrations/no-users.png'),
+		description: 'Keiner folgt dir bisher. Mach aktiv mit, um dich sichtbar zumachen.'//Nobody follows you. Create expeditions to make yourself visible!
 	};
 	
 	constructor(private userService: UserService,
@@ -25,11 +32,12 @@ export class UserLikersComponent implements OnInit, OnDestroy {
 	            private scrollService: ScrollService) {}
 	
 	ngOnInit() {
-		this.likersSubscription = this.route.parent.params.map(params => params['username']).do(() => {
+		this.likersSubscription = this.route.parent.data.do((data: { user: User }) => {
 			this.likers = null;
-		}).flatMap(username => {
+			this.isAuthenticatedUser = data.user.id == this.userService.getAuthenticatedUser().user.id;
+		}).flatMap((data: { user: User }) => {
 			return this.scrollService.hasScrolledToBottom().map(() => this.likers ? this.likers.length : 0).startWith(0).distinct().flatMap((offset: number) => {
-				return this.userService.likers(username, offset, 25);
+				return this.userService.likers(data.user.username, offset, 25);
 			});
 		}).subscribe((likers: User[]) => {
 			if (likers.length < 25) this.likersSubscription.unsubscribe();

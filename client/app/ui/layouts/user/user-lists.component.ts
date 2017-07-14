@@ -5,6 +5,8 @@ import {List} from '../../../models/list';
 import {ListService} from '../../../services/list.service';
 import {EmptyState} from '../../widgets/state/empty.component';
 import {ScrollService} from '../../../services/scroll.service';
+import {User} from "../../../models/user";
+import {UserService} from "../../../services/user.service";
 
 @Component({
 	templateUrl: 'user-lists.component.html',
@@ -14,22 +16,26 @@ export class UserListsComponent implements OnInit, OnDestroy {
 	
 	listsSubscription: Subscription;
 	lists: List[] = null;
+    isAuthenticatedUser: boolean;
+
 	emptyState: EmptyState = {
 		title: 'You have no lists',
-		image: require('../../../../assets/boarding/radar.png'),
+		image: require('../../../../assets/illustrations/no-lists.png'),
 		description: 'You have no lists created yet. Use them to group your Rudels! Others can follow them.'
 	};
 	
 	constructor(private listService: ListService,
 	            private route: ActivatedRoute,
+	            private userService: UserService,
 	            private scrollService: ScrollService) {}
 	
 	ngOnInit() {
-		this.listsSubscription = this.route.parent.params.map(params => params['username']).do(() => {
+		this.listsSubscription = this.route.parent.data.do((data: { user: User }) => {
 			this.lists = null;
-		}).flatMap(username => {
+			this.isAuthenticatedUser = data.user.id == this.userService.getAuthenticatedUser().user.id;
+		}).flatMap((data: { user: User }) => {
 			return this.scrollService.hasScrolledToBottom().map(() => this.lists ? this.lists.length : 0).startWith(0).distinct().flatMap((offset: number) => {
-				return this.listService.by(username, offset, 25);
+				return this.listService.by(data.user.username, offset, 25);
 			});
 		}).subscribe((lists: List[]) => {
 			if (lists.length < 25) this.listsSubscription.unsubscribe();

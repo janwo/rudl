@@ -6,7 +6,7 @@
   @include setup-max-width();
   padding: map_get($base-padding, 'default');
 
-  item-wrapper {
-
+  menu {
+    margin-bottom: map_get($base-padding, 'default');
   }
 }

@@ -14,10 +14,10 @@ $emoji-size: 3rem;
   div {
     margin: 0;
     display: block;
-    height: 115%;
-    width: 115%;
+    height: 100%;
+    width: 100%;
     flex: 0 0 auto;
     background-size: cover;
-    background-color: map_get($base-colors, 'background');
+    background-color: map_get($base-colors, 'emoji-background');
   }
 }

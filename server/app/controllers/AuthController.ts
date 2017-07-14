@@ -1,4 +1,4 @@
-import * as Uuid from 'uuid';
+import * as shortid from 'shortid';
 import * as jwt from 'jsonwebtoken';
 import {Config} from '../../../run/config';
 import {User} from '../models/user/User';
@@ -22,7 +22,7 @@ export module AuthController {
 			provider: provider
 		}).then((results: any) => {
 			session.close();
-			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop();
+			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift();
 		}, (err: any) => {
 			session.close();
 			return Promise.reject(err);
@@ -50,7 +50,7 @@ export module AuthController {
 			password: this.hashPassword(password)
 		}).then((results: any) => {
 			session.close();
-			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop();
+			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift();
 		}, (err: any) => {
 			session.close();
 			return Promise.reject(err);
@@ -64,7 +64,7 @@ export module AuthController {
 				userId: token.userId
 			}).then((results: any) => {
 				session.close();
-				return DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop();
+				return DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift();
 			}, (err: any) => {
 				session.close();
 				return Promise.reject(err);
@@ -133,7 +133,7 @@ export module AuthController {
 	export function signToken(user: User): Promise<string> {
 		// Define token.
 		let token: DecodedToken = {
-			tokenId: Uuid.v4(),
+			tokenId: shortid.generate(),
 			userId: user.id
 		};
 		
@@ -149,7 +149,7 @@ export module AuthController {
 			});
 			return userDataCache;
 		}).then(userDataCache => AuthController.saveUserDataCache(userDataCache)).then(() => {
-			return new Promise<String>((resolve, reject) => {
+			return new Promise<string>((resolve, reject) => {
 				// Sign web token.
 				jwt.sign(token, Config.backend.salts.jwt, {
 					algorithm: 'HS256'
@@ -202,7 +202,7 @@ export module AuthController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = AccountController.create(transaction, {
 				username: request.payload.username,
-				id: Uuid.v4(),
+				id: shortid.generate(),
 				mail: request.payload.mail,
 				password: AuthController.hashPassword(request.payload.password),
 				firstName: request.payload.firstname,

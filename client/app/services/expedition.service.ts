@@ -21,7 +21,7 @@ export class ExpeditionService {
 	}
 	
 	get(key: string): Observable<Expedition> {
-		return this.dataService.get(`/api/expeditions/=/${key}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
+		return this.dataService.get(`/api/expeditions/=/${key}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data) as Expedition).share();
 	}
 	
 	approve(expedition: string, username: string = 'me'): Observable<ExpeditionRequestResponse> {
@@ -46,24 +46,32 @@ export class ExpeditionService {
 		return this.dataService.get(`/api/expeditions/=/${expedition}/invite-like/${query}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data as ExpeditionRequestResponse[]).share();
 	}
 	
-	nearby(offset = 0, limit = 25): Observable<Expedition[]> {
-		return this.dataService.get(`/api/expeditions/nearby?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
-	}
-	
 	upcoming(offset = 0, limit = 25): Observable<Expedition[]> {
-		return this.dataService.get(`/api/expeditions/upcoming?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
+		return this.dataService.get(`/api/expeditions/upcoming?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data) as Expedition[]).share();
 	}
 	
 	done(offset = 0, limit = 25): Observable<Expedition[]> {
-		return this.dataService.get(`/api/expeditions/done?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
+		return this.dataService.get(`/api/expeditions/done?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data) as Expedition[]).share();
 	}
 	
 	upcomingByRudel(rudel: string, offset = 0, limit = 25): Observable<Expedition[]> {
-		return this.dataService.get(`/api/expeditions/upcoming/${rudel}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
+		return this.dataService.get(`/api/expeditions/upcoming/${rudel}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data) as Expedition[]).share();
 	}
 	
 	doneByRudel(rudel: string, offset = 0, limit = 25): Observable<Expedition[]> {
-		return this.dataService.get(`/api/expeditions/done/${rudel}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data)).share();
+		return this.dataService.get(`/api/expeditions/done/${rudel}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data) as Expedition[]).share();
+	}
+	
+	recent(offset = 0, limit = 25): Observable<Expedition[]> {
+		return this.dataService.get(`/api/expeditions/recent?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data) as Expedition[]).share();
+	}
+	
+	popular(offset = 0, limit = 25): Observable<Expedition[]> {
+		return this.dataService.get(`/api/expeditions/popular?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data) as Expedition[]).share();
+	}
+	
+	suggested(offset = 0, limit = 25): Observable<Expedition[]> {
+		return this.dataService.get(`/api/expeditions/suggested?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => this.handleExpeditionResponse(json.data) as Expedition[]).share();
 	}
 	
 	private handleExpeditionResponse(data: any | any[]): Expedition | Expedition[] {

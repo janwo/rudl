@@ -12,6 +12,14 @@ export module UtilController {
 		return icon ? icon.image : null;
 	}
 	
+	export function isoDate(seconds: number): string {
+		return new Date(seconds * 1000).toISOString();
+	}
+	
+	export function timestamp(iso: string): number {
+		return Math.trunc(new Date(iso).getTime() / 1000);
+	}
+	
 	export namespace RouteHandlers {
 		
 		/**

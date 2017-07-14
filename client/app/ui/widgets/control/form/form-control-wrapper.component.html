@@ -1,4 +1,4 @@
-<!--suppress XmlInvalidId --><label *ngIf="description" [innerHTML]="description | format"></label>
+<label *ngIf="description" [innerHTML]="description | format"></label>
 <div>
     <ng-content></ng-content>
     <small class="error" *ngIf="errorMessage">{{errorMessage}}</small>

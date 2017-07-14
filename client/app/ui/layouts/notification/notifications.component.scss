@@ -4,9 +4,5 @@
 :host {
   display: block;
   @include setup-max-width();
-  padding: map_get($base-padding, 'default');
-
-  item-wrapper {
-
-  }
+  @include setup-default-padding();
 }

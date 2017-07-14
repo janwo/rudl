@@ -1,25 +1,17 @@
 <section class="sidebar">
     <div>
         <logo></logo>
-        <h2 i18n><!--Sei Teil der Community, verbinde dich jetzt!-->Im Sommer geht's los!</h2>
-        <p i18n>Zusammen mit der Community empfiehlt dir rudl neue Aktivitäten, ganz nach deinem Geschmack. Du
-            hinterlegst all jene Aktivitäten, von denen du träumst, schwärmst oder die du noch heute beginnst. Komm mit
-            ins Team, joine uns im Sommer hier auf rudl.me :)</p>
-        <login *ngIf="showLogin; else alternative"></login>
-        <ng-template #alternative>
-            <styled-button
-                    (click)="openExternalLink('https://docs.google.com/forms/d/e/1FAIpQLSeMl5H65jBg67wuSBc38oKDHeqBZqhMRAyTrsIChV28K_3EqQ/viewform')"
-                    [text]="'Benachrichtigen lassen'"></styled-button>
-        </ng-template>
+        <h2 i18n="@@landingTitle">Be part of the community and connect now!</h2>
+        <p i18n="@@landingDescription">In conjunction with the growing community, rudl recommends you interesting activities that match your taste. You let us know of things you dream of or such activities you start today. Join the team, connect with us now! :)</p>
+        <login></login>
     </div>
     <app-footer></app-footer>
 </section>
 <section class="content">
     <img class="background" src="../../../../assets/landing-page/background.png">
     <h1>
-        <span>Eine neue Stadt besucht und gleich nette Leute getroffen. Check!</span>
-        <span>Bei rudl einfach und entspannt die eigene Stadt kennenlernen, gleichgesinnte Menschen finden und die Freizeitgestaltung transparenter und einfach planbar gestalten.</span>
+        <span i18n="@@landingBigTitle">I´ve visited a new city and already met great people. Check!</span>
+        <span i18n="@@landingBigDescription">At rudl you get in touch with new, like-minded people to organize your free time more transparent and efficiently.</span>
     </h1>
     <i class="material-icons hide-min-small indicator">chevron_down</i>
 </section>
-

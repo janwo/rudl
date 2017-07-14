@@ -1,4 +1,5 @@
 @import '../../variables.scss';
+@import '../../mixins.scss';
 
 :host {
   display: block;
@@ -11,7 +12,11 @@
   form {
     margin-top: map_get($base-padding, 'larger');
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+
+    @include breakpoint('small') {
+      flex-direction: row;
+    }
 
     form-control-wrapper {
       flex: 1 1 auto;
@@ -30,7 +35,14 @@
     styled-button {
       margin-bottom: 0;
       flex: 0 0 auto;
-      margin-left: map_get($base-padding, 'smaller');
+
+      @include breakpoint(null, 'small') {
+        margin-top: map_get($base-padding, 'small');
+      }
+
+      @include breakpoint('small') {
+        margin-left: map_get($base-padding, 'smaller');
+      }
     }
   }
 }

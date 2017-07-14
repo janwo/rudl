@@ -10,9 +10,44 @@ export const RoutesConfig: RoutesConfiguration = {
 	name: 'expedition-routes',
 	routes: [
 		{
-			path: '/api/expeditions/like/{query}',
+			path: '/api/expeditions/create',
+			method: 'POST',
+			handler: ExpeditionController.RouteHandlers.create,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					payload: {
+						rudel: Joi.string(),
+						expedition: ExpeditionValidation
+					}
+				}
+			}
+		},
+		{
+			path: '/api/expeditions/=/{id}',
 			method: 'GET',
-			handler: ExpeditionController.RouteHandlers.like,
+			handler: ExpeditionController.RouteHandlers.get,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					params: {
+						id: Joi.string()
+					}
+				}
+			}
+		},
+		{
+			path: '/api/expeditions/search/{query}',
+			method: 'GET',
+			handler: ExpeditionController.RouteHandlers.search,
 			config: {
 				auth: {
 					scope: [
@@ -26,6 +61,85 @@ export const RoutesConfig: RoutesConfiguration = {
 					query: {
 						offset: Joi.number().min(0).default(0),
 						limit: Joi.number().positive().max(100).default(25)
+					}
+				}
+			}
+		},
+		{
+			path: '/api/expeditions/=/{id}/attendees',
+			method: 'GET',
+			handler: ExpeditionController.RouteHandlers.getAttendees,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					params: {
+						id: Joi.string()
+					},
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
+					}
+				}
+			}
+		},
+		{
+			path: '/api/expeditions/=/{id}/invite-like/{query}',
+			method: 'GET',
+			handler: ExpeditionController.RouteHandlers.inviteLike,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					params: {
+						id: Joi.string(),
+						query: Joi.string().min(3)
+					},
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
+					}
+				}
+			}
+		},
+		{
+			path: '/api/expeditions/=/{id}/approve/{username}',
+			method: 'POST',
+			handler: ExpeditionController.RouteHandlers.approveUser,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					params: {
+						id: Joi.string(),
+						username: UsernameValidation
+					}
+				}
+			}
+		},
+		{
+			path: '/api/expeditions/=/{id}/reject/{username}',
+			method: 'POST',
+			handler: ExpeditionController.RouteHandlers.rejectUser,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					params: {
+						id: Joi.string(),
+						username: UsernameValidation
 					}
 				}
 			}
@@ -127,9 +241,9 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
-			path: '/api/expeditions/=/{id}/attendees',
+			path: '/api/expeditions/popular',
 			method: 'GET',
-			handler: ExpeditionController.RouteHandlers.getAttendees,
+			handler: ExpeditionController.RouteHandlers.popular,
 			config: {
 				auth: {
 					scope: [
@@ -137,9 +251,6 @@ export const RoutesConfig: RoutesConfiguration = {
 					]
 				},
 				validate: {
-					params: {
-						id: Joi.string()
-					},
 					query: {
 						offset: Joi.number().min(0).default(0),
 						limit: Joi.number().positive().max(100).default(25)
@@ -148,9 +259,9 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
-			path: '/api/expeditions/=/{id}/invite-like/{query}',
+			path: '/api/expeditions/recent',
 			method: 'GET',
-			handler: ExpeditionController.RouteHandlers.inviteLike,
+			handler: ExpeditionController.RouteHandlers.recent,
 			config: {
 				auth: {
 					scope: [
@@ -158,10 +269,6 @@ export const RoutesConfig: RoutesConfiguration = {
 					]
 				},
 				validate: {
-					params: {
-						id: Joi.string(),
-						query: Joi.string().min(3)
-					},
 					query: {
 						offset: Joi.number().min(0).default(0),
 						limit: Joi.number().positive().max(100).default(25)
@@ -170,45 +277,9 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
-			path: '/api/expeditions/=/{id}/approve/{username}',
-			method: 'POST',
-			handler: ExpeditionController.RouteHandlers.approveUser,
-			config: {
-				auth: {
-					scope: [
-						UserRoles.user
-					]
-				},
-				validate: {
-					params: {
-						id: Joi.string(),
-						username: UsernameValidation
-					}
-				}
-			}
-		},
-		{
-			path: '/api/expeditions/=/{id}/reject/{username}',
-			method: 'POST',
-			handler: ExpeditionController.RouteHandlers.rejectUser,
-			config: {
-				auth: {
-					scope: [
-						UserRoles.user
-					]
-				},
-				validate: {
-					params: {
-						id: Joi.string(),
-						username: UsernameValidation
-					}
-				}
-			}
-		},
-		{
-			path: '/api/expeditions/=/{id}',
+			path: '/api/expeditions/suggested',
 			method: 'GET',
-			handler: ExpeditionController.RouteHandlers.get,
+			handler: ExpeditionController.RouteHandlers.suggested,
 			config: {
 				auth: {
 					scope: [
@@ -216,26 +287,9 @@ export const RoutesConfig: RoutesConfiguration = {
 					]
 				},
 				validate: {
-					params: {
-						id: Joi.string()
-					}
-				}
-			}
-		},
-		{
-			path: '/api/expeditions/create',
-			method: 'POST',
-			handler: ExpeditionController.RouteHandlers.create,
-			config: {
-				auth: {
-					scope: [
-						UserRoles.user
-					]
-				},
-				validate: {
-					payload: {
-						rudel: Joi.string(),
-						expedition: ExpeditionValidation
+					query: {
+						offset: Joi.number().min(0).default(0),
+						limit: Joi.number().positive().max(100).default(25)
 					}
 				}
 			}

@@ -4,12 +4,16 @@
 :host {
   display: block;
   @include setup-max-width();
-  padding: map_get($base-padding, 'default');
+  @include setup-default-padding();
 
   .card {
     position: relative;
     display: flex;
     flex-direction: row;
+
+    @include breakpoint(null, 'small') {
+      flex-direction: column;
+    }
 
     .about {
       flex: 1 1 auto;
@@ -17,11 +21,17 @@
       flex-direction: row;
       align-items: center;
 
+      @include breakpoint(null, 'small') {
+        margin-bottom: map_get($base-padding, 'smaller');
+      }
+
       emoji {
         margin-right: map_get($base-padding, 'smaller');
+        flex: 0 0 auto;
       }
 
       h1 {
+        hyphens: auto;
         margin: 0;
       }
     }
@@ -40,6 +50,7 @@
         display: flex;
         justify-content: space-between;
         margin-top: map_get($base-padding, 'small');
+        position: relative;
 
         styled-button {
           flex: 1 1 auto;
@@ -60,5 +71,6 @@
 
   dropdown-menu {
     top: 100%;
+    right: 0;
   }
 }

@@ -8,6 +8,7 @@ import * as faker from 'faker';
 import {TransactionSession} from '../Database';
 import {UserAuthProvider} from '../models/user/UserAuthProvider';
 import * as shortid from 'shortid';
+import {MailManager, WelcomeMailOptions} from '../Mail';
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -30,7 +31,6 @@ export const StrategyConfig: StrategyConfiguration = {
 export function handleFacebook(request: any, reply: any): void {
 	// Authenticated successful?
 	if (!request.auth.isAuthenticated) reply(Boom.badRequest('Authentication failed: ' + request.auth.error.message));
-	
 	let profile: any = request.auth.credentials.profile;
 	
 	// Create provider.
@@ -41,13 +41,16 @@ export function handleFacebook(request: any, reply: any): void {
 		refreshBefore: request.auth.credentials.expiresIn ? Math.trunc(request.auth.credentials.expiresIn + Date.now() / 1000) : null,
 		refreshToken: request.auth.credentials.refreshToken || undefined
 	};
-	
+
 	// Start transaction.
 	let transactionSession = new TransactionSession();
 	let transaction = transactionSession.beginTransaction();
 	let promise = AuthController.authByProvider(provider).then((user: User) => {
 		// Create User?
-		return user ? user : AccountController.availableUsername(transaction, profile.displayName.toLowerCase().replace(/[^a-z0-9-_]/g, '')).then((username: string) => {
+		return user ? {
+			mail: null,
+			user: user
+		} : AccountController.availableUsername(transaction, profile.displayName.toLowerCase()).then((username: string) => {
 			return AccountController.create(transaction, {
 				id: shortid.generate(),
 				firstName: profile.name.first,
@@ -55,21 +58,36 @@ export function handleFacebook(request: any, reply: any): void {
 				username: username,
 				password: AuthController.hashPassword(faker.internet.password(10)),
 				mail: profile.email || profile.id + '@facebook.com'
+			}).then(user => {
+				return {
+					mail: {
+						to: user.mails.primary.mail,
+						name: user.firstName,
+						locale: user.languages.shift(),
+						provider: 'Facebook'
+					},
+					user: user
+				};
 			});
 		});
-	}).then((user: User) => Promise.all([
-		AuthController.addAuthProvider(transaction, user.username, provider),
-		AuthController.signToken(user)
+	}).then((result: {
+		mail: WelcomeMailOptions,
+		user: User
+	}) => Promise.all([
+		AuthController.addAuthProvider(transaction, result.user.username, provider),
+		AuthController.signToken(result.user),
+		result.mail
 	]));
 	
-	transactionSession.finishTransaction(promise).then((values: [void, string]) => {
+	transactionSession.finishTransaction(promise).then((values: [void, string, WelcomeMailOptions]) => {
 		reply.view('message', {
 			title: 'Authentication',
 			domain: Config.backend.domain,
 			token: values[1],
 			type: Config.frontend.messageTypes.oauth
 		}).header("Authorization", values[1]);
-	}).catch((err: any) => {
-		reply(Boom.badRequest(err));
-	});
+		if(values[2]) return MailManager.sendWelcomeMail(values[2]);
+	}, (err: any) => {
+        reply(Boom.badRequest(err));
+    });
 }

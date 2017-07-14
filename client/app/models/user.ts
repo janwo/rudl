@@ -22,6 +22,7 @@ export interface User extends UserPreview {
 export interface AuthenticatedUser extends User {
 	location: Location;
 	onBoard: boolean;
+	unreadNotifications: number;
 	languages: Array<Locale.Language>;
 }
 
@@ -54,4 +55,12 @@ export interface UserRecipe {
 	profileText?: string;
 	firstName?: string;
 	lastName?: string;
+}
+
+export interface UserSettings {
+	emailNotifications: boolean;
+}
+
+export interface UserSettingsRecipe {
+	emailNotifications?: boolean;
 }

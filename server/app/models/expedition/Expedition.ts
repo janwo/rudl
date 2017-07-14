@@ -2,17 +2,15 @@ import {Node} from '../Node';
 import * as Joi from 'joi';
 import {Config} from '../../../../run/config';
 import {User} from '../user/User';
+import {Location} from '../Location';
 
 export interface Expedition extends Node {
 	title: string;
 	description: string;
 	needsApproval: boolean;
-	date: string;
+	date: number;
 	fuzzyTime: boolean;
-	location: {
-		lat: number,
-		lng: number
-	};
+	location: Location;
 	icon: string;
 }
 
@@ -23,8 +21,8 @@ export const ExpeditionValidation = {
 	date: Joi.string().isoDate().required(),
 	fuzzyTime: Joi.boolean().default(false).required(),
 	location: Joi.object().keys({
-		lng: Joi.number().min(-180).max(180).required(),
-		lat: Joi.number().min(-90).max(90).required()
+		longitude: Joi.number().min(-180).max(180).required(),
+		latitude: Joi.number().min(-90).max(90).required()
 	}),
 	icon: Joi.string().required().valid(Object.keys(Config.backend.icons))
 };

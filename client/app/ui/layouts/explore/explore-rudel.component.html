@@ -1,0 +1,54 @@
+<ng-container *ngIf="suggestedRudel && suggestedRudel.length > 0; else loadingSuggestedRudel">
+    <h1 i18n="@@suggestedRudel">Suggested Rudel</h1>
+    <item-wrapper [horizontal]="true">
+        <rudel-item [style]="rudelItemStyle" *ngFor="let suggestedRudelItem of suggestedRudel" [rudel]="suggestedRudelItem">
+            <styled-button [disabled]="pendingRequest" [style]="rudelItemButtonStyle" [icon]="'more_vert'" (click)="suggestedRudelItemDropdown.toggle()"></styled-button>
+            <dropdown-menu #suggestedRudelItemDropdown [arrowAlignment]="'right'">
+                <menu-item *ngIf="!suggestedRudelItem.relations.isLiked" [icon]="'check'" [title]="'Interessiert'" (click)="like(suggestedRudelItem)"></menu-item>
+                <menu-item [icon]="'visibility_off'" [title]="'Nicht Interessiert'" (click)="dislike(suggestedRudelItem)"></menu-item>
+            </dropdown-menu>
+        </rudel-item>
+    </item-wrapper>
+</ng-container>
+
+<ng-template #loadingSuggestedRudel>
+    <loading *ngIf="suggestedRudel == null"></loading>
+</ng-template>
+
+<ng-container *ngIf="popularRudel && popularRudel.length > 0; else loadingPopularRudel">
+    <h1 i18n="@@popularRudel">Popular Rudel</h1>
+    <item-wrapper [horizontal]="true">
+        <rudel-item [style]="rudelItemStyle" *ngFor="let popularRudelItem of popularRudel" [rudel]="popularRudelItem">
+            <styled-button [disabled]="pendingRequest" [style]="rudelItemButtonStyle" [icon]="'more_vert'" (click)="popularRudelItemDropdown.toggle()"></styled-button>
+            <dropdown-menu #popularRudelItemDropdown [arrowAlignment]="'right'">
+                <menu-item *ngIf="!popularRudelItem.relations.isLiked" [icon]="'check'" [title]="'Interessiert'" (click)="like(popularRudelItem)"></menu-item>
+                <menu-item [icon]="'visibility_off'" [title]="'Nicht Interessiert'" (click)="dislike(popularRudelItem)"></menu-item>
+            </dropdown-menu>
+        </rudel-item>
+    </item-wrapper>
+</ng-container>
+
+<ng-template #loadingPopularRudel>
+    <loading *ngIf="popularRudel == null"></loading>
+</ng-template>
+
+<ng-container *ngIf="recentRudel && recentRudel.length > 0; else loadingRecentRudel">
+    <h1 i18n="@@recentRudel">Recent Rudel</h1>
+    <item-wrapper [horizontal]="true">
+        <rudel-item [style]="rudelItemStyle" *ngFor="let recentRudelItem of recentRudel" [rudel]="recentRudelItem">
+            <styled-button [disabled]="pendingRequest" [style]="rudelItemButtonStyle" [icon]="'more_vert'" (click)="recentRudelItemDropdown.toggle()"></styled-button>
+            <dropdown-menu #recentRudelItemDropdown [arrowAlignment]="'right'">
+                <menu-item *ngIf="!recentRudelItem.relations.isLiked" [icon]="'check'" [title]="'Interessiert'" (click)="like(recentRudelItem)"></menu-item>
+                <menu-item [icon]="'visibility_off'" [title]="'Nicht Interessiert'" (click)="dislike(recentRudelItem)"></menu-item>
+            </dropdown-menu>
+        </rudel-item>
+    </item-wrapper>
+</ng-container>
+
+<ng-template #loadingRecentRudel>
+    <loading *ngIf="recentRudel == null"></loading>
+</ng-template>
+
+<ng-container *ngIf="suggestedRudel && suggestedRudel.length == 0 && popularRudel && popularRudel.length == 0 && recentRudel && recentRudel.length == 0">
+    <empty [emptyState]="emptyState"></empty>
+</ng-container>

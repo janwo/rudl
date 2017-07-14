@@ -2,7 +2,6 @@ import {Config} from '../../../run/config';
 import {RoutesConfiguration} from '../binders/RoutesBinder';
 import {UserRoles, UserValidation} from '../models/user/User';
 import {AuthController} from '../controllers/AuthController';
-import * as TwitterStrategy from '../strategies/TwitterStrategy';
 import * as FacebookStrategy from '../strategies/FacebookStrategy';
 import * as GoogleStrategy from '../strategies/GoogleStrategy';
 
@@ -10,7 +9,7 @@ export const RoutesConfig: RoutesConfiguration = {
 	name: 'auth-routes',
 	routes: [
 		{
-			path: '/api/sign_up',
+			path: '/api/sign-up',
 			method: 'POST',
 			handler: AuthController.RouteHandlers.signUp,
 			config: {
@@ -21,7 +20,7 @@ export const RoutesConfig: RoutesConfiguration = {
 			}//TODO VALIDATE
 		},
 		{
-			path: '/api/sign_in',
+			path: '/api/sign-in',
 			method: 'POST',
 			handler: AuthController.RouteHandlers.signIn,
 			config: {
@@ -31,7 +30,7 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
-			path: '/api/sign_out',
+			path: '/api/sign-out',
 			method: 'GET',
 			handler: AuthController.RouteHandlers.signOut,
 			config: {
@@ -49,16 +48,6 @@ export const RoutesConfig: RoutesConfiguration = {
 			config: {
 				auth: {
 					strategies: ['facebook']
-				}
-			}
-		},
-		{
-			path: Config.backend.providers.twitter.callbackURL,
-			method: ['GET', 'POST'],
-			handler: TwitterStrategy.handleTwitter,
-			config: {
-				auth: {
-					strategies: ['twitter']
 				}
 			}
 		},

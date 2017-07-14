@@ -49,9 +49,7 @@ $datetime-padding: map_get($base-font-size, 'default') / 1.5; // Golden Ratio <3
       font-size: map_get($base-font-size, 'default');
       font-family: $base-font-family;
       position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      display: block;
       color: map_get($base-colors, 'secondary-text');
 
       &:not(.header):not(.legend):before {

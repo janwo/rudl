@@ -22,6 +22,7 @@ export class CreateRudelComponent implements OnInit {
 	@ViewChild(TranslationListComponent) translationList: TranslationListComponent;
 	@ViewChild(CarouselComponent) carousel: CarouselComponent;
 	form: FormGroup;
+	carouselIndex: number;
 	@Input() rudel: Rudel;
 	
 	submitPending: boolean;
@@ -48,6 +49,9 @@ export class CreateRudelComponent implements OnInit {
 		});
 	}
 	
+	setCarouselIndex(index: number): void {
+		this.carouselIndex = index;
+	}
 	
 	cancel() {
 		this.onCanceled.emit();

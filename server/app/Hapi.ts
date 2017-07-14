@@ -9,6 +9,9 @@ import * as AutoSNI from 'auto-sni';
 import * as Path from 'path';
 import {Server} from 'hapi';
 import 'vision';
+import {MailManager} from './Mail';
+import {Schedule} from './Schedule';
+import {AccountController} from './controllers/AccountController';
 
 export function hapiServer(): Promise<Server> {
 	// Create dirs.
@@ -27,7 +30,7 @@ export function hapiServer(): Promise<Server> {
 	let server = new Server({
 		cache: [
 			{
-				name: 'redisCache',
+				name: 'redis',
 				engine: require('catbox-redis'),
 				host: Config.backend.db.redis.host,
 				port: Config.backend.db.redis.port,
@@ -54,19 +57,21 @@ export function hapiServer(): Promise<Server> {
 		
 		case 'secure':
 			// Load SSL key and certificate.
+			let domain = /^(https?:\/\/)?[\d.]*([\S][^\/]+)/i.exec(Config.backend.domain)[2];
 			let autoSni = AutoSNI({
 				email: Config.backend.mails.admin,
 				agreeTos: true,
 				debug: Config.debug,
 				domains: [
-					/^(https?:\/\/)?[\d.]*([\S][^\/]+)/i.exec(Config.backend.domain)[2]
+                    domain,
+                    `www.${domain}`
 				],
 				ports: {
 					http: Config.backend.ports.http,
 					https: Config.backend.ports.https
 				}
 			});
-			
+
 			// Create server connection.
 			server.connection({
 				listener: autoSni as any, //TODO why needed?
@@ -107,18 +112,25 @@ export function hapiServer(): Promise<Server> {
 		// Register views.
 		server.views({
 			engines: {
-				handlebars: require('handlebars')
+				hbs: require('handlebars')
 			},
-			path: Path.resolve(__dirname, './templates/views')
+			path: Path.resolve(__dirname, './templates')
 		});
 		
 		// Close database on exit.
 		server.on('stop', () => DatabaseManager.disconnect());
 		
 		// Connect to database + create collections.
-		return DatabaseManager.connect().then(() => DatabaseManager.createNeo4jData());
-	}).then(() => server.start()).then(() => {
-		console.log(`Server is running...`);
-		return server;
+		return DatabaseManager.connect().then(() => {
+			return DatabaseManager.createNeo4jData();
+		});
+	}).then(() => {
+		console.log(`Setting up schedules...`);
+		Schedule.start();
+		
+		return server.start().then(() => {
+			console.log(`Server is running...`);
+			return server;
+		});
 	});
 }

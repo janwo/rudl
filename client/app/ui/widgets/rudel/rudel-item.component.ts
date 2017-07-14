@@ -10,4 +10,20 @@ export class RudelItemComponent {
 	
 	@Input() rudel: Rudel;
 	@Input() highlight: string;
+	@Input() style: RudelItemStyles = RudelItemStyles.list;
+	
+	getStyleClass(): string {
+		switch (this.style) {
+			case RudelItemStyles.block:
+				return 'card block';
+				
+			case RudelItemStyles.list:
+				return 'card list';
+		}
+	}
+}
+
+export enum RudelItemStyles {
+	list,
+	block
 }

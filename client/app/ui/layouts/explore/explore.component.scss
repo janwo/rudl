@@ -2,7 +2,11 @@
 @import "../../mixins.scss";
 
 :host {
+  display: block;
   @include setup-max-width();
-  padding: map_get($base-padding, 'default');
+  @include setup-default-padding();
 
+  menu {
+    margin-bottom: map_get($base-padding, 'default');
+  }
 }

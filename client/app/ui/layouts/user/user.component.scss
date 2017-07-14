@@ -6,7 +6,7 @@ $profile-avatar-size: 5rem;
 :host {
   display: flex;
   @include setup-max-width();
-  padding: map_get($base-padding, 'default');
+  @include setup-default-padding();
   flex-direction: column;
 
   @include breakpoint('small') {
@@ -40,6 +40,10 @@ $profile-avatar-size: 5rem;
       display: flex;
       justify-content: center;
       margin: map_get($base-padding, 'default') map_get($base-padding, 'smallest') map_get($base-padding, 'smallest');
+
+      statistics:first-child:last-child {
+        flex: 1 1 auto;
+      }
 
       @include breakpoint('small') {
         flex-direction: column;

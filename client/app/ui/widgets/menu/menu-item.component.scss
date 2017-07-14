@@ -1,16 +1,19 @@
 @import '../../variables.scss';
 
-$tab-menu-font-size: map_get($base-font-size, 'default');
+$menu-item-font-size: map_get($base-font-size, 'default');
+$menu-item-notification-size: map_get($base-padding, 'smallest');
+$menu-item-padding-horizontal: map_get($base-padding, 'small');
 
 :host {
-  padding-right: map_get($base-padding, 'small');
-  padding-left: map_get($base-padding, 'small');
+  padding-right: $menu-item-padding-horizontal;
+  padding-left: $menu-item-padding-horizontal;
   color: inactive(map_get($base-colors, 'primary-text'));
   white-space: nowrap;
   cursor: pointer;
   margin-right: map_get($base-padding, 'small');
   display: flex;
   align-items: center;
+  position: relative;
 
   &.active {
     color: map_get($base-colors, 'primary-text');
@@ -21,12 +24,32 @@ $tab-menu-font-size: map_get($base-font-size, 'default');
     display: block;
     flex: 1 1 auto;
     overflow: hidden;
-    font-size: $tab-menu-font-size;
-    padding-left: map_get($base-padding, 'small');
+    font-size: $menu-item-font-size;
+    padding-left: $menu-item-padding-horizontal;
   }
 
   i {
-    font-size: $tab-menu-font-size;
+    font-size: $menu-item-font-size;
     transform: scale($base-icon-scale);
+  }
+
+  div {
+    position: absolute;
+    top: 0;
+    left: $menu-item-padding-horizontal;
+    width: $menu-item-notification-size;
+    height: $menu-item-notification-size;
+    border-radius: $menu-item-notification-size / 2;
+    background-color: map_get($base-colors, 'warning');
+    animation: alternate infinite pulse 1s;
+  }
+
+  @keyframes pulse {
+    from {
+      box-shadow: 0 0 0 map_get($base-colors, 'warning');
+    }
+    to {
+      box-shadow: 0 0 $menu-item-notification-size map_get($base-colors, 'warning');
+    }
   }
 }

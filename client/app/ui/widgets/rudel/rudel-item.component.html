@@ -1,16 +1,11 @@
-<div class="card" [routerLink]="['/rudel', rudel.id]">
+<div [routerLink]="['/rudel', rudel.id]" class="{{getStyleClass()}}">
     <emoji [emoji]="rudel.links.icon"></emoji>
-    <span class="name" [innerHTML]="highlight ? (rudel.name | highlight: highlight) : rudel.name"></span>
-    <slots [users]="[rudel.owner]" [slots]="rudel.statistics.likers"></slots>
-    <ul>
-        <li>
-            <span>{{rudel.owner.firstName + ' ' + rudel.owner.lastName}}</span>
-        </li>
-        <li>
-            <span>{{rudel.statistics.likers}} Liker</span>
-        </li>
-    </ul>
-    <div class="overflow" (click)="$event.stopPropagation()">
+    <h2 [innerHTML]="highlight ? (rudel.name | highlight: highlight) : rudel.name"></h2>
+    <footer>
+        <user-avatar [user]="rudel.owner"></user-avatar>
+        <span i18n="@@rudelItemLikees">{rudel.statistics.likers, plural, =1 {1 member} other {{{rudel.statistics.likers}} members}}</span>
+    </footer>
+    <aside class="overflow" (click)="$event.stopPropagation()">
         <ng-content></ng-content>
-    </div>
+    </aside>
 </div>

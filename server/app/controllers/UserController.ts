@@ -5,6 +5,9 @@ import {Config} from '../../../run/config';
 import {User} from '../models/user/User';
 import {DatabaseManager, TransactionSession} from '../Database';
 import {AccountController} from './AccountController';
+import {UtilController} from './UtilController';
+import {UserStatistics} from '../../../client/app/models/user';
+import {NotificationType} from "../models/notification/Notification";
 
 export module UserController {
 	
@@ -19,13 +22,13 @@ export module UserController {
 	export function findByUsername(transaction: Transaction, username: string): Promise<User> {
 		return transaction.run<User, any>('MATCH(u:User {username: $username}) RETURN COALESCE(properties(u), []) as u LIMIT 1', {
 			username: username
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift());
 	}
 	
 	export function findByMail(transaction: Transaction, mail: string): Promise<User> {
 		return transaction.run<User, any>('MATCH(u:User) WHERE (u.mails_primary_mail = $mail AND u.mails_primary_verified) OR (u.mails_secondary_mail = $mail AND u.mails_secondary_verified) RETURN COALESCE(properties(u), []) as u LIMIT 1', {
 			mail: mail
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift());
 	}
 	
 	export interface UserStatistics {
@@ -45,8 +48,8 @@ export module UserController {
 			"MATCH (user:User {id: $userId})",
 			"OPTIONAL MATCH (user)-[fr:LIKES_RUDEL]->() WITH COUNT(fr) as rudelCount, user",
 			"OPTIONAL MATCH (user)-[fl:LIKES_LIST]->() WITH rudelCount, COUNT(fl) as listsCount, user",
-			"OPTIONAL MATCH (user)-[:LIKES_USER]->(fes:User) WITH rudelCount, listsCount, fes as likees, COUNT(fes) as likeesCount, user",
-			"OPTIONAL MATCH (user)<-[:LIKES_USER]-(frs:User) WITH rudelCount, listsCount, likees, likeesCount, frs as likers, COUNT(frs) as likersCount, user"
+			"OPTIONAL MATCH (user)-[:LIKES_USER]->(fes:User) WITH rudelCount, listsCount, COLLECT(fes) as likees, COUNT(fes) as likeesCount, user",
+			"OPTIONAL MATCH (user)<-[:LIKES_USER]-(frs:User) WITH rudelCount, listsCount, likees, likeesCount, COLLECT(frs) as likers, COUNT(frs) as likersCount, user"
 		];
 		
 		let transformations: string[] = [
@@ -60,15 +63,15 @@ export module UserController {
 		if (user.id != relatedUser.id) {
 			queries = queries.concat([
 				"MATCH (relatedUser:User {id: $relatedUserId}) WITH rudelCount, listsCount, likees, likeesCount, likers, likersCount, user, relatedUser",
-				"OPTIONAL MATCH (relatedUser)-[mfes:LIKES_USER]->(likees) WITH rudelCount, listsCount, likeesCount, likersCount, COUNT(mfes) as mutualLikeesCount, user, relatedUser",
-				"OPTIONAL MATCH (relatedUser)<-[mfrs:LIKES_USER]-(likers) WITH rudelCount, listsCount, likeesCount, likersCount, mutualLikeesCount, COUNT(mfrs) as mutualLikersCount, user, relatedUser",
+				"OPTIONAL MATCH (relatedUser)-[mfes:LIKES_USER]->(u:User) WHERE ANY(l in likees WHERE l.id = u.id) WITH rudelCount, listsCount, likeesCount, likers, likersCount, COUNT(mfes) as mutualLikeesCount, user, relatedUser",
+				"OPTIONAL MATCH (relatedUser)<-[mfrs:LIKES_USER]-(u:User) WHERE ANY(l in likers WHERE l.id = u.id) WITH rudelCount, listsCount, likeesCount, likersCount, mutualLikeesCount, COUNT(mfrs) as mutualLikersCount, user, relatedUser",
 				"OPTIONAL MATCH (user)<-[fu:LIKES_USER]-(relatedUser) WITH rudelCount, listsCount, likeesCount, likersCount, mutualLikeesCount, mutualLikersCount, COUNT(fu) > 0 as isLikee, user, relatedUser",
 				"OPTIONAL MATCH (user)-[fu:LIKES_USER]->(relatedUser) WITH rudelCount, listsCount, likeesCount, likersCount, mutualLikeesCount, mutualLikersCount, isLikee, COUNT(fu) > 0 as isLiker"
 			]);
 			
 			transformations = transformations.concat([
-				"mutualLikers: mutualLikeesCount",
-				"mutualLikees: mutualLikersCount",
+				"mutualLikees: mutualLikeesCount",
+				"mutualLikers: mutualLikersCount",
 				"isLiker: isLiker",
 				"isLikee: isLikee"
 			]);
@@ -81,24 +84,18 @@ export module UserController {
 		return transaction.run<any, any>(queries.join(' '), {
 			userId: user.id,
 			relatedUserId: relatedUser.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 0).pop());
+		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 0).shift());
 	}
 	
 	export function getPublicUser(transaction: Transaction, user: User | User[], relatedUser: User, preview = false): Promise<any | any[]> {
 		let createPublicUser = (user: User) => {
 			// Gather user information.
-			let promise = ((): Promise<[UserStatistics]> => {
-				if(!preview) {
-					let userStatistics = UserController.getStatistics(transaction, user, relatedUser);
-					return Promise.all([
-						userStatistics
-					]);
-				}
-				return Promise.resolve([]);
-			})();
+			let promises: Promise<UserStatistics | number>[] = [];
+			if(!preview) promises.push(UserController.getStatistics(transaction, user, relatedUser));
+			if (user.id == relatedUser.id) promises.push(AccountController.NotificationController.countUnread(transaction, user));
 			
 			// Modify user information.
-			return promise.then((results: [UserStatistics]) => {
+			return Promise.all(promises).then((values: [UserStatistics, number]) => {
 				// Add default links.
 				let links: any = {
 					likers: `${Config.backend.domain}/api/users/${user.username}/likers`,
@@ -120,14 +117,17 @@ export module UserController {
 					'user.firstName': 'firstName',
 					'user.lastName': 'lastName',
 					'hasAvatar': 'hasAvatar',
-					'user.profileText': 'profileText',
-					'user.createdAt': 'createdAt',
-					'user.updatedAt': 'updatedAt',
+					'profileText': 'profileText',
+					'createdAt': 'createdAt',
+					'updatedAt': 'updatedAt',
 					'links': 'links'
 				};
 				
 				let transformationObject = {
 					user: user,
+					profileText: user.profileText || null,
+					createdAt: UtilController.isoDate(user.createdAt),
+					updatedAt: UtilController.isoDate(user.updatedAt),
 					hasAvatar: !!user.avatarId,
 					links: links
 				};
@@ -148,16 +148,25 @@ export module UserController {
 					
 					// Extend transformation object.
 					transformationObject = Object.assign(transformationObject, {
-						statistics: results[0]
+						statistics: values[0]
 					});
 				}
 				
 				// Emit private information.
-				if (user.id == relatedUser.id) transformationRecipe = Object.assign(transformationRecipe, {
-					'user.location': 'location',
-					'user.onBoard': 'onBoard',
-					'user.languages': 'languages',
-				});
+				if (user.id == relatedUser.id) {
+					// Extend transformation recipe.
+					transformationRecipe = Object.assign(transformationRecipe, {
+						'user.location': 'location',
+						'user.onBoard': 'onBoard',
+						'user.languages': 'languages',
+						'unreadNotifications': 'unreadNotifications',
+					});
+					
+					// Extend transformation object.
+					transformationObject = Object.assign(transformationObject, {
+						unreadNotifications: values[1]
+					});
+				}
 				
 				return dot.transform(transformationRecipe, transformationObject) as any;
 			});
@@ -187,24 +196,42 @@ export module UserController {
 		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'likees'));
 	}
 	
-	export function follow(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
+	export function like(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
 		if (aimedUser.id === user.id) return Promise.reject<void>('Users cannot follow themselves.');
 		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:LIKES_USER]->(followee) WITH user, followee CREATE UNIQUE (user)-[:LIKES_USER {createdAt: $now}]->(followee) WITH user, followee OPTIONAL MATCH (user)-[dlu:DISLIKES_USER]->(followee) DETACH DELETE dlu", {
 			userId: user.id,
 			followeeUserId: aimedUser.id,
-			now: new Date().toISOString()
-		}).then(() => {});
+			now: new Date().getTime() / 1000
+		}).then((result: any) => {
+			if(result.summary.counters.relationshipsCreated() > 0) return AccountController.NotificationController.set(transaction, NotificationType.LIKES_USER, aimedUser, aimedUser, user);
+		});
 	}
 	
-	export function unfollow(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
+	export function dislike(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
 		if (aimedUser.id === user.id) return Promise.reject<void>('Users cannot unfollow themselves.');
 		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:DISLIKES_USER]->(followee) WITH user, followee CREATE UNIQUE (user)-[:DISLIKES_USER {createdAt: $now}]->(followee) WITH user, followee OPTIONAL MATCH (user)-[lu:LIKES_USER]->(followee) DETACH DELETE lu", {
 			userId: user.id,
 			followeeUserId: aimedUser.id,
-			now: new Date().toISOString()
+			now: new Date().getTime() / 1000
 		}).then(() => {});
 	}
-	
+
+    export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<User[]> {
+        return transaction.run<User, any>('MATCH (u:User)<-[:LIKES_USER]-(u1:User {id: $userId}) WITH COUNT(u) as userLikes, u1 MATCH (u2:User)-[:LIKES_USER]->(u:User)<-[:LIKES_USER]-(u1) WHERE NOT u2 = u1 WITH u1, u2, toFloat(COUNT(DISTINCT u)) / userLikes as similarity WHERE similarity > 0.3 MATCH (u:User)<-[:LIKES_USER]-(u2) WHERE NOT u = u1 AND NOT (u)<-[:LIKES_USER]-(u1) AND NOT (u)<-[:DISLIKES_USER]-(u1) WITH DISTINCT u SKIP $skip LIMIT $limit RETURN properties(u) as u', {
+            userId: user.id,
+            skip: skip,
+            limit: limit
+        }).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));
+    }
+
+    export function recent(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<User[]> {
+        return transaction.run<User, any>('MATCH(ru:User), (u:User {id: $userId}) WHERE NOT ru = u AND NOT (ru)<-[:DISLIKES_USER]-(u) WITH ru ORDER BY ru.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(ru) as u', {
+            userId: user.id,
+            skip: skip,
+            limit: limit
+        }).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));
+    }
+
 	export namespace RouteHandlers {
 		
 		/**
@@ -224,7 +251,7 @@ export module UserController {
 		}
 		
 		/**
-		 * Handles [GET] /api/users/like/{query}
+		 * Handles [GET] /api/users/search/{query}
 		 * @param request Request-Object
 		 * @param request.params.query query
 		 * @param request.query.offset offset (optional, default=0)
@@ -232,7 +259,7 @@ export module UserController {
 		 * @param request.auth.credentials
 		 * @param reply Reply-Object
 		 */
-		export function getUsersLike(request: any, reply: any): void {
+		export function search(request: any, reply: any): void {
 			// Create promise.
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
@@ -286,19 +313,19 @@ export module UserController {
 		}
 		
 		/**
-		 * Handles [POST] /api/users/follow/{followee}
+		 * Handles [POST] /api/users/like/{user}
 		 * @param request Request-Object
 		 * @param request.auth.credentials
-		 * @param request.params.followee followee
+		 * @param request.params.user user
 		 * @param reply Reply-Object
 		 */
-		export function follow(request: any, reply: any): void {
+		export function like(request: any, reply: any): void {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise = UserController.findByUsername(transaction, request.params.followee).then((followee: User) => {
-				if (!followee) return Promise.reject(Boom.notFound('Followee not found!'));
-				return UserController.follow(transaction, request.auth.credentials, followee).then(() => {
-					return UserController.getPublicUser(transaction, followee, request.auth.credentials);
+			let promise = UserController.findByUsername(transaction, request.params.user).then((user: User) => {
+				if (!user) return Promise.reject(Boom.notFound('User not found!'));
+				return UserController.like(transaction, request.auth.credentials, user).then(() => {
+					return UserController.getPublicUser(transaction, user, request.auth.credentials);
 				});
 			});
 			
@@ -306,70 +333,61 @@ export module UserController {
 		}
 		
 		/**
-		 * Handles [POST] /api/users/unfollow/{followee}
+		 * Handles [POST] /api/users/dislike/{user}
 		 * @param request Request-Object
 		 * @param request.auth.credentials
-		 * @param request.params.followee followee
+		 * @param request.params.user user
 		 * @param reply Reply-Object
 		 */
-		export function unfollow(request: any, reply: any): void {
+		export function dislike(request: any, reply: any): void {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
-			let promise = findByUsername(transaction, request.params.followee).then((followee: User) => {
-				if (!followee) return Promise.reject(Boom.notFound('Followee not found!'));
-				return UserController.unfollow(transaction, request.auth.credentials, followee).then(() => {
-					return UserController.getPublicUser(transaction, followee, request.auth.credentials);
+			let promise = findByUsername(transaction, request.params.user).then((user: User) => {
+				if (!user) return Promise.reject(Boom.notFound('User not found!'));
+				return UserController.dislike(transaction, request.auth.credentials, user).then(() => {
+					return UserController.getPublicUser(transaction, user, request.auth.credentials);
 				});
 			});
 			
 			reply.api(promise, transactionSession);
 		}
+
+        /**
+         * Handles [GET] /api/users/recent
+         * @param request Request-Object
+         * @param request.query.offset offset (optional, default=0)
+         * @param request.query.limit limit (optional, default=25)
+         * @param request.auth.credentials
+         * @param reply Reply-Object
+         */
+        export function recent(request: any, reply: any): void {
+            // Create promise.
+            let transactionSession = new TransactionSession();
+            let transaction = transactionSession.beginTransaction();
+            let promise: Promise<any> = UserController.recent(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((user: User[]) => {
+                return UserController.getPublicUser(transaction, user, request.auth.credentials);
+            });
+
+            reply.api(promise, transactionSession);
+        }
+
+        /**
+         * Handles [GET] /api/users/suggested
+         * @param request Request-Object
+         * @param request.query.offset offset (optional, default=0)
+         * @param request.query.limit limit (optional, default=25)
+         * @param request.auth.credentials
+         * @param reply Reply-Object
+         */
+        export function suggested(request: any, reply: any): void {
+            // Create promise.
+            let transactionSession = new TransactionSession();
+            let transaction = transactionSession.beginTransaction();
+            let promise: Promise<any> = UserController.suggested(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((user: User[]) => {
+                return UserController.getPublicUser(transaction, user, request.auth.credentials);
+            });
+
+            reply.api(promise, transactionSession);
+        }
 	}
 }
-
-/*
- var smtpTransport = Nodemailer.createTransport(Config.mailer.options);
- request.server.render('templates/reset-password-email', {
- name: user.displayName,
- appName: Config.app.title,
- url: 'http://' + request.headers.host + '/auth/reset/' + token
- }, function (err, emailHTML) {
- 
- var mailOptions = {
- to: user.email,
- from: Config.mailer.from,
- subject: 'Password Reset',
- html: emailHTML
- };
- smtpTransport.sendMail(mailOptions, function (err) {
- 
- if (!err) {
- reply({message: 'An email has been sent to ' + user.email + ' with further instructions.'});
- } else {
- return reply(Boom.badRequest('Failure sending email'));
- }
- 
- done(err);
- });
- });
- },
- */
-
-/*
- function (user, done) {
- request.server.render('templates/reset-password-confirm-email', {
- name: user.displayName,
- appName: Config.app.title
- }, function (err, emailHTML) {
- var mailOptions = {
- to: user.email,
- from: Config.mailer.from,
- subject: 'Your password has been changed',
- html: emailHTML
- };
- 
- smtpTransport.sendMail(mailOptions, function (err) {
- done(err, 'done');
- });
- });
- */

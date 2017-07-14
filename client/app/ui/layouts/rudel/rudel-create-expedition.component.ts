@@ -4,9 +4,12 @@ import {Rudel} from '../../../models/rudel';
 import {ExpeditionService} from '../../../services/expedition.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {UserService} from '../../../services/user.service';
+import {Location} from '../../../models/location';
 import {Locale} from '../../../models/locale';
+import * as geolib from 'geolib';
 import {ExpeditionRecipe} from '../../../models/expedition';
 import {CarouselComponent} from '../../widgets/wrapper/carousel.component';
+import {RudelService} from "../../../services/rudel.service";
 
 @Component({
 	templateUrl: 'rudel-create-expedition.component.html',
@@ -15,13 +18,16 @@ import {CarouselComponent} from '../../widgets/wrapper/carousel.component';
 export class RudelCreateExpeditionComponent implements OnInit {
 	
 	rudel: Rudel;
-	form: FormGroup;
+    form: FormGroup;
+    locations: Location[];
+	carouselIndex: number;
 	submitPending: boolean;
 	@ViewChild(CarouselComponent) carousel: CarouselComponent;
 	
 	constructor(private router: Router,
 	            private route: ActivatedRoute,
-	            private userService: UserService,
+				private rudelService: RudelService,
+				private userService: UserService,
 	            private expeditionService: ExpeditionService,
 	            private fb: FormBuilder) {}
 	
@@ -57,6 +63,13 @@ export class RudelCreateExpeditionComponent implements OnInit {
 					]
 				]
 			}),
+			location: this.fb.group({
+				location: [
+					null, [
+						Validators.required
+					]
+				]
+			}),
 			time: this.fb.group({
 				fuzzyTime: [
 					false, [
@@ -68,27 +81,28 @@ export class RudelCreateExpeditionComponent implements OnInit {
 						Validators.required
 					]
 				]
-			}),
-			location: this.fb.group({
-				location: [
-					this.rudel.defaultLocation, [
-						Validators.required
-					]
-				]
 			})
 		});
+
+		// Load nearby locations.
+		this.rudelService.locations(this.rudel.id).subscribe(locations => {
+		    this.locations = locations;
+			if(!this.form.value.location.location) {
+                let center = locations.length > 0 ? geolib.getCenterOfBounds(locations) : this.userService.getAuthenticatedUser().user.location;
+			    this.form.get('location').get('location').setValue(center);
+            }
+		});
+	}
+	
+	setCarouselIndex(index: number): void {
+		this.carouselIndex = index;
 	}
 	
 	submit() {
 		for (const key in this.form.controls) this.form.controls[key].markAsTouched();
 		if (!this.form.valid) {
 			// Go to corresponding page.
-			[
-				this.form.controls.general,
-				this.form.controls.icon,
-				this.form.controls.location,
-				this.form.controls.time
-			].every((control: FormGroup, page: number) => {
+			Object.keys(this.form.controls).map(key => this.form.controls[key]).every((control: FormGroup, page: number) => {
 				Object.keys(control.controls).forEach(controlKey => control.get(controlKey).markAsTouched());
 				if (!control.valid) this.carousel.go(page);
 				return control.valid;
@@ -121,6 +135,6 @@ export class RudelCreateExpeditionComponent implements OnInit {
 	}
 	
 	formControlCount(value: string, maxChars: number = 0): (value: string) => {} {
-		return (value: string) => `${value ? value.length : 0} of ${maxChars} characters used`;
+		return (value: string) => `${value ? value.length : 0} von ${maxChars} Buchstaben verwendet`;
 	}
 }

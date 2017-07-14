@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Comment} from '../../../models/comment';
 import * as moment from 'moment';
+import {Locale} from "../../../../../server/app/models/Translations";
 
 @Component({
 	templateUrl: 'comment-item.component.html',
@@ -15,6 +16,7 @@ export class CommentItemComponent implements OnInit {
 	constructor() {}
 	
 	ngOnInit(): void {
-		this.formattedDate = `${moment.duration(moment().diff(this.comment.createdAt)).humanize()} ago`;
+		let date = moment.duration(moment().diff(this.comment.createdAt)).humanize();
+		this.formattedDate = `vor ${date}`;
 	}
 }

@@ -4,5 +4,5 @@
 
 <ng-template #loading>
     <loading *ngIf="likees == null"></loading>
-    <empty [emptyState]="emptyState" *ngIf="likees && likees.length == 0"></empty>
+    <empty [emptyState]="isAuthenticatedUser ? emptyStateAuthenticatedProfile : emptyState" *ngIf="likees && likees.length == 0"></empty>
 </ng-template>

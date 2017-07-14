@@ -2,155 +2,504 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="en" datatype="plaintext" original="ng2.template">
     <body>
-      <trans-unit id="3254af9acb61fe6a3c6577be47bbe5c382890ce1" datatype="html">
-        <source>Einstellungen</source>
-        <target/>
+      <trans-unit id="settingsTitle" datatype="html">
+        <source>Settings</source>
+        <target>Einstellungen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/settings/settings.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="073a3f169b30a9c2028b9f4ea4ef0fe02e956fb6" datatype="html">
+      <trans-unit id="rudelItemLikees" datatype="html">
+        <source>{VAR_PLURAL, plural, =1 {1 member} other {<x id="INTERPOLATION"/> members} }</source>
+        <target>{VAR_PLURAL, plural, =1 {1 Mitglied} other {<x id="INTERPOLATION"/> Mitglieder} }</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/rudel/rudel-item.component.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="rudel" datatype="html">
         <source>Rudel</source>
-        <target/>
+        <target>Rudel</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/search/search.component.ts</context>
-          <context context-type="linenumber">2</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="16b8ee1865f8f2e319cbb09b70a812a3321cf619" datatype="html">
-        <source>Bilde ein neues Rudel</source>
-        <target/>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/layouts/search/search.component.ts</context>
-          <context context-type="linenumber">6</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="4ee30b9285d5bf3610118b8b01d1731e0c4fed05" datatype="html">
-        <source>People</source>
-        <target/>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/layouts/search/search.component.ts</context>
-          <context context-type="linenumber">36</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="88243abd8988ba30cc911172ad920d036a057993" datatype="html">
-        <source>Imprint</source>
-        <target/>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/layouts/legal/legal.component.ts</context>
-          <context context-type="linenumber">6</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/widgets/app-footer/app-footer.component.ts</context>
           <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3a52dd570719577ddfbdff42aaadef64c1589ccc" datatype="html">
-        <source>Cool, dass du dich für die App interessierst! Die App ist noch im totalen Anfangsstadium. Einiges ist noch nicht funktionsfähig und übersetzt, deswegen ist Geduld noch wichtig.</source>
-        <target/>
+      <trans-unit id="searchNothingFound" datatype="html">
+        <source>Found nothing?</source>
+        <target>Nichts gefunden?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/search/search.component.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="searchCreateRudel" datatype="html">
+        <source>Settle a rudel</source>
+        <target>Bilde ein neues Rudel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/search/search.component.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="user" datatype="html">
+        <source>User</source>
+        <target>Nutzer</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/search/search.component.ts</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1stBoardingHeader" datatype="html">
+        <source>Welcome to rudl</source>
+        <target>Willkommen auf rudl</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1stBoardingDescription" datatype="html">
+        <source>Cool, that you have interest in our project! Your are part of a constantly growing Rudl-Community, where you will find interesting activities and people!</source>
+        <target>Cool, dass du dich für unser Projekt interessierst! Du bist nun Teil einer wachsenden Rudl-Community, in denen du interessante Aktivitäten und Personen finden wirst!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
           <context context-type="linenumber">6</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8779938b420da2d2faae8c3cc1d43b9794b373c0" datatype="html">
-        <source>Im Sommer geht&apos;s los!</source>
-        <target/>
+      <trans-unit id="2ndBoardingHeader" datatype="html">
+        <source>Explore rudel</source>
+        <target>Entdecke Rudel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2ndBoardingDescription" datatype="html">
+        <source>On our platform new interests and activities are shown as a rudel (german: wolfpack). You can join or create a rudel.</source>
+        <target>Auf Rudl werden dir Interessen und Aktivitäten in Form von Rudel angezeigt. Du kannst Rudel beitreten und nicht vorhandene gründen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3rdBoardingHeader" datatype="html">
+        <source>Create expeditions</source>
+        <target>Erstelle Events</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3rdBoardingDescription" datatype="html">
+        <source>In every rudel you can join or plan an expedition, e.g. the next barbecue party, happening or any other spontaneous event in your neighborhood.</source>
+        <target>In jedem Rudel kannst du Streifzüge erstellen oder beitreten. Die nächste Grillparty, Happening oder ein spontanes Event in deiner Nachbarschaft.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4thBoardingHeader" datatype="html">
+        <source>Get out</source>
+        <target>Gehe raus</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4thBoardingDescription" datatype="html">
+        <source>Meet people who are members of the same rudel and join an expedition. Get out and meet each other.</source>
+        <target>Triff Menschen, die in einem Rudel Mitglied sind und tritt Streifzügen bei. Gehe raus und triff dich.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5thBoardingHeader" datatype="html">
+        <source>Grant permission</source>
+        <target>Berechtigung geben</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="boardingLocationPermissionDenied" datatype="html">
+        <source>Seems like you denied the permission, please check your browser settings to enable location sharing!</source>
+        <target>Du hast die Freigabe deines Standortes abgelehnt. Bitte überprüfe deine Browsereinstellungen!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="boardingLocationPermissionDescription" datatype="html">
+        <source>In order to show you all relevant rudel and events near you, rudl needs to access your location.</source>
+        <target>Um dir Rudel in deiner Nähe anzuzeigen und die App nutzen zu können, muss dein Standort abgerufen werden.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landingTitle" datatype="html">
+        <source>Be part of the community and connect now!</source>
+        <target>Sei Teil der Community, verbinde dich jetzt!</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/landing/landing.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="f62d08bdabf57ea986abb4b561a3f0225f712875" datatype="html">
-        <source>Zusammen mit der Community empfiehlt dir rudl neue Aktivitäten, ganz nach deinem Geschmack. Du
-            hinterlegst all jene Aktivitäten, von denen du träumst, schwärmst oder die du noch heute beginnst. Komm mit
-            ins Team, joine uns im Sommer hier auf rudl.me :)</source>
-        <target/>
+      <trans-unit id="landingDescription" datatype="html">
+        <source>In conjunction with the growing community, rudl recommends you interesting activities that match your taste. You let us know of things you dream of or such activities you start today. Join the team, connect with us now! :)</source>
+        <target>Zusammen mit der Community empfiehlt dir rudl neue Aktivitäten, ganz nach deinem Geschmack. Du hinterlegst all jene Aktivitäten, von denen du träumst, schwärmst oder die du noch heute beginnst. Komm mit ins Team, joine uns jetzt! :)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/landing/landing.component.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="e50aed3b68d3f2bcbb54413092ae714191be52ba" datatype="html">
-        <source>Streifzug des Rudels &quot;<x id="INTERPOLATION"/>&quot;</source>
-        <target/>
+      <trans-unit id="landingBigTitle" datatype="html">
+        <source>I´ve visited a new city and already met great people. Check!</source>
+        <target>Eine neue Stadt besucht und gleich nette Leute getroffen. Check!</target>
+      <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/landing/landing.component.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="landingBigDescription" datatype="html">
+        <source>At rudl you get in touch with new, like-minded people to organize your free time more transparent and efficiently.</source>
+        <target>Bei rudl einfach und entspannt die eigene Stadt kennenlernen, gleichgesinnte Menschen finden und die Freizeitgestaltung transparenter und einfach planbar gestalten.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/landing/landing.component.ts</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="expeditionRudelInfo" datatype="html">
+        <source>Expedition of rudel &quot;<x id="INTERPOLATION"/>&quot;</source>
+        <target>Streifzug des Rudels &quot;<x id="INTERPOLATION"/>&quot;</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/expedition/expedition.component.ts</context>
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="f01274281b49b1c319ede7c42a9a2d36199b2817" datatype="html">
-        <source>File is not an image or exceeds the maximal file size.</source>
-        <target/>
+      <trans-unit id="createExpedition" datatype="html">
+        <source>Create your expedition</source>
+        <target>Erstelle einen Streifzug</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/rudel/rudel-create-expedition.component.ts</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="decideWhoAttendsTitle" datatype="html">
+        <source>Did you know?</source>
+        <target>Wusstest du schon?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/rudel/rudel-create-expedition.component.ts</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="decideWhoAttendsDescription" datatype="html">
+        <source>You can decide, whether you want to approve new members of the expedition!</source>
+        <target>Du kannst entscheiden, ob du neue Teilnehmer akzeptieren möchtest.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/rudel/rudel-create-expedition.component.ts</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="addEmojiTitle" datatype="html">
+        <source>Add an emoji!</source>
+        <target>Füge einen Emoji hinzu!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/rudel/rudel-create-expedition.component.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="addEmojiDescription" datatype="html">
+        <source>Give your expedition an unique icon to increase it&apos;s visibility!</source>
+        <target>Statte deinen Streifzug mit einem Emoji aus, um die Sichtbarkeit zu erhöhen!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/rudel/rudel-create-expedition.component.ts</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="whereToGoTitle" datatype="html">
+        <source>Where to go?</source>
+        <target>Wo gehts hin?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/rudel/rudel-create-expedition.component.ts</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="whereToGoDescription" datatype="html">
+        <source>Please mark the location of the expedition on the map.</source>
+        <target>Bitte markiere den Standort des Streifzugs auf der Karte.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/rudel/rudel-create-expedition.component.ts</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="setTimeTitle" datatype="html">
+        <source>Set the time</source>
+        <target>Gebe den Zeitpunkt an</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/rudel/rudel-create-expedition.component.ts</context>
+          <context context-type="linenumber">65</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="setTimeDescription" datatype="html">
+        <source>Last step, when shall it happen?</source>
+        <target>Letzter Schritt, wann gehts los?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/rudel/rudel-create-expedition.component.ts</context>
+          <context context-type="linenumber">66</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="profileSettings" datatype="html">
+        <source>Profile Settings</source>
+        <target>Profil-Einstellungen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/settings/settings-profile.component.ts</context>
-          <context context-type="linenumber">22</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7368c0739e84b7301694133093cd9d323d334d15" datatype="html">
-        <source>What are you looking for?</source>
-        <target/>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/widgets/search/search-bar.component.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
-        <note priority="1" from="description">What are you looking for?</note>
       </trans-unit>
-      <trans-unit id="744bb513038ef779df0aa9e50122db4a5cddb9e8" datatype="html">
-        <source>rudl</source>
-        <target/>
+      <trans-unit id="imageSizeError" datatype="html">
+        <source>File is not an image or exceeds the maximal file size.</source>
+        <target>Auswahl ist kein Bild oder überschreitet Maximalgröße.</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/widgets/logo.component.ts</context>
-          <context context-type="linenumber">3</context>
+          <context context-type="sourcefile">app/ui/layouts/settings/settings-profile.component.ts</context>
+          <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1470eabded471793a7ef2271e2a1dc30a1a3265f" datatype="html">
-        <source>Datum</source>
-        <target/>
+      <trans-unit id="legalCopyright" datatype="html">
+        <source>
+    <x id="START_HEADING_LEVEL1" ctype="x-h1"/>Licenses<x id="CLOSE_HEADING_LEVEL1" ctype="x-h1"/>
+    <x id="START_PARAGRAPH" ctype="x-p"/>rudl.me uses Open Source Software. The following list contains all attributions for software and additional components that requires a several attribution.<x id="CLOSE_PARAGRAPH" ctype="x-p"/>
+    <x id="START_UNORDERED_LIST" ctype="x-ul"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>
+            Emoji artwork is provided by <x id="START_LINK" ctype="x-a"/>EmojiOne<x id="CLOSE_LINK" ctype="x-a"/> and is licensed under <x id="START_LINK_1" ctype="x-a"/>CC-BY 4.0<x id="CLOSE_LINK" ctype="x-a"/>.
+        <x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>
+            Location services provided by <x id="START_LINK_2" ctype="x-a"/>Mapzen<x id="CLOSE_LINK" ctype="x-a"/>,  <x id="START_LINK_3" ctype="x-a"/>OpenStreetMap<x id="CLOSE_LINK" ctype="x-a"/> and <x id="START_LINK_4" ctype="x-a"/>others<x id="CLOSE_LINK" ctype="x-a"/>.
+        <x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+        <x id="START_LIST_ITEM" ctype="x-li"/>
+            The illustrations of wolf-paintings had been designed by Marie Kollarczyk.
+        <x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+    <x id="CLOSE_UNORDERED_LIST" ctype="x-ul"/>
+</source>
+        <target>
+          <x id="START_HEADING_LEVEL1" ctype="x-h1"/>Copyright-Hinweise<x id="CLOSE_HEADING_LEVEL1" ctype="x-h1"/>
+          <x id="START_PARAGRAPH" ctype="x-p"/>rudl.me verwendet Open Source Software. Für die nachfolgende Software und Komponenten ist eine gesonderte Nennung der Urheber erforderlich.<x id="CLOSE_PARAGRAPH" ctype="x-p"/>
+          <x id="START_UNORDERED_LIST" ctype="x-ul"/>
+          <x id="START_LIST_ITEM" ctype="x-li"/>
+          Emoji Grafiken werden bereitgestellt von <x id="START_LINK" ctype="x-a"/>EmojiOne<x id="CLOSE_LINK" ctype="x-a"/> und sind lizensiert über die <x id="START_LINK_1" ctype="x-a"/>CC-BY 4.0<x id="CLOSE_LINK" ctype="x-a"/>.
+          <x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+          <x id="START_LIST_ITEM" ctype="x-li"/>
+            Standortdienste werden bereitgestellt von <x id="START_LINK_2" ctype="x-a"/>Mapzen<x id="CLOSE_LINK" ctype="x-a"/>,  <x id="START_LINK_3" ctype="x-a"/>OpenStreetMap<x id="CLOSE_LINK" ctype="x-a"/> und <x id="START_LINK_4" ctype="x-a"/>andere<x id="CLOSE_LINK" ctype="x-a"/>.
+          <x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+          <x id="START_LIST_ITEM" ctype="x-li"/>
+          Die Illustrationen der Wolfmalungen wurden von Marie Kollarczyk gestaltet.
+          <x id="CLOSE_LIST_ITEM" ctype="x-li"/>
+          <x id="CLOSE_UNORDERED_LIST" ctype="x-ul"/>
+        </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/widgets/control/form/datetime.component.ts</context>
-          <context context-type="linenumber">9</context>
+          <context context-type="sourcefile">app/ui/layouts/legal/legal-about.component.ts</context>
+          <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="051d2e768e3113af47747139eeca269c599286a2" datatype="html">
-        <source>Uhrzeit (Stunde)</source>
-        <target/>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/widgets/control/form/datetime.component.ts</context>
-          <context context-type="linenumber">23</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="a41efb735da227da81772b9b1e49c56110f9a5f7" datatype="html">
-        <source>Uhrzeit (Minute)</source>
-        <target/>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/widgets/control/form/datetime.component.ts</context>
-          <context context-type="linenumber">34</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="170cf1faf122500e428d4fe4052c18e49294c6ce" datatype="html">
-        <source><x id="INTERPOLATION"/></source>
-        <target/>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/widgets/expedition/expedition-item.component.ts</context>
-          <context context-type="linenumber">13</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3353a33022d16886356deeea164a4b507a12fdae" datatype="html">
-        <source>Du bist Teilnehmer</source>
-        <target/>
+      <trans-unit id="expeditionItemAttending" datatype="html">
+        <source>Attending</source>
+        <target>Du nimmst teil</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/widgets/expedition/expedition-item.component.ts</context>
           <context context-type="linenumber">14</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7972c16edbffd2d23f66e0d5999b1d5dc94af4c3" datatype="html">
-        <source>Made with <x id="START_ITALIC_TEXT" ctype="x-i"/>local_pizza<x id="CLOSE_ITALIC_TEXT" ctype="x-i"/> in Bremen</source>
-        <target/>
+      <trans-unit id="suggestedExpeditions" datatype="html">
+        <source>Suggested Expeditions</source>
+        <target>Empfohlende Streifzüge</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/widgets/app-footer/app-footer.component.ts</context>
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-expeditions.component.ts</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="popularExpeditions" datatype="html">
+        <source>Popular Expeditions</source>
+        <target>Beliebte Streifzüge</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-expeditions.component.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="recentExpeditions" datatype="html">
+        <source>Recent Expeditions</source>
+        <target>Neue Streifzüge</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-expeditions.component.ts</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="suggestedRudel" datatype="html">
+        <source>Suggested Rudel</source>
+        <target>Empfohlende Rudel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-rudel.component.ts</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="popularRudel" datatype="html">
+        <source>Popular Rudel</source>
+        <target>Beliebte Rudel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-rudel.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="recentRudel" datatype="html">
+        <source>Recent Rudel</source>
+        <target>Neue Rudel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-rudel.component.ts</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="mailsettings" datatype="html">
+        <source>Mail Settings</source>
+        <target>Mail-Einstellungen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/settings/settings-notifications.component.ts</context>
           <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="otherProfileSettings" datatype="html">
+        <source>Tools</source>
+        <target>Werkzeuge</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/settings/settings-other.component.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="deleteAccountTitle" datatype="html">
+        <source>Terminate Membership</source>
+        <target>Mitgliedschaft beenden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/settings/settings-other.component.ts</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="deleteAccountDescription" datatype="html">
+        <source>You want to terminate your membership? Enter your username in the input field and click on &quot;Terminate membership&quot; to terminate your membership irreversibly.</source>
+        <target>Möchtest du deine Mitgliedschaft unwiederruflich beenden? Dann gebe bitte deinen Usernamen in das Eingabefeld ein und bestätige mit Klick auf "Mitgliedschaft beenden".</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/settings/settings-other.component.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="deleteAccountPlaceholder" datatype="html">
+        <source>Confirm your username...</source>
+        <target>Bestätige deinen Nutzernamen...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/settings/settings-other.component.ts</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="suggestedUsers" datatype="html">
+        <source>Suggested Users</source>
+        <target>Empfohlene Nutzer</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-user.component.ts</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="recentUsers" datatype="html">
+        <source>Recent Users</source>
+        <target>Neue Nutzer</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-user.component.ts</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="searchBarPlaceholder" datatype="html">
+        <source>Search Rudl</source>
+        <target>Durchsuche Rudl</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/search/search-bar.component.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="createRudelTranslationTitle" datatype="html">
+        <source>Name of rudel</source>
+        <target>Benenne das Rudel</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/rudel/create-rudel.component.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="createRudelTranslationDescription" datatype="html">
+        <source>Each rudel is an individual interest group, e.g. &quot;Go Running&quot; or &quot;Meetup at the café&quot;.</source>
+        <target>Jedes Rudel ist eine Interessensgemeinschaft, z.B. "Joggen gehen" oder "Treffen im Café".</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/rudel/create-rudel.component.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="createRudelIconTitle" datatype="html">
+        <source>Add an icon!</source>
+        <target>Füge ein Icon hinzu!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/rudel/create-rudel.component.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="createRudelIconDescription" datatype="html">
+        <source>The icon increases the memorability of your rudel!</source>
+        <target>Das Icon erhöht den Wiedererkennnungswert deines Rudels!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/rudel/create-rudel.component.ts</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="logoTitle" datatype="html">
+        <source>rudl</source>
+        <target>rudl</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/logo.component.ts</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dateTimeDate" datatype="html">
+        <source>Date</source>
+        <target>Datum</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/control/form/datetime.component.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dateTimeHour" datatype="html">
+        <source>Time (Hour)</source>
+        <target>Uhrzeit (Stunde)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/control/form/datetime.component.ts</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dateTimeMinute" datatype="html">
+        <source>Time (Minute)</source>
+        <target>Uhrzeit (Minute)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/control/form/datetime.component.ts</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="footer" datatype="html">
+        <source>Made with <x id="START_ITALIC_TEXT" ctype="x-i"/>local_pizza<x id="CLOSE_ITALIC_TEXT" ctype="x-i"/> in Bremen</source>
+        <target>Konzipiert bei <x id="START_ITALIC_TEXT" ctype="x-i"/>local_pizza<x id="CLOSE_ITALIC_TEXT" ctype="x-i"/> in Bremen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/footer/footer.component.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="footerLink" datatype="html">
+        <source>Legal</source>
+        <target>Impressum</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/footer/footer.component.ts</context>
+          <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
     </body>

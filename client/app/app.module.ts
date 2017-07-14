@@ -77,8 +77,8 @@ import {UtilService} from './services/util.service';
 import {KeysPipe} from './pipes/keys.pipe';
 import {SafePipe} from './pipes/safe.pipe';
 import {RudelEditComponent} from './ui/layouts/rudel/rudel-edit.component';
-import {RudelExpeditionsComponent} from './ui/layouts/rudel/rudel-expeditions.component';
-import {RudelPastExpeditionsComponent} from './ui/layouts/rudel/rudel-past-expeditions.component';
+import {RudelUpcomingExpeditionsComponent} from './ui/layouts/rudel/rudel-upcoming-expeditions.component';
+import {RudelDoneExpeditionsComponent} from './ui/layouts/rudel/rudel-done-expeditions.component';
 import {RudelCreateExpeditionComponent} from './ui/layouts/rudel/rudel-create-expedition.component';
 import {RudelAddToListComponent} from './ui/layouts/rudel/rudel-add-to-list.component';
 import {RudelLikersComponent} from './ui/layouts/rudel/rudel-likers.component';
@@ -103,6 +103,12 @@ import {ExpeditionsUpcomingComponent} from './ui/layouts/expedition/expeditions-
 import {LegalAboutComponent} from './ui/layouts/legal/legal-about.component';
 import {LegalTermsComponent} from './ui/layouts/legal/legal-terms.component';
 import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component';
+import {ExploreRudelComponent} from './ui/layouts/explore/explore-rudel.component';
+import {ExploreExpeditionsComponent} from './ui/layouts/explore/explore-expeditions.component';
+import {SettingsNotificationsComponent} from './ui/layouts/settings/settings-notifications.component';
+import {Ng2DeviceDetectorModule} from "ng2-device-detector";
+import {SettingsOtherComponent} from "./ui/layouts/settings/settings-other.component";
+import {ExploreUserComponent} from "./ui/layouts/explore/explore-user.component";
 
 @NgModule({
 	declarations: [
@@ -112,7 +118,7 @@ import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component'
 		CarouselComponent,
 		CarouselSlideComponent,
 		DropdownMenuComponent,
-		RudelPastExpeditionsComponent,
+		RudelDoneExpeditionsComponent,
 		RudelItemComponent,
 		ItemWrapperComponent,
 		ListComponent,
@@ -141,9 +147,10 @@ import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component'
 		DashboardComponent,
 		RudelEditComponent,
 		RudelCreateExpeditionComponent,
-		RudelExpeditionsComponent,
+		RudelUpcomingExpeditionsComponent,
 		RudelLikersComponent,
 		RudelAddToListComponent,
+		SettingsNotificationsComponent,
 		LegalAboutComponent,
 		LegalTermsComponent,
 		LegalPrivacyComponent,
@@ -156,6 +163,7 @@ import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component'
 		ExploreComponent,
 		ExpeditionsComponent,
 		StackComponent,
+		SettingsOtherComponent,
 		UserItemComponent,
 		CommentItemComponent,
 		RedirectComponent,
@@ -176,6 +184,8 @@ import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component'
 		LegalComponent,
 		FormControlWrapper,
 		UserComponent,
+		ExploreExpeditionsComponent,
+		ExploreRudelComponent,
 		UserRudelComponent,
 		UserLikeesComponent,
 		KeysPipe,
@@ -187,6 +197,7 @@ import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component'
 		ListRudelComponent,
 		FanComponent,
 		LocationSearchComponent,
+		ExploreUserComponent,
 		SafePipe,
 		ArrayPipe,
 		TranslationListComponent,
@@ -217,6 +228,7 @@ import {LegalPrivacyComponent} from './ui/layouts/legal/legal-privacy.component'
 		HttpModule,
 		InfiniteScrollModule,
 		JsonpModule,
+		Ng2DeviceDetectorModule.forRoot(),
 		BrowserModule,
 		routing
 	],

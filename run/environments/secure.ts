@@ -4,7 +4,7 @@ import {AotPlugin} from '@ngtools/webpack';
 import {root} from '../config';
 
 export default {
-	name: 'rudl - Secure Production Environment',
+	name: 'rudl - Secure Environment',
 	frontend: {
 		metadata: {
 			"google-site-verification": process.env.GOOGLE_SITE_VERIFICATION
@@ -24,7 +24,9 @@ export default {
 						plugins: [
 							new AotPlugin({
 								tsConfigPath: root('client/tsconfig.json'),
-								entryModule: root('client/app/app.module#AppModule')
+								entryModule: root('client/app/app.module#AppModule'),
+								i18nFile: root(`client/locale/messages.${'de'}.xlf`),
+								locale: 'de'
 							}),
 							new Webpack.optimize.UglifyJsPlugin({
 								compress: {
@@ -51,6 +53,9 @@ export default {
 			file: {
 				enabled: true
 			}
+		},
+		ses: {
+			operational: true
 		}
 	}
 };

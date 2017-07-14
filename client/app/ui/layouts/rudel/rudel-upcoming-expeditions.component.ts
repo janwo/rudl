@@ -8,18 +8,18 @@ import {EmptyState} from '../../widgets/state/empty.component';
 import {ScrollService} from '../../../services/scroll.service';
 
 @Component({
-	templateUrl: 'rudel-expeditions.component.html',
-	styleUrls: ['rudel-expeditions.component.scss']
+	templateUrl: 'rudel-upcoming-expeditions.component.html',
+	styleUrls: ['rudel-upcoming-expeditions.component.scss']
 })
-export class RudelExpeditionsComponent implements OnInit, OnDestroy {
+export class RudelUpcomingExpeditionsComponent implements OnInit, OnDestroy {
 	
 	rudel: Rudel;
 	expeditionsSubscription: Subscription;
 	expeditions: Expedition[];
 	emptyState: EmptyState = {
-		title: 'That\'s sad',
-		image: require('../../../../assets/boarding/radar.png'),
-		description: 'We couldn\'t find any expeditions around here. Create one and make your locals happy!'
+		title: 'Organisiere einen Streifzug in deiner Region!',
+		image: require('../../../../assets/illustrations/no-upcoming-expeditions.png'),
+		description: 'Wir konnten in deiner Region keine bevorstehenden Streifzüge in diesem Rudel finden. Werde jetzt Organisator!'//We couldn\'t find any expeditions around here. Create one and make your locals happy!
 	};
 	
 	constructor(private expeditionService: ExpeditionService,

@@ -1,14 +1,17 @@
-import {AfterViewInit, Component, ElementRef, Input, Optional, ViewChild} from '@angular/core';
+import {
+    AfterViewInit, Component, ElementRef, Input, OnChanges, Optional, SimpleChanges,
+    ViewChild
+} from '@angular/core';
 import * as L from 'leaflet';
 import {ControlValueAccessor, NgControl} from '@angular/forms';
-import {Location} from '../../../../models/location';
+import {Location} from "../../../../models/location";
 
 @Component({
 	templateUrl: 'location-picker.component.html',
 	styleUrls: ['location-picker.component.scss'],
 	selector: 'location-picker'
 })
-export class LocationPickerComponent implements AfterViewInit, ControlValueAccessor {
+export class LocationPickerComponent implements AfterViewInit, ControlValueAccessor, OnChanges {
 	
 	private static source = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 	private static quotas: any = {
@@ -18,20 +21,23 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 		dividerTune: 0,
 		divider: () => LocationPickerComponent.quotas.red + LocationPickerComponent.quotas.green + LocationPickerComponent.quotas.blue + LocationPickerComponent.quotas.dividerTune
 	};
-	
+
+    private location: Location = {
+        latitude: 0,
+        longitude: 0
+    };
+
+    private map: L.Map;
+    private marker: L.Marker;
+    private indicatorMarkers: L.Marker[];
+
 	constructor(@Optional() ngControl: NgControl) {
 		if (ngControl) ngControl.valueAccessor = this;
 	}
-	
-	location: Location = {
-		lat: 0,
-		lng: 0
-	};
-	@Input() zoom: number = 16;
+
+    @Input() zoom: number = 16;
+    @Input() indicators: Location[];
 	@ViewChild('map') mapElement: ElementRef;
-	
-	map: L.Map;
-	marker: L.Marker;
 	
 	ngAfterViewInit(): void {
 		// Create app.
@@ -43,9 +49,7 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 			doubleClickZoom: true,
 			boxZoom: true,
 			tap: true,
-			center: this.location,
 			keyboard: false,
-			attributionControl: false,
 			zoom: this.zoom
 		});
 		
@@ -56,8 +60,9 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 		
 		// Add map layer.
 		new L.TileLayer(LocationPickerComponent.source, {
-			crossOrigin: true
-		}).on('tileload', (e: L.TileEvent) => {
+			crossOrigin: true,
+            attribution: 'Maps provided by © <a target="_blank" href="https://openstreetmap.org/copyright">OpenStreetMap</a> Contributors via <a target="_blank" href="http://leafletjs.com">Leaflet</a>'
+        }).on('tileload', (e: L.TileEvent) => {
 			if (e.tile.getAttribute('data-grayscaled')) return;
 			
 			let canvas = document.createElement("canvas");
@@ -75,17 +80,21 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 		}).addTo(this.map);
 		
 		let icon = L.icon({
-			iconUrl: require('../../../../../assets/map-marker.png') as string,
+			iconUrl: require('../../../../../assets/marker/large.png') as string,
 			className: 'leaflet-icon'
 		});
 		
-		this.marker = L.marker(this.location, {
+		this.marker = L.marker(new L.LatLng(this.location.latitude, this.location.longitude), {
 			icon: icon,
-			clickable: false
+			clickable: false,
+            zIndexOffset: 50
 		}).addTo(this.map);
 		
 		this.map.on('click', (e: any) => {
-			this.setLocation(e.latlng);
+			this.setLocation({
+				latitude: e.latlng.lat,
+				longitude: e.latlng.lng
+			});
 			this.onChange(this.location);
 			this.onTouched();
 		});
@@ -94,9 +103,30 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 	private setLocation(location: Location): void {
 		this.location = location;
 		
-		if (this.marker) this.marker.setLatLng(this.location);
-		if (this.map) this.map.panTo(this.location);
+		if (this.marker) this.marker.setLatLng(new L.LatLng(this.location.latitude, this.location.longitude));
+		if (this.map) this.map.panTo(new L.LatLng(this.location.latitude, this.location.longitude));
 	}
+
+    private setIndicators(locations: Location[]): void {
+        if (!this.map) return;
+
+        if (this.indicatorMarkers) this.indicatorMarkers.forEach(indicator => {
+            this.map.removeLayer(indicator);
+        });
+
+        let icon = L.icon({
+            iconUrl: require('../../../../../assets/marker/small.png') as string,
+            className: 'leaflet-small-icon'
+        });
+
+        this.indicatorMarkers = locations.map(location => {
+            return L.marker(new L.LatLng(location.latitude, location.longitude), {
+                icon: icon,
+                clickable: false,
+                zIndexOffset: 5
+            }).addTo(this.map);
+        });
+    }
 	
 	writeValue(value: Location): void {
 		if (value) this.setLocation(value);
@@ -108,4 +138,8 @@ export class LocationPickerComponent implements AfterViewInit, ControlValueAcces
 	registerOnChange(fn: (_: any) => void): void { this.onChange = fn; }
 	
 	registerOnTouched(fn: () => void): void { this.onTouched = fn; }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if(changes.indicators) this.setIndicators(changes.indicators.currentValue as Location[]);
+    }
 }

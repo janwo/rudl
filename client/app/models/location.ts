@@ -1,6 +1,8 @@
 import {LatLngLiteral} from 'leaflet';
 
-export interface Location extends LatLngLiteral {
+export interface Location {
+	latitude: number;
+	longitude: number;
 }
 
 export interface VagueLocation extends Location {

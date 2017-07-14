@@ -1,9 +1,11 @@
-import {UserRoles, UserValidation} from '../models/user/User';
+import {UserRoles, UserSettingsValidation, UserValidation} from '../models/user/User';
 import {RoutesConfiguration} from '../binders/RoutesBinder';
 import {Config} from '../../../run/config';
 import {AccountController} from '../controllers/AccountController';
 import * as Joi from 'joi';
 import {UserController} from '../controllers/UserController';
+
+const UsernameValidation = Joi.alternatives().try(UserValidation.username, Joi.string().regex(/^me$/));
 
 export const RoutesConfig: RoutesConfiguration = {
 	name: 'account-routes',
@@ -22,7 +24,8 @@ export const RoutesConfig: RoutesConfiguration = {
 					payload: {
 						profileText: UserValidation.profileText.optional(),
 						firstName: UserValidation.firstName.optional(),
-						lastName: UserValidation.lastName.optional()
+						lastName: UserValidation.lastName.optional(),
+						username: UserValidation.username.optional()
 					}
 				}
 			}
@@ -74,9 +77,38 @@ export const RoutesConfig: RoutesConfiguration = {
 				},
 				validate: {
 					payload: {
-						lat: Joi.number().min(-90).max(90),
-						lng: Joi.number().min(-180).max(180)
+						latitude: Joi.number().min(-90).max(90),
+						longitude: Joi.number().min(-180).max(180)
 					}
+				}
+			}
+		},
+		{
+			path: '/api/account/settings',
+			method: 'POST',
+			handler: AccountController.RouteHandlers.updateSettings,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					payload: {
+						settings: UserSettingsValidation
+					}
+				}
+			}
+		},
+		{
+			path: '/api/account/settings',
+			method: 'GET',
+			handler: AccountController.RouteHandlers.settings,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
 				}
 			}
 		},
@@ -128,5 +160,22 @@ export const RoutesConfig: RoutesConfiguration = {
 				}
 			}
 		},
+		{
+			path: '/api/account/terminate',
+			method: 'POST',
+			handler: AccountController.RouteHandlers.terminate,
+			config: {
+				auth: {
+					scope: [
+						UserRoles.user
+					]
+				},
+				validate: {
+					payload: {
+						username: UserValidation.username
+					}
+				}
+			}
+		}
 	]
 };

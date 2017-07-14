@@ -1,52 +1,50 @@
-<carousel #carousel>
+<carousel #carousel (index)="setCarouselIndex($event)">
     <carousel-slide>
         <div class="card" [@fadeIn]="true">
             <div class="image"></div>
-            <h1>{{steps[0]}}</h1>
-            <span i18n>Cool, dass du dich für die App interessierst! Die App ist noch im totalen Anfangsstadium. Einiges ist noch nicht funktionsfähig und übersetzt, deswegen ist Geduld noch wichtig.</span>
+            <h1 i18n="@@1stBoardingHeader">Welcome to rudl</h1>
+            <span i18n="@@1stBoardingDescription">Cool, that you have interest in our project! Your are part of a constantly growing Rudl-Community, where you will find interesting activities and people!</span>
         </div>
     </carousel-slide>
     <carousel-slide>
         <div class="card">
             <div class="image"></div>
-            <h1>{{steps[1]}}</h1>
-            <span>Rudl empfiehlt dir Rudel (Interessen) in deiner Nähe und bringt dich mit ähnlichen Menschen zusammen.</span>
+            <h1 i18n="@@2ndBoardingHeader">Explore rudel</h1>
+            <span i18n="@@2ndBoardingDescription">On our platform new interests and activities are shown as a rudel (german: wolfpack). You can join or create a rudel.</span>
         </div>
     </carousel-slide>
     <carousel-slide>
         <div class="card">
             <div class="image"></div>
-            <h1>{{steps[2]}}</h1>
-            <span>In jedem Rudel kannst du Streifzüge erstellen oder beitreten. Die nächste Grillparty, Happening oder ein spontanes Event in deiner Nachbarschaft.</span>
+            <h1 i18n="@@3rdBoardingHeader">Create expeditions</h1>
+            <span i18n="@@3rdBoardingDescription">In every rudel you can join or plan an expedition, e.g. the next barbecue party, happening or any other spontaneous event in your neighborhood.</span>
         </div>
     </carousel-slide>
     <carousel-slide>
         <div class="card">
             <div class="image"></div>
-            <h1>{{steps[3]}}</h1>
-            <span>Bald wird dir Rudl auch ähnliche Menschen mit deinen Interessen empfehlen können.</span>
+            <h1 i18n="@@4thBoardingHeader">Get out</h1>
+            <span i18n="@@4thBoardingDescription">Meet people who are members of the same rudel and join an expedition. Get out and meet each other.</span>
         </div>
     </carousel-slide>
     <carousel-slide>
         <div class="card">
             <div class="image"></div>
-            <h1>{{steps[4]}}</h1>
-            <span *ngIf="permissionStatus == 'denied'">Seems like you denied the permission, please check your browser settings to enable location sharing!</span>
-            <span *ngIf="permissionStatus != 'denied'"><!--In order to show you all relevant rudels and events near you, rudl needs to access your location.-->Um dir Rudel in deiner Nähe anzuzeigen und die App nutzen zu können, muss dein Standort abgerufen werden.</span>
-            <styled-button *ngIf="permissionStatus != 'denied'" [style]="ButtonStyles.filled"
-                    [text]="permissionStatus == 'granted' ? 'Thank you!' : (permissionStatus == 'granting' ? 'Please wait...' : 'Grant Permission')"
-                    [disabled]="permissionStatus != 'ungranted'" (click)="grantPermission()"></styled-button>
-            <styled-button *ngIf="permissionStatus == 'denied'" [style]="ButtonStyles.filledInverse" [text]="'Get help'"
-                    (click)="openHelpTopic()"></styled-button>
+            <h1 i18n="@@5thBoardingHeader">Grant permission</h1>
+            <span *ngIf="permissionStatus == 'denied'" i18n="@@boardingLocationPermissionDenied">Seems like you denied the permission, please check your browser settings to enable location sharing!</span>
+            <span *ngIf="permissionStatus != 'denied'" i18n="@@boardingLocationPermissionDescription">In order to show you all relevant rudel and events near you, rudl needs to access your location.</span>
+            <styled-button [style]="permissionButtonStyle" [text]="permissionStatus == 'denied' ? 'Nochmal versuchen' : ( permissionStatus == 'granted' ? 'Danke!' : (permissionStatus == 'granting' ? 'Bitte warten...' : 'Berechtigung geben'))"
+                           [disabled]="permissionStatus == 'granted' || permissionStatus == 'granting' " (click)="grantPermission()"></styled-button>
+            <styled-button *ngIf="permissionStatus == 'denied' && getHelpLink()" [style]="helpButtonStyle" [text]="'Brauchst du Hilfe?'" (click)="openHelpLink()"></styled-button>
         </div>
     </carousel-slide>
 </carousel>
 <footer>
-    <styled-button class="back" *ngIf="carousel.index() > 0" [style]="ButtonStyles.filled" [text]="'Go back'"
-            (click)="carousel.back()"></styled-button>
-    <styled-button class="next" *ngIf="carousel.index() < carousel.length() - 1" [style]="ButtonStyles.filled"
-            [text]="'Continue'" (click)="carousel.next()"></styled-button>
-    <styled-button class="done" *ngIf="carousel.index() == carousel.length() - 1" [disabled]="permissionStatus != 'granted'"
-            [style]="ButtonStyles.filled" [text]="'Finish'" (click)="finishBoarding()"></styled-button>
-    <indicator [steps]="carousel.length()" [selectedStep]="carousel.index()"></indicator>
+    <styled-button class="back" *ngIf="carouselIndex > 0" [style]="navigationButtonStyle" [text]="'Zurück'"
+                   (click)="carousel.back()"></styled-button>
+    <styled-button class="next" *ngIf="carouselIndex < 5 - 1" [style]="navigationButtonStyle"
+            [text]="'Weiter'" (click)="carousel.next()"></styled-button>
+    <styled-button class="done" *ngIf="carouselIndex == 5 - 1" [disabled]="permissionStatus != 'granted'"
+                   [style]="navigationButtonStyle" [text]="'Los geht´s!'" (click)="finishBoarding()"></styled-button>
+    <indicator [steps]="5" [selectedStep]="carouselIndex"></indicator>
 </footer>

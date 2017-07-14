@@ -4,7 +4,7 @@
 :host {
   display: block;
   @include setup-max-width();
-  padding: map_get($base-padding, 'default');
+  @include setup-default-padding();
 
   section {
     padding-top: 0;
@@ -13,10 +13,6 @@
       padding-top: map_get($base-padding, 'smaller');
       padding-bottom: map_get($base-padding, 'smaller');
       margin-bottom: map_get($base-padding, 'default');
-
-      .coming-soon {
-        opacity: 0.25;
-      }
     }
   }
 }

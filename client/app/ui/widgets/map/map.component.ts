@@ -19,7 +19,7 @@ import {VagueLocation} from '../../../models/location';
 })
 export class MapComponent implements AfterViewInit, OnChanges {
 	
-	private static iconUrl = require('../../../../assets/map-marker.png') as string;
+	private static iconUrl = require('../../../../assets/marker/large.png') as string;
 	private static source = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 	private static quotas: any = {
 		red: 21,
@@ -30,8 +30,8 @@ export class MapComponent implements AfterViewInit, OnChanges {
 	};
 	
 	@Input() location: VagueLocation = {
-		lat: 0,
-		lng: 0,
+		latitude: 0,
+		longitude: 0,
 		accuracy: 0
 	};
 	@Input() zoom: number = 16;
@@ -52,9 +52,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
 			doubleClickZoom: true,
 			boxZoom: false,
 			tap: true,
-			center: this.location,
 			keyboard: false,
-			attributionControl: false,
 			zoom: this.zoom
 		});
 		
@@ -65,7 +63,8 @@ export class MapComponent implements AfterViewInit, OnChanges {
 		
 		// Add map layer.
 		new L.TileLayer(MapComponent.source, {
-			crossOrigin: true
+			crossOrigin: true,
+			attribution: 'Maps provided by © <a target="_blank" href="https://openstreetmap.org/copyright">OpenStreetMap</a> Contributors via <a target="_blank" href="http://leafletjs.com">Leaflet</a>'
 		}).on('tileload', (e: L.TileEvent) => {
 			if (e.tile.getAttribute('data-grayscaled')) return;
 			
@@ -89,7 +88,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
 	
 	setLocation(location: VagueLocation): void {
 		// Pan map.
-		this.map.panTo(location);
+		this.map.panTo(new L.LatLng(location.latitude, location.longitude));
 		
 		// Remove markers.
 		if (this.accuracyLayer) this.map.removeLayer(this.accuracyLayer);
@@ -97,7 +96,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
 		
 		// Add inaccurate marker.
 		if (location.accuracy > 0) {
-			this.accuracyLayer = new L.Circle(location, location.accuracy, {
+			this.accuracyLayer = new L.Circle(new L.LatLng(location.latitude, location.longitude), location.accuracy, {
 				stroke: true,
 				weight: 10,
 				color: '#fff',
@@ -112,7 +111,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
 		}
 		
 		// Add center marker.
-		this.centerPointLayer = L.marker(location, {
+		this.centerPointLayer = L.marker(new L.LatLng(location.latitude, location.longitude), {
 			icon: L.icon({
 				iconUrl: MapComponent.iconUrl,
 				className: 'leaflet-icon'

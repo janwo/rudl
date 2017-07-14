@@ -11,7 +11,10 @@
 
     li {
       display: inline-block;
-      cursor: pointer;
+
+      &.clickable {
+        cursor: pointer;
+      }
 
       &:not(:last-child) {
         margin-right: map_get($base-padding, 'small');

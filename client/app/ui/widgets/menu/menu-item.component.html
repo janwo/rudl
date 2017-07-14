@@ -1,2 +1,4 @@
-<i class="material-icons" *ngIf="icon">{{icon}}</i><span [@expandHorizontally]="getAnimationState()">{{title}}</span>
+<i class="material-icons" *ngIf="icon">{{icon}}</i>
+<span [@expandHorizontally]="getAnimationState()">{{title}}</span>
+<div *ngIf="notification"></div>
 

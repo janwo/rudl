@@ -1,6 +1,6 @@
-<user-avatar [routerLink]="['/people', comment.owner.username]" [user]="comment.owner"></user-avatar>
+<user-avatar [routerLink]="['/user', comment.owner.username]" [user]="comment.owner"></user-avatar>
 <div class="card" [ngClass]="{pinned: comment.pinned}">
-    <span class="user" [routerLink]="['/people', comment.owner.username]"
+    <span class="user" [routerLink]="['/user', comment.owner.username]"
             [innerHTML]="comment.owner.firstName + ' ' + comment.owner.lastName"></span>
     <span class="message">{{comment.message}}</span>
     <span class="meta">{{formattedDate}}</span>

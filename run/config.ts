@@ -38,7 +38,7 @@ export const Config: {
 		},
 		webpack: {
 			config: {
-				devtool: string,
+				devtool: any,
 				resolve: {
 					extensions: Array<string>,
 					modules: Array<string>,
@@ -122,12 +122,6 @@ export const Config: {
 				clientSecret: string,
 				callbackURL: string
 			},
-			twitter: {
-				password: string,
-				clientID: string,
-				clientSecret: string,
-				callbackURL: string
-			},
 			google: {
 				password: string,
 				clientID: string,
@@ -135,12 +129,13 @@ export const Config: {
 				callbackURL: string
 			}
 		},
-		mailer: {
-			service: string,
-			auth: {
-				user: string,
-				pass: string
-			}
+		ses: {
+			accessKeyId: string,
+			secretAccessKey: string,
+			from: string,
+			rateLimit?: number,
+			region?: string,
+			operational: boolean
 		}
 	}
 } = (() => {

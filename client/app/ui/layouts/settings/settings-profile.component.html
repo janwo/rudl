@@ -1,26 +1,39 @@
-<form class="profile-content" [formGroup]="form">
-    <form-control-wrapper [errorMessages]="{
-                        required: 'Gebe einen Vornamen an.'
-                    }" [infoMessage]="formControlCount(form.get('firstName').value, 24)">
-        <input maxlength="24" formControlName="firstName" type="text"
-                placeholder="Set your first name...">
-    </form-control-wrapper>
-    <form-control-wrapper [errorMessages]="{
-                        required: 'Gebe einen Nachnamen an.'
-                    }" [infoMessage]="formControlCount(form.get('lastName').value, 24)">
-        <input maxlength="24" formControlName="lastName" type="text"
-                placeholder="Set your last name...">
-    </form-control-wrapper>
-    <form-control-wrapper [errorMessages]="{}" [infoMessage]="formControlCount(form.get('profileText').value, 60)">
-        <textarea maxlength="60" formControlName="profileText" placeholder="Enter a short description of you..."></textarea>
-    </form-control-wrapper>
-    <styled-button [style]="profileSubmitButtonStyle" [text]="'Änderungen übernehmen'" (click)="submit()" [disabled]="pendingProfileUpdate"></styled-button>
-</form>
-<div class="avatar-content">
-    <user-avatar [size]="'medium'" [user]="user" [loading]="pendingAvatarUpload"></user-avatar>
-    <input #uploadAvatar type="file" class="hide" max accept="{{uploadMimeTypes.join('|')}}" (change)="onChangedAvatar($event.target)">
-    <span *ngIf="!validAvatar" i18n class="error">File is not an image or exceeds the maximal file size.</span>
-    <styled-button [disabled]="pendingAvatarUpload" [style]="avatarSubmitButtonStyle" [text]="'Profilbild setzen'" (click)="uploadAvatar.click()"></styled-button>
-    <styled-button [disabled]="pendingAvatarUpload" [style]="avatarSubmitButtonStyle" *ngIf="user.hasAvatar" (click)="onDeleteAvatar()" [text]="'Profilbild löschen'"></styled-button>
-</div>
-
+<h2 i18n="@@profileSettings">Profile Settings</h2>
+<section>
+    <form class="profile-content" [formGroup]="form">
+        <form-control-wrapper [errorMessages]="{
+                            required: 'Gebe einen Vornamen an.',
+                            pattern: 'Dein Vorname ist zu kurz.'
+                        }" [infoMessage]="formControlCount(form.get('firstName').value, 24)">
+            <input maxlength="24" formControlName="firstName" type="text"
+                   placeholder="Gebe einen Vornamen an...">
+        </form-control-wrapper>
+        <form-control-wrapper [errorMessages]="{
+                            required: 'Gebe einen Nachnamen an.',
+                            pattern: 'Dein Nachnamen ist zu kurz.'
+                        }" [infoMessage]="formControlCount(form.get('lastName').value, 24)">
+            <input maxlength="24" formControlName="lastName" type="text"
+                   placeholder="Gebe einen Nachnamen an...">
+        </form-control-wrapper>
+        <form-control-wrapper [errorMessages]="{
+                            required: 'Gebe einen Usernamen an.',
+                            minlength: 'Dein Username ist zu kurz.',
+                            pattern: 'Dein Username enthält unerlaubte Zeichen.',
+                            taken: 'Der Nutzername ist vergeben. ' + usernameSuggestion + ' ist noch frei.'
+                        }" [infoMessage]="formControlCount(form.get('username').value, 16)">
+            <input maxlength="16" formControlName="username" type="text"
+                   placeholder="Gebe einen Usernamen an...">
+        </form-control-wrapper>
+        <form-control-wrapper [errorMessages]="{}" [infoMessage]="formControlCount(form.get('profileText').value, 60)">
+            <textarea maxlength="60" formControlName="profileText" placeholder="Gebe einen Profiltext an..."></textarea>
+        </form-control-wrapper>
+        <styled-button [style]="profileSubmitButtonStyle" [text]="'Änderungen übernehmen'" (click)="submit()" [disabled]="pendingProfileUpdate"></styled-button>
+    </form>
+    <div class="avatar-content">
+        <user-avatar [size]="'medium'" [user]="user" [loading]="pendingAvatarUpload"></user-avatar>
+        <input #uploadAvatar type="file" class="hide" max accept="{{uploadMimeTypes.join('|')}}" (change)="onChangedAvatar($event.target)">
+        <span *ngIf="!validAvatar" i18n="@@imageSizeError" class="error">File is not an image or exceeds the maximal file size.</span>
+        <styled-button [disabled]="pendingAvatarUpload" [style]="avatarSubmitButtonStyle" [text]="'Profilbild setzen'" (click)="uploadAvatar.click()"></styled-button>
+        <styled-button [disabled]="pendingAvatarUpload" [style]="avatarSubmitButtonStyle" *ngIf="user.hasAvatar" (click)="onDeleteAvatar()" [text]="'Profilbild löschen'"></styled-button>
+    </div>
+</section>

@@ -3,6 +3,7 @@
 
 $list-margin: map_get($base-padding, 'smaller');
 $list-horizontal-glimpse: map_get($base-padding, 'default');
+$list-horizontal-item-width: 15rem;
 
 :host {
   display: block;
@@ -11,7 +12,6 @@ $list-horizontal-glimpse: map_get($base-padding, 'default');
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
     flex-direction: row;
 
     &.single-column-layout,
@@ -25,11 +25,11 @@ $list-horizontal-glimpse: map_get($base-padding, 'default');
 
     &.horizontal-layout {
       flex-wrap: nowrap;
-      overflow: scroll;
+      overflow: auto;
 
       & > /deep/ * {
+        width: $list-horizontal-item-width;
         margin-right: $list-margin;
-        width: calc(50% - #{$list-margin * 2}) !important;
 
         &:last-child {
           margin-right: 0;
@@ -57,20 +57,28 @@ $list-horizontal-glimpse: map_get($base-padding, 'default');
       }
 
       @include breakpoint('small') {
-        &.two-columns-layout > /deep/ * {
-          width: calc(50% - #{$list-margin / 2});
+        &.two-columns-layout {
+          justify-content: space-between;
 
-          &:nth-child(2) {
-            margin-top: 0;
+          & > /deep/ * {
+            width: calc(50% - #{$list-margin / 2});
+
+            &:nth-child(2) {
+              margin-top: 0;
+            }
           }
         }
 
-        &.three-columns-layout > /deep/ * {
-          width: calc(100% / 3 - #{$list-margin / 2});
+        &.three-columns-layout {
+          justify-content: space-between;
 
-          &:nth-child(2),
-          &:nth-child(3) {
-            margin-top: 0;
+          & > /deep/ * {
+            width: calc(100% / 3 - #{$list-margin / 2});
+
+            &:nth-child(2),
+            &:nth-child(3) {
+              margin-top: 0;
+            }
           }
         }
       }

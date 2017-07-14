@@ -12,8 +12,8 @@ export class LocationSearchComponent implements OnInit, OnDestroy {
 	
 	@ViewChild('searchElement') searchElement: ElementRef;
 	@Input() locationFocus: Location = {
-		lat: 0,
-		lng: 0
+		latitude: 0,
+		longitude: 0
 	};
 	@Output() locationSelected: EventEmitter<Location> = new EventEmitter();
 	

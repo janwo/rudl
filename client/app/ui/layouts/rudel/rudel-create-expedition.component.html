@@ -1,6 +1,6 @@
 <form [formGroup]="form" class="card">
-    <h1>Create your expedition</h1>
-    <carousel #carousel>
+    <h1 i18n="@@createExpedition">Create your expedition</h1>
+    <carousel #carousel (index)="setCarouselIndex($event)">
         <carousel-slide class="split" formGroupName="general">
             <div class="content">
                 <form-control-wrapper [errorMessages]="{
@@ -8,22 +8,22 @@
 						required: 'Gebe einen Titel an.'
 					}" [infoMessage]="formControlCount(form.get('general').get('description').value, 50)">
                     <input maxlength="50" formControlName="title" type="text"
-                            placeholder="Give your expedition a title...">
+                            placeholder="Gebe dem Streifzug einen Namen...">
                 </form-control-wrapper>
                 <form-control-wrapper [errorMessages]="{
 						minlength: 'Die Beschreibung ist zu kurz (mindestens 5 Zeichen).',
 						required: 'Gebe eine Beschreibung an.'
 					}" [infoMessage]="formControlCount(form.get('general').get('description').value, 300)">
                     <textarea maxlength="300" formControlName="description"
-                            placeholder="Enter a short public description..."></textarea>
+                            placeholder="Beschreibe den Streifzug kurz..."></textarea>
                 </form-control-wrapper>
                 <form-control-wrapper>
                     <checkbox formControlName="needsApproval" [text]="'Zugangsbeschränkung'"></checkbox>
                 </form-control-wrapper>
             </div>
             <div class="content info">
-                <h2>Did you know?</h2>
-                <p>You can decide, whether you want to approve new members of the expedition!</p>
+                <h2 i18n="@@decideWhoAttendsTitle">Did you know?</h2>
+                <p i18n="@@decideWhoAttendsDescription">You can decide, whether you want to approve new members of the expedition!</p><!--Du kannst entscheiden, ob du neue Teilnehmer bestätigen möchtest.-->
             </div>
         </carousel-slide>
         <carousel-slide class="split" formGroupName="icon">
@@ -33,19 +33,19 @@
                 </form-control-wrapper>
             </div>
             <div class="content info">
-                <h2>Add an emoji!</h2>
-                <p>Give your expedition an unique icon to increase it's visibility!</p>
+                <h2 i18n="@@addEmojiTitle">Add an emoji!</h2>
+                <p i18n="@@addEmojiDescription">Give your expedition an unique icon to increase it's visibility!</p>
             </div>
         </carousel-slide>
         <carousel-slide class="split" formGroupName="location">
             <div class="content">
                 <form-control-wrapper class="map">
-                    <location-picker formControlName="location"></location-picker>
+                    <location-picker formControlName="location" [indicators]="locations"></location-picker>
                 </form-control-wrapper>
             </div>
             <div class="content info">
-                <h2>Where to go?</h2>
-                <p>Please mark the location of the expedition on the map.</p>
+                <h2 i18n="@@whereToGoTitle">Where to go?</h2>
+                <p i18n="@@whereToGoDescription">Please mark the location of the expedition on the map.</p>
                 <location-search [locationFocus]="form.get('location').get('location').value"
                         (locationSelected)="form.get('location').get('location').setValue($event)"></location-search>
             </div>
@@ -55,25 +55,25 @@
                 <form-control-wrapper [errorMessages]="{
 					required: 'Gebe ein Datum an.'
 					}">
-                    <datetime formControlName="date" [locale]="'de'"></datetime>
+                    <datetime formControlName="date"></datetime>
                 </form-control-wrapper>
                 <form-control-wrapper>
                     <checkbox formControlName="fuzzyTime" [text]="'Öffentliche Uhrzeit verbergen'"></checkbox>
                 </form-control-wrapper>
             </div>
             <div class="content info">
-                <h2>Date of the expedition</h2>
-                <p>Last step, when shall it happen?</p>
+                <h2 i18n="@@setTimeTitle">Set the time</h2>
+                <p i18n="@@setTimeDescription">Last step, when shall it happen?</p>
             </div>
         </carousel-slide>
     </carousel>
     <footer>
-        <styled-button class="back" *ngIf="carousel.index() > 0" [disabled]="submitPending" [text]="'Go back'"
+        <styled-button class="back" *ngIf="carouselIndex > 0" [disabled]="submitPending" [text]="'Zurück'"
                 (click)="carousel.back()"></styled-button>
-        <styled-button class="next" *ngIf="carousel.index() < carousel.length() - 1" [disabled]="submitPending" [text]="'Continue'"
+        <styled-button class="next" *ngIf="carouselIndex < 4 - 1" [disabled]="submitPending" [text]="'Weiter'"
                 (click)="carousel.next()"></styled-button>
-        <styled-button class="done" *ngIf="carousel.index() == carousel.length() - 1" [disabled]="submitPending" (click)="submit()"
-                [text]="'Create Expedition'"></styled-button>
-        <indicator [steps]="carousel.length()" [selectedStep]="carousel.index()"></indicator>
+        <styled-button class="done" *ngIf="carouselIndex == 4 - 1" [disabled]="submitPending" (click)="submit()"
+                [text]="'Erstellen'"></styled-button>
+        <indicator [steps]="4" [selectedStep]="carouselIndex"></indicator>
     </footer>
 </form>

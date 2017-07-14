@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserService, UserStatus} from '../../../services/user.service';
+import {Title} from '@angular/platform-browser';
 
 @Component({
 	templateUrl: 'landing.component.html',
@@ -8,18 +9,14 @@ import {UserService, UserStatus} from '../../../services/user.service';
 })
 export class LandingComponent implements OnInit {
 	
-	showLogin: boolean;
-	
 	constructor(private route: ActivatedRoute,
 	            private router: Router,
-	            private userService: UserService) {}
-	
-	openExternalLink(link: string): void {
-		window.open(link);
-	}
+	            title: Title,
+	            private userService: UserService) {
+			title.setTitle('Entdecke den Puls deiner Stadt! | rudl.me');
+		}
 	
 	ngOnInit(): void {
-		this.showLogin = this.route.snapshot.data['login'];
 		this.userService.getAuthenticatedUserObservable().subscribe(((user: UserStatus) => {
 			if (user.loggedIn) this.router.navigate(['/']);
 		}));

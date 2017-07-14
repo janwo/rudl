@@ -5,10 +5,6 @@ import {Config} from '../../../../run/config';
 
 export interface Rudel extends Node {
 	translations: Translations;
-	defaultLocation: {
-		lng: number,
-		lat: number,
-	};//TODO Median über alle Locations von öffentlichen Expeditions, bei jedem erstellen und löschen von expeditions neu generieren
 	icon: string;
 }
 

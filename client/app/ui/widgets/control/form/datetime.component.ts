@@ -1,4 +1,4 @@
-import {Component, Input, Optional} from '@angular/core';
+import {Component, Input, OnInit, Optional} from '@angular/core';
 import * as moment from 'moment';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {ControlValueAccessor, NgControl} from '@angular/forms';
@@ -33,17 +33,15 @@ import Moment = moment.Moment;
 		])
 	]
 })
-export class DateTimeComponent implements ControlValueAccessor {
+export class DateTimeComponent implements ControlValueAccessor, OnInit {
 	
 	constructor(@Optional() ngControl: NgControl) {
 		if (ngControl) ngControl.valueAccessor = this;
 	}
-	
-	@Input() set locale(string: string) {
-		if (!string) return;
-		this.selectedMoment.locale(string);
-		this.invalidate();
-	}
+
+    ngOnInit(): void {
+	    this.invalidate();
+    }
 	
 	@Input() set minDateTime(string: string) {
 		if (!string) return;

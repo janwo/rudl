@@ -9,12 +9,12 @@
         <!--{value: user.statistics.lists, subject: 'Liste(n)', link: ['lists']},-->
         <statistics [statistics]="[
 		{value: user.statistics.likees, subject: 'Folgt', link: ['likees']},
-		{value: user.statistics.likers, subject: 'Liker', link: ['likers']}
+		{value: user.statistics.likers, subject: 'Anhänger', link: ['likers']}
 		]"></statistics>
         <div class="cta" *ngIf="!!user.relations">
             <styled-button [style]="user.relations.isLikee ? buttonStyleFollowing : buttonStyleDefault"
                     (click)="onToggleFollow()" [disabled]="pendingFollowRequest"
-                    [text]="user.relations.isLikee ? 'Following' : 'Follow'"></styled-button>
+                    [text]="user.relations.isLikee ? 'Du folgst' : 'Folgen'"></styled-button>
         </div>
     </div>
 </div>
@@ -25,7 +25,7 @@
                 [link]="['lists']"></menu-item>-->
         <menu-item [makeRoomIfSmall]="true" [icon]="'people_outline'" [title]="'Folgt'"
                 [link]="['likees']"></menu-item>
-        <menu-item [makeRoomIfSmall]="true" [icon]="'people_outline'" [title]="'Liker'"
+        <menu-item [makeRoomIfSmall]="true" [icon]="'people_outline'" [title]="'Anhänger'"
                 [link]="['likers']"></menu-item>
     </menu>
     <router-outlet></router-outlet>

@@ -4,12 +4,25 @@
 :host {
   line-height: map_get($base-line-height, 'multiline');
 
-  p {
+  .address {
     display: flex;
     flex-direction: column;
 
     & > *:first-child {
       font-weight: $base-font-weight-bold;
     }
+  }
+
+  a {
+    font-weight: $base-font-weight-bold;
+  }
+
+  li {
+    list-style: circle inside;
+    margin-bottom: map_get($base-padding, 'smallest');
+  }
+
+  .card:not(:first-child) {
+    margin-top: map_get($base-padding, 'default');
   }
 }

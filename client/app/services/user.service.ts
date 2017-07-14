@@ -1,14 +1,21 @@
 import {DataService, JsonResponse} from './data.service';
 import {Router} from '@angular/router';
 import {Injectable} from '@angular/core';
+import * as geolib from 'geolib';
+import * as moment from 'moment';
 import {BehaviorSubject, Observable, ReplaySubject} from 'rxjs';
-import {AuthenticatedUser, User, UserRecipe} from '../models/user';
+import {AuthenticatedUser, User, UserRecipe, UserSettings, UserSettingsRecipe} from '../models/user';
 import {Location} from '../models/location';
 import {Notification} from '../models/notification';
 
 export interface UserStatus {
-	loggedIn: boolean;
-	user: AuthenticatedUser
+    loggedIn: boolean;
+    user: AuthenticatedUser
+}
+
+export interface UsernameCheckResult {
+    available: boolean;
+    suggestion?: string
 }
 
 @Injectable()
@@ -17,10 +24,13 @@ export class UserService {
 	private authenticatedProfile: BehaviorSubject<UserStatus> = new BehaviorSubject<UserStatus>(null);
 	private authenticatedProfileObservable: Observable<UserStatus> = this.authenticatedProfile.asObservable().filter(user => !!user);
 	private currentLocation: ReplaySubject<Position> = new ReplaySubject(1);
+
 	private locationUpdates: Observable<Location> = this.currentLocation.asObservable().flatMap((position: Position) => {
-		let location: Location = {
-			lat: position.coords.latitude,
-			lng: position.coords.longitude
+		if(!position) return Observable.of(null).delay(1000);
+
+	    let location: Location = {
+			latitude: position.coords.latitude,
+			longitude: position.coords.longitude
 		};
 		
 		// Just return current location, if new location is less than 100 meters away.
@@ -41,18 +51,21 @@ export class UserService {
 				console.log(`authenticatedProfile was set to: username = ${authenticatedUser.user.username}, language = ${authenticatedUser.user.languages ? authenticatedUser.user.languages[0] : 'none'}.`);
 				
 				// Request position updates immediately if user is boarded.
-				if (authenticatedUser.user.onBoard && this.watchPositionCallerId === false) {
-					console.log('Resume position updates...');
-					this.resumePositionUpdates();
-				}
-			} else
+				if (authenticatedUser.user.onBoard) this.resumePositionUpdates();
+
+				// Set moment language.
+                moment.locale(authenticatedUser.user.languages);
+
+			} else {
 				console.log(`authenticatedProfile got removed.`);
+				this.pausePositionUpdates();
+			}
 		});
 		
 		// Listen on token expeditions in data service and redirect it to the authenticatedProfile observer.
-		this.dataService.getTokenObservable().flatMap((tokenString: string) => {
-			return tokenString ? this.get() : Observable.of(null);
-		}).subscribe((user: AuthenticatedUser) => {
+		this.dataService.getTokenObservable().switchMap((tokenString: string) => {
+			return tokenString ? this.get().repeatWhen(notifications => notifications.delay(300000)) : Observable.of(null);
+		}).distinctUntilChanged((user: AuthenticatedUser) => !!user).subscribe((user: AuthenticatedUser) => {
 			this.authenticatedProfile.next({
 				loggedIn: !!user,
 				user: user
@@ -65,14 +78,10 @@ export class UserService {
 	
 	getUsersDistance(location: Location): number {
 		let userStatus = this.getAuthenticatedUser();
-		if (!userStatus.user || !userStatus.user.location) return NaN;
+		if (!userStatus || !userStatus.user || !userStatus.user.location) return NaN;
 		
 		// Calculate distance.
-		let pi = Math.PI / 180;
-		let R = 6378137; // Earth’s radius
-		let a = 0.5 - Math.cos((userStatus.user.location.lat - location.lat) * pi) / 2 + Math.cos(location.lng * pi)
-			* Math.cos(userStatus.user.location.lat * pi) * (1 - Math.cos((userStatus.user.location.lng - location.lng) * pi)) / 2;
-		return Math.floor(R * Math.asin(Math.sqrt(a)) * 2);
+        return geolib.getDistance(userStatus.user.location, location);
 	}
 	
 	getAuthenticatedUser(): UserStatus {
@@ -84,20 +93,23 @@ export class UserService {
 	}
 	
 	resumePositionUpdates(): void {
-		this.pausePositionUpdates();
+		if(this.watchPositionCallerId !== false) return;
+		console.log('Resume position updates...');
 		this.watchPositionCallerId = navigator.geolocation.watchPosition((position: Position) => {
 			this.currentLocation.next(position);
 		}, (error: PositionError) => {
-			this.currentLocation.error(error);
+            this.pausePositionUpdates();
+			this.currentLocation.next(null);
 		}, {
 			enableHighAccuracy: false,
-			maximumAge: 1000 * 60,
-			timeout: 1000 * 60
+			maximumAge: 1000 * 30,
+			timeout: 1000 * 30
 		});
 	}
 	
 	pausePositionUpdates(): void {
 		if (this.watchPositionCallerId !== false) {
+			console.log('Pause position updates...');
 			navigator.geolocation.clearWatch(this.watchPositionCallerId);
 			this.watchPositionCallerId = false;
 		}
@@ -107,22 +119,38 @@ export class UserService {
 		return this.locationUpdates;
 	}
 	
-	signUp(username: string, password: string): void {
-	
+	signUp(username: string, password: string): Observable<void> {
+        return;
 	}
+
+    signIn(username: string, password: string): Observable<void> {
+        return;
+    }
+
+    terminate(): Observable<boolean> {
+        return this.dataService.post('/api/account/terminate', JSON.stringify({
+            username: this.getAuthenticatedUser().user.username
+        }), true).map(response => {
+            if (response.statusCode == 200) {
+                this.dataService.removeToken();
+                this.authenticatedProfile.next(null);
+                return true;
+            }
+
+            return false;
+        }).share();
+    }
 	
-	signIn(username: string, password: string): void {
-	
-	}
-	
-	signOut(): void {
-		this.dataService.get('/api/sign_out', true).subscribe(response => {
+	signOut(): Observable<boolean> {
+		return this.dataService.get('/api/sign-out', true).map(response => {
 			if (response.statusCode == 200) {
 				this.dataService.removeToken();
 				this.authenticatedProfile.next(null);
-				this.router.navigate(['/sign_up']);
+				return true;
 			}
-		});
+
+			return false;
+		}).share();
 	}
 	
 	get(username: string = 'me'): Observable<User | AuthenticatedUser> {
@@ -137,16 +165,16 @@ export class UserService {
 		return this.dataService.get(`/api/users/=/${username}/likees?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
 	}
 	
-	follow(username: string): Observable<User> {
-		return this.dataService.post(`/api/users/follow/${username}`, null, true).map((json: JsonResponse) => json.data as User).share();
+	like(username: string): Observable<User> {
+		return this.dataService.post(`/api/users/like/${username}`, null, true).map((json: JsonResponse) => json.data as User).share();
 	}
 	
-	unfollow(username: string): Observable<User> {
-		return this.dataService.post(`/api/users/unfollow/${username}`, null, true).map((json: JsonResponse) => json.data as User).share();
+	dislike(username: string): Observable<User> {
+		return this.dataService.post(`/api/users/dislike/${username}`, null, true).map((json: JsonResponse) => json.data as User).share();
 	}
 	
-	like(query: string, offset = 0, limit = 25): Observable<User[]> {
-		return this.dataService.get(`/api/users/like/${query}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
+	search(query: string, offset = 0, limit = 25): Observable<User[]> {
+		return this.dataService.get(`/api/users/search/${query}?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
 	}
 	
 	updateLocation(location: Location): Observable<AuthenticatedUser> {
@@ -165,8 +193,14 @@ export class UserService {
 		})).share();
 	}
 	
-	suggestedPeople(offset = 0, limit = 25): Observable<User[]> {
-		return this.dataService.get(`/api/suggestions/people?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
+	settings(): Observable<UserSettings> {
+		return this.dataService.get(`/api/account/settings`, true).map((json: JsonResponse) => json.data).share();
+	}
+	
+	updateSettings(recipe: UserSettingsRecipe): Observable<UserSettings> {
+		return this.dataService.post(`/api/account/settings`, `${JSON.stringify({
+			settings: recipe
+		})}`, true).map((json: JsonResponse) => json.data).share();
 	}
 	
 	updateAvatar(file: File): Observable<AuthenticatedUser> {
@@ -185,6 +219,20 @@ export class UserService {
 	}
 	
 	notifications(offset = 0, limit = 25): Observable<Notification[]> {
-		return this.dataService.get(`/api/account/notifications?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
+		return this.dataService.get(`/api/account/notifications?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).do(() => {
+			this.getAuthenticatedUser().user.unreadNotifications = 0;
+		}).share();
 	}
+
+	suggested(offset = 0, limit = 25): Observable<User[]> {
+		return this.dataService.get(`/api/users/suggested?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
+	}
+
+	recent(offset = 0, limit = 25): Observable<User[]> {
+		return this.dataService.get(`/api/users/recent?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
+	}
+
+	checkUsername(username: string): Observable<UsernameCheckResult> {
+        return this.dataService.get(`/api/account/check-username/${username}`, false).map((json: JsonResponse) => json.data).share();
+    }
 }

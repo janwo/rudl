@@ -1,14 +1,15 @@
 @import '../../variables.scss';
 @import "../../mixins.scss";
 
-$boarding-size: 15rem;
+$boarding-size: map_get($base-breakpoints, 'small') / 2;
+$boarding-image-max-size: $boarding-size * 2 / 3;
 
 :host {
+  min-height: 100%;
   display: flex;
-  height: 100%;
   flex-direction: column;
   @include setup-max-width();
-  padding: map_get($base-padding, 'default');
+  @include setup-default-padding();
   justify-content: space-between;
 
   carousel {
@@ -16,49 +17,73 @@ $boarding-size: 15rem;
     margin-bottom: auto;
 
     carousel-slide {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: block;
 
       .card {
-        width: $boarding-size + 2 * map_get($base-padding, 'default');
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+        max-width: $boarding-size - 2 * map_get($base-padding, 'smaller');
         flex: 1 1 auto;
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: map_get($base-padding, 'default');
+        text-align: center;
+        padding: map_get($base-padding, 'smaller');
 
         .image {
           width: 100%;
-          flex: 1 1 auto;
-          background: no-repeat top center;
-          background-size: contain;
-        }
+          max-width: $boarding-image-max-size;
+          flex: 0 0 auto;
 
-        &:nth-child(1) .image,
-        &:nth-child(2) .image,
-        &:nth-child(3) .image,
-        &:nth-child(4) .image,
-        &:nth-child(5) .image {
-          background-image: url(../../../../assets/boarding/radar.png);
+          &:after {
+            content: '';
+            width: 100%;
+            display: block;
+            padding-bottom: 100%;
+            background: no-repeat center;
+            background-size: contain;
+          }
         }
 
         h1 {
-          text-align: center;
+          margin-top: map_get($base-padding, 'smaller');
         }
 
         span {
-          text-align: center;
+          hyphens: auto;
           display: block;
           line-height: map_get($base-line-height, 'multiline');
-          width: $boarding-size;
           color: map_get($base-colors, 'primary-text');
         }
 
         styled-button {
           margin-top: map_get($base-padding, 'default');
+
+          &:last-of-type:not(:first-of-type) {
+            margin-top: 0;
+          }
         }
+      }
+
+      &:nth-child(1) .card .image:after {
+        background-image: url(../../../../assets/illustrations/welcome.png);
+      }
+
+      &:nth-child(2) .card .image:after {
+        background-image: url(../../../../assets/illustrations/explore-rudel.png);
+      }
+
+      &:nth-child(3) .card .image:after {
+        background-image: url(../../../../assets/illustrations/create-expeditions.png);
+      }
+
+      &:nth-child(4) .card .image:after {
+        background-image: url(../../../../assets/illustrations/get-out.png);
+      }
+
+      &:nth-child(5) .card .image:after {
+        background-image: url(../../../../assets/illustrations/grant-permission.png);
       }
     }
   }
@@ -68,7 +93,7 @@ $boarding-size: 15rem;
     display: flex;
     flex-direction: row;
     position: relative;
-    margin-top: map_get($base-padding, 'default');
+    margin-top: map_get($base-padding, 'smaller');
 
     styled-button {
       margin: 0;

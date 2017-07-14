@@ -38,6 +38,7 @@ export class MenuItemComponent implements OnInit, OnDestroy, AfterViewChecked {
 	@Input() icon: string;
 	@Input() title: string;
 	@Input() link: string[];
+	@Input() notification: boolean;
 	routerChanges: Subscription;
 	checkRoom = (mql: MediaQueryList): void => {
 		this.makeRoom = !mql.matches;
@@ -52,19 +53,22 @@ export class MenuItemComponent implements OnInit, OnDestroy, AfterViewChecked {
 	}
 	
 	ngOnInit() {
-		this.routerChanges = this.router.events.filter((event: Event) => event instanceof NavigationEnd).subscribe(() => {
-			if (!this.link) {
-				this.isActive = false;
-				return;
-			}
-			
-			let urlTree = this.router.createUrlTree(this.link, {
-				relativeTo: this.route
-			});
-			
-			this.isActive = this.router.isActive(urlTree, false);
-		});
+        this.update();
+		this.routerChanges = this.router.events.filter((event: Event) => event instanceof NavigationEnd).subscribe(() => this.update());
 	}
+
+	update(): void {
+        if (!this.link) {
+            this.isActive = false;
+            return;
+        }
+
+        let urlTree = this.router.createUrlTree(this.link, {
+            relativeTo: this.route
+        });
+
+        this.isActive = this.router.isActive(urlTree, false);
+    }
 	
 	ngAfterViewChecked() {
 		if (this.makeRoomIfSmall) {
@@ -78,8 +82,8 @@ export class MenuItemComponent implements OnInit, OnDestroy, AfterViewChecked {
 		MenuItemComponent.mql.removeListener(this.checkRoom);
 	}
 	
-	@HostListener('click', ['$event'])
-	onClick(event: Event) {
+	@HostListener('click')
+	onClick() {
 		// Navigate, if link was set.
 		if (this.link) this.router.navigate(this.link, {
 			relativeTo: this.route

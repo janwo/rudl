@@ -8,7 +8,7 @@ export class StrategiesBinder {
 		let defaultStrategiesFound: number = 0;
 		Glob.sync(Path.resolve(__dirname, `../strategies/**/*.ts`)).forEach(file => {
 			// Configure strategy.
-			let config: any = require(file).StrategyConfig;
+			let config: StrategyConfiguration = require(file).StrategyConfig;
 			server.auth.strategy(config.strategyName, config.schemeName, config.strategyConfig);
 			
 			// Set as default strategy?

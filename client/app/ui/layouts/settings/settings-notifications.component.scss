@@ -1,0 +1,17 @@
+@import '../../variables.scss';
+@import "../../mixins.scss";
+
+$settings-profile-component-avatar-size: 7.5rem;
+
+:host {
+  display: block;
+
+  section {
+    display: flex;
+    flex-direction: column;
+
+    styled-button {
+      margin-top: map_get($base-padding, 'smaller') - map_get($base-padding, 'small');
+    }
+  }
+}

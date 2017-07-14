@@ -80,11 +80,14 @@
   border-radius: $base-border-radius;
   background-color: map_get($base-colors, 'background-highlighted');
   box-shadow: map_get($base-shadow, 'default');
+
+  @include breakpoint('small') {
+    padding: map_get($base-padding, 'smaller');
+  }
 }
 
 /deep/ .material-icons {
   font-size: inherit;
-  line-height: inherit;
 }
 
 /deep/ small {

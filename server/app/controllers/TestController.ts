@@ -11,12 +11,13 @@ import * as shortid from 'shortid';
 export module TestController {
 	
 	export function generateUser(): User {
-		let date = [
-			faker.date.past().toISOString(),
-			faker.date.past().toISOString()
-		].sort();
 		let firstName = faker.name.firstName();
 		let lastName = faker.name.lastName();
+		let date: number[] = [
+			faker.date.past().getTime() / 1000,
+			faker.date.past().getTime() / 1000
+		].sort();
+		
 		// Return.
 		return {
 			id: shortid.generate(),
@@ -38,8 +39,8 @@ export module TestController {
 				UserRoles.user
 			],
 			location: {
-				lat: Number.parseFloat(faker.address.latitude()),
-				lng: Number.parseFloat(faker.address.longitude())
+				latitude: Number.parseFloat(faker.address.latitude()),
+				longitude: Number.parseFloat(faker.address.longitude())
 			},
 			avatarId: null,
 			onBoard: true,
@@ -52,16 +53,12 @@ export module TestController {
 	
 	export function generateRudel(): Rudel {
 		let translations: string[] = ['de', 'en', 'fr', 'es'];
-		let date: string[] = [
-			faker.date.past().toISOString(),
-			faker.date.past().toISOString()
+		let date: number[] = [
+			faker.date.past().getTime() / 1000,
+			faker.date.past().getTime() / 1000
 		].sort();
 		let rudel: Rudel = {
 			id: shortid.generate(),
-			defaultLocation: {
-				lat: Number.parseFloat(faker.address.latitude()),
-				lng: Number.parseFloat(faker.address.longitude())
-			},
 			translations: {},
 			icon: faker.random.arrayElement(Object.keys(faker.random.objectElement<any>(Config.backend.icons).icons)),
 			createdAt: date[0],

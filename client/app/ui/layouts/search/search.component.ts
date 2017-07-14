@@ -9,6 +9,7 @@ import {SearchService} from '../../../services/search.service';
 import {ActivatedRoute} from '@angular/router';
 import {ListService} from '../../../services/list.service';
 import {RudelService} from '../../../services/rudel.service';
+import {RudelItemStyles} from '../../widgets/rudel/rudel-item.component';
 
 @Component({
 	templateUrl: 'search.component.html',
@@ -33,14 +34,17 @@ export class SearchComponent implements OnDestroy, OnInit {
 	
 	rudel: Rudel[] = null;
 	collapsedRudel: boolean = true;
-	expandedRudelCreation: boolean = false;
+	expandedRudel: boolean = false;
+	rudelAnimationState: boolean = false;
+	rudelItemStyle: RudelItemStyles = RudelItemStyles.list;
+	
 	lists: List[] = null;
-	collapsedLists: boolean = true;
-	expandedListCreation: boolean = false;
+	
 	users: User[] = null;
-	collapsedUsers: boolean = true;
+	
 	querySubscription: Subscription;
 	searchValue: string = null;
+	searching: boolean;
 	
 	constructor(private listService: ListService,
 	            private userService: UserService,
@@ -51,18 +55,21 @@ export class SearchComponent implements OnDestroy, OnInit {
 	ngOnInit(): void {
 		// Register for query changes.
 		this.querySubscription = this.searchService.onQueryChangedDebounced.do(() => {
+			this.searching = false;
 			this.searchValue = null;
 			this.rudel = null;
 			this.lists = null;
 			this.users = null;
 		}).filter(query => query && query.length >= 3).flatMap((query: string) => {
+			this.searching = true;
 			return Observable.zip(
-				this.rudelService.like(query, 0, 5),
-				this.listService.like(query, 0, 5),
-				this.userService.like(query, 0, 5),
+				this.rudelService.search(query, 0, 5),
+				this.listService.search(query, 0, 5),
+				this.userService.search(query, 0, 5),
 				Observable.from([query])
 			);
 		}).subscribe((values: [Rudel[], List[], User[], string]) => {
+			this.searching = false;
 			this.searchValue = values[3];
 			this.rudel = values[0];
 			this.lists = values[1];
@@ -73,8 +80,20 @@ export class SearchComponent implements OnDestroy, OnInit {
 		this.activatedRoute.params.map(params => params['query']).forEach(query => this.searchService.search(query));
 	}
 	
-	log(j: any) {
-		console.log(j);
+	onShrinkRudelStarted(): void {
+		this.expandedRudel = false;
+	}
+	
+	onShrinkRudelCompleted(): void {
+		this.collapsedRudel = true;
+	}
+	
+	onExpandRudelStarted(): void {
+		this.collapsedRudel = false;
+	}
+	
+	onExpandRudelCompleted(): void {
+		this.expandedRudel = true;
 	}
 	
 	ngOnDestroy(): void {

@@ -6,7 +6,7 @@ import * as chalk from 'chalk';
 class WebpackManager {
 	static start() {
 		// Create webpack compiler.
-		const webpackCompiler = Webpack([Config.frontend.webpack.config]);
+		const webpackCompiler = Webpack(Config.frontend.webpack.config);
 		
 		// Listen on "done" to output stats.
 		webpackCompiler.plugin('done', (stats: any) => {

@@ -1,8 +1,8 @@
 <item-wrapper *ngIf="rudel && rudel.length > 0; else loading">
-    <rudel-item *ngFor="let rudel of rudel" [rudel]="rudel"></rudel-item>
+    <rudel-item [style]="rudelItemStyle" *ngFor="let rudel of rudel" [rudel]="rudel"></rudel-item>
 </item-wrapper>
 
 <ng-template #loading>
     <loading *ngIf="rudel == null"></loading>
-    <empty [emptyState]="emptyState" *ngIf="rudel && rudel.length == 0"></empty>
+    <empty [emptyState]="isAuthenticatedUser ? emptyStateAuthenticatedProfile : emptyState" *ngIf="rudel && rudel.length == 0"></empty>
 </ng-template>

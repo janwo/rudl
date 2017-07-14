@@ -4,6 +4,7 @@
 <head>
     <base href="<%= htmlWebpackPlugin.options.baseUrl %>">
     <title><%= htmlWebpackPlugin.options.title %></title>
+    <link rel="canonical" href="<%= htmlWebpackPlugin.options.domain %>">
     
     <style>
         html,
@@ -19,7 +20,7 @@
         }
         
         body {
-            overflow: scroll;
+            overflow: auto;
         }
     </style>
     

@@ -34,7 +34,9 @@ export default {
 			'apple-mobile-web-app-title': 'Rudl',
 			'apple-mobile-web-app-capable': 'yes',
 			'apple-mobile-web-app-status-bar-style': '#50E3C2',
-			'msapplication-navbutton-color': '#50E3C2'
+			'msapplication-navbutton-color': '#50E3C2',
+			'robots': 'follow,index',
+			'description': 'Bei rudl einfach und entspannt die eigene Stadt kennenlernen, gleichgesinnte Menschen finden und die Freizeitgestaltung transparenter und einfach planbar gestalten.'
 		},
 		messageTypes: {
 			oauth: 'OAUTH_TOKEN_MESSAGE'
@@ -130,12 +132,13 @@ export default {
 							new HtmlWebpackPlugin({
 								filename: Config.paths.public.filename,
 								template: root('client/index.ejs'),
-								title: Config.name,
+								title: 'Entdecke den Puls deiner Stadt! | rudl.me'/*Config.name*/,
 								baseUrl: '/',
+                                domain: Config.backend.domain,
 								metadata: Config.frontend.metadata
 							}),
 							new Webpack.optimize.CommonsChunkPlugin({
-								name: [
+								names: [
 									'static/app', 'static/vendor', 'static/polyfill'
 								]
 							}),
@@ -208,12 +211,6 @@ export default {
 				clientSecret: process.env.FACEBOOK_SECRET,
 				callbackURL: '/oauth/facebook'
 			},
-			twitter: {
-				password: 'oqbK@by0%#uoqbfdfby0%#uoqbK@by0%#u',
-				clientID: process.env.TWITTER_ID || 'cVJWo8A0jf3WyG0ufbmDXVXwN',
-				clientSecret: process.env.TWITTER_SECRET || 'vTyr3SLCUJU2EIEa3h9ZADZLh2ZUkomsmk1liSnG8649qnyIgo',
-				callbackURL: '/oauth/twitter'
-			},
 			google: {
 				password: process.env.GOOGLE_PASSWORD,
 				clientID: process.env.GOOGLE_ID,
@@ -221,12 +218,13 @@ export default {
 				callbackURL: '/oauth/google'
 			}
 		},
-		mailer: {
-			service: process.env.MAILER_SERVICE_PROVIDER || 'MAILER_SERVICE_PROVIDER',
-			auth: {
-				user: process.env.MAILER_EMAIL_ID || 'MAILER_EMAIL_ID',
-				pass: process.env.MAILER_PASSWORD || 'MAILER_PASSWORD'
-			}
+		ses: {
+			accessKeyId: process.env.AWS_ID,
+			secretAccessKey: process.env.AWS_SECRET,
+			from: 'noreply@rudl.me',
+			rateLimit: 14,
+			region: 'eu-west-1',
+			operational: false
 		}
 	}
 };

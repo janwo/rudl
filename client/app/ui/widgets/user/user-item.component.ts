@@ -11,6 +11,7 @@ export class UserItemComponent implements OnInit {
 	@Input() user: User = null;
 	@Input() highlight: string = null;
 	@Input() info: string;
+	@Input() style: UserItemStyles = UserItemStyles.list;
 	
 	constructor() {}
 	
@@ -19,15 +20,29 @@ export class UserItemComponent implements OnInit {
 		if(!this.info) {
 			// Choose default message.
 			if (!this.user.relations) {
-				this.info = `This is you!`;
+				this.info = `Das bist du!`;
 				return;
 			}
 			
 			let choices = [
-				`You have ${this.user.relations.mutualLikers} mutual likers`,
-				`You have ${this.user.relations.mutualLikees} mutual likees`
+				`Du hast ${this.user.relations.mutualLikers} gemeinsame Anhänger`,
+				`Ihr beide folgt gemeinsam ${this.user.relations.mutualLikees} Nutzer`
 			];
 			this.info = choices[Math.trunc(choices.length * Math.random())];
 		}
 	}
+	
+	getStyleClass(): string {
+		switch (this.style) {
+			case UserItemStyles.list:
+				return 'card list';
+
+			case UserItemStyles.block:
+				return 'card block';
+		}
+	}
+}
+
+export enum UserItemStyles {
+	list, block
 }
