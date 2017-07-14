@@ -37,6 +37,6 @@ services:
       - "7687:7687"
     volumes:
       - ./db/neo4j/conf:/var/lib/neo4j/conf
-      - ./db/neo4j/data:/data
+      - ./db/neo4j/data:/var/lib/neo4j/data
       - ./db/neo4j/plugins:/plugins
       - ./db/neo4j/logs:/logs
