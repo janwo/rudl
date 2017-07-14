@@ -7,8 +7,9 @@ import {DecodedToken, TokenData, UserDataCache} from '../models/Token';
 import {AccountController} from './AccountController';
 import {UserAuthProvider} from '../models/user/UserAuthProvider';
 import * as CryptoJS from 'crypto-js';
-import Transaction from 'neo4j-driver/lib/v1/transaction';
-import Session from 'neo4j-driver/lib/v1/session';
+import {StatementResult} from 'neo4j-driver/types/v1/result';
+import Transaction from 'neo4j-driver/types/v1/transaction';
+import Session from 'neo4j-driver/types/v1/session';
 
 export module AuthController {
 	

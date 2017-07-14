@@ -1,34 +1,35 @@
 import * as Boom from 'boom';
 import * as dot from 'dot-object';
-import Transaction from 'neo4j-driver/lib/v1/transaction';
+import Transaction from 'neo4j-driver/types/v1/transaction';
 import {Config} from '../../../run/config';
 import {User} from '../models/user/User';
 import {DatabaseManager, TransactionSession} from '../Database';
 import {AccountController} from './AccountController';
 import {UtilController} from './UtilController';
+import {StatementResult} from 'neo4j-driver/types/v1/result';
 import {UserStatistics} from '../../../client/app/models/user';
 import {NotificationType} from "../models/notification/Notification";
 
 export module UserController {
 	
 	export function findByFulltext(transaction: Transaction, query: string, skip = 0, limit = 25): Promise<User[]> {
-		return transaction.run<User, any>('CALL apoc.index.search("User", $query) YIELD node WITH properties(node) as u RETURN u SKIP $skip LIMIT $limit', {
+		return transaction.run('CALL apoc.index.search("User", $query) YIELD node WITH properties(node) as u RETURN u SKIP $skip LIMIT $limit', {
 			query: `${DatabaseManager.neo4jFunctions.escapeLucene(query)}~`,
 			skip: skip,
 			limit: limit
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u'));
 	}
 	
 	export function findByUsername(transaction: Transaction, username: string): Promise<User> {
-		return transaction.run<User, any>('MATCH(u:User {username: $username}) RETURN COALESCE(properties(u), []) as u LIMIT 1', {
+		return transaction.run('MATCH(u:User {username: $username}) RETURN COALESCE(properties(u), []) as u LIMIT 1', {
 			username: username
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift());
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u').shift());
 	}
 	
 	export function findByMail(transaction: Transaction, mail: string): Promise<User> {
-		return transaction.run<User, any>('MATCH(u:User) WHERE (u.mails_primary_mail = $mail AND u.mails_primary_verified) OR (u.mails_secondary_mail = $mail AND u.mails_secondary_verified) RETURN COALESCE(properties(u), []) as u LIMIT 1', {
+		return transaction.run('MATCH(u:User) WHERE (u.mails_primary_mail = $mail AND u.mails_primary_verified) OR (u.mails_secondary_mail = $mail AND u.mails_secondary_verified) RETURN COALESCE(properties(u), []) as u LIMIT 1', {
 			mail: mail
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift());
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u').shift());
 	}
 	
 	export interface UserStatistics {
@@ -81,10 +82,10 @@ export module UserController {
 		queries.push(`RETURN {${transformations.join(',')}}`);
 		
 		// Run query.
-		return transaction.run<any, any>(queries.join(' '), {
+		return transaction.run(queries.join(' '), {
 			userId: user.id,
 			relatedUserId: relatedUser.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 0).shift());
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 0).shift());
 	}
 	
 	export function getPublicUser(transaction: Transaction, user: User | User[], relatedUser: User, preview = false): Promise<any | any[]> {
@@ -181,19 +182,19 @@ export module UserController {
 	}
 	
 	export function likers(transaction: Transaction, user: User, skip: number = 0, limit: number = 25): Promise<User[]> {
-		return transaction.run<User, any>(`MATCH(:User {id: $userId})<-[:LIKES_USER]-(likers:User) RETURN COALESCE(properties(likers), []) as likers SKIP $skip LIMIT $limit`, {
+		return transaction.run(`MATCH(:User {id: $userId})<-[:LIKES_USER]-(likers:User) RETURN COALESCE(properties(likers), []) as likers SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			skip: skip,
 			limit: limit
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'likers'));
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'likers'));
 	}
 	
 	export function likees(transaction: Transaction, user: User, skip: number = 0, limit: number = 25): Promise<User[]> {
-		return transaction.run<User, any>(`MATCH(:User {id: $userId})-[:LIKES_USER]->(likees:User) RETURN COALESCE(properties(likees), []) as likees SKIP $skip LIMIT $limit`, {
+		return transaction.run(`MATCH(:User {id: $userId})-[:LIKES_USER]->(likees:User) RETURN COALESCE(properties(likees), []) as likees SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			skip: skip,
 			limit: limit
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'likees'));
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'likees'));
 	}
 	
 	export function like(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
@@ -217,19 +218,19 @@ export module UserController {
 	}
 
     export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<User[]> {
-        return transaction.run<User, any>('MATCH (u:User)<-[:LIKES_USER]-(u1:User {id: $userId}) WITH COUNT(u) as userLikes, u1 MATCH (u2:User)-[:LIKES_USER]->(u:User)<-[:LIKES_USER]-(u1) WHERE NOT u2 = u1 WITH u1, u2, toFloat(COUNT(DISTINCT u)) / userLikes as similarity WHERE similarity > 0.3 MATCH (u:User)<-[:LIKES_USER]-(u2) WHERE NOT u = u1 AND NOT (u)<-[:LIKES_USER]-(u1) AND NOT (u)<-[:DISLIKES_USER]-(u1) WITH DISTINCT u SKIP $skip LIMIT $limit RETURN properties(u) as u', {
+        return transaction.run('MATCH (u:User)<-[:LIKES_USER]-(u1:User {id: $userId}) WITH COUNT(u) as userLikes, u1 MATCH (u2:User)-[:LIKES_USER]->(u:User)<-[:LIKES_USER]-(u1) WHERE NOT u2 = u1 WITH u1, u2, toFloat(COUNT(DISTINCT u)) / userLikes as similarity WHERE similarity > 0.3 MATCH (u:User)<-[:LIKES_USER]-(u2) WHERE NOT u = u1 AND NOT (u)<-[:LIKES_USER]-(u1) AND NOT (u)<-[:DISLIKES_USER]-(u1) WITH DISTINCT u SKIP $skip LIMIT $limit RETURN properties(u) as u', {
             userId: user.id,
             skip: skip,
             limit: limit
-        }).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));
+        }).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u'));
     }
 
     export function recent(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<User[]> {
-        return transaction.run<User, any>('MATCH(ru:User), (u:User {id: $userId}) WHERE NOT ru = u AND NOT (ru)<-[:DISLIKES_USER]-(u) WITH ru ORDER BY ru.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(ru) as u', {
+        return transaction.run('MATCH(ru:User), (u:User {id: $userId}) WHERE NOT ru = u AND NOT (ru)<-[:DISLIKES_USER]-(u) WITH ru ORDER BY ru.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(ru) as u', {
             userId: user.id,
             skip: skip,
             limit: limit
-        }).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));
+        }).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u'));
     }
 
 	export namespace RouteHandlers {

@@ -5,6 +5,7 @@ import {Rudel} from '../models/rudel/Rudel';
 import * as faker from 'faker';
 import {Config} from '../../../run/config';
 import {AuthController} from './AuthController';
+import {StatementResult} from 'neo4j-driver/types/v1/result';
 import {TranslationsKeys} from '../models/Translations';
 import * as shortid from 'shortid';
 

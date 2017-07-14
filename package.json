@@ -99,7 +99,7 @@
     "material-design-icons": "^3.0.1",
     "mocha": "^3.2.0",
     "moment": "^2.18.1",
-    "neo4j-driver": "https://github.com/SnappyCroissant/neo4j-javascript-driver.git#type-definitions",
+    "neo4j-driver": "^1.4.0",
     "ng2-device-detector": "^1.0.0",
     "ngx-infinite-scroll": "^0.5.1",
     "node-sass": "^4.5.1",

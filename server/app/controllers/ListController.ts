@@ -7,9 +7,10 @@ import {UserController} from './UserController';
 import * as shortid from 'shortid';
 import {Rudel} from '../models/rudel/Rudel';
 import {ListRecipe} from '../../../client/app/models/list';
-import Transaction from 'neo4j-driver/lib/v1/transaction';
+import Transaction from 'neo4j-driver/types/v1/transaction';
 import {RudelController} from './RudelController';
 import {AccountController} from "./AccountController";
+import {StatementResult} from 'neo4j-driver/types/v1/result';
 import {UtilController} from './UtilController';
 
 export module ListController {
