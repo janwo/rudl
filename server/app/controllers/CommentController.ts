@@ -9,7 +9,8 @@ import * as shortid from 'shortid';
 import {ExpeditionController} from './ExpeditionController';
 import {CommentRecipe} from '../../../client/app/models/comment';
 import {Expedition} from '../models/expedition/Expedition';
-import Transaction from 'neo4j-driver/lib/v1/transaction';
+import Transaction from 'neo4j-driver/types/v1/transaction';
+import {StatementResult} from 'neo4j-driver/types/v1/result';
 import {AccountController} from "./AccountController";
 import {UtilController} from './UtilController';
 
@@ -58,7 +59,7 @@ export module CommentController {
 	export function get(transaction: Transaction, commentId: string): Promise<any> {
 		return transaction.run(`MATCH(c:Comment {id: $commentId}) RETURN COALESCE(properties(c), []) as c LIMIT 1`, {
 			commentId: commentId
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'c').shift());
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'c').shift());
 	}
 	
 	export function getPublicComment(transaction: Transaction, comment: Comment | Comment[], relatedUser: User): Promise<any | any[]> {
@@ -99,19 +100,17 @@ export module CommentController {
 	}
 	
 	export function getOwner(transaction: Transaction, comment: Comment): Promise<User> {
-		return transaction.run<User, any>(`MATCH(c:Comment {id: $commentId})<-[:OWNS_COMMENT]-(u:User) RETURN COALESCE(properties(u), []) as u LIMIT 1`, {
+		return transaction.run(`MATCH(c:Comment {id: $commentId})<-[:OWNS_COMMENT]-(u:User) RETURN COALESCE(properties(u), []) as u LIMIT 1`, {
 			commentId: comment.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift());
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u').shift());
 	}
 	
 	export function ofNode<T extends Node>(transaction: Transaction, node: T, skip = 0, limit = 25): Promise<Comment[]> {
-		return transaction.run<Comment, any>(`MATCH(n {id: $nodeId})<-[:BELONGS_TO_NODE]-(c:Comment) WITH properties(c) as c RETURN c ORDER BY c.pinned DESC, c.createdAt DESC SKIP $skip LIMIT $limit`, {
+		return transaction.run(`MATCH(n {id: $nodeId})<-[:BELONGS_TO_NODE]-(c:Comment) WITH properties(c) as c RETURN c ORDER BY c.pinned DESC, c.createdAt DESC SKIP $skip LIMIT $limit`, {
 			nodeId: node.id,
 			limit: limit,
 			skip: skip
-		}).then(results => {
-			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'c');
-		});
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'c'));
 	}
 	
 	export namespace RouteHandlers {

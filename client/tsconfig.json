@@ -8,8 +8,6 @@
     "experimentalDecorators": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
-    "pretty": true,
-    "removeComments": true,
     "noEmit": true,
     "types": [
       "node"

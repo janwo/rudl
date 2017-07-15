@@ -6,11 +6,11 @@ import {Node} from './models/Node';
 import * as Dot from 'dot-object';
 import * as _ from 'lodash';
 import {Relationship} from './models/Relationship';
-import Record from 'neo4j-driver/lib/v1/record';
-import {auth, driver} from 'neo4j-driver/lib/v1';
-import Session from 'neo4j-driver/lib/v1/session';
-import Transaction from 'neo4j-driver/lib/v1/transaction';
-import Integer from 'neo4j-driver/lib/v1/integer';
+import Record from 'neo4j-driver/types/v1/record';
+import Neo4j from 'neo4j-driver';
+import Session from 'neo4j-driver/types/v1/session';
+import Transaction from 'neo4j-driver/types/v1/transaction';
+import {Driver} from "neo4j-driver/types/v1/driver";
 const DOT_DELIMITER = '_';
 const dot = new Dot(DOT_DELIMITER);
 
@@ -203,45 +203,42 @@ export class DatabaseManager {
 			isRelationship: true
 		}
 	};
-	
-	static neo4jFunctions: any = (() => {
-		return {
-			unflatten: <L extends Node | Relationship | any, T extends { [key: string]: L }, K extends keyof T>(record: Record<T> | Record<T>[], returnVariable: K): L | L[] => {
-				if (record instanceof Array) return record.map((record => DatabaseManager.neo4jFunctions.unflatten(record, returnVariable)));
-				let $return = record.get(returnVariable) as any;
 
+	static neo4jFunctions: any = {
+        unflatten: <L extends Node | Relationship | any>(record: Record | Record[], returnVariable: string): L | L[] => {
+            if (record instanceof Array) return record.map((record => DatabaseManager.neo4jFunctions.unflatten(record, returnVariable)));
+            let $return = record.get(returnVariable) as any;
 
-				let convert = (obj: any) => {
-                    if (typeof obj == 'object') {
-                        if (obj instanceof Integer) return Integer.toNumber(obj);
-                        if (obj instanceof Array) return obj;
-                        for (let key in obj) {
-                            if (!obj.hasOwnProperty(key)) continue;
-                            obj[key] = convert(obj[key]);
-                            if(key.indexOf(DOT_DELIMITER) < 0) continue;
-                            dot.str(key, obj[key], obj);
-                            delete obj[key];
-                        }
+            let convert = (obj: any) => {
+                if (typeof obj == 'object') {
+                    if (Neo4j.isInt(obj)) return obj.toNumber();
+                    if (obj instanceof Array) return obj;
+                    for (let key in obj) {
+                        if (!obj.hasOwnProperty(key)) continue;
+                        obj[key] = convert(obj[key]);
+                        if(key.indexOf(DOT_DELIMITER) < 0) continue;
+                        dot.str(key, obj[key], obj);
+                        delete obj[key];
                     }
+                }
 
-                    return obj;
-                };
+                return obj;
+            };
 
-				return convert($return);
-			},
-			flatten: <T extends Node | Relationship>(document: T): any | any[] => {
-				if (document instanceof Array) return document.map((document => DatabaseManager.neo4jFunctions.flatten(document)));
-				return (document ? dot.dot(document) : null) as any;
-			},
-			escapeLucene: (str: string) => {
-				return str.replace(/([\-\|\~\*\?\+\/\!\^\:\"\(\)\{\}\[\]\\&])/gi, match => '\\' + match);
-			}
-		};
-	})();
+            return convert($return);
+        },
+        flatten: <T extends Node | Relationship>(document: T): any | any[] => {
+            if (document instanceof Array) return document.map((document => DatabaseManager.neo4jFunctions.flatten(document)));
+            return (document ? dot.dot(document) : null) as any;
+        },
+        escapeLucene: (str: string) => {
+            return str.replace(/([\-\|\~\*\?\+\/\!\^\:\"\(\)\{\}\[\]\\&])/gi, match => '\\' + match);
+        }
+    };
 	
 	private static RETRY_MILLIS = 3000;
 	
-	public static neo4jClient: any;//TODO Driver
+	public static neo4jClient: Driver;
 	public static redisClient: RedisClient;
 	public static onlineStatus: { [key: string]: boolean } = {
 		redisClient: false,
@@ -302,39 +299,31 @@ export class DatabaseManager {
 	public static connect(): Promise<void> {
 		return new Promise<void>(resolve => {
 			// Wait for neo4j.
-			let connectNeo4jDriver = () => {
-				DatabaseManager.neo4jClient = driver(`bolt://${Config.backend.db.neo4j.host}:${Config.backend.db.neo4j.port}`, auth.basic(Config.backend.db.neo4j.user, Config.backend.db.neo4j.password));
-				let session: Session = null;
-				DatabaseManager.neo4jClient.onCompleted = () => {
-					session.run(
-						"MATCH (n) RETURN 'Number of Nodes: ' + COUNT(n) as output UNION" +
-						" MATCH ()-[]->() RETURN 'Number of Relationships: ' + COUNT(*) as output UNION" +
-						" CALL db.labels() YIELD label RETURN 'Number of Labels: ' + COUNT(*) AS output UNION" +
-						" CALL db.relationshipTypes() YIELD relationshipType RETURN 'Number of Relationships Types: ' + COUNT(*) AS output UNION" +
-						" CALL db.propertyKeys() YIELD propertyKey RETURN 'Number of Property Keys: ' + COUNT(*) AS output UNION" +
-						" CALL db.constraints() YIELD description RETURN 'Number of Constraints:' + COUNT(*) AS output UNION" +
-						" CALL db.indexes() YIELD description RETURN 'Number of Indexes: ' + COUNT(*) AS output UNION" +
-						" CALL dbms.procedures() YIELD name RETURN 'Number of Procedures: ' + COUNT(*) AS output"
-					).then((result: any) => {
-						DatabaseManager.neo4jFunctions.unflatten(result.records, 'output').forEach((summary: string) => console.log(summary));
-						session.close();
-					});
-					
-					console.log('Connected to neo4j successfully...');
-					DatabaseManager.onlineStatus.neo4jClient = true;
-				};
-				
-				DatabaseManager.neo4jClient.onError = (error: any) => {
+            DatabaseManager.neo4jClient = Neo4j.driver(`bolt://${Config.backend.db.neo4j.host}:${Config.backend.db.neo4j.port}`, Neo4j.auth.basic(Config.backend.db.neo4j.user, Config.backend.db.neo4j.password));
+            let session: Session = DatabaseManager.neo4jClient.session();
+            let waitForNeo4jConnection = () => {
+				session.run(
+                        "MATCH (n) RETURN 'Number of Nodes: ' + COUNT(n) as output UNION" +
+                        " MATCH ()-[]->() RETURN 'Number of Relationships: ' + COUNT(*) as output UNION" +
+                        " CALL db.labels() YIELD label RETURN 'Number of Labels: ' + COUNT(*) AS output UNION" +
+                        " CALL db.relationshipTypes() YIELD relationshipType RETURN 'Number of Relationships Types: ' + COUNT(*) AS output UNION" +
+                        " CALL db.propertyKeys() YIELD propertyKey RETURN 'Number of Property Keys: ' + COUNT(*) AS output UNION" +
+                        " CALL db.constraints() YIELD description RETURN 'Number of Constraints:' + COUNT(*) AS output UNION" +
+                        " CALL db.indexes() YIELD description RETURN 'Number of Indexes: ' + COUNT(*) AS output UNION" +
+                        " CALL dbms.procedures() YIELD name RETURN 'Number of Procedures: ' + COUNT(*) AS output"
+                    ).then((result: any) => {
+                        console.log('Connected to neo4j successfully...');
+                        DatabaseManager.onlineStatus.neo4jClient = true;
+                        DatabaseManager.neo4jFunctions.unflatten(result.records, 'output').forEach((summary: string) => console.log(summary));
+                        session.close();
+                    }).catch((error: any) => {
 					// Retry.
 					console.log(`Disconnected from neo4j...`);
 					DatabaseManager.onlineStatus.neo4jClient = false;
-					setTimeout(connectNeo4jDriver, DatabaseManager.RETRY_MILLIS);
-				};
-				
-				// Create demo session.
-				session = DatabaseManager.neo4jClient.session();
+					setTimeout(waitForNeo4jConnection, DatabaseManager.RETRY_MILLIS);
+				});
 			};
-			connectNeo4jDriver();
+            waitForNeo4jConnection();
 			
 			// Connect to redis.
 			DatabaseManager.redisClient = redis.createClient(Config.backend.db.redis.port, Config.backend.db.redis.host, {
@@ -369,7 +358,7 @@ export class TransactionSession {
 	
 	private transaction: Transaction = null;
 	private session: Session = null;
-	
+
 	public beginTransaction(): Transaction {
 		this.session = DatabaseManager.neo4jClient.session();
 		this.transaction = this.session.beginTransaction();
@@ -378,7 +367,7 @@ export class TransactionSession {
 	
 	public finishTransaction<T>(promise: Promise<T>): Promise<T> {
 		return promise.then((value: any) => {
-			return this.transaction.commit<any>().then(() => {
+			return this.transaction.commit().then(() => {
 				this.session.close();
 				return value;
 			}, (err: any) => {
@@ -387,7 +376,7 @@ export class TransactionSession {
 				return Promise.reject(err);
 			});
 		}, (err: any) => {
-			return this.transaction.rollback<any>().then(() => {
+			return this.transaction.rollback().then(() => {
 				this.session.close();
 				return err;
 			}, (rollbackError: any) => {

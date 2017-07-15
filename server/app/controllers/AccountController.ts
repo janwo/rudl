@@ -7,7 +7,7 @@ import {Notification, NotificationType} from '../models/notification/Notificatio
 import {DatabaseManager, TransactionSession} from '../Database';
 import {UserController} from './UserController';
 import * as sharp from 'sharp';
-import Transaction from 'neo4j-driver/lib/v1/transaction';
+import Transaction from 'neo4j-driver/types/v1/transaction';
 import {AuthController} from './AuthController';
 import * as shortid from 'shortid';
 import * as dot from 'dot-object';
@@ -18,8 +18,7 @@ import {ExpeditionController} from './ExpeditionController';
 import {RudelController} from './RudelController';
 import {Rudel} from '../models/rudel/Rudel';
 import {UtilController} from './UtilController';
-import Integer from 'neo4j-driver/lib/v1/integer';
-import {MailManager} from '../Mail';
+import {StatementResult} from 'neo4j-driver/types/v1/result';
 import {CommentController} from "./CommentController";
 
 export module AccountController {
@@ -188,13 +187,13 @@ export module AccountController {
 			return transaction.run("MATCH (u:User { id: $userId }) MERGE (u)-[:USER_SETTINGS]->(s:Settings) ON CREATE SET s = $flattenSettings ON MATCH SET s = apoc.map.merge(s, $flattenSettings) RETURN properties(s) as s", {
 				userId: user.id,
 				flattenSettings: DatabaseManager.neo4jFunctions.flatten(settings)
-			}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 's').shift());
+			}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 's').shift());
 		}
 
 		export function get(transaction: Transaction, user: User): Promise<UserSettings> {
 			return transaction.run("MATCH (:User { id: $userId })-[:USER_SETTINGS]->(s:Settings) RETURN properties(s) as s", {
 				userId: user.id
-			}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 's').shift());
+			}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 's').shift());
 		}
 
 		export function getPublicUserSettings(transaction: Transaction, settings: UserSettings): Promise<any | any[]> {
@@ -209,23 +208,23 @@ export module AccountController {
 	
 	export namespace NotificationController {
 		export function get(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Notification[]> {
-			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n, u ORDER BY n.createdAt DESC SKIP $skip LIMIT $limit MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User), (n)-[:NOTIFICATION_SUBJECT]->(subject) WITH subject, sender, n, u OPTIONAL MATCH (n)<-[nur:NOTIFICATION_UNREAD]-(u) WITH apoc.map.setKey( apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)), 'unread', COUNT(nur) > 0) as n ORDER BY n.createdAt DESC RETURN COALESCE(n, []) as n`, {
+			return transaction.run(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n, u ORDER BY n.createdAt DESC SKIP $skip LIMIT $limit MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User), (n)-[:NOTIFICATION_SUBJECT]->(subject) WITH subject, sender, n, u OPTIONAL MATCH (n)<-[nur:NOTIFICATION_UNREAD]-(u) WITH apoc.map.setKey( apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)), 'unread', COUNT(nur) > 0) as n ORDER BY n.createdAt DESC RETURN COALESCE(n, []) as n`, {
 				userId: user.id,
 				limit: limit,
 				skip: skip
-			}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'n'));
+			}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'n'));
 		}
 		
 		export function markAsRead(transaction: Transaction, user: User): Promise<void> {
-			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[nur:NOTIFICATION_UNREAD]->(:Notification) DETACH DELETE nur`, {
+			return transaction.run(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[nur:NOTIFICATION_UNREAD]->(:Notification) DETACH DELETE nur`, {
 				userId: user.id
 			}).then(() => {});
 		}
 		
 		export function countUnread(transaction: Transaction, user: User): Promise<number> {
-			return transaction.run<Notification, any>(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[nur:NOTIFICATION_UNREAD]->(:Notification) RETURN COUNT(nur) as unread`, {
+			return transaction.run(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[nur:NOTIFICATION_UNREAD]->(:Notification) RETURN COUNT(nur) as unread`, {
 				userId: user.id
-			}).then(results => Integer.toNumber(results.records.shift().get('unread') as any as Integer));
+			}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'unread').shift());
 		}
 
 		export function removeDetachedNotifications(transaction: Transaction): Promise<void> {
