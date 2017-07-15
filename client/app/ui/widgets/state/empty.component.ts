@@ -1,6 +1,10 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {animate, style, transition, trigger} from '@angular/animations';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
+import {
+	OnChanges,
+	SimpleChanges
+} from "@angular/core";
 
 @Component({
 	templateUrl: 'empty.component.html',
@@ -53,7 +57,7 @@ import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 		])
 	]
 })
-export class EmptyComponent implements OnInit {
+export class EmptyComponent implements OnInit, OnChanges {
 	
 	@Input() emptyState: EmptyState;
 	backgroundImageStyle: SafeStyle;
@@ -61,6 +65,14 @@ export class EmptyComponent implements OnInit {
 	constructor(private sanitizer: DomSanitizer) {}
 	
 	ngOnInit(): void {
+		this.init();
+	}
+
+	ngOnChanges(changes: SimpleChanges): void {
+		if(changes.emptyState) this.init();
+	}
+
+	init(): void {
 		this.backgroundImageStyle = this.sanitizer.bypassSecurityTrustStyle(`url(${this.emptyState.image})`);
 	}
 }

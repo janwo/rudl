@@ -176,7 +176,7 @@ export module ExpeditionController {
 		return transaction.run(queries.join(' '), {
 			expeditionId: expedition.id,
 			relatedUserId: relatedUser ? relatedUser.id : null
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 0).shift());
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 0).shift());
 	}
 	
 	export function findUpcomingByUser(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
@@ -185,7 +185,7 @@ export module ExpeditionController {
 			limit: limit,
 			skip: skip,
 			after: new Date().getTime() / 1000 - 43200
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'e'));
 	}
 	
 	export function findDoneByUser(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
@@ -194,7 +194,7 @@ export module ExpeditionController {
 			limit: limit,
 			skip: skip,
 			before: new Date().getTime() / 1000 + 43200
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'e'));
 	}
 	
 	export function findUpcomingByRudel(transaction: Transaction, rudel: Rudel, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
@@ -207,7 +207,7 @@ export module ExpeditionController {
 			limit: limit,
 			skip: skip,
 			after: new Date().getTime() / 1000 - 43200
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'e'));
 	}
 	
 	export function findDoneByRudel(transaction: Transaction, rudel: Rudel, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
@@ -220,13 +220,13 @@ export module ExpeditionController {
 			limit: limit,
 			skip: skip,
 			before: new Date().getTime() / 1000 + 43200
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'e'));
 	}
 	
 	export function get(transaction: Transaction, expeditionId: string): Promise<Expedition> {
 		return transaction.run(`MATCH(e:Expedition {id: $expeditionId}) RETURN COALESCE(properties(e), []) as e LIMIT 1`, {
 			expeditionId: expeditionId
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e').shift());
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'e').shift());
 	}
 	
 	export function findByFulltext(transaction: Transaction, query: string, limit = 0, skip = 25): Promise<Expedition[]> {
@@ -234,7 +234,7 @@ export module ExpeditionController {
 			query: `${DatabaseManager.neo4jFunctions.escapeLucene(query)}~`,
 			skip: skip,
 			limit: limit
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'e'));
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'e'));
 	}
 	
 	export function approveUser(transaction: Transaction, expedition: Expedition, user: User, relatedUser: User): Promise<void> {
@@ -271,7 +271,7 @@ export module ExpeditionController {
 					expeditionId: expedition.id,
 					userId: user.id,
 					now: new Date().getTime() / 1000
-				}).then(results => (results.summary.counters.relationshipsCreated() as any as number) > 0);
+				}).then((result: StatementResult) => (result.summary.counters.relationshipsCreated() as any as number) > 0);
 			};
 			
 			let inviteUser = (): Promise<boolean> => {
@@ -282,7 +282,7 @@ export module ExpeditionController {
 					expeditionId: expedition.id,
 					userId: user.id,
 					now: new Date().getTime() / 1000
-				}).then(results => (results.summary.counters.relationshipsCreated() as any as number) > 0);
+				}).then((result: StatementResult) => (result.summary.counters.relationshipsCreated() as any as number) > 0);
 			};
 			
 			let addUser = (): Promise<boolean> => {
@@ -296,7 +296,7 @@ export module ExpeditionController {
 					expeditionId: expedition.id,
 					userId: user.id,
 					now: new Date().getTime() / 1000
-				}).then(results => (results.summary.counters.relationshipsCreated() as any as number) > 0);
+				}).then((result: StatementResult) => (result.summary.counters.relationshipsCreated() as any as number) > 0);
 			};
 			
 			// If owner is approving someone...
@@ -357,7 +357,7 @@ export module ExpeditionController {
 				RETURN {applied: applied, joined: joined} as deleted`, {
 					expeditionId: expedition.id,
 					userId: user.id
-				}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'deleted').shift()).then((deleted: any) => {
+				}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'deleted').shift()).then((deleted: any) => {
 					if(deleted.joined || deleted.applied) return AccountController.NotificationController.set(
 						transaction,
 						deleted.joined ? NotificationType.REJECTED_FROM_EXPEDITION : NotificationType.REJECTED_APPLICATION_FOR_EXPEDITION,
@@ -380,7 +380,7 @@ export module ExpeditionController {
 				RETURN {invited: invited, joined: joined} as deleted`, {
 					expeditionId: expedition.id,
 					userId: user.id
-				}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'deleted').shift()).then((deleted: any) => {
+				}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'deleted').shift()).then((deleted: any) => {
 					if(deleted.joined || deleted.invited) return AccountController.NotificationController.set(
 						transaction,
 						deleted.joined ? NotificationType.LEFT_EXPEDITION : NotificationType.REJECTED_INVITATION_FOR_EXPEDITION,
@@ -403,7 +403,7 @@ export module ExpeditionController {
 		return transaction.run(`MATCH (e:Expedition {id: $expeditionId}), (u:User {id: $userId}) WITH u, e OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) RETURN {isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0} as as`, {
 			expeditionId: expedition.id,
 			userId: user.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'as').shift());
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'as').shift());
 	}
 
     export function removeExpeditions(transaction: Transaction, rudel: Rudel, user: User = null): Promise<void> {
@@ -478,7 +478,7 @@ export module ExpeditionController {
 	export function getOwner(transaction: Transaction, expedition: Expedition): Promise<User> {
 		return transaction.run("MATCH(:Expedition {id : $expeditionId })<-[:OWNS_EXPEDITION]-(u:User) RETURN COALESCE(properties(u), []) as u LIMIT 1", {
 			expeditionId: expedition.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift());
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u').shift());
 	}
 	
 	export function getAttendees(transaction: Transaction, expedition: Expedition, skip = 0, limit = 25): Promise<{
@@ -489,7 +489,7 @@ export module ExpeditionController {
 			expeditionId: expedition.id,
 			skip: skip,
 			limit: limit
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u'));
 	}
 	
 	export function inviteLike(transaction: Transaction, expedition: Expedition, query: string, relatedUser: User, skip = 0, limit = 25): Promise<{
@@ -502,7 +502,7 @@ export module ExpeditionController {
 			relatedUserId: relatedUser.id,
 			skip: skip,
 			limit: limit
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'u'));
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u'));
 	}
 	
 	export function setRudel(transaction: Transaction, expedition: Expedition, rudel: Rudel): Promise<void> {
@@ -515,14 +515,14 @@ export module ExpeditionController {
 	export function getRudel(transaction: Transaction, expedition: Expedition): Promise<Rudel> {
 		return transaction.run("MATCH(:Expedition {id : $expeditionId })-[:BELONGS_TO_RUDEL]->(r:Rudel) RETURN COALESCE(properties(r), []) as r LIMIT 1", {
 			expeditionId: expedition.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'r').shift());
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'r').shift());
 	}
 	
 	export function isAttendee(transaction: Transaction, expedition: Expedition, user: User): Promise<boolean> {
 		return transaction.run("MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) OPTIONAL MATCH (e)<-[je:JOINS_EXPEDITION]-(u) RETURN COUNT(je) > 0 as je", {
 			expeditionId: expedition.id,
 			userId: user.id
-		}).then(results => DatabaseManager.neo4jFunctions.unflatten(results.records, 'je').shift());
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'je').shift());
 	}
 	
 	export function nearby(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
@@ -533,9 +533,7 @@ export module ExpeditionController {
 			},
 			limit: limit,
 			skip: skip
-		}).then(results => {
-			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e');
-		});
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'e'));
 	}
 
     export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
@@ -544,9 +542,7 @@ export module ExpeditionController {
             now: Math.trunc(Date.now() / 1000),
             limit: limit,
             skip: skip
-        }).then(results => {
-            return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e');
-        });
+        }).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'e'));
     }
 
 	export function popular(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
@@ -555,9 +551,7 @@ export module ExpeditionController {
 			now: Math.trunc(Date.now() / 1000),
 			limit: limit,
 			skip: skip
-		}).then(results => {
-			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e');
-		});
+		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'e'));
 	}
 
     export function recent(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
@@ -566,9 +560,7 @@ export module ExpeditionController {
             now: Math.trunc(Date.now() / 1000),
             limit: limit,
             skip: skip
-        }).then(results => {
-            return DatabaseManager.neo4jFunctions.unflatten(results.records, 'e');
-        });
+        }).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'e'));
     }
 	
 	export namespace RouteHandlers {

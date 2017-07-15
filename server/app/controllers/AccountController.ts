@@ -7,7 +7,7 @@ import {Notification, NotificationType} from '../models/notification/Notificatio
 import {DatabaseManager, TransactionSession} from '../Database';
 import {UserController} from './UserController';
 import * as sharp from 'sharp';
-import Transaction from 'neo4j-driver/lib/v1/transaction';
+import Transaction from 'neo4j-driver/types/v1/transaction';
 import {AuthController} from './AuthController';
 import * as shortid from 'shortid';
 import * as dot from 'dot-object';
@@ -18,7 +18,6 @@ import {ExpeditionController} from './ExpeditionController';
 import {RudelController} from './RudelController';
 import {Rudel} from '../models/rudel/Rudel';
 import {UtilController} from './UtilController';
-import Integer from 'neo4j-driver/types/v1/integer';
 import {StatementResult} from 'neo4j-driver/types/v1/result';
 import {CommentController} from "./CommentController";
 
@@ -225,7 +224,7 @@ export module AccountController {
 		export function countUnread(transaction: Transaction, user: User): Promise<number> {
 			return transaction.run(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[nur:NOTIFICATION_UNREAD]->(:Notification) RETURN COUNT(nur) as unread`, {
 				userId: user.id
-			}).then((result: StatementResult) => Integer.toNumber(result.records.shift().get('unread') as any as Integer));
+			}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'unread').shift());
 		}
 		
 		export function removeDetachedNotifications(transaction: Transaction): Promise<void> {

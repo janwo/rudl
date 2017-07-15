@@ -6,11 +6,11 @@ import {Node} from './models/Node';
 import * as Dot from 'dot-object';
 import * as _ from 'lodash';
 import {Relationship} from './models/Relationship';
-import Record from 'neo4j-driver/lib/v1/record';
-import {auth, driver} from 'neo4j-driver/lib/v1';
-import Session from 'neo4j-driver/lib/v1/session';
-import Transaction from 'neo4j-driver/lib/v1/transaction';
-import Integer from 'neo4j-driver/lib/v1/integer';
+import Record from 'neo4j-driver/types/v1/record';
+import Neo4j from 'neo4j-driver';
+import Session from 'neo4j-driver/types/v1/session';
+import Transaction from 'neo4j-driver/types/v1/transaction';
+import {Driver} from "neo4j-driver/types/v1/driver";
 const DOT_DELIMITER = '_';
 const dot = new Dot(DOT_DELIMITER);
 
@@ -203,40 +203,37 @@ export class DatabaseManager {
 		}
 	};
 
-	static neo4jFunctions: any = (() => {
-		return {
-			unflatten: <L extends Node | Relationship | any>(record: Record | Record[], returnVariable: string): L | L[] => {
-				if (record instanceof Array) return record.map((record => DatabaseManager.neo4jFunctions.unflatten(record, returnVariable)));
-				let $return = record.get(returnVariable) as any;
+	static neo4jFunctions: any = {
+        unflatten: <L extends Node | Relationship | any>(record: Record | Record[], returnVariable: string): L | L[] => {
+            if (record instanceof Array) return record.map((record => DatabaseManager.neo4jFunctions.unflatten(record, returnVariable)));
+            let $return = record.get(returnVariable) as any;
 
-
-				let convert = (obj: any) => {
-                    if (typeof obj == 'object') {
-                        if (obj instanceof Integer) return Integer.toNumber(obj);
-                        if (obj instanceof Array) return obj;
-                        for (let key in obj) {
-                            if (!obj.hasOwnProperty(key)) continue;
-                            obj[key] = convert(obj[key]);
-                            if(key.indexOf(DOT_DELIMITER) < 0) continue;
-                            dot.str(key, obj[key], obj);
-                            delete obj[key];
-                        }
+            let convert = (obj: any) => {
+                if (typeof obj == 'object') {
+                    if (Neo4j.isInt(obj)) return obj.toNumber();
+                    if (obj instanceof Array) return obj;
+                    for (let key in obj) {
+                        if (!obj.hasOwnProperty(key)) continue;
+                        obj[key] = convert(obj[key]);
+                        if(key.indexOf(DOT_DELIMITER) < 0) continue;
+                        dot.str(key, obj[key], obj);
+                        delete obj[key];
                     }
+                }
 
-                    return obj;
-                };
+                return obj;
+            };
 
-				return convert($return);
-			},
-			flatten: <T extends Node | Relationship>(document: T): any | any[] => {
-				if (document instanceof Array) return document.map((document => DatabaseManager.neo4jFunctions.flatten(document)));
-				return (document ? dot.dot(document) : null) as any;
-			},
-			escapeLucene: (str: string) => {
-				return str.replace(/([\-\|\~\*\?\+\/\!\^\:\"\(\)\{\}\[\]\\&])/gi, match => '\\' + match);
-			}
-		};
-	})();
+            return convert($return);
+        },
+        flatten: <T extends Node | Relationship>(document: T): any | any[] => {
+            if (document instanceof Array) return document.map((document => DatabaseManager.neo4jFunctions.flatten(document)));
+            return (document ? dot.dot(document) : null) as any;
+        },
+        escapeLucene: (str: string) => {
+            return str.replace(/([\-\|\~\*\?\+\/\!\^\:\"\(\)\{\}\[\]\\&])/gi, match => '\\' + match);
+        }
+    };
 	
 	private static RETRY_MILLIS = 3000;
 	
