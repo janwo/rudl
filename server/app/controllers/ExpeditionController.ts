@@ -306,7 +306,7 @@ export module ExpeditionController {
 						if(invited || accepted) return AccountController.NotificationController.set(
 							transaction,
 							accepted ? NotificationType.ACCEPTED_APPLICATION_FOR_EXPEDITION : NotificationType.INVITED_TO_EXPEDITION,
-							user,
+							[user],
 							expedition,
 							relatedUser
 						);
@@ -321,7 +321,7 @@ export module ExpeditionController {
 						if (applied || joined) return AccountController.NotificationController.set(
 							transaction,
 							joined ? (expedition.needsApproval ? NotificationType.ACCEPTED_INVITATION_FOR_EXPEDITION : NotificationType.JOINED_EXPEDITION ) : NotificationType.APPLIED_FOR_EXPEDITION,
-							owner,
+							[owner],
 							expedition,
 							relatedUser
 						);
@@ -361,7 +361,7 @@ export module ExpeditionController {
 					if(deleted.joined || deleted.applied) return AccountController.NotificationController.set(
 						transaction,
 						deleted.joined ? NotificationType.REJECTED_FROM_EXPEDITION : NotificationType.REJECTED_APPLICATION_FOR_EXPEDITION,
-						user,
+						[user],
 						expedition,
 						relatedUser
 					);
@@ -384,7 +384,7 @@ export module ExpeditionController {
 					if(deleted.joined || deleted.invited) return AccountController.NotificationController.set(
 						transaction,
 						deleted.joined ? NotificationType.LEFT_EXPEDITION : NotificationType.REJECTED_INVITATION_FOR_EXPEDITION,
-						owner,
+						[owner],
 						expedition,
 						user
 					);

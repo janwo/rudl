@@ -208,7 +208,7 @@ export module AccountController {
 	
 	export namespace NotificationController {
 		export function get(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Notification[]> {
-			return transaction.run(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n, u ORDER BY n.createdAt DESC SKIP $skip LIMIT $limit MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User), (n)-[:NOTIFICATION_SUBJECT]->(subject) WITH subject, sender, n, u OPTIONAL MATCH (n)<-[nur:NOTIFICATION_UNREAD]-(u) WITH apoc.map.setKey( apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)), 'unread', COUNT(nur) > 0) as n ORDER BY n.createdAt DESC RETURN COALESCE(n, []) as n`, {
+			return transaction.run(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n, u ORDER BY n.createdAt DESC SKIP $skip LIMIT $limit MATCH (n)-[:NOTIFICATION_SUBJECT]->(subject) OPTIONAL MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User) OPTIONAL MATCH (n)<-[nur:NOTIFICATION_UNREAD]-(u) WITH subject, sender, n, u, apoc.map.setKey( apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)), 'unread', COUNT(nur) > 0) as n ORDER BY n.createdAt DESC RETURN COALESCE(n, []) as n`, {
 				userId: user.id,
 				limit: limit,
 				skip: skip
@@ -247,6 +247,7 @@ export module AccountController {
 					case NotificationType.APPLIED_FOR_EXPEDITION:
 					case NotificationType.ACCEPTED_APPLICATION_FOR_EXPEDITION:
 					case NotificationType.REJECTED_APPLICATION_FOR_EXPEDITION:
+                    case NotificationType.EXPEDITION_IS_TODAY:
 						subjectProfilePromise = ExpeditionController.getPublicExpedition(transaction, notification.subject as any as Expedition, relatedUser, true);
 						break;
 
@@ -287,16 +288,26 @@ export module AccountController {
 			});
 		}
 		
-		export function set(transaction: Transaction, type: NotificationType, recipient: User, subject: Node, sender: User): Promise<void> {
-			let query = `MATCH(subject {id : $subjectId }), (recipient:User {id: $recipientId}), (sender:User {id: $senderId})
-				CREATE UNIQUE (sender)<-[:NOTIFICATION_SENDER]-(n:Notification {type: $type, createdAt: $now})-[:NOTIFICATION_SUBJECT]->(subject), (n)<-[:NOTIFICATION_UNREAD]-(recipient), (n)-[:NOTIFICATION_RECIPIENT]->(recipient)`;
-			return transaction.run(query, {
-				type: type,
-				recipientId: recipient.id,
-				subjectId: subject.id,
-				senderId: sender.id,
-				now: Math.trunc(new Date().getTime() / 1000)
-			}).then(() => {});
+		export function set(transaction: Transaction, type: NotificationType, recipients: User[], subject: Node, sender: User = null): Promise<void> {
+            let params = {
+                type: type,
+                recipientIds: recipients.map(recipient => recipient.id),
+                subjectId: subject.id,
+                senderId: sender ? sender.id: null,
+                hasSender: !!sender,
+                now: Math.trunc(new Date().getTime() / 1000)
+            };
+
+            let matches = [
+                '(subject {id : $subjectId })'
+            ];
+            if(sender) matches.push('(sender:User {id: $senderId})');
+
+            let matchQuery = `MATCH ${matches.join(',')} WITH sender, subject MATCH (recipients:User) WHERE recipients.id IN $recipientIds CREATE (subject)<-[:NOTIFICATION_SUBJECT]-(n:Notification {type: $type, createdAt: $now, hasSender: $hasSender)`;
+            if(sender) matchQuery += '-[:NOTIFICATION_SENDER]->(sender)';
+            matchQuery += `(n)<-[:NOTIFICATION_UNREAD]-(recipients)<-[:NOTIFICATION_RECIPIENT]-(n)`;
+
+            return transaction.run(matchQuery, params).then(() => {});
 		}
 	}
 	

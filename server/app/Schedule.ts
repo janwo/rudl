@@ -8,6 +8,7 @@ export class Schedule {
 	public static start(): void {
 		Glob.sync(Path.resolve(__dirname, `./schedules/**/*.ts`)).forEach(file => {
 			let config: ScheduleConfiguration = require(file).ScheduleConfig;
+			console.log(`Schedules job in ${Path.basename(file)}...`);
 			schedule.scheduleJob(config.rule, config.job);
 		});
 	}

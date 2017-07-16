@@ -17,9 +17,6 @@
       "dom"
     ]
   },
-  "exclude": [
-    "../node_modules"
-  ],
   "angularCompilerOptions": {
     "skipMetadataEmit": true,
     "genDir": "./locale"
