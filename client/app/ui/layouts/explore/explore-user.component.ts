@@ -33,11 +33,11 @@ export class ExploreUserComponent implements OnInit, OnDestroy {
 	};
 
 	constructor(private userService: UserService,
-				title: Title) {
-		title.setTitle('Entdecke Nutzer | rudl.me');
-	}
+				private title: Title) {}
 	
 	ngOnInit(): void {
+		this.title.setTitle('Entdecke Nutzer | rudl.me');
+
 		this.suggestedUsersSubscription = this.userService.suggested().subscribe((user: User[]) => {
 			this.suggestedUsers = user;
 		});

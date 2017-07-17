@@ -6,6 +6,7 @@ import {List} from '../../../models/list';
 import {ListService} from '../../../services/list.service';
 import {EmptyState} from '../../widgets/state/empty.component';
 import {ScrollService} from '../../../services/scroll.service';
+import {Title} from "@angular/platform-browser";
 
 @Component({
 	templateUrl: 'list-rudel.component.html',
@@ -24,9 +25,12 @@ export class ListRudelComponent implements OnInit, OnDestroy {
 	
 	constructor(private listService: ListService,
 	            private route: ActivatedRoute,
-	            private scrollService: ScrollService) {}
+	            private scrollService: ScrollService,
+				private title: Title) {}
 	
 	ngOnInit() {
+		this.title.setTitle('Rudel der Liste | rudl.me');
+
 		// Define changed params subscription.
 		this.rudelSubscription = this.route.parent.data.flatMap((data: { list: List }) => {
 			this.list = data.list;

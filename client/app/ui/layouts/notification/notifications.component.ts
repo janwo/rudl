@@ -4,6 +4,7 @@ import {ScrollService} from '../../../services/scroll.service';
 import {Notification} from '../../../models/notification';
 import {EmptyState} from '../../widgets/state/empty.component';
 import {UserService} from '../../../services/user.service';
+import {Title} from "@angular/platform-browser";
 
 @Component({
 	templateUrl: 'notifications.component.html',
@@ -20,9 +21,12 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 	};
 	
 	constructor(private userService: UserService,
-	            private scrollService: ScrollService) {}
-	
+	            private scrollService: ScrollService,
+                private title: Title) {}
+
 	ngOnInit() {
+        this.title.setTitle(`Meldungen | rudl.me`);
+
 		// Expeditions.
 		this.notificationSubscription = this.scrollService.hasScrolledToBottom().map(() => this.notifications.length).startWith(0).distinct().flatMap((offset: number) => {
 			return this.userService.notifications(offset, 25);

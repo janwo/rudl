@@ -32,11 +32,11 @@ export class ExploreRudelComponent implements OnInit, OnDestroy {
 	};
 
 	constructor(private rudelService: RudelService,
-				title: Title) {
-		title.setTitle('Entdecke Rudel | rudl.me');
-	}
+				private title: Title) {}
 	
 	ngOnInit(): void {
+		this.title.setTitle('Entdecke Rudel | rudl.me');
+
 		this.suggestedRudelSubscription = this.rudelService.suggested().subscribe((rudel: Rudel[]) => {
 			this.suggestedRudel = rudel;
 		});

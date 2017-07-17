@@ -5,6 +5,8 @@ import {Rudel} from '../../../models/rudel';
 import {RudelService} from '../../../services/rudel.service';
 import {User} from '../../../models/user';
 import {ScrollService} from '../../../services/scroll.service';
+import {RudelComponent} from "./rudel.component";
+import {Title} from "@angular/platform-browser";
 
 @Component({
 	templateUrl: 'rudel-likers.component.html',
@@ -18,9 +20,13 @@ export class RudelLikersComponent implements OnInit, OnDestroy {
 	
 	constructor(private rudelService: RudelService,
 	            private route: ActivatedRoute,
+				private parent: RudelComponent,
+				private title: Title,
 	            private scrollService: ScrollService) {}
 	
 	ngOnInit() {
+		this.title.setTitle(`Anhänger - Rudel "${this.parent.rudel.name}" | rudl.me`);
+
 		// Define changed params subscription.
 		this.likersSubscription = this.route.parent.data.flatMap((data: { rudel: Rudel }) => {
 			this.rudel = data.rudel;

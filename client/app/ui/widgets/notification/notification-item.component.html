@@ -1,4 +1,4 @@
-<div class="card" [routerLink]="link">
+<div class="card" [routerLink]="link" [ngClass]="{elevated: notification.unread}">
     <div class="icon">
         <user-avatar *ngIf="notification.sender" [user]="notification.sender"></user-avatar>
         <div [ngClass]="{'clip-mask': notification.sender}" *ngIf="emoji">

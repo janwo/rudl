@@ -27,7 +27,7 @@ export class ExpeditionsDoneComponent implements OnInit, OnDestroy {
 	            private title: Title) {}
 	
 	ngOnInit() {
-		this.title.setTitle(`Streifzug "Bisherige Streifzüge" | rudl.me`);
+		this.title.setTitle(`Deine bisherigen Streifzüge | rudl.me`);
 		
 		// Expeditions.
 		this.expeditionsSubscription = this.scrollService.hasScrolledToBottom().map(() => this.expeditions.length).startWith(0).distinct().flatMap((offset: number) => {

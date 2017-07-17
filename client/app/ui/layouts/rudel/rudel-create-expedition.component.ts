@@ -10,6 +10,8 @@ import * as geolib from 'geolib';
 import {ExpeditionRecipe} from '../../../models/expedition';
 import {CarouselComponent} from '../../widgets/wrapper/carousel.component';
 import {RudelService} from "../../../services/rudel.service";
+import {Title} from "@angular/platform-browser";
+import {RudelComponent} from "./rudel.component";
 
 @Component({
 	templateUrl: 'rudel-create-expedition.component.html',
@@ -29,9 +31,13 @@ export class RudelCreateExpeditionComponent implements OnInit {
 				private rudelService: RudelService,
 				private userService: UserService,
 	            private expeditionService: ExpeditionService,
-	            private fb: FormBuilder) {}
+	            private parent: RudelComponent,
+	            private fb: FormBuilder,
+				private title: Title) {}
 	
 	ngOnInit() {
+		this.title.setTitle(`Streifzug erstellen - Rudel "${this.parent.rudel.name}" | rudl.me`);
+
 		// Define changed params subscription.
 		this.route.parent.data.subscribe((data: { rudel: Rudel }) => this.rudel = data.rudel);
 		this.form = this.fb.group({
