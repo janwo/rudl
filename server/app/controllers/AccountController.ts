@@ -20,6 +20,7 @@ import {Rudel} from '../models/rudel/Rudel';
 import {UtilController} from './UtilController';
 import {StatementResult} from 'neo4j-driver/types/v1/result';
 import {CommentController} from "./CommentController";
+import {Observable} from "rxjs/Observable";
 
 export module AccountController {
 	
@@ -208,7 +209,7 @@ export module AccountController {
 	
 	export namespace NotificationController {
 		export function get(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Notification[]> {
-			return transaction.run(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n, u ORDER BY n.createdAt DESC SKIP $skip LIMIT $limit MATCH (n)-[:NOTIFICATION_SUBJECT]->(subject) OPTIONAL MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User) OPTIONAL MATCH (n)<-[nur:NOTIFICATION_UNREAD]-(u) WITH subject, sender, n, u, apoc.map.setKey( apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)), 'unread', COUNT(nur) > 0) as n ORDER BY n.createdAt DESC RETURN COALESCE(n, []) as n`, {
+			return transaction.run(`MATCH(u:User {id: $userId})<-[:NOTIFICATION_RECIPIENT]-(n:Notification) WITH n, u ORDER BY n.createdAt DESC SKIP $skip LIMIT $limit MATCH(n)-[:NOTIFICATION_SUBJECT]->(subject) WITH subject, n, u OPTIONAL MATCH (n)-[nur:NOTIFICATION_UNREAD]-(u) OPTIONAL MATCH (n)-[:NOTIFICATION_SENDER]->(sender:User) WITH apoc.map.setKey( apoc.map.setKey( apoc.map.setKey( properties(n), 'subject', properties(subject)), 'sender', properties(sender)), 'unread', COUNT(nur) > 0) as n ORDER BY n.createdAt DESC RETURN n`, {
 				userId: user.id,
 				limit: limit,
 				skip: skip
@@ -232,8 +233,8 @@ export module AccountController {
 		}
 		
 		export function getPublicNotification(transaction: Transaction, notification: Notification | Notification[], relatedUser: User): Promise<any | any[]> {
-			let createPublicNotification = (notification: Notification): Promise<any> => {
-				let userProfilePromise = UserController.getPublicUser(transaction, notification.sender, relatedUser, true);
+		    let createPublicNotification = (notification: Notification): Promise<any> => {
+				let userProfilePromise = notification.sender ? UserController.getPublicUser(transaction, notification.sender, relatedUser, true) : null;
 				let subjectProfilePromise;
 				switch(notification.type) {
                     case NotificationType.COMMENTED_EXPEDITION:
@@ -301,12 +302,21 @@ export module AccountController {
             let matches = [
                 '(subject {id : $subjectId })'
             ];
-            if(sender) matches.push('(sender:User {id: $senderId})');
+            let matchesVars = [
+                'subject'
+            ];
+            if(sender) {
+                matches.push('(sender:User {id: $senderId})');
+                matchesVars.push('sender');
+            }
 
-            let matchQuery = `MATCH ${matches.join(',')} WITH sender, subject MATCH (recipients:User) WHERE recipients.id IN $recipientIds CREATE (subject)<-[:NOTIFICATION_SUBJECT]-(n:Notification {type: $type, createdAt: $now, hasSender: $hasSender)`;
-            if(sender) matchQuery += '-[:NOTIFICATION_SENDER]->(sender)';
-            matchQuery += `(n)<-[:NOTIFICATION_UNREAD]-(recipients)<-[:NOTIFICATION_RECIPIENT]-(n)`;
+            let creations = [
+                `(subject)<-[:NOTIFICATION_SUBJECT]-(n:Notification {type: $type, createdAt: $now, hasSender: $hasSender})`,
+                `(n)<-[:NOTIFICATION_UNREAD]-(recipients)<-[:NOTIFICATION_RECIPIENT]-(n)`
+            ];
+            if(sender) creations[0] += '-[:NOTIFICATION_SENDER]->(sender)';
 
+            let matchQuery = `MATCH ${matches.join(',')} WITH ${matchesVars.join(',')} MATCH (recipients:User) WHERE recipients.id IN $recipientIds CREATE ${creations.join(',')}`;
             return transaction.run(matchQuery, params).then(() => {});
 		}
 	}
@@ -326,7 +336,7 @@ export module AccountController {
 			let transactionSession = new TransactionSession();
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = AccountController.NotificationController.get(transaction, request.auth.credentials, request.query.offset, request.query.limit).then((notifications: Notification[]) => {
-				return AccountController.NotificationController.markAsRead(transaction, request.auth.credentials).then(() => {
+			    return AccountController.NotificationController.markAsRead(transaction, request.auth.credentials).then(() => {
 					return AccountController.NotificationController.getPublicNotification(transaction, notifications, request.auth.credentials);
 				});
 			});

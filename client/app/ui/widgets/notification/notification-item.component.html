@@ -1,7 +1,7 @@
 <div class="card" [routerLink]="link">
     <div class="icon">
-        <user-avatar [user]="notification.sender"></user-avatar>
-        <div class="clip-mask" *ngIf="emoji">
+        <user-avatar *ngIf="notification.sender" [user]="notification.sender"></user-avatar>
+        <div [ngClass]="{'clip-mask': notification.sender}" *ngIf="emoji">
             <emoji [emoji]="emoji"></emoji>
         </div>
     </div>
