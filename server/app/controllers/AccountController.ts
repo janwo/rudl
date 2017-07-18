@@ -321,7 +321,7 @@ export module AccountController {
             let creation = `(subject)<-[:NOTIFICATION_SUBJECT]-(n:Notification {type: $type, createdAt: $now, hasSender: $hasSender})`;
             if(sender) creation += '-[:NOTIFICATION_SENDER]->(sender)';
 
-            let matchQuery = `MATCH ${matches.join(',')} WITH ${matchesVars.join(',')} CREATE ${creation} WITH n CALL apoc.date.expireIn(n, 6, 'months') MATCH(recipients:User) WHERE recipients.id IN $recipientIds CREATE (n)<-[:NOTIFICATION_UNREAD]-(recipients)<-[:NOTIFICATION_RECIPIENT]-(n)`;
+            let matchQuery = `MATCH ${matches.join(',')} WITH ${matchesVars.join(',')} CREATE ${creation} WITH n CALL apoc.date.expireIn(n, 60 * 60 * 24 * 30 * 6, 's') MATCH(recipients:User) WHERE recipients.id IN $recipientIds CREATE (n)<-[:NOTIFICATION_UNREAD]-(recipients)<-[:NOTIFICATION_RECIPIENT]-(n)`;
             return transaction.run(matchQuery, params).then(() => {});
 		}
 	}
