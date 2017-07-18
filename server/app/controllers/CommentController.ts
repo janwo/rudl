@@ -13,6 +13,7 @@ import Transaction from 'neo4j-driver/types/v1/transaction';
 import {StatementResult} from 'neo4j-driver/types/v1/result';
 import {AccountController} from "./AccountController";
 import {UtilController} from './UtilController';
+import {NotificationType} from "../models/notification/Notification";
 
 export module CommentController {
 	
@@ -139,7 +140,17 @@ export module CommentController {
 					pinned: request.payload.pinned,
 					message: request.payload.message
 				}).then((comment: Comment) => {
-					return CommentController.assign(transaction, comment, request.auth.credentials, expedition).then(() => {
+					let createNotificationPromise = Promise.all([
+                        AccountController.NotificationController.remove(transaction, NotificationType.COMMENTED_EXPEDITION, expedition, 24 * 60 * 60),
+                        ExpeditionController.getAllAttendees(transaction, expedition, [request.auth.credentials])
+                    ]).then((values: [void, User[]]) => {
+                        return AccountController.NotificationController.set(transaction, NotificationType.COMMENTED_EXPEDITION, values[1], expedition, request.auth.credentials);
+                    });
+                    let assignCommentPromise = CommentController.assign(transaction, comment, request.auth.credentials, expedition);
+					return Promise.all([
+                        createNotificationPromise,
+                        assignCommentPromise
+                    ]).then(() => {
 						return CommentController.getPublicComment(transaction, comment, request.auth.credentials);
 					});
 				});

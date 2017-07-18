@@ -288,6 +288,14 @@ export module AccountController {
 				return result;
 			});
 		}
+
+		export function remove(transaction: Transaction, type: NotificationType, subject: Node, delta: number): Promise<void> {
+           return transaction.run(`MATCH (subject {id : $subjectId })<-[:NOTIFICATION_SUBJECT]-(n:Notification {type: $type}) WHERE n.createdAt > $time DETACH DELETE n`, {
+               time: Math.trunc(Date.now() / 1000 - delta),
+               subjectId: subject.id,
+               type: type
+           }).then(() => {});
+        }
 		
 		export function set(transaction: Transaction, type: NotificationType, recipients: User[], subject: Node, sender: User = null): Promise<void> {
             let params = {
@@ -310,13 +318,10 @@ export module AccountController {
                 matchesVars.push('sender');
             }
 
-            let creations = [
-                `(subject)<-[:NOTIFICATION_SUBJECT]-(n:Notification {type: $type, createdAt: $now, hasSender: $hasSender})`,
-                `(n)<-[:NOTIFICATION_UNREAD]-(recipients)<-[:NOTIFICATION_RECIPIENT]-(n)`
-            ];
-            if(sender) creations[0] += '-[:NOTIFICATION_SENDER]->(sender)';
+            let creation = `(subject)<-[:NOTIFICATION_SUBJECT]-(n:Notification {type: $type, createdAt: $now, hasSender: $hasSender})`;
+            if(sender) creation += '-[:NOTIFICATION_SENDER]->(sender)';
 
-            let matchQuery = `MATCH ${matches.join(',')} WITH ${matchesVars.join(',')} MATCH (recipients:User) WHERE recipients.id IN $recipientIds CREATE ${creations.join(',')}`;
+            let matchQuery = `MATCH ${matches.join(',')} WITH ${matchesVars.join(',')} CREATE ${creation} WITH n CALL apoc.date.expireIn(n, 6, 'months') MATCH(recipients:User) WHERE recipients.id IN $recipientIds CREATE (n)<-[:NOTIFICATION_UNREAD]-(recipients)<-[:NOTIFICATION_RECIPIENT]-(n)`;
             return transaction.run(matchQuery, params).then(() => {});
 		}
 	}

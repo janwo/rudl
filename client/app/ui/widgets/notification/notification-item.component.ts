@@ -57,7 +57,7 @@ export class NotificationItemComponent implements OnChanges, OnInit {
                 break;
 
             case NotificationType.LIKES_USER:
-                this.link = ['/user', (this.notification.subject as UserPreview).username];
+                this.link = ['/user', (this.notification.sender as UserPreview).username];
                 break;
 		}
 		

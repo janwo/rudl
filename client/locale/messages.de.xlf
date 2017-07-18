@@ -302,6 +302,14 @@
           <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="expeditionItemAttendees" datatype="html">
+        <source><x id="INTERPOLATION"/> attendees</source>
+        <target><x id="INTERPOLATION"/> Teilnehmer</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/widgets/expedition/expedition-item.component.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="expeditionItemAttending" datatype="html">
         <source>Attending</source>
         <target>Du nimmst teil</target>

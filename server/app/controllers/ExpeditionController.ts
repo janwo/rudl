@@ -480,8 +480,8 @@ export module ExpeditionController {
 			expeditionId: expedition.id
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u').shift());
 	}
-	
-	export function getAttendees(transaction: Transaction, expedition: Expedition, skip = 0, limit = 25): Promise<{
+
+	export function getAttendeeStatuses(transaction: Transaction, expedition: Expedition, skip = 0, limit = 25): Promise<{
 		status: AttendeeStatus,
 		user: User
 	}[]> {
@@ -490,6 +490,13 @@ export module ExpeditionController {
 			skip: skip,
 			limit: limit
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u'));
+	}
+
+	export function getAllAttendees(transaction: Transaction, expedition: Expedition, exclude: User[]): Promise<User[]> {
+		return transaction.run(`MATCH(:Expedition {id : $expeditionId})<-[:JOINS_EXPEDITION]-(u:User) WHERE NOT u.id IN $excludeIds RETURN properties(u) as u`, {
+			expeditionId: expedition.id,
+			excludeIds: exclude.map(user => user.id)
+		}).then((result: StatementResult) =>  DatabaseManager.neo4jFunctions.unflatten(result.records, 'u'));
 	}
 	
 	export function inviteLike(transaction: Transaction, expedition: Expedition, query: string, relatedUser: User, skip = 0, limit = 25): Promise<{
@@ -666,7 +673,7 @@ export module ExpeditionController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = ExpeditionController.get(transaction, request.params.id).then((expedition: Expedition) => {
 				if (!expedition) return Promise.reject(Boom.notFound('Expedition not found.'));
-				return ExpeditionController.getAttendees(transaction, expedition, request.query.offset, request.query.limit);
+				return ExpeditionController.getAttendeeStatuses(transaction, expedition, request.query.offset, request.query.limit);
 			}).then((attendees: {
 				status: AttendeeStatus,
 				user: User

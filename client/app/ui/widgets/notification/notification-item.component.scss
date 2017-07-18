@@ -16,11 +16,12 @@ $notification-avatar-size: 2.5rem;
     .content {
       margin-left: map_get($base-padding, 'smaller');
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       flex: 1 1 auto;
 
-      @include breakpoint(null, 'small') {
-        flex-direction: column;
+      @include breakpoint('small') {
+        flex-direction: row;
+        align-items: center;
       }
 
       .message {
