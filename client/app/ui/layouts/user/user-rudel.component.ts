@@ -8,6 +8,8 @@ import {ScrollService} from '../../../services/scroll.service';
 import {RudelItemStyles} from '../../widgets/rudel/rudel-item.component';
 import {User} from "../../../models/user";
 import {UserService} from "../../../services/user.service";
+import {UserComponent} from "./user.component";
+import {Title} from "@angular/platform-browser";
 
 @Component({
 	templateUrl: 'user-rudel.component.html',
@@ -33,10 +35,14 @@ export class UserRudelComponent implements OnInit, OnDestroy {
 	
 	constructor(private rudelService: RudelService,
 	            private route: ActivatedRoute,
+	            private title: Title,
+	            private parent: UserComponent,
 	            private userService: UserService,
 	            private scrollService: ScrollService) {}
 	
 	ngOnInit() {
+		this.title.setTitle(`Rudel - ${this.parent.user.username} - rudl.me`);
+
 		this.rudelSubscription = this.route.parent.data.do((data: { user: User }) => {
 			this.rudel = null;
             this.isAuthenticatedUser = data.user.id == this.userService.getAuthenticatedUser().user.id;

@@ -31,9 +31,7 @@ export class BoardingComponent implements OnDestroy, OnInit {
     constructor(private userService: UserService,
 	            private router: Router,
                 private deviceService: Ng2DeviceService,
-	            title: Title) {
-		title.setTitle('Boarding | rudl.me'); //rudl.me - Boarding
-	}
+	            private title: Title) {}
 	
 	carouselIndex: number = 0;
     permissionStatus: 'ungranted' | 'granting' | 'granted' | 'denied' = 'ungranted';
@@ -43,6 +41,8 @@ export class BoardingComponent implements OnDestroy, OnInit {
     helpButtonStyle = ButtonStyles.filledInverseShadowed;
 
     ngOnInit(): void {
+    	this.title.setTitle('Boarding | rudl.me'); //rudl.me - Boarding;
+
         // Subscribe to permissions.
         this.locationSubscription = this.userService.getCurrentPosition().subscribe(location => {
             this.permissionStatus = location ? 'granted' : 'denied';

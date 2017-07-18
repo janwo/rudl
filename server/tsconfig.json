@@ -12,8 +12,5 @@
     "types": [
       "node"
     ]
-  },
-  "exclude": [
-    "../node_modules"
-  ]
+  }
 }

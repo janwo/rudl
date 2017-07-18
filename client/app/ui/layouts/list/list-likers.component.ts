@@ -5,6 +5,7 @@ import {User} from '../../../models/user';
 import {ListService} from '../../../services/list.service';
 import {List} from '../../../models/list';
 import {ScrollService} from '../../../services/scroll.service';
+import {Title} from "@angular/platform-browser";
 
 @Component({
 	templateUrl: 'list-likers.component.html',
@@ -18,9 +19,12 @@ export class ListLikersComponent implements OnInit, OnDestroy {
 	
 	constructor(private listService: ListService,
 	            private route: ActivatedRoute,
-	            private scrollService: ScrollService) {}
+	            private scrollService: ScrollService,
+				private title: Title) {}
 	
 	ngOnInit() {
+		this.title.setTitle('Likers der Liste | rudl.me');
+
 		// Define changed params subscription.
 		this.likersSubscription = this.route.parent.data.flatMap((data: { list: List }) => {
 			this.list = data.list;

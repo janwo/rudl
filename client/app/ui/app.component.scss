@@ -84,6 +84,10 @@
   @include breakpoint('small') {
     padding: map_get($base-padding, 'smaller');
   }
+
+  &.elevated {
+    box-shadow: map_get($base-shadow, 'elevated');
+  }
 }
 
 /deep/ .material-icons {

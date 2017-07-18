@@ -51,7 +51,8 @@ $notification-avatar-size: 2.5rem;
       width: $notification-avatar-size;
       flex: 0 0 auto;
 
-      user-avatar {
+      user-avatar,
+      emoji {
         height: $notification-avatar-size;
         width: $notification-avatar-size;
       }
@@ -66,8 +67,6 @@ $notification-avatar-size: 2.5rem;
 
         emoji {
           margin-left: -$notification-avatar-size / 2;
-          height: $notification-avatar-size;
-          width: $notification-avatar-size;
         }
       }
     }

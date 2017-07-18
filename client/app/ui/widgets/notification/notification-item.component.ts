@@ -44,7 +44,8 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 			case NotificationType.APPLIED_FOR_EXPEDITION:
 			case NotificationType.ACCEPTED_APPLICATION_FOR_EXPEDITION:
 			case NotificationType.REJECTED_APPLICATION_FOR_EXPEDITION:
-            case NotificationType.ADDED_EXPEDITION:
+			case NotificationType.ADDED_EXPEDITION:
+			case NotificationType.EXPEDITION_IS_TODAY:
             case NotificationType.COMMENTED_EXPEDITION:
 				this.link = ['/expeditions', (this.notification.subject as ExpeditionPreview).id];
 				this.emoji = (this.notification.subject as ExpeditionPreview).links.icon;
@@ -66,7 +67,11 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} ist an der Teilnahme von **${(this.notification.subject as ExpeditionPreview).title}** interessiert.`;
 				this.link.push('attendees');
 				break;
-			
+
+			case NotificationType.EXPEDITION_IS_TODAY:
+                this.message = `Du nimmst heute an **${(this.notification.subject as ExpeditionPreview).title}** teil!`;
+                break;
+
 			case NotificationType.INVITED_TO_EXPEDITION:
 				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat dich in **${(this.notification.subject as ExpeditionPreview).title}** eingeladen.`;
 				break;

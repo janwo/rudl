@@ -33,11 +33,11 @@ export class ExploreExpeditionsComponent implements OnInit, OnDestroy {
 	
 	constructor(private expeditionService: ExpeditionService,
 				private rudelService: RudelService,
-				title: Title) {
-		title.setTitle('Entdecke Streifzüge | rudl.me');
-	}
+				private title: Title) {}
 	
 	ngOnInit(): void {
+		this.title.setTitle('Entdecke Streifzüge | rudl.me');
+
 		this.suggestedExpeditionsSubscription = this.expeditionService.suggested().subscribe((expeditions: Expedition[]) => {
 			this.suggestedExpeditions = expeditions;
 		});

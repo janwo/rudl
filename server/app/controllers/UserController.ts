@@ -204,7 +204,7 @@ export module UserController {
 			followeeUserId: aimedUser.id,
 			now: new Date().getTime() / 1000
 		}).then((result: any) => {
-			if(result.summary.counters.relationshipsCreated() > 0) return AccountController.NotificationController.set(transaction, NotificationType.LIKES_USER, aimedUser, aimedUser, user);
+			if(result.summary.counters.relationshipsCreated() > 0) return AccountController.NotificationController.set(transaction, NotificationType.LIKES_USER, [aimedUser], aimedUser, user);
 		});
 	}
 	

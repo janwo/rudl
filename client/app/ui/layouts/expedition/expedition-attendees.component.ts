@@ -40,7 +40,7 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	            private title: Title) {}
 	
 	ngOnInit() {
-		this.title.setTitle(`Streifzug "${this.parent.expedition.getValue().title}" - Teilnehmer | rudl.me`);
+		this.title.setTitle(`Teilnehmer - Streifzug "${this.parent.expedition.getValue().title}" | rudl.me`);
 		
 		// Define subscriptions for changed user statuses.
 		let approveObservable = this.approveUser.asObservable().flatMap(user => {

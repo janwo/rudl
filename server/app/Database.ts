@@ -190,7 +190,8 @@ export class DatabaseManager {
 			name: 'Notification',
 			isRelationship: false,
 			indices: [
-				'createdAt'
+                'createdAt',
+                'hasSender'
 			]
 		},
 		settings: {

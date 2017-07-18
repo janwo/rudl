@@ -4,6 +4,7 @@ import {Form, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {User, UserSettings} from "../../../models/user";
 import {ButtonStyles} from '../../widgets/control/styled-button.component';
 import {Subscription} from 'rxjs/Subscription';
+import {Title} from "@angular/platform-browser";
 
 @Component({
 	templateUrl: 'settings-notifications.component.html',
@@ -18,9 +19,12 @@ export class SettingsNotificationsComponent implements OnInit, OnDestroy {
 	settingsSubscription: Subscription;
 	
 	constructor(public userService: UserService,
-	            private fb: FormBuilder ) {}
+	            private fb: FormBuilder,
+				private title: Title ) {}
 	
 	ngOnInit() {
+		this.title.setTitle(`Mail - Einstellungen | rudl.me`);
+
 		this.form = this.fb.group({
 			notificationMails: [
 				true, [

@@ -10,6 +10,7 @@ import {ActivatedRoute} from '@angular/router';
 import {ListService} from '../../../services/list.service';
 import {RudelService} from '../../../services/rudel.service';
 import {RudelItemStyles} from '../../widgets/rudel/rudel-item.component';
+import {Title} from "@angular/platform-browser";
 
 @Component({
 	templateUrl: 'search.component.html',
@@ -49,18 +50,21 @@ export class SearchComponent implements OnDestroy, OnInit {
 	constructor(private listService: ListService,
 	            private userService: UserService,
 	            private rudelService: RudelService,
+	            private title: Title,
 	            private searchService: SearchService,
 	            private activatedRoute: ActivatedRoute) {}
 	
 	ngOnInit(): void {
 		// Register for query changes.
 		this.querySubscription = this.searchService.onQueryChangedDebounced.do(() => {
+            this.title.setTitle(`Suche | rudl.me`);
 			this.searching = false;
 			this.searchValue = null;
 			this.rudel = null;
 			this.lists = null;
 			this.users = null;
 		}).filter(query => query && query.length >= 3).flatMap((query: string) => {
+            this.title.setTitle(`"${query}" - Suche | rudl.me`);
 			this.searching = true;
 			return Observable.zip(
 				this.rudelService.search(query, 0, 5),
