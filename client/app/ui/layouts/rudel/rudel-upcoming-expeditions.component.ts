@@ -6,6 +6,8 @@ import {Expedition} from '../../../models/expedition';
 import {ExpeditionService} from '../../../services/expedition.service';
 import {EmptyState} from '../../widgets/state/empty.component';
 import {ScrollService} from '../../../services/scroll.service';
+import {RudelComponent} from "./rudel.component";
+import {Title} from "@angular/platform-browser";
 
 @Component({
 	templateUrl: 'rudel-upcoming-expeditions.component.html',
@@ -24,9 +26,13 @@ export class RudelUpcomingExpeditionsComponent implements OnInit, OnDestroy {
 	
 	constructor(private expeditionService: ExpeditionService,
 	            private route: ActivatedRoute,
+                private parent: RudelComponent,
+                private title: Title,
 	            private scrollService: ScrollService) {}
 	
 	ngOnInit() {
+		this.title.setTitle(`Zukünftige Streifzüge - Rudel "${this.parent.rudel.name}" | rudl.me`);
+
 		// Define changed params subscription.
 		this.expeditionsSubscription = this.route.parent.data.flatMap((data: { rudel: Rudel }) => {
 			this.rudel = data.rudel;

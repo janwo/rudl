@@ -5,6 +5,7 @@ import {AuthenticatedUser, User} from "../../../models/user";
 import {ButtonStyles} from '../../widgets/control/styled-button.component';
 import {Subscription} from 'rxjs/Subscription';
 import {Observable} from "rxjs/Observable";
+import {Title} from "@angular/platform-browser";
 
 @Component({
 	templateUrl: 'settings-profile.component.html',
@@ -25,6 +26,7 @@ export class SettingsProfileComponent implements OnInit, OnDestroy {
 	usernameSuggestion: string;
 	
 	constructor(public userService: UserService,
+	            private title: Title,
 	            private fb: FormBuilder ) {}
 	
 	onChangedAvatar(input: HTMLInputElement): void {
@@ -62,6 +64,8 @@ export class SettingsProfileComponent implements OnInit, OnDestroy {
     }
 	
 	ngOnInit() {
+        this.title.setTitle(`Profil - Einstellungen | rudl.me`);
+
 		this.form = this.fb.group({
 			firstName: [
 				null, [

@@ -5,6 +5,8 @@ import {ActivatedRoute} from '@angular/router';
 import {User} from '../../../models/user';
 import {EmptyState} from '../../widgets/state/empty.component';
 import {ScrollService} from '../../../services/scroll.service';
+import {UserComponent} from "./user.component";
+import {Title} from "@angular/platform-browser";
 
 @Component({
 	templateUrl: 'user-likers.component.html',
@@ -29,9 +31,13 @@ export class UserLikersComponent implements OnInit, OnDestroy {
 	
 	constructor(private userService: UserService,
 	            private route: ActivatedRoute,
+				private title: Title,
+				private parent: UserComponent,
 	            private scrollService: ScrollService) {}
 	
 	ngOnInit() {
+		this.title.setTitle(`Anhänger - ${this.parent.user.username} - rudl.me`);
+
 		this.likersSubscription = this.route.parent.data.do((data: { user: User }) => {
 			this.likers = null;
 			this.isAuthenticatedUser = data.user.id == this.userService.getAuthenticatedUser().user.id;

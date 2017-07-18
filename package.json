@@ -132,7 +132,7 @@
     "webpack-dev-server": "^2.4.5",
     "webpack-merge": "^4.1.0",
     "white-out": "^2.0.0",
-    "zone.js": "^0.8.12"
+    "zone.js": "0.8.12"
   },
   "repository": {
     "type": "git",

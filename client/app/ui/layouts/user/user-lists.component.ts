@@ -7,6 +7,8 @@ import {EmptyState} from '../../widgets/state/empty.component';
 import {ScrollService} from '../../../services/scroll.service';
 import {User} from "../../../models/user";
 import {UserService} from "../../../services/user.service";
+import {UserComponent} from "./user.component";
+import {Title} from "@angular/platform-browser";
 
 @Component({
 	templateUrl: 'user-lists.component.html',
@@ -26,10 +28,14 @@ export class UserListsComponent implements OnInit, OnDestroy {
 	
 	constructor(private listService: ListService,
 	            private route: ActivatedRoute,
+				private title: Title,
+				private parent: UserComponent,
 	            private userService: UserService,
 	            private scrollService: ScrollService) {}
 	
 	ngOnInit() {
+		this.title.setTitle(`Listen - ${this.parent.user.username} - rudl.me`);
+
 		this.listsSubscription = this.route.parent.data.do((data: { user: User }) => {
 			this.lists = null;
 			this.isAuthenticatedUser = data.user.id == this.userService.getAuthenticatedUser().user.id;

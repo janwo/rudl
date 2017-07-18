@@ -5,6 +5,7 @@ import {AuthenticatedUser, User} from "../../../models/user";
 import {ButtonStyles} from '../../widgets/control/styled-button.component';
 import {Subscription} from 'rxjs/Subscription';
 import {Router} from "@angular/router";
+import {Title} from "@angular/platform-browser";
 
 @Component({
 	templateUrl: 'settings-other.component.html',
@@ -18,6 +19,7 @@ export class SettingsOtherComponent implements OnInit, OnDestroy {
 	authenticatedUserSubscription: Subscription;
 	user: User;
 	constructor(public userService: UserService,
+                private title: Title,
                 private router: Router) {}
 
     onUsernameConfirmationKeyUp(input: HTMLInputElement): void {
@@ -38,6 +40,8 @@ export class SettingsOtherComponent implements OnInit, OnDestroy {
 	}
 	
 	ngOnInit() {
+		this.title.setTitle(`Werkzeuge | rudl.me`);
+
 		this.authenticatedUserSubscription = this.userService.getAuthenticatedUserObservable().subscribe((userStatus: UserStatus) => {
             this.user = userStatus.user;
 		});
