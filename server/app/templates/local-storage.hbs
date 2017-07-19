@@ -1,0 +1,22 @@
+<!doctype>
+<html>
+<head>
+    <title>{{title}}</title>
+    <meta charset="UTF-8">
+</head>
+<body></body>
+<script>
+    // Get params.
+    let key = "{{key}}";
+    let value = "{{value}}";
+    let redirectTo = "{{redirectTo}}";
+
+    // Save storage item.
+    if (key && value) {
+        window.localStorage.setItem(key, value);
+        if(redirectTo) window.location = redirectTo;
+    } else {
+        document.body.innerHTML = "Your browser is not supported. Sorry for the inconvenience.";
+    }
+</script>
+</html>

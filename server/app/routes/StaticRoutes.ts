@@ -44,7 +44,6 @@ export const RoutesConfig: RoutesConfiguration = {
 			config: {
 				auth: false
 			}
-			
 		}
 	]
 };

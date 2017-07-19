@@ -38,9 +38,6 @@ export default {
 			'robots': 'follow,index',
 			'description': 'Bei rudl einfach und entspannt die eigene Stadt kennenlernen, gleichgesinnte Menschen finden und die Freizeitgestaltung transparenter und einfach planbar gestalten.'
 		},
-		messageTypes: {
-			oauth: 'OAUTH_TOKEN_MESSAGE'
-		},
 		apiKeys: {
 			mapzen: process.ENV.MAPZEN_KEY
 		},
@@ -123,7 +120,7 @@ export default {
 								'process.env': {
 									ENV: JSON.stringify(Config.env),
 									DOMAIN: JSON.stringify(Config.backend.domain),
-									MESSAGE_TYPES: JSON.stringify(Config.frontend.messageTypes),
+									JWT_TOKEN_NAME: JSON.stringify(Config.backend.jwt.name),
 									API_KEYS: JSON.stringify(Config.frontend.apiKeys),
 									MAX_UPLOAD_BYTES: JSON.stringify(Config.backend.maxUploadBytes),
 									UPLOAD_MIME_TYPES: JSON.stringify(Config.backend.uploadMimeTypes)
@@ -160,6 +157,7 @@ export default {
 		},
 		icons: require('../../db/files/icons/data.json'),
 		jwt: {
+			name: 'jwt-token',
 			expiresIn: 60 * 60 * 24 * 50,
 			deleteIn: 60 * 60 * 24 * 30
 		},

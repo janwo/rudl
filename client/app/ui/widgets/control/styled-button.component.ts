@@ -9,7 +9,8 @@ export class StyledButtonComponent {
 	
 	@Input() text: string = null;
 	@Input() icon: string = null;
-	@Input() link: string = null;
+    @Input() link: string = null;
+    @Input() externalLink: string = null;
 	@Input() flag: string = null;
 	@Input() disabled: boolean = false;
 	@Input() style: ButtonStyles = ButtonStyles.filled;
@@ -26,8 +27,8 @@ export class StyledButtonComponent {
 		this.click.emit(event);
 		
 		// Route to new location.
-		if (!this.link) return;
-		window.open(this.link);
+		if(this.link) window.location.assign(this.link);
+        if(this.externalLink) window.open(this.externalLink);
 	}
 	
 	constructor() {}

@@ -5,37 +5,27 @@ import {BehaviorSubject} from 'rxjs';
 
 @Injectable()
 export class DataService {
-	
+
 	static domain: string = process.env.DOMAIN;
-	static callbackMessageType: string = process.env.MESSAGE_TYPES.oauth;
-	static localStorageKey: string = 'jwt-token';
+	static jwtStorageKey: string = process.env.JWT_TOKEN_NAME;
 	private token: BehaviorSubject<string>;
 	
 	constructor(private http: Http) {
 		// Create token observable.
-		this.token = new BehaviorSubject<string>(window.localStorage.getItem(DataService.localStorageKey) || null);
-		this.token.subscribe((tokenString: string) => {
-			if (tokenString) {
+		let token = window.localStorage.getItem(DataService.jwtStorageKey) || null;
+		this.token = new BehaviorSubject<string>(token);
+		this.token.subscribe((token: string) => {
+			if (token) {
 				// Save item, if set.
-				window.localStorage.setItem(DataService.localStorageKey, tokenString);
+				window.localStorage.setItem(DataService.jwtStorageKey, token);
 				return;
 			}
-			
+
 			// Otherwise remove item.
-			window.localStorage.removeItem(DataService.localStorageKey);
+			window.localStorage.removeItem(DataService.jwtStorageKey);
 		});
-		
-		// Listen to any incoming authentication messages.
-		this.registerAuthenticationMessageListener();
 	}
-	
-	private registerAuthenticationMessageListener() {
-		window.addEventListener('message', event => {
-			if (event.origin != DataService.domain || event.data.type !== DataService.callbackMessageType) return;
-			this.token.next(event.data.message);
-		}, false);
-	}
-	
+
 	setToken(tokenString: string): void {
 		this.token.next(tokenString);
 	}

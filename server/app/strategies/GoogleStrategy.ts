@@ -81,11 +81,11 @@ export function handleGoogle(request: any, reply: any): void {
 	]));
 	
 	transactionSession.finishTransaction(promise).then((values: [void, string, WelcomeMailOptions]) => {
-		reply.view('message', {
-			title: 'Authentication',
-			domain: Config.backend.domain,
-			token: values[1],
-			type: Config.frontend.messageTypes.oauth
+		reply.view('local-storage', {
+			title: 'Authentication in Progress...',
+			key: Config.backend.jwt.name,
+			value: values[1],
+			redirectTo: Config.backend.domain
 		}).header("Authorization", values[1]);
 		if(values[2]) return MailManager.sendWelcomeMail(values[2]);
 	}, (err: any) => {

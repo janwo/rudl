@@ -32,7 +32,6 @@ export const Config: {
 	debug: boolean,
 	frontend: {
 		metadata: { [key: string]: string },
-		messageTypes: { [key: string]: string },
 		apiKeys: {
 			mapzen: string
 		},
@@ -88,6 +87,7 @@ export const Config: {
 		},
 		excludeRoutes: string[],
 		jwt: {
+			name: string,
 			expiresIn: number,
 			deleteIn: number
 		},
