@@ -1,11 +1,11 @@
-import {Config} from '../../run/config';
+import {Config, root} from '../../run/config';
 import {RoutesBinder} from './binders/RoutesBinder';
 import {StrategiesBinder} from './binders/StrategiesBinder';
 import {DecoratorsBinder} from './binders/DecoratorsBinder';
 import {PluginsBinder} from './binders/PluginsBinder';
 import {DatabaseManager} from './Database';
 import * as Fs from 'fs';
-import * as AutoSNI from 'auto-sni';
+import * as ge from 'greenlock-express';
 import * as Path from 'path';
 import {Server} from 'hapi';
 import 'vision';
@@ -58,23 +58,21 @@ export function hapiServer(): Promise<Server> {
 		case 'secure':
 			// Load SSL key and certificate.
 			let domain = /^(https?:\/\/)?[\d.]*([\S][^\/]+)/i.exec(Config.backend.domain)[2];
-			let autoSni = AutoSNI({
-				email: Config.backend.mails.admin,
-				agreeTos: true,
-				debug: Config.debug,
-				domains: [ [
+			let gle = ge.create({
+				server: 'staging', // in production use https://acme-v01.api.letsencrypt.org/directory
+                email: Config.backend.mails.admin,
+                agreeTos: true,
+                domains: [
                     domain,
                     `www.${domain}`
-				] ],
-				ports: {
-					http: Config.backend.ports.http,
-					https: Config.backend.ports.https
-				}
-			});
-
+                ],
+				configDir: root('letsencrypt'),
+                debug: true
+			}).listen(Config.backend.ports.http, Config.backend.ports.https);
+			
 			// Create server connection.
 			server.connection({
-				listener: autoSni,
+				listener: gle,
 				tls: true,
 				autoListen: false
 			});

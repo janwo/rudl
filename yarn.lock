@@ -93,12 +93,6 @@
     magic-string "^0.19.0"
     source-map "^0.5.6"
 
-"@types/auto-sni@^2.1.0":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@types/auto-sni/-/auto-sni-2.1.1.tgz#f3efc0fca348a3ca312779d61b716b3362094637"
-  dependencies:
-    "@types/node" "*"
-
 "@types/boom@*", "@types/boom@^4.3.0":
   version "4.3.5"
   resolved "https://registry.yarnpkg.com/@types/boom/-/boom-4.3.5.tgz#9ccca31e08c989bce483bd76b2de798526c608f5"
@@ -2602,7 +2596,7 @@ graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/graceful-readlink/-/graceful-readlink-1.0.1.tgz#4cafad76bc62f02fa039b2f94e9a3dd3a391a725"
 
-greenlock-express@^2.0.9:
+greenlock-express@^2.0.11, greenlock-express@^2.0.9:
   version "2.0.11"
   resolved "https://registry.yarnpkg.com/greenlock-express/-/greenlock-express-2.0.11.tgz#156f47a50e5e07f059516a3e07c81947e46d3709"
   dependencies:
