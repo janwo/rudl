@@ -59,7 +59,7 @@ export function hapiServer(): Promise<Server> {
 			// Load SSL key and certificate.
 			let domain = /^(https?:\/\/)?[\d.]*([\S][^\/]+)/i.exec(Config.backend.domain)[2];
 			let gle = ge.create({
-				server: 'staging', // in production use https://acme-v01.api.letsencrypt.org/directory
+				server: Cofnig.debug ? 'staging': 'https://acme-v01.api.letsencrypt.org/directory',
                 email: Config.backend.mails.admin,
                 agreeTos: true,
                 domains: [
@@ -69,7 +69,7 @@ export function hapiServer(): Promise<Server> {
 				configDir: root('letsencrypt'),
                 debug: true
 			}).listen(Config.backend.ports.http, Config.backend.ports.https);
-			
+
 			// Create server connection.
 			server.connection({
 				listener: gle,
