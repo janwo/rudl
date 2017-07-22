@@ -11,16 +11,16 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./letsencrypt:/root/letsencrypt
       - ./.cache:/root/.cache
       - ./.env:/root/app/.env
       - ./server:/root/app/server
       - ./client:/root/app/client
       - ./run:/root/app/run
       - ./test:/root/app/test
+      - ./letsencrypt:/root/app/letsencrypt
+      - ./logs:/root/app/logs
       - ./yarn.lock:/root/app/yarn.lock
       - ./db/files:/root/app/db/files
-      - ./logs:/root/app/logs
     depends_on:
       - redis
       - neo4j

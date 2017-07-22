@@ -58,10 +58,11 @@ export function hapiServer(): Promise<Server> {
 		case 'secure':
 			// Load SSL key and certificate.
 			let gle = ge.create({
-				server: Config.debug ? 'staging': 'https://acme-v01.api.letsencrypt.org/directory',
+                app: () => {},
+                debug: Config.debug,
                 configDir: root('letsencrypt'),
-                debug: true,
-                approveDomains: (opts: any, certs: any, cb: () => {}) => {
+				server: Config.debug ? 'staging': 'https://acme-v01.api.letsencrypt.org/directory',
+                approveDomains: (opts: any, certs: any, cb: (x: any, y: any) => {}) => {
                     if (certs) {
                         opts.domains = certs.altnames;
                     } else {
