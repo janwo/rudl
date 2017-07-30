@@ -27,7 +27,7 @@ export module UserController {
 	}
 	
 	export function findByMail(transaction: Transaction, mail: string): Promise<User> {
-		return transaction.run('MATCH(u:User) WHERE (u.mails_primary_mail = $mail AND u.mails_primary_verified) OR (u.mails_secondary_mail = $mail AND u.mails_secondary_verified) RETURN COALESCE(properties(u), []) as u LIMIT 1', {
+		return transaction.run('MATCH(u:User {mail: $mail}) RETURN COALESCE(properties(u), []) as u LIMIT 1', {
 			mail: mail
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u').shift());
 	}

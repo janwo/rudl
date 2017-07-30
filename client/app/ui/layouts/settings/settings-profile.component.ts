@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {UsernameCheckResult, UserService, UserStatus} from '../../../services/user.service';
+import {AvailabilityResult, UserService, UserStatus} from '../../../services/user.service';
 import {AbstractControl, Form, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AuthenticatedUser, User} from "../../../models/user";
 import {ButtonStyles} from '../../widgets/control/styled-button.component';
@@ -21,8 +21,8 @@ export class SettingsProfileComponent implements OnInit, OnDestroy {
 	avatarSubmitButtonStyle = ButtonStyles.filledInverseShadowed;
 	profileSubmitButtonStyle = ButtonStyles.outlined;
 	authenticatedUserSubscription: Subscription;
-	uploadMimeTypes = process.env.UPLOAD_MIME_TYPES;
-	maxUploadBytes = process.env.MAX_UPLOAD_BYTES;
+	uploadMimeTypes: string[] = process.env.UPLOAD_MIME_TYPES as any as string[];
+	maxUploadBytes = process.env.MAX_UPLOAD_BYTES as any;
 	usernameSuggestion: string;
 	
 	constructor(public userService: UserService,
@@ -56,9 +56,9 @@ export class SettingsProfileComponent implements OnInit, OnDestroy {
 
 	checkUsername(control: AbstractControl): Observable<{taken: boolean}> {
 	    if(control.value == this.userService.getAuthenticatedUser().user.username) return Observable.of(null);
-	    return this.userService.checkUsername(control.value).do((result: UsernameCheckResult) => {
+	    return this.userService.checkUsername(control.value).do((result: AvailabilityResult) => {
 	        if(result.suggestion) this.usernameSuggestion = result.suggestion;
-        }).map((result: UsernameCheckResult) => result.available ? null : {
+        }).map((result: AvailabilityResult) => result.available ? null : {
             taken: true
         });
     }

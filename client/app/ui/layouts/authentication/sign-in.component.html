@@ -1,0 +1,33 @@
+<div class="social-login">
+	<styled-button [style]="facebookButtonStyle" [link]="'/oauth/facebook'"
+            [text]="'Einloggen via Facebook'"></styled-button>
+    <styled-button [style]="googleButtonStyle" [link]="'/oauth/google'"
+            [text]="'Einloggen via Google'"></styled-button>
+</div>
+
+<p class="text-divider">
+	<span i18n="@@@signInDivider">Or sign in via mail</span>
+</p>
+
+<form [formGroup]="form">
+    <ng-container *ngIf="expanded">
+        <form-control-wrapper [description]="'Gebe deine **E-Mail** an' | format" [errorMessages]="{
+            required: 'Bitte gebe eine E-Mail-Adresse an.',
+            email: 'Deine E-Mail-Adresse ist nicht korrekt.'
+        }">
+            <input formControlName="mail" type="email">
+        </form-control-wrapper>
+        <form-control-wrapper [description]="'Gebe dein **Passwort** ein' | format" [errorMessages]="{
+            required: 'Bitte gebe ein Passwort an.',
+            minlength: 'Dein Passwort ist zu kurz (mindestens 6 Zeichen).'
+        }" [infoMessage]="formControlCount(form.get('password').value, 32)">
+            <input formControlName="password" maxlength="32" type="password">
+        </form-control-wrapper>
+    </ng-container>
+    <span class="error" *ngIf="loginFailed" i18n="@@loginFailed">Your mail or password is incorrect! <a [routerLink]="['/forgot-password']">Forgot password?</a></span>
+    <styled-button class="auth-button-mail" (click)="!expand() && submit()" [icon]="'mail'" [text]="'Mit E-Mail anmelden'" [disabled]="pendingRequest"></styled-button>
+</form>
+<small>
+	<span i18n="@@notRegisteredYet">Not registered yet?</span>
+	<a [routerLink]="['/sign-up']" i18n="@@signUp">Sign Up</a>
+</small>

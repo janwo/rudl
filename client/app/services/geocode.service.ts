@@ -6,7 +6,7 @@ import {Location} from '../models/location';
 @Injectable()
 export class GeocodeService {
 	
-	private static apiKey: string = process.env.API_KEYS.mapzen;
+	private static apiKey: string = (process.env.API_KEYS as any).mapzen;
 	private static url = 'https://search.mapzen.com/v1/search?';
 	
 	constructor(private http: Http) {}

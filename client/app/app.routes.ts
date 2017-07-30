@@ -46,14 +46,12 @@ import {ExploreRudelComponent} from './ui/layouts/explore/explore-rudel.componen
 import {SettingsNotificationsComponent} from './ui/layouts/settings/settings-notifications.component';
 import {SettingsOtherComponent} from "./ui/layouts/settings/settings-other.component";
 import {ExploreUserComponent} from "./ui/layouts/explore/explore-user.component";
+import {ForgotPasswordComponent} from "./ui/layouts/authentication/forgot-password.component";
+import {SignInComponent} from "./ui/layouts/authentication/sign-in.component";
+import {SignUpComponent} from "./ui/layouts/authentication/sign-up.component";
+import {SetPasswordComponent} from "./ui/layouts/authentication/set-password.component";
 
 const appRoutes: Routes = [
-	{
-		path: 'sign-up',
-		component: LandingComponent,
-		pathMatch: 'full'
-	},
-
     {
         path: 'membership-terminated', component: NotFoundComponent, data: {
         title: 'Konto entfernt',
@@ -72,6 +70,18 @@ const appRoutes: Routes = [
 			{path: 'privacy', component: LegalPrivacyComponent}
 		]
 	},
+
+    {
+        path: '',
+        component: LandingComponent,
+        children: [
+            {path: '', redirectTo: 'sign-up', pathMatch: 'full'},
+            {path: 'sign-up', component: SignUpComponent},
+            {path: 'sign-in', component: SignInComponent},
+            {path: 'forgot-password', component: ForgotPasswordComponent},
+            {path: 'set-password', component: SetPasswordComponent}
+        ]
+    },
 
 	{
 		path: '',
@@ -218,14 +228,19 @@ const appRoutes: Routes = [
 	},
 
 	{
-		path: '404', component: NotFoundComponent, data: {
-		title: 'Oops, hier ist nichts!', //Oops, nothing here!
-		image: require('../assets/illustrations/not-found.png'),
-		description: 'Die angeforderte Seite existiert nicht.'//The requested page does not exist!
-	}
+		path: '404',
+        component: NotFoundComponent,
+            data: {
+            title: 'Oops, hier ist nichts!', //Oops, nothing here!
+            image: require('../assets/illustrations/not-found.png'),
+            description: 'Die angeforderte Seite existiert nicht.'//The requested page does not exist!
+        }
 	},
 
-	{path: '**', redirectTo: '404'}
+	{
+	    path: '**',
+        redirectTo: '404'
+	}
 ];
 
 export const appRoutingProviders: any[] = [];

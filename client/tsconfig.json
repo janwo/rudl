@@ -19,9 +19,6 @@
   },
   "angularCompilerOptions": {
     "skipMetadataEmit": true,
-    "genDir": "./locale"
-  },
-  "awesomeTypescriptLoaderOptions": {
-    "useWebpackText": true
+    "genDir": "."
   }
 }

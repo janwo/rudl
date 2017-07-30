@@ -143,6 +143,19 @@ export const RoutesConfig: RoutesConfiguration = {
 			}
 		},
 		{
+			path: '/api/account/check-mail/{mail}',
+			method: 'GET',
+			handler: AccountController.RouteHandlers.checkMail,
+			config: {
+				auth: false,
+				validate: {
+					params: {
+						mail: UserValidation.mail
+					}
+				}
+			}
+		},
+		{
 			path: '/api/account/notifications',
 			method: 'GET',
 			handler: AccountController.RouteHandlers.notifications,

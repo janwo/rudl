@@ -5,7 +5,11 @@ export interface DecodedToken {
 
 export interface UserDataCache {
 	userId: string;
-	tokens: Array<TokenData>
+	tokens: Array<TokenData>;
+	singleTokens: {
+		resetPassword: string,
+		verifyMail: string
+	};
 }
 
 export interface TokenData {

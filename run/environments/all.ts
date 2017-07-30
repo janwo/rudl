@@ -81,6 +81,7 @@ export default {
 										'to-string-loader', 'css-loader', {
 											loader: 'postcss-loader',
 											options: {
+												sourceMap: true,
 												plugins: () => {
 													return [
 														require('autoprefixer')({browsers: ['last 2 versions']})
@@ -96,6 +97,7 @@ export default {
 										'to-string-loader', 'css-loader', {
 											loader: 'postcss-loader',
 											options: {
+												sourceMap: true,
 												plugins: () => {
 													return [
 														require('autoprefixer')({browsers: ['last 2 versions']})
@@ -220,7 +222,7 @@ export default {
 			accessKeyId: process.env.AWS_ID,
 			secretAccessKey: process.env.AWS_SECRET,
 			from: 'noreply@rudl.me',
-			rateLimit: 14,
+			sendingRate: 14,
 			region: 'eu-west-1',
 			operational: false
 		}

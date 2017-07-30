@@ -62,7 +62,7 @@ export function handleGoogle(request: any, reply: any): void {
 			}).then(user => {
 				return {
 					mail: {
-						to: user.mails.primary.mail,
+						to: user.mail,
 						name: user.firstName,
 						locale: user.languages.shift(),
 						provider: 'Google'
@@ -81,13 +81,13 @@ export function handleGoogle(request: any, reply: any): void {
 	]));
 	
 	transactionSession.finishTransaction(promise).then((values: [void, string, WelcomeMailOptions]) => {
+		if(values[2]) return MailManager.sendWelcomeMail(values[2]);
 		reply.view('local-storage', {
 			title: 'Authentication in Progress...',
 			key: Config.backend.jwt.name,
 			value: values[1],
 			redirectTo: Config.backend.domain
-		}).header("Authorization", values[1]);
-		if(values[2]) return MailManager.sendWelcomeMail(values[2]);
+		});
 	}, (err: any) => {
 		reply(Boom.badRequest(err));
 	});
