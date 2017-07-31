@@ -171,21 +171,17 @@ export module AuthController {
 		}).then(userDataCache => AuthController.saveUserDataCache(userDataCache));
 	}
 
-    export function sendWelcomeMail(user: User): Promise<void> {
+    export function sendResetPasswordInstructions(user: User): Promise<void> {
         return AuthController.getUserDataCache(user.id).then((userDataCache: UserDataCache) => {
-            userDataCache.singleTokens.verifyMail = Math.min(9999, Math.random() * 10000).toString();
-            let missingDigits = Math.max(0, userDataCache.singleTokens.verifyMail.length);
-            userDataCache.singleTokens.verifyMail = '0'.repeat(missingDigits) + userDataCache.singleTokens.verifyMail;
-
-            return Promise.all[
-                AuthController.saveUserDataCache(userDataCache),
-                MailManager.sendWelcomeMail({
+            userDataCache.singleTokens.resetPassword = shortid.generate();
+            return AuthController.saveUserDataCache(userDataCache).then(() => {
+                return MailManager.sendResetPasswordMail({
                     to: user.mail,
                     name: user.firstName,
-                    token: userDataCache.singleTokens.verifyMail,
+                    resetPasswordLink: `${Config.backend.domain}/set-password?mail=${encodeURIComponent(user.mail)}&token=${encodeURIComponent(userDataCache.singleTokens.resetPassword)}`,
                     locale: user.languages.shift()
-                })
-            ];
+                });
+            });
         });
     }
 
@@ -216,8 +212,8 @@ export module AuthController {
 				id: shortid.generate(),
 				mail: request.payload.mail,
 				password: AuthController.hashPassword(request.payload.password),
-				firstName: request.payload.firstname,
-				lastName: request.payload.lastname
+				firstName: request.payload.firstName,
+				lastName: request.payload.lastName
 			}).then((user: User) => Promise.all([
                 AuthController.signToken(user),
                 user
@@ -273,7 +269,9 @@ export module AuthController {
             let transactionSession = new TransactionSession();
             let transaction = transactionSession.beginTransaction();
             let promise: Promise<any> = UserController.findByMail(transaction, request.payload.mail).then((user: User) => {
+                if(!user) return Promise.reject(Boom.badData('Unknown user mail.'));
 
+                return AuthController.sendResetPasswordInstructions(user);
             });
 
             reply.api(promise, transactionSession);
@@ -284,13 +282,26 @@ export module AuthController {
          * @param request Request-Object
          * @param request.payload.mail mail
          * @param request.payload.token token
+         * @param request.payload.password password
          * @param reply Reply-Object
          */
         export function setPassword(request: any, reply: any): void {
             let transactionSession = new TransactionSession();
             let transaction = transactionSession.beginTransaction();
             let promise: Promise<any> = UserController.findByMail(transaction, request.payload.mail).then((user: User) => {
+                if(!user) return Promise.reject(Boom.badData('Unknown user mail.'));
 
+                return AuthController.getUserDataCache(user.id).then(userDataCache => {
+                    if(userDataCache.singleTokens.resetPassword !== request.payload.token) return AuthController.sendResetPasswordInstructions(user).then(() => {
+                       return Promise.reject(Boom.badData('Token is not valid.'));
+                    });
+
+                    delete userDataCache.singleTokens.resetPassword;
+                    return AuthController.saveUserDataCache(userDataCache).then(() => {
+                        user.password = AuthController.hashPassword(request.payload.password);
+                        return AccountController.save(transaction, user);
+                    });
+                });
             });
 
             reply.api(promise, transactionSession);

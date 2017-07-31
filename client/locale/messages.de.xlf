@@ -157,7 +157,7 @@
       <trans-unit id="landingBigTitle" datatype="html">
         <source>I´ve visited a new city and already met great people. Check!</source>
         <target>Eine neue Stadt besucht und gleich nette Leute getroffen. Check!</target>
-      <context-group purpose="location">
+        <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/landing/landing.component.ts</context>
           <context context-type="linenumber">13</context>
         </context-group>
@@ -331,7 +331,7 @@
         <target>Beliebte Streifzüge</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/explore/explore-expeditions.component.ts</context>
-          <context context-type="linenumber">13</context>
+          <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
       <trans-unit id="recentExpeditions" datatype="html">
@@ -339,7 +339,7 @@
         <target>Neue Streifzüge</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/explore/explore-expeditions.component.ts</context>
-          <context context-type="linenumber">24</context>
+          <context context-type="linenumber">38</context>
         </context-group>
       </trans-unit>
       <trans-unit id="suggestedRudel" datatype="html">
@@ -420,6 +420,130 @@
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/explore/explore-user.component.ts</context>
           <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="failedPasswordRequest" datatype="html">
+        <source>We were unable to locate your mail in our database.</source>
+        <target>Wir konnten deine E-Mail nicht in der Datenbank finden.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/forgot-password.component.ts</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="successfulPasswordRequest" datatype="html">
+        <source>You´ll find further instructions to reset your password in your mailbox.</source>
+        <target>Weitere Anweisungen zur Passwortwiederherstellung wurden an deine E-Mail versendet.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/forgot-password.component.ts</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="goBackToLogin" datatype="html">
+        <source>You remember your password?</source>
+        <target>Passwort ist dir eingefallen?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/forgot-password.component.ts</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/set-password.component.ts</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="signIn" datatype="html">
+        <source>Sign In</source>
+        <target>Anmelden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/forgot-password.component.ts</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/sign-up.component.ts</context>
+          <context context-type="linenumber">52</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/set-password.component.ts</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="@signInDivider" datatype="html">
+        <source>Or sign in via mail</source>
+        <target>Oder via E-Mail anmelden</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/sign-in.component.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="loginFailed" datatype="html">
+        <source>Your mail or password is incorrect! <x id="START_LINK" ctype="x-a"/>Forgot password?<x id="CLOSE_LINK" ctype="x-a"/></source>
+        <target>Deine E-Mail oder dein Passwort ist falsch! <x id="START_LINK" ctype="x-a"/>Passwort vergessen?<x id="CLOSE_LINK" ctype="x-a"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/sign-in.component.ts</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="notRegisteredYet" datatype="html">
+        <source>Not registered yet?</source>
+        <target>Noch nicht registriert?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/sign-in.component.ts</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="signUp" datatype="html">
+        <source>Sign Up</source>
+        <target>Registrieren</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/sign-in.component.ts</context>
+          <context context-type="linenumber">32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="signUpTerms" datatype="html">
+        <source>By signing up I accept the <x id="START_LINK" ctype="x-a"/>Privacy Policy<x id="CLOSE_LINK" ctype="x-a"/> and <x id="START_LINK_1" ctype="x-a"/>Terms and Conditions<x id="CLOSE_LINK" ctype="x-a"/>.</source>
+        <target>Durch die Anmeldung stimmst du den <x id="START_LINK" ctype="x-a"/>Datenschutzbestimmungen<x id="CLOSE_LINK" ctype="x-a"/> und <x id="START_LINK_1" ctype="x-a"/>Nutzungsbedingungen<x id="CLOSE_LINK" ctype="x-a"/> zu.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/sign-up.component.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="signUpDivider" datatype="html">
+        <source>Or register via mail</source>
+        <target>Oder via E-Mail registrieren</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/sign-up.component.ts</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="registerFailed" datatype="html">
+        <source>Registration failed, try again!</source>
+        <target>Registrierung fehlgeschlagen, versuche es erneut!</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/sign-up.component.ts</context>
+          <context context-type="linenumber">46</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="alreadyRegistered" datatype="html">
+        <source>Already registered yourself?</source>
+        <target>Hast dich schon registriert?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/sign-up.component.ts</context>
+          <context context-type="linenumber">51</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="failedPasswordChange" datatype="html">
+        <source>Your link is not valid anymore. We sent you a new link.</source>
+        <target>Dein Link ist nicht mehr gültig. Wir haben dir einen Neuen gesendet.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/set-password.component.ts</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="successfulPasswordChange" datatype="html">
+        <source>We´ve just changed your password, <x id="START_LINK" ctype="x-a"/>sign in<x id="CLOSE_LINK" ctype="x-a"/> again.</source>
+        <target>Wir haben gerade dein Passwort geändert, nun <x id="START_LINK" ctype="x-a"/>melde dich an<x id="CLOSE_LINK" ctype="x-a"/>.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/authentication/set-password.component.ts</context>
+          <context context-type="linenumber">18</context>
         </context-group>
       </trans-unit>
       <trans-unit id="searchBarPlaceholder" datatype="html">

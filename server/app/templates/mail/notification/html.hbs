@@ -11,9 +11,9 @@
     <p>
         Hi <span>{{name}}</span>, you have <span>{{unread}}</span> unread {{pluralize unread 'notification' 'notifications'}} that are awaiting for you. Come back soon, if you like to get updated.
     </p>
-    <a class="button" href="{{notificationsLink}}">Show</a>
+    <a class="button" href="{{{notificationsLink}}}">Show</a>
     <div class="footer">
-        <a href="{{notificationSettingsLink}}">Edit Notifications</a>
+        <a href="{{{notificationSettingsLink}}}">Edit Notifications</a>
         {{#each address}}
             <span>{{this}}</span>
         {{/each}}

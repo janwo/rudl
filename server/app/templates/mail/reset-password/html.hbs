@@ -11,9 +11,9 @@
     <p>
         Hi <span>{{name}}</span>, somebody requested the reset of your account's password. If you requested it, click on "Set password".
     </p>
-    <a class="button" href="{{resetPasswordLink}}">Set password</a>
+    <a class="button" href="{{{resetPasswordLink}}}">Set password</a>
     <div class="footer">
-        <a href="{{notificationSettingsLink}}">Edit Notifications</a>
+        <a href="{{{notificationSettingsLink}}}">Edit Notifications</a>
         {{#each address}}
             <span>{{this}}</span>
         {{/each}}

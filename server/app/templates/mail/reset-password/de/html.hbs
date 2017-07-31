@@ -11,9 +11,9 @@
     <p>
         Hallo <span>{{name}}</span>, jemand hat ein neues Passwort für deinen Account angefordert. Sofern du dies warst, setze dein Passwort durch Klick auf "Passwort setzen".
     </p>
-    <a class="button" href="{{resetPasswordLink}}">Passwort setzen</a>
+    <a class="button" href="{{{resetPasswordLink}}}">Passwort setzen</a>
     <div class="footer">
-        <a href="{{notificationSettingsLink}}">Benachrichtigungen bearbeiten</a>
+        <a href="{{{notificationSettingsLink}}}">Benachrichtigungen bearbeiten</a>
         {{#each address}}
             <span>{{this}}</span>
         {{/each}}

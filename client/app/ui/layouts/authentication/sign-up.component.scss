@@ -1,4 +1,4 @@
-@import '../../variables';
+@import '../../variables.scss';
 
 $login-text-divider-color: map_get($base-colors, 'secondary-text');
 $login-text-divider-line-size: map_get($base-font-size, 'default') * 0.05;

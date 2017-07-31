@@ -18,7 +18,7 @@ export class LandingComponent implements OnInit {
 		this.title.setTitle('Entdecke den Puls deiner Stadt! | rudl.me');
 
 		this.userService.getAuthenticatedUserObservable().subscribe(((user: UserStatus) => {
-			if (user.loggedIn) this.router.navigate(['/']);
+			if (user.loggedIn) this.router.navigate(['/explore']);
 		}));
 	}
 }

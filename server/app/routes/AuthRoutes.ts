@@ -56,6 +56,7 @@ export const RoutesConfig: RoutesConfiguration = {
                 validate: {
                     payload: {
                         mail: UserValidation.mail,
+                        password: UserValidation.password,
                         token: Joi.string().required()
                     }
                 }

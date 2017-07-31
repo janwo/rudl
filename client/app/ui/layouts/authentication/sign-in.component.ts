@@ -8,8 +8,8 @@ import {Observable} from "rxjs/Observable";
 import {Router} from "@angular/router";
 
 @Component({
-	templateUrl: './sign-in.component.html',
-	styleUrls: ['./sign-in.component.scss']
+	templateUrl: 'sign-in.component.html',
+	styleUrls: ['sign-in.component.scss']
 })
 export class SignInComponent implements OnInit {
 
@@ -64,6 +64,6 @@ export class SignInComponent implements OnInit {
             this.pendingRequest = false;
             this.loginFailed = !success;
             if(success) this.router.navigate(['/']);
-        }, );
+        });
     }
 }

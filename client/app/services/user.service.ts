@@ -148,12 +148,18 @@ export class UserService {
         }).catch(() => Observable.of(false)).share();
     }
 
-    forgotPassword(mail: string): Observable<void> {
-        return Observable.of(null);
+    forgotPassword(recipe: {
+        mail: string
+    }): Observable<boolean> {
+        return this.dataService.post('/api/forgot-password', JSON.stringify(recipe)).map(response => response.statusCode == 200).catch(() => Observable.of(false)).share();
     }
 
-    setPassword(mail: string): Observable<void> {
-        return Observable.of(null);
+    setPassword(recipe: {
+        mail: string,
+        password: string,
+        token: string
+    }): Observable<boolean> {
+        return this.dataService.post('/api/set-password', JSON.stringify(recipe)).map(response => response.statusCode == 200).catch(() => Observable.of(false)).share();
     }
 
     terminate(): Observable<boolean> {

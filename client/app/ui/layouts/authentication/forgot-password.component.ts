@@ -8,14 +8,15 @@ import {Observable} from "rxjs/Observable";
 import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
-	templateUrl: './forgot-password.component.html',
-	styleUrls: ['./forgot-password.component.scss']
+	templateUrl: 'forgot-password.component.html',
+	styleUrls: ['forgot-password.component.scss']
 })
 export class ForgotPasswordComponent implements OnInit {
 
     form: FormGroup;
     pendingRequest: boolean;
     successfulRequest: boolean;
+    completedRequest: boolean;
 
 	constructor(private userService: UserService,
                 private route: ActivatedRoute,
@@ -30,8 +31,6 @@ export class ForgotPasswordComponent implements OnInit {
                 ]
             ]
         });
-
-        this.route.queryParams.subscribe(params => console.log(params));
 	}
 
     submit(): void {
@@ -41,9 +40,10 @@ export class ForgotPasswordComponent implements OnInit {
         // Mark as pending.
         this.pendingRequest = true;
 
-        this.userService.forgotPassword(this.form.value.mail).subscribe(() => {
+        this.userService.forgotPassword(this.form.value).subscribe((success: boolean) => {
             this.pendingRequest = false;
-            this.successfulRequest = true;
+            this.successfulRequest = success;
+            this.completedRequest = true;
         });
     }
 }

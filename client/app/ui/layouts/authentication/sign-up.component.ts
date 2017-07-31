@@ -8,8 +8,8 @@ import {Observable} from "rxjs/Observable";
 import {Router} from "@angular/router";
 
 @Component({
-	templateUrl: './sign-up.component.html',
-	styleUrls: ['./sign-up.component.scss']
+	templateUrl: 'sign-up.component.html',
+	styleUrls: ['sign-up.component.scss']
 })
 export class SignUpComponent implements OnInit {
 
@@ -108,7 +108,7 @@ export class SignUpComponent implements OnInit {
 
         this.userService.signUp(this.form.value).subscribe(success => {
             this.pendingRequest = false;
-            this.registerFailed = success;
+            this.registerFailed = !success;
             if(success) this.router.navigate(['/']);
         });
     }

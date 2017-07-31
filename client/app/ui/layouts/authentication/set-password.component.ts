@@ -8,14 +8,15 @@ import {Observable} from "rxjs/Observable";
 import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
-	templateUrl: './set-password.component.html',
-	styleUrls: ['./set-password.component.scss']
+	templateUrl: 'set-password.component.html',
+	styleUrls: ['set-password.component.scss']
 })
 export class SetPasswordComponent implements OnInit {
 
     form: FormGroup;
     pendingRequest: boolean;
     successfulRequest: boolean;
+    completedRequest: boolean;
 
 	constructor(private userService: UserService,
                 private route: ActivatedRoute,
@@ -36,6 +37,16 @@ export class SetPasswordComponent implements OnInit {
                     Validators.minLength(6),
                     Validators.maxLength(32)
                 ]
+            ],
+            token: [
+                null, [
+                    Validators.required
+                ]
+            ],
+            mail: [
+                null, [
+                    Validators.required
+                ]
             ]
         }, {
             validator: (group: FormGroup) => {
@@ -49,7 +60,12 @@ export class SetPasswordComponent implements OnInit {
             }
         });
 
-        this.route.queryParams.subscribe(params => console.log(params));
+        this.route.queryParams.subscribe(params => {
+            this.form.setValue(Object.assign(this.form.value, {
+                token: params.token,
+                mail: params.mail
+            }));
+        });
 	}
 
     formControlCount(value: string, maxChars: number = 0): (value: string) => {} {
@@ -63,9 +79,14 @@ export class SetPasswordComponent implements OnInit {
         // Mark as pending.
         this.pendingRequest = true;
 
-        this.userService.forgotPassword(this.form.value.mail).subscribe(() => {
+        this.userService.setPassword({
+            password: this.form.value.password,
+            token: this.form.value.token,
+            mail: this.form.value.mail
+        }).subscribe((success: boolean) => {
             this.pendingRequest = false;
-            this.successfulRequest = true;
+            this.successfulRequest = success;
+            this.completedRequest = true;
         });
     }
 }

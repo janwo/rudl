@@ -54,9 +54,6 @@ export class MailManager {
                     });
 					return;
 				}
-
-				// Just debug mail.
-                console.log(mailOptions);
 			});
 		});
 	}
@@ -138,10 +135,11 @@ export class MailManager {
 }
 
 export interface WelcomeMailOptions {
-	to: string;
-	name: string;
-	provider: string;
-	locale: Locale;
+    to: string;
+    name: string;
+    provider: string;
+    locale: Locale;
+}
 
 export interface ResetPasswordMailOptions {
     to: string;
