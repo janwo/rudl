@@ -1,5 +1,5 @@
 import * as nodemailer from 'nodemailer';
-import * as ses from 'nodemailer-ses-transport';
+import * as aws from 'aws-sdk';
 import {SentMessageInfo, Transporter} from 'nodemailer';
 import {Config} from '../../run/config';
 import * as Bull from 'bull';
@@ -20,12 +20,14 @@ export class MailManager {
 	private queue: Bull.Queue;
 	
 	constructor() {
-		this.transporter = nodemailer.createTransport(ses({
-			accessKeyId: Config.backend.ses.accessKeyId,
-			secretAccessKey: Config.backend.ses.secretAccessKey,
-			rateLimit: Config.backend.ses.rateLimit,
-			region: Config.backend.ses.region
-		}));
+		this.transporter = nodemailer.createTransport({
+            SES: new aws.SES({
+                accessKeyId: Config.backend.ses.accessKeyId,
+                secretAccessKey: Config.backend.ses.secretAccessKey,
+                region: Config.backend.ses.region
+            }),
+            sendingRate: Config.backend.ses.sendingRate
+        });
 		
 		this.queue = new Bull('mail', {
 			redis: {
@@ -52,9 +54,6 @@ export class MailManager {
                     });
 					return;
 				}
-
-				// Just debug mail.
-                console.log(mailOptions);
 			});
 		});
 	}
@@ -63,7 +62,6 @@ export class MailManager {
 		if (!MailManager.instance) MailManager.instance = new MailManager();
 		return MailManager.instance.queue.add(options).then(() => {});
 	}
-	
 	static sendWelcomeMail(options: WelcomeMailOptions): Promise<void> {
 		let dir = Path.resolve(__dirname, './templates/mail/welcome');
 		let template = new EmailTemplate.EmailTemplate(dir);
@@ -86,6 +84,29 @@ export class MailManager {
 			});
 		});
 	}
+
+    static sendResetPasswordMail(options: ResetPasswordMailOptions): Promise<void> {
+        let dir = Path.resolve(__dirname, './templates/mail/reset-password');
+        let template = new EmailTemplate.EmailTemplate(dir);
+
+        return template.render({
+            name: options.name,
+            resetPasswordLink: options.resetPasswordLink,
+            notificationSettingsLink: 'https://rudl.me/settings/notifications',
+            address: [
+                'rudl // Jan Wolf',
+                'Kleine Helle 41',
+                '28195 Bremen'
+            ]
+        }, options.locale).then((results: EmailTemplateResults) => {
+            return MailManager.sendMail({
+                to: options.to,
+                subject: results.subject,
+                text: results.text,
+                html: results.html
+            });
+        });
+    }
 	
 	
 	static sendNotificationMail(options: NotificationMailOptions): Promise<void> {
@@ -114,17 +135,24 @@ export class MailManager {
 }
 
 export interface WelcomeMailOptions {
-	to: string;
-	name: string;
-	provider: string;
-	locale: Locale;
+    to: string;
+    name: string;
+    provider: string;
+    locale: Locale;
+}
+
+export interface ResetPasswordMailOptions {
+    to: string;
+    name: string;
+    resetPasswordLink: string;
+    locale: Locale;
 }
 
 export interface NotificationMailOptions {
 	to: string;
 	name: string;
-	locale: Locale;
 	unread: number;
+    locale: Locale;
 }
 
 export interface MailOptions {

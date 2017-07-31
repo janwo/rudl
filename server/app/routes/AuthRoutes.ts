@@ -4,6 +4,7 @@ import {UserRoles, UserValidation} from '../models/user/User';
 import {AuthController} from '../controllers/AuthController';
 import * as FacebookStrategy from '../strategies/FacebookStrategy';
 import * as GoogleStrategy from '../strategies/GoogleStrategy';
+import * as Joi from 'joi';
 
 export const RoutesConfig: RoutesConfiguration = {
 	name: 'auth-routes',
@@ -17,16 +18,68 @@ export const RoutesConfig: RoutesConfiguration = {
 				validate: {
 					payload: UserValidation
 				}
-			}//TODO VALIDATE
+			}
 		},
+        {
+            path: '/api/sign-in',
+            method: 'POST',
+            handler: AuthController.RouteHandlers.signIn,
+            config: {
+                auth: false,
+                validate: {
+                    payload: {
+                        mail: UserValidation.mail,
+                        password: UserValidation.password
+                    }
+                }
+            }
+        },
+        {
+            path: '/api/forgot-password',
+            method: 'POST',
+            handler: AuthController.RouteHandlers.forgotPassword,
+            config: {
+                auth: false,
+                validate: {
+                    payload: {
+                        mail: UserValidation.mail
+                    }
+                }
+            }
+        },
+        {
+            path: '/api/set-password',
+            method: 'POST',
+            handler: AuthController.RouteHandlers.setPassword,
+            config: {
+                auth: false,
+                validate: {
+                    payload: {
+                        mail: UserValidation.mail,
+                        password: UserValidation.password,
+                        token: Joi.string().required()
+                    }
+                }
+            }
+        },
 		{
-			path: '/api/sign-in',
-			method: 'POST',
-			handler: AuthController.RouteHandlers.signIn,
+			path: Config.backend.providers.facebook.callbackURL,
+			method: ['GET', 'POST'],
+			handler: FacebookStrategy.handleFacebook,
 			config: {
 				auth: {
-					strategies: ['basic']
-				}//TODO VALIDATE
+					strategy: 'facebook'
+				}
+			}
+		},
+		{
+			path: Config.backend.providers.google.callbackURL,
+			method: ['GET', 'POST'],
+			handler: GoogleStrategy.handleGoogle,
+			config: {
+				auth: {
+					strategy: 'google'
+				}
 			}
 		},
 		{
@@ -38,26 +91,6 @@ export const RoutesConfig: RoutesConfiguration = {
 					scope: [
 						UserRoles.user
 					]
-				}
-			}
-		},
-		{
-			path: Config.backend.providers.facebook.callbackURL,
-			method: ['GET', 'POST'],
-			handler: FacebookStrategy.handleFacebook,
-			config: {
-				auth: {
-					strategies: ['facebook']
-				}
-			}
-		},
-		{
-			path: Config.backend.providers.google.callbackURL,
-			method: ['GET', 'POST'],
-			handler: GoogleStrategy.handleGoogle,
-			config: {
-				auth: {
-					strategies: ['google']
 				}
 			}
 		}

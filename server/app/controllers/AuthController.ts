@@ -10,8 +10,15 @@ import * as CryptoJS from 'crypto-js';
 import {StatementResult} from 'neo4j-driver/types/v1/result';
 import Transaction from 'neo4j-driver/types/v1/transaction';
 import Session from 'neo4j-driver/types/v1/session';
+import {MailManager} from "../Mail";
+import * as Boom from "boom";
+import {UserController} from "./UserController";
 
 export module AuthController {
+
+    export function generateRedisKey(id: string) : string {
+        return `user-${id}`;
+    }
 	
 	export function hashPassword(password: string): string {
 		return CryptoJS.SHA256(password, Config.backend.salts.password).toString();
@@ -44,20 +51,6 @@ export module AuthController {
 		}).then(() => {});
 	}
 	
-	export function authByMail(mail: string, password: string): Promise<User> {
-		let session = DatabaseManager.neo4jClient.session();
-		return session.run(`MATCH(u:User {password: $password}) WHERE (u.mails_primary_mail = $mail AND u.mails_primary_verified) OR (u.mails_secondary_mail = $mail AND u.mails_secondary_verified) RETURN properties(u) as u LIMIT 1`, {
-			mail: mail,
-			password: this.hashPassword(password)
-		}).then((results: any) => {
-			session.close();
-			return DatabaseManager.neo4jFunctions.unflatten(results.records, 'u').shift();
-		}, (err: any) => {
-			session.close();
-			return Promise.reject(err);
-		});
-	}
-	
 	export function authByToken(token: DecodedToken): Promise<User> {
 		return this.getTokenData(token).then(() => {
 			let session: Session = DatabaseManager.neo4jClient.session();
@@ -75,26 +68,25 @@ export module AuthController {
 	
 	export function getUserDataCache(userId: string): Promise<UserDataCache> {
 		return new Promise<UserDataCache>((resolve, reject) => {
-			// Retrieve user in redis.
-			let redisKey: string = `user-${userId}`;
-			DatabaseManager.redisClient.get(redisKey, (err: any, reply: any) => {
-				if (err) {
-					reject(err);
-					return;
-				}
-				resolve(reply ? JSON.parse(reply) : {
-					userId: userId,
-					tokens: []
-				});
-			});
-		});
+            // Retrieve user in redis.
+            DatabaseManager.redisClient.get(AuthController.generateRedisKey(userId), (err: any, reply: any) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve(Object.assign({
+                    userId: userId,
+                    tokens: [],
+                    singleTokens: {}
+                }, JSON.parse(reply)));
+            });
+        });
 	}
 	
 	export function saveUserDataCache(userDataCache: UserDataCache): Promise<UserDataCache> {
 		return new Promise<UserDataCache>((resolve, reject) => {
 			// Retrieve user in redis.
-			let redisKey: string = `user-${userDataCache.userId}`;
-			DatabaseManager.redisClient.set(redisKey, JSON.stringify(userDataCache), err => {
+			DatabaseManager.redisClient.set(AuthController.generateRedisKey(userDataCache.userId), JSON.stringify(userDataCache), err => {
 				if (err) {
 					reject(err);
 					return;
@@ -166,7 +158,7 @@ export module AuthController {
 	}
 	
 	export function unsignToken(token: DecodedToken): Promise<UserDataCache> {
-		return getUserDataCache(token.userId).then((userDataCache: UserDataCache) => {
+		return AuthController.getUserDataCache(token.userId).then((userDataCache: UserDataCache) => {
 			for (let i = 0; i < userDataCache.tokens.length; i++) {
 				let tokenItem = userDataCache.tokens[i];
 				if (tokenItem.tokenId != token.tokenId) continue;
@@ -178,7 +170,21 @@ export module AuthController {
 			return Promise.reject<UserDataCache>('Token is invalid.');
 		}).then(userDataCache => AuthController.saveUserDataCache(userDataCache));
 	}
-	
+
+    export function sendResetPasswordInstructions(user: User): Promise<void> {
+        return AuthController.getUserDataCache(user.id).then((userDataCache: UserDataCache) => {
+            userDataCache.singleTokens.resetPassword = shortid.generate();
+            return AuthController.saveUserDataCache(userDataCache).then(() => {
+                return MailManager.sendResetPasswordMail({
+                    to: user.mail,
+                    name: user.firstName,
+                    resetPasswordLink: `${Config.backend.domain}/set-password?mail=${encodeURIComponent(user.mail)}&token=${encodeURIComponent(userDataCache.singleTokens.resetPassword)}`,
+                    locale: user.languages.shift()
+                });
+            });
+        });
+    }
+
 	export namespace RouteHandlers {
 		
 		/**
@@ -206,31 +212,99 @@ export module AuthController {
 				id: shortid.generate(),
 				mail: request.payload.mail,
 				password: AuthController.hashPassword(request.payload.password),
-				firstName: request.payload.firstname,
-				lastName: request.payload.lastname
-			}).then((user: User) => AuthController.signToken(user)).then((token: string) => {
-				return {
-					token: token
-				};
-			});
-			
-			reply.api(promise, transactionSession);
+				firstName: request.payload.firstName,
+				lastName: request.payload.lastName
+			}).then((user: User) => Promise.all([
+                AuthController.signToken(user),
+                user
+            ]));
+
+            transactionSession.finishTransaction(promise).then((values: [string, User]) => {
+                let promise : Promise<any> = MailManager.sendWelcomeMail({
+                    to: values[1].mail,
+                    name: values[1].firstName,
+                    locale: values[1].languages.shift(),
+                    provider: 'Mail'
+                }).then(() => {
+                    return {
+                        token: values[0]
+                    };
+                });
+
+                reply.api(promise);
+            }, (err: any) => {
+                reply(Boom.badRequest(err));
+            });
 		}
-		
-		/**
-		 * Handles [POST] /api/sign-in
-		 * @param request Request-Object
-		 * @param reply Reply-Object
-		 */
-		export function signIn(request: any, reply: any): void {
-			let user = request.auth.credentials;
-			let promise = signToken(user).then(token => {
-				return {
-					token: token
-				};
-			});
-			
-			reply.api(promise);
-		}
+
+        /**
+         * Handles [POST] /api/sign-in
+         * @param request Request-Object
+         * @param request.payload.mail mail
+         * @param request.payload.password password
+         * @param reply Reply-Object
+         */
+        export function signIn(request: any, reply: any): void {
+            let transactionSession = new TransactionSession();
+            let transaction = transactionSession.beginTransaction();
+            let promise: Promise<any> = UserController.findByMail(transaction, request.payload.mail).then((user: User) => {
+                if(!user || user.password != AuthController.hashPassword(request.payload.password)) return Promise.reject(Boom.unauthorized('Credentials are wrong.'));
+                return signToken(user).then((token: string) => {
+                    return {
+                        token: token
+                    };
+                });
+            });
+
+            reply.api(promise, transactionSession);
+        }
+
+        /**
+         * Handles [POST] /api/forgot-password
+         * @param request Request-Object
+         * @param request.payload.mail mail
+         * @param reply Reply-Object
+         */
+        export function forgotPassword(request: any, reply: any): void {
+            let transactionSession = new TransactionSession();
+            let transaction = transactionSession.beginTransaction();
+            let promise: Promise<any> = UserController.findByMail(transaction, request.payload.mail).then((user: User) => {
+                if(!user) return Promise.reject(Boom.badData('Unknown user mail.'));
+
+                return AuthController.sendResetPasswordInstructions(user);
+            });
+
+            reply.api(promise, transactionSession);
+        }
+
+        /**
+         * Handles [POST] /api/set-password
+         * @param request Request-Object
+         * @param request.payload.mail mail
+         * @param request.payload.token token
+         * @param request.payload.password password
+         * @param reply Reply-Object
+         */
+        export function setPassword(request: any, reply: any): void {
+            let transactionSession = new TransactionSession();
+            let transaction = transactionSession.beginTransaction();
+            let promise: Promise<any> = UserController.findByMail(transaction, request.payload.mail).then((user: User) => {
+                if(!user) return Promise.reject(Boom.badData('Unknown user mail.'));
+
+                return AuthController.getUserDataCache(user.id).then(userDataCache => {
+                    if(userDataCache.singleTokens.resetPassword !== request.payload.token) return AuthController.sendResetPasswordInstructions(user).then(() => {
+                       return Promise.reject(Boom.badData('Token is not valid.'));
+                    });
+
+                    delete userDataCache.singleTokens.resetPassword;
+                    return AuthController.saveUserDataCache(userDataCache).then(() => {
+                        user.password = AuthController.hashPassword(request.payload.password);
+                        return AccountController.save(transaction, user);
+                    });
+                });
+            });
+
+            reply.api(promise, transactionSession);
+        }
 	}
 }

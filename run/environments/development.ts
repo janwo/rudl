@@ -1,5 +1,6 @@
 import * as ExtractTextPlugin from 'extract-text-webpack-plugin';
 import {root} from '../config';
+// noinspection TypeScriptUnresolvedVariable
 
 export default {
 	name: 'rudl - Development Environment',

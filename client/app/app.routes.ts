@@ -46,41 +46,39 @@ import {ExploreRudelComponent} from './ui/layouts/explore/explore-rudel.componen
 import {SettingsNotificationsComponent} from './ui/layouts/settings/settings-notifications.component';
 import {SettingsOtherComponent} from "./ui/layouts/settings/settings-other.component";
 import {ExploreUserComponent} from "./ui/layouts/explore/explore-user.component";
+import {ForgotPasswordComponent} from "./ui/layouts/authentication/forgot-password.component";
+import {SignInComponent} from "./ui/layouts/authentication/sign-in.component";
+import {SignUpComponent} from "./ui/layouts/authentication/sign-up.component";
+import {SetPasswordComponent} from "./ui/layouts/authentication/set-password.component";
 
 const appRoutes: Routes = [
-	{
-		path: 'sign-up',
-		component: LandingComponent,
-		pathMatch: 'full'
-	},
+    {
+        path: 'legal',
+        component: LegalComponent,
+        children: [
+            {path: '', redirectTo: 'about', pathMatch: 'full'},
+            {path: 'about', component: LegalAboutComponent, pathMatch: 'full'},
+            {path: 'terms', component: LegalTermsComponent},
+            {path: 'privacy', component: LegalPrivacyComponent}
+        ]
+    },
 
     {
         path: 'membership-terminated', component: NotFoundComponent, data: {
-        title: 'Konto entfernt',
-        image: require('../assets/illustrations/user-not-found.png'),
-        description: 'Wir haben dein Konto entfernt.'
-    }
+            title: 'Konto entfernt',
+            image: require('../assets/illustrations/user-not-found.png'),
+            description: 'Wir haben dein Konto entfernt.'
+        }
     },
-
-	{
-		path: 'legal',
-		component: LegalComponent,
-		children: [
-			{path: '', redirectTo: 'about', pathMatch: 'full'},
-			{path: 'about', component: LegalAboutComponent, pathMatch: 'full'},
-			{path: 'terms', component: LegalTermsComponent},
-			{path: 'privacy', component: LegalPrivacyComponent}
-		]
-	},
 
 	{
 		path: '',
 		component: DashboardComponent,
 		canActivate: [LoginGuard],
 		children: [
-			// Boarding required.
-			{path: '', redirectTo: 'explore', pathMatch: 'full'},
-			
+            {path: '', redirectTo: 'explore', pathMatch: 'full'},
+
+            // Boarding required.
 			{path: 'explore', component: ExploreComponent, canActivate: [BoardingGuard], children: [
 				{path: '', redirectTo: 'expeditions', pathMatch: 'full'},
 				{path: 'rudel', component: ExploreRudelComponent},
@@ -98,7 +96,7 @@ const appRoutes: Routes = [
 			{path: 'notifications', component: NotificationsComponent, pathMatch: 'full', canActivate: [BoardingGuard]},
 			
 			{
-				path: 'user/not-found', component: NotFoundComponent, data: {
+				path: 'user/not-found', component: NotFoundComponent, canActivate: [BoardingGuard], data: {
 				title: 'Nutzer existiert nicht',
 				image: require('../assets/illustrations/user-not-found.png'),
 				description: 'Der angeforderte Nutzer existiert nicht.'
@@ -118,14 +116,14 @@ const appRoutes: Routes = [
 			},
 			
 			{
-				path: 'lists/not-found', component: NotFoundComponent, data: {
+				path: 'lists/not-found', component: NotFoundComponent, canActivate: [BoardingGuard], data: {
 				title: 'Liste existiert nicht',
 				image: require('../assets/illustrations/no-list-found.png'),
 				description: 'Die angeforderte Liste existiert nicht.'
 			}
 			},
 			{
-				path: 'lists/deleted-message', component: NotFoundComponent, data: {
+				path: 'lists/deleted-message', component: NotFoundComponent, canActivate: [BoardingGuard], data: {
 				title: 'Liste gelöscht',
 				image: require('../assets/illustrations/no-list-found.png'),
 				description: 'Die Liste wurde gelöscht, da es keine Anhänger mehr gab.'
@@ -142,17 +140,18 @@ const appRoutes: Routes = [
 			},
 			
 			{path: 'search', redirectTo: 'search/', pathMatch: 'full', canActivate: [BoardingGuard]},
-			{path: 'search/:query', component: SearchComponent, canActivate: [BoardingGuard]},
+
+            {path: 'search/:query', component: SearchComponent, canActivate: [BoardingGuard]},
 			
 			{
-				path: 'rudel/not-found', component: NotFoundComponent, data: {
+				path: 'rudel/not-found', component: NotFoundComponent, canActivate: [BoardingGuard], data: {
 				title: 'Rudel existiert nicht',
 				image: require('../assets/illustrations/rudel-not-found.png'),
 				description: 'Das angeforderte Rudel existiert nicht.'
 			}
 			},
 			{
-				path: 'rudel/deleted-message', component: NotFoundComponent, data: {
+				path: 'rudel/deleted-message', component: NotFoundComponent, canActivate: [BoardingGuard], data: {
 				title: 'Rudel gelöscht',
 				image: require('../assets/illustrations/rudel-not-found.png'),
 				description: 'Das Rudel wurde gelöscht, da es keine Anhänger mehr gab.'
@@ -172,19 +171,21 @@ const appRoutes: Routes = [
 			]
 			},
 			{
-				path: 'expeditions/not-found', component: NotFoundComponent, data: {
+				path: 'expeditions/not-found', canActivate: [BoardingGuard], component: NotFoundComponent, data: {
 				title: 'Streifzug existiert nicht',
 				image: require('../assets/illustrations/expedition-not-found.png'),
 				description: 'Der angeforderte Streifzug existiert nicht.'
 			}
 			},
+
 			{
-				path: 'expeditions/deleted-message', component: NotFoundComponent, data: {
+				path: 'expeditions/deleted-message', canActivate: [BoardingGuard], component: NotFoundComponent, data: {
 				title: 'Streifzug abgesagt',
 				image: require('../assets/illustrations/expedition-not-found.png'),
 				description: 'Der Streifzug wurde abgesagt.'
 			}
 			},
+
 			{
 				path: 'expeditions/:expedition', component: ExpeditionComponent, resolve: {
 				expedition: ExpeditionResolver
@@ -208,24 +209,49 @@ const appRoutes: Routes = [
 			},
 			{
 				path: '404', component: NotFoundComponent, data: {
-				title: 'Oops, hier ist nichts!',
-				image: require('../assets/illustrations/not-found.png'),
-				description: 'Die angeforderte Seite existiert nicht.'
+                    title: 'Oops, hier ist nichts!',
+                    image: require('../assets/illustrations/not-found.png'),
+                    description: 'Die angeforderte Seite existiert nicht.'
+                }
 			}
-			},
-			{path: '**', redirectTo: '404'}
 		]
 	},
 
+    {
+        path: '',
+        component: LandingComponent,
+        children: [
+            {path: '', redirectTo: 'sign-up', pathMatch: 'full'},
+            {path: 'sign-up', component: SignUpComponent},
+            {path: 'sign-in', component: SignInComponent},
+            {path: 'forgot-password', component: ForgotPasswordComponent},
+            {path: 'set-password', component: SetPasswordComponent}
+        ]
+    },
+
+    {
+        path: '',
+        component: DashboardComponent,
+        canActivate: [LoginGuard],
+        children: [
+            {path: '**', redirectTo: '404'}
+        ]
+    },
+
 	{
-		path: '404', component: NotFoundComponent, data: {
-		title: 'Oops, hier ist nichts!', //Oops, nothing here!
-		image: require('../assets/illustrations/not-found.png'),
-		description: 'Die angeforderte Seite existiert nicht.'//The requested page does not exist!
-	}
+		path: '404',
+        component: NotFoundComponent,
+            data: {
+            title: 'Oops, hier ist nichts!', //Oops, nothing here!
+            image: require('../assets/illustrations/not-found.png'),
+            description: 'Die angeforderte Seite existiert nicht.'//The requested page does not exist!
+        }
 	},
 
-	{path: '**', redirectTo: '404'}
+	{
+	    path: '**',
+        redirectTo: '404'
+	}
 ];
 
 export const appRoutingProviders: any[] = [];

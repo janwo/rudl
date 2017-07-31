@@ -2,7 +2,8 @@ import * as Webpack from 'webpack';
 import * as ExtractTextPlugin from 'extract-text-webpack-plugin';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import {root} from '../config';
-let CleanObsoleteChunks = require('webpack-clean-obsolete-chunks');
+import * as CleanObsoleteChunks from 'webpack-clean-obsolete-chunks';
+// noinspection TypeScriptUnresolvedVariable
 
 export default {
 	env: process.env.ENV,
@@ -81,6 +82,7 @@ export default {
 										'to-string-loader', 'css-loader', {
 											loader: 'postcss-loader',
 											options: {
+												sourceMap: true,
 												plugins: () => {
 													return [
 														require('autoprefixer')({browsers: ['last 2 versions']})
@@ -96,6 +98,7 @@ export default {
 										'to-string-loader', 'css-loader', {
 											loader: 'postcss-loader',
 											options: {
+												sourceMap: true,
 												plugins: () => {
 													return [
 														require('autoprefixer')({browsers: ['last 2 versions']})
@@ -220,7 +223,7 @@ export default {
 			accessKeyId: process.env.AWS_ID,
 			secretAccessKey: process.env.AWS_SECRET,
 			from: 'noreply@rudl.me',
-			rateLimit: 14,
+			sendingRate: 14,
 			region: 'eu-west-1',
 			operational: false
 		}

@@ -21,15 +21,12 @@ export class DatabaseManager {
 			name: 'User',
 			isRelationship: false,
 			indices: [
-				'mails_primary_verified',
-				'mails_secondary_verified',
 				'password'
 			],
 			uniqueness: [
 				'username',
 				'id',
-				'mails_primary_mail',
-				'mails_secondary_mail'
+				'mail'
 			],
 			fulltext: {
 				User: [
@@ -378,11 +375,10 @@ export class TransactionSession {
 		}, (err: any) => {
 			return this.transaction.rollback().then(() => {
 				this.session.close();
-				return err;
+				return Promise.reject(err);
 			}, (rollbackError: any) => {
-				this.session.close();
-				console.log(err);
 				console.log(rollbackError);
+				this.session.close();
 				return Promise.reject(err);
 			});
 		});

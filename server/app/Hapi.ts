@@ -9,9 +9,7 @@ import * as ge from 'greenlock-express';
 import * as Path from 'path';
 import {Server} from 'hapi';
 import 'vision';
-import {MailManager} from './Mail';
 import {Schedule} from './Schedule';
-import {AccountController} from './controllers/AccountController';
 
 export function hapiServer(): Promise<Server> {
 	// Create dirs.
@@ -33,8 +31,7 @@ export function hapiServer(): Promise<Server> {
 				name: 'redis',
 				engine: require('catbox-redis'),
 				host: Config.backend.db.redis.host,
-				port: Config.backend.db.redis.port,
-				partition: 'cache'
+				port: Config.backend.db.redis.port
 			}
 		],
 		connections: {
@@ -57,26 +54,18 @@ export function hapiServer(): Promise<Server> {
 		
 		case 'secure':
 			// Load SSL key and certificate.
+            let domain = /^(https?:\/\/)?[\d.]*([\S][^\/]+)/i.exec(Config.backend.domain)[2];
 			let gle = ge.create({
                 app: () => {},
                 debug: Config.debug,
                 configDir: root('letsencrypt'),
 				server: Config.debug ? 'staging': 'https://acme-v01.api.letsencrypt.org/directory',
-                approveDomains: (opts: any, certs: any, cb: (x: any, y: any) => {}) => {
-                    if (certs) {
-                        opts.domains = certs.altnames;
-                    } else {
-                        let domain = /^(https?:\/\/)?[\d.]*([\S][^\/]+)/i.exec(Config.backend.domain)[2];
-                        opts.domains = [
-                            domain,
-                            `www.${domain}`
-                        ];
-                        opts.email = Config.backend.mails.admin;
-                        opts.agreeTos = true;
-                    }
-
-                    cb(null, {options: opts, certs: certs});
-                }
+                email: Config.backend.mails.admin,
+                agreeTos: true,
+                domains: [
+                    domain,
+                    `www.${domain}`
+                ]
 			}).listen(Config.backend.ports.http, Config.backend.ports.https);
 
 			// Create server connection.

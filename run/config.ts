@@ -133,7 +133,7 @@ export const Config: {
 			accessKeyId: string,
 			secretAccessKey: string,
 			from: string,
-			rateLimit?: number,
+			sendingRate?: number,
 			region?: string,
 			operational: boolean
 		}

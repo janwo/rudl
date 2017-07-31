@@ -20,7 +20,7 @@ export const ScheduleConfig = {
         }[]) => {
 		    let mailJobs = results.map(result => MailManager.sendNotificationMail({
                 name: result.user.firstName,
-                to: result.user.mails.primary.mail,
+                to: result.user.mail,
                 locale: result.user.languages.shift(),
                 unread: result.unread
             }));

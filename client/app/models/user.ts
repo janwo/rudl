@@ -57,6 +57,11 @@ export interface UserRecipe {
 	lastName?: string;
 }
 
+export interface UserLoginRecipe {
+	mail: string;
+	password: string;
+}
+
 export interface UserSettings {
 	emailNotifications: boolean;
 }

@@ -5,6 +5,7 @@ $form-control-wrapper-input-padding: map_get($base-font-size, 'default') / 1.5; 
 
 :host {
   display: flex;
+  flex-direction: column;
 
   label {
     font-size: map_get($base-font-size, 'small');

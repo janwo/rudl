@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {AppComponent} from './ui/app.component';
-import {LoginComponent} from './ui/widgets/login.component';
 import {ExploreComponent} from './ui/layouts/explore/explore.component';
 import {DashboardComponent} from './ui/layouts/dashboard/dashboard.component';
 import {StyledButtonComponent} from './ui/widgets/control/styled-button.component';
@@ -109,11 +108,17 @@ import {SettingsNotificationsComponent} from './ui/layouts/settings/settings-not
 import {Ng2DeviceDetectorModule} from "ng2-device-detector";
 import {SettingsOtherComponent} from "./ui/layouts/settings/settings-other.component";
 import {ExploreUserComponent} from "./ui/layouts/explore/explore-user.component";
+import {ForgotPasswordComponent} from "./ui/layouts/authentication/forgot-password.component";
+import {SignInComponent} from "./ui/layouts/authentication/sign-in.component";
+import {SignUpComponent} from "./ui/layouts/authentication/sign-up.component";
+import {SetPasswordComponent} from "./ui/layouts/authentication/set-password.component";
 
 @NgModule({
 	declarations: [
 		AppComponent,
-		LoginComponent,
+		SignInComponent,
+		SignUpComponent,
+		ForgotPasswordComponent,
 		StyledButtonComponent,
 		CarouselComponent,
 		CarouselSlideComponent,
@@ -200,6 +205,7 @@ import {ExploreUserComponent} from "./ui/layouts/explore/explore-user.component"
 		ExploreUserComponent,
 		SafePipe,
 		ArrayPipe,
+		SetPasswordComponent,
 		TranslationListComponent,
 		DateTimeComponent
 	],

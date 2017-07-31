@@ -6,7 +6,6 @@
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "noImplicitAny": true,
     "skipLibCheck": true,
     "noEmit": true,
     "types": [

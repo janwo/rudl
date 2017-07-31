@@ -11,9 +11,9 @@
     <p>
         Hallo <span>{{name}}</span>, es warten <span>{{unread}}</span> ungelesene {{pluralize unread 'Benachrichtigung' 'Benachrichtigungen'}} auf dich. Kehre zurück, um sie dir anzusehen.
     </p>
-    <a class="button" href="{{notificationsLink}}">Anzeigen</a>
+    <a class="button" href="{{{notificationsLink}}}">Anzeigen</a>
     <div class="footer">
-        <a href="{{notificationSettingsLink}}">Benachrichtigungen bearbeiten</a>
+        <a href="{{{notificationSettingsLink}}}">Benachrichtigungen bearbeiten</a>
         {{#each address}}
             <span>{{this}}</span>
         {{/each}}

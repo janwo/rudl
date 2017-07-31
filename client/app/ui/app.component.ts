@@ -2,8 +2,8 @@ import {Component, ViewEncapsulation} from '@angular/core';
 import {Meta, Title} from '@angular/platform-browser';
 
 @Component({
-	templateUrl: './app.component.html',
-	styleUrls: ['./app.component.scss'],
+	templateUrl: 'app.component.html',
+	styleUrls: ['app.component.scss'],
 	encapsulation: ViewEncapsulation.Emulated,
 	selector: 'app'
 })

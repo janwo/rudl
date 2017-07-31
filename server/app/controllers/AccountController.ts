@@ -61,16 +61,7 @@ export module AccountController {
 				avatarId: null,
 				profileText: null,
 				onBoard: false,
-				mails: {
-					primary: {
-						mail: recipe.mail,
-						verified: false
-					},
-					secondary: {
-						mail: recipe.mail,
-						verified: false
-					}
-				},
+				mail: recipe.mail,
 				password: AuthController.hashPassword(recipe.password)
 			};
 			
@@ -103,9 +94,9 @@ export module AccountController {
 
         return username;
     }
-	
+
 	export function availableUsername(transaction: Transaction, username: string): Promise<string> {
-        username = username.replace(/[^a-z0-9_]/g, '');
+		username = username.replace(/[^a-z0-9_]/g, '');
 
 		let nextAvailableUsername = (username: string, increment = false): Promise<string> => {
 			username = this.normalizeUsername(username, increment);
@@ -113,7 +104,7 @@ export module AccountController {
 				return user ? nextAvailableUsername(username, true) : username;
 			});
 		};
-		
+
 		return nextAvailableUsername(username);
 	}
 
@@ -547,7 +538,7 @@ export module AccountController {
 			
 			reply.api(promise, transactionSession);
 		}
-		
+
 		/**
 		 * Handles [POST] /api/account/check-username/{username}
 		 * @param request Request-Object
@@ -564,7 +555,25 @@ export module AccountController {
 				if (!obj.available) obj.suggestion = username;
 				return obj;
 			});
-			
+
+			reply.api(promise, transactionSession);
+		}
+
+		/**
+		 * Handles [POST] /api/account/check-mail/{mail}
+		 * @param request Request-Object
+		 * @param request.params.mail mail
+		 * @param reply Reply-Object
+		 */
+		export function checkMail(request: any, reply: any): void {
+			let transactionSession = new TransactionSession();
+			let transaction = transactionSession.beginTransaction();
+			let promise: Promise<any> = UserController.findByMail(transaction, request.params.mail).then(user => {
+			    return {
+                    available: !user
+                };
+            });
+
 			reply.api(promise, transactionSession);
 		}
 	}

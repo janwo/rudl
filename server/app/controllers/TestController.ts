@@ -26,16 +26,7 @@ export module TestController {
 			lastName: lastName,
 			languages: _.sampleSize(TranslationsKeys),
 			username: faker.internet.userName(firstName, lastName).toLowerCase().replace(/[^0-9a-z_]/, '_'),
-			mails: {
-				primary: {
-					mail: faker.internet.email(firstName, lastName),
-					verified: true
-				},
-				secondary: {
-					mail: faker.internet.email(firstName, lastName),
-					verified: true
-				}
-			},
+			mail: faker.internet.email(firstName, lastName),
 			scope: [
 				UserRoles.user
 			],

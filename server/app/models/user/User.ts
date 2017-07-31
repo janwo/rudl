@@ -30,16 +30,7 @@ export interface User extends Node {
 		latitude: number,
 	};
 	languages: Locale[];
-	mails: {
-		primary: {
-			verified: boolean;
-			mail: string;
-		},
-		secondary: {
-			verified: boolean;
-			mail: string;
-		}
-	}
+	mail: string;
 	password: string;
 }
 

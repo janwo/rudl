@@ -13,7 +13,7 @@ export interface UserStatus {
     user: AuthenticatedUser
 }
 
-export interface UsernameCheckResult {
+export interface AvailabilityResult {
     available: boolean;
     suggestion?: string
 }
@@ -118,13 +118,48 @@ export class UserService {
 	getCurrentPosition(): Observable<Location> {
 		return this.locationUpdates;
 	}
-	
-	signUp(username: string, password: string): Observable<void> {
-        return;
-	}
 
-    signIn(username: string, password: string): Observable<void> {
-        return;
+    signUp(recipe: UserRecipe): Observable<boolean> {
+	    this.dataService.removeToken();
+        this.authenticatedProfile.next(null);
+        return this.dataService.post('/api/sign-up', JSON.stringify(recipe), false).map(response => {
+            if (response.statusCode == 200) {
+                this.dataService.setToken(response.data.token);
+                return true;
+            }
+
+            return false;
+        }).catch(() => Observable.of(false)).share();
+    }
+
+    signIn(recipe: {
+        mail: string,
+        password: string
+    }): Observable<boolean> {
+        this.dataService.removeToken();
+        this.authenticatedProfile.next(null);
+        return this.dataService.post('/api/sign-in', JSON.stringify(recipe), false).map(response => {
+            if (response.statusCode == 200) {
+                this.dataService.setToken(response.data.token);
+                return true;
+            }
+
+            return false;
+        }).catch(() => Observable.of(false)).share();
+    }
+
+    forgotPassword(recipe: {
+        mail: string
+    }): Observable<boolean> {
+        return this.dataService.post('/api/forgot-password', JSON.stringify(recipe)).map(response => response.statusCode == 200).catch(() => Observable.of(false)).share();
+    }
+
+    setPassword(recipe: {
+        mail: string,
+        password: string,
+        token: string
+    }): Observable<boolean> {
+        return this.dataService.post('/api/set-password', JSON.stringify(recipe)).map(response => response.statusCode == 200).catch(() => Observable.of(false)).share();
     }
 
     terminate(): Observable<boolean> {
@@ -232,7 +267,11 @@ export class UserService {
 		return this.dataService.get(`/api/users/recent?offset=${offset}&limit=${limit}`, true).map((json: JsonResponse) => json.data).share();
 	}
 
-	checkUsername(username: string): Observable<UsernameCheckResult> {
-        return this.dataService.get(`/api/account/check-username/${username}`, false).map((json: JsonResponse) => json.data).share();
-    }
+	checkUsername(username: string): Observable<AvailabilityResult> {
+		return this.dataService.get(`/api/account/check-username/${username}`, false).map((json: JsonResponse) => json.data).share();
+	}
+
+	checkMail(mail: string): Observable<AvailabilityResult> {
+		return this.dataService.get(`/api/account/check-mail/${mail}`, false).map((json: JsonResponse) => json.data).share();
+	}
 }

@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>You have {{unread}} unread {{pluralize unread 'notification' 'notifications'}}!</title>
+    <title>{{name}}, a warm welcome to rudl!</title>
 </head>
 <body>
 <div class="container">
@@ -12,7 +12,7 @@
         Hi <span>{{name}}</span>, welcome to the rudl-Community! You signed up successfully via {{provider}}. Explore new rudel and join expeditions in your area. Spread the word, if you like it!
     </p>
     <div class="footer">
-        <a href="{{notificationSettingsLink}}">Edit Notifications</a>
+        <a href="{{{notificationSettingsLink}}}">Edit Notifications</a>
         {{#each address}}
             <span>{{this}}</span>
         {{/each}}

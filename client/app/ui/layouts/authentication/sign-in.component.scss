@@ -1,4 +1,4 @@
-@import '../variables.scss';
+@import '../../variables.scss';
 
 $login-text-divider-color: map_get($base-colors, 'secondary-text');
 $login-text-divider-line-size: map_get($base-font-size, 'default') * 0.05;
@@ -56,8 +56,18 @@ $login-text-divider-font-size: map_get($base-font-size, 'default') * 0.75;
     }
   }
 
-  .terms-info {
-    margin-top: map_get($base-padding, 'smaller');
-    margin-bottom: map_get($base-padding, 'smaller');
+  .error {
+    font-size: map_get($base-font-size, 'small');
+    color: map_get($base-colors, 'warning');
+    padding: map_get($base-padding, 'small');
+    border: map_get($base-line-widths, 'default') solid map_get($base-colors, 'warning');
+    display: block;
+    margin-bottom: map_get($base-padding, 'small');
+    text-align: center;
+    border-radius: $base-border-radius;
+
+    a {
+      font-weight: $base-font-weight-bold;
+    }
   }
 }
