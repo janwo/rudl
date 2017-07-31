@@ -2,6 +2,7 @@ import * as Webpack from 'webpack';
 import * as ExtractTextPlugin from 'extract-text-webpack-plugin';
 import {AotPlugin} from '@ngtools/webpack';
 import {root} from '../config';
+// noinspection TypeScriptUnresolvedVariable
 
 export default {
 	name: 'rudl - Production Environment',

@@ -2,7 +2,8 @@ import * as Webpack from 'webpack';
 import * as ExtractTextPlugin from 'extract-text-webpack-plugin';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import {root} from '../config';
-let CleanObsoleteChunks = require('webpack-clean-obsolete-chunks');
+import * as CleanObsoleteChunks from 'webpack-clean-obsolete-chunks';
+// noinspection TypeScriptUnresolvedVariable
 
 export default {
 	env: process.env.ENV,
