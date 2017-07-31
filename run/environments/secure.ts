@@ -25,7 +25,7 @@ export default {
 						plugins: [
 							new AotPlugin({
 								tsConfigPath: root('client/tsconfig.json'),
-								entryModule: root('client/app/app.module#AppModule'),
+								entryModule: root('client/app/app.module') + '#AppModule',
 								i18nFile: root(`client/locale/messages.${'de'}.xlf`),
 								locale: 'de'
 							}),
