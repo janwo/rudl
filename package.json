@@ -1,6 +1,6 @@
 {
   "name": "rudl",
-  "version": "0.2.0",
+  "version": "0.5.0",
   "scripts": {
     "i18n": "ng-xi18n --project client --i18nFormat=xlf --outFile=locale/messages.xlf",
     "start": "ts-node run/index.ts"
