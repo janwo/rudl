@@ -34,7 +34,7 @@
       margin-bottom: 0;
     }
 
-    /deep/ .overflow {
+    ::ng-deep .overflow {
       bottom: 0 !important;
     }
   }

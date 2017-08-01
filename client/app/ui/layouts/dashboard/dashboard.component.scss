@@ -91,7 +91,7 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
           justify-content: center;
 
           @include breakpoint(null, 'small') {
-            .search-menu-item /deep/ span {
+            .search-menu-item ::ng-deep span {
               display: none;
             }
           }

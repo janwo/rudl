@@ -75,7 +75,7 @@ $dropdown-menu-arrow-center-offset: 1rem;
       }
     }
 
-    /deep/ menu-item {
+    ::ng-deep menu-item {
       padding: map_get($base-padding, 'smaller');
       color: map_get($base-colors, 'primary-text');
       margin-right: 0;

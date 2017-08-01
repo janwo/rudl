@@ -3,7 +3,6 @@ import * as ExtractTextPlugin from 'extract-text-webpack-plugin';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import {root} from '../config';
 import * as CleanObsoleteChunks from 'webpack-clean-obsolete-chunks';
-// noinspection TypeScriptUnresolvedVariable
 
 export default {
 	env: process.env.ENV,
@@ -84,7 +83,7 @@ export default {
 											options: {
 												sourceMap: true,
 												plugins: () => {
-													return [
+                                                    return [
 														require('autoprefixer')({browsers: ['last 2 versions']})
 													];
 												}

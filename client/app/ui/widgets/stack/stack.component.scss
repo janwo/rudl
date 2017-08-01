@@ -50,7 +50,7 @@ $swipe-rudel-swipe-area-ratio: 100 / 75; // total width|height / stack width|hei
         }
       }
 
-      /deep/ .card {
+      ::ng-deep .card {
         display: flex;
         align-items: center;
         justify-items: center;

@@ -10,7 +10,7 @@
     align-items: stretch;
     transition: transform 0.3s;
 
-    & /deep/ > * {
+    & ::ng-deep > * {
       flex: 0 0 100%;
     }
   }

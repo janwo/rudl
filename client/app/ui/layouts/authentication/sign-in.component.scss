@@ -41,7 +41,7 @@ $login-text-divider-font-size: map_get($base-font-size, 'default') * 0.75;
   }
 
   styled-button,
-  styled-button /deep/ button {
+  styled-button ::ng-deep button {
     width: 100%;
   }
 

@@ -14,7 +14,7 @@ $form-control-wrapper-input-padding: map_get($base-font-size, 'default') / 1.5; 
     margin-top: map_get($base-padding, 'smallest');
     margin-bottom: map_get($base-padding, 'smallest');
 
-    /deep/ .bold {
+    ::ng-deep .bold {
       font-weight: $base-font-weight-bold;
     }
   }
@@ -42,16 +42,16 @@ $form-control-wrapper-input-padding: map_get($base-font-size, 'default') / 1.5; 
       }
     }
 
-    & > /deep/ * {
+    & > ::ng-deep * {
       flex: 1 1 auto;
     }
 
-    & > /deep/ input,
-    & > /deep/ textarea {
+    & > ::ng-deep input,
+    & > ::ng-deep textarea {
       @include setup-input(false);
     }
 
-    & > /deep/ textarea {
+    & > ::ng-deep textarea {
       line-height: map_get($base-line-height, 'multiline');
     }
   }
@@ -68,7 +68,7 @@ $form-control-wrapper-input-padding: map_get($base-font-size, 'default') / 1.5; 
       border-color: map_get($base-colors, 'warning');
 
       & /deeo/ > input,
-      & /deep/ > textarea {
+      & ::ng-deep > textarea {
         color: map_get($base-colors, 'warning');
       }
 
