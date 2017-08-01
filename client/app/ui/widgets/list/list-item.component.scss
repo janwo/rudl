@@ -18,7 +18,7 @@
       display: block;
       margin-right: map_get($base-padding, 'smaller');
 
-      /deep/ .highlight {
+      ::ng-deep .highlight {
         color: map_get($base-colors, 'primary');
       }
     }
@@ -59,7 +59,7 @@
       flex-direction: row;
       align-items: center;
 
-      & /deep/ > * {
+      & ::ng-deep > * {
         pointer-events: auto;
       }
     }

@@ -1,5 +1,4 @@
 import * as ExtractTextPlugin from 'extract-text-webpack-plugin';
-// noinspection TypeScriptUnresolvedVariable
 
 export default {
 	name: 'rudl - Test Environment',

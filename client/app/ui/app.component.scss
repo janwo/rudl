@@ -2,7 +2,7 @@
 @import "./mixins.scss";
 
 // Reset.
-/deep/ * {
+::ng-deep * {
   box-sizing: border-box;
   border: none;
   outline: none;
@@ -14,27 +14,27 @@
   }
 }
 
-/deep/ ul {
+::ng-deep ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 // Set paragraphs
-/deep/ p {
+::ng-deep p {
   margin-bottom: map_get($base-padding, 'small');
   line-height: map_get($base-line-height, 'multiline');
 }
 
 // Reset text decorations.
-/deep/ a {
+::ng-deep a {
   text-decoration: none;
   cursor: pointer;
   color: inherit;
 }
 
 // Reset borders.
-/deep/ button {
+::ng-deep button {
   border: none;
   outline: none;
   cursor: pointer;
@@ -42,7 +42,7 @@
 
 // Set headings.
 @each $heading, $size in $base-heading-font-size {
-  /deep/ #{$heading} {
+  ::ng-deep #{$heading} {
     font-family: $base-heading-font-family;
     font-weight: $base-heading-font-weight;
     margin-top: $size * 1.5;
@@ -56,26 +56,26 @@
 }
 
 // Set helper classes.
-/deep/ .hide {
+::ng-deep .hide {
   display: none !important;
 }
 
 @each $name, $value in $base-breakpoints {
   @include breakpoint(null, $name) {
-    /deep/ .hide-max-#{$name} {
+    ::ng-deep .hide-max-#{$name} {
       display: none;
     }
   }
 
   @include breakpoint($name, null) {
-    /deep/ .hide-min-#{$name} {
+    ::ng-deep .hide-min-#{$name} {
       display: none;
     }
   }
 }
 
 // Define default card.
-/deep/ .card {
+::ng-deep .card {
   padding: map_get($base-padding, 'small');
   border-radius: $base-border-radius;
   background-color: map_get($base-colors, 'background-highlighted');
@@ -90,11 +90,11 @@
   }
 }
 
-/deep/ .material-icons {
+::ng-deep .material-icons {
   font-size: inherit;
 }
 
-/deep/ small {
+::ng-deep small {
   font-size: map_get($base-font-size, 'small');
   hyphens: auto;
 }
@@ -107,7 +107,7 @@
   background-color: map_get($base-colors, 'background');
   overflow: hidden;
 
-  & /deep/ {
+  & ::ng-deep {
     font-family: $base-font-family;
     font-weight: $base-font-weight-normal;
     font-size: map_get($base-font-size, 'default');

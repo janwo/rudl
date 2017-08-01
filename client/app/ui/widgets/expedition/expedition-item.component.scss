@@ -79,7 +79,7 @@ $expedition-item-block-emoji-size: 4rem;
       flex-direction: row;
       align-items: center;
 
-      & /deep/ > * {
+      & ::ng-deep > * {
         pointer-events: auto;
       }
     }

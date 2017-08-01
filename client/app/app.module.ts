@@ -1,5 +1,4 @@
 import {NgModule} from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
 import {AppComponent} from './ui/app.component';
 import {ExploreComponent} from './ui/layouts/explore/explore.component';
 import {DashboardComponent} from './ui/layouts/dashboard/dashboard.component';
@@ -112,6 +111,7 @@ import {ForgotPasswordComponent} from "./ui/layouts/authentication/forgot-passwo
 import {SignInComponent} from "./ui/layouts/authentication/sign-in.component";
 import {SignUpComponent} from "./ui/layouts/authentication/sign-up.component";
 import {SetPasswordComponent} from "./ui/layouts/authentication/set-password.component";
+import {BrowserModule} from "@angular/platform-browser";
 
 @NgModule({
 	declarations: [

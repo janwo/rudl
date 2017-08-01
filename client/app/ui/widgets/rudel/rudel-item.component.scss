@@ -31,7 +31,7 @@ $rudel-item-list-user-avatar-size-mobile: 1.5rem;
       flex: 1 1 auto;
       min-width: 0;
 
-      & /deep/ .highlight {
+      & ::ng-deep .highlight {
         color: map_get($base-colors, 'primary');
       }
     }
@@ -61,7 +61,7 @@ $rudel-item-list-user-avatar-size-mobile: 1.5rem;
       flex-direction: row;
       align-items: center;
 
-      & /deep/ > * {
+      & ::ng-deep > * {
         pointer-events: auto;
       }
     }

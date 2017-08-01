@@ -27,7 +27,7 @@ $user-item-avatar-block-size: $user-item-avatar-list-size * 1.5;
         font-size: map_get($base-heading-font-size, 'h2');
         display: block;
 
-        /deep/ .highlight {
+        ::ng-deep .highlight {
           color: map_get($base-colors, 'primary');
         }
       }
@@ -82,7 +82,7 @@ $user-item-avatar-block-size: $user-item-avatar-list-size * 1.5;
       flex-direction: row;
       align-items: center;
 
-      & /deep/ > * {
+      & ::ng-deep > * {
         pointer-events: auto;
       }
     }

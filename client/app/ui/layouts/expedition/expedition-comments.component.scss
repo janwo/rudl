@@ -22,7 +22,7 @@
       flex: 1 1 auto;
       padding: 0;
 
-      /deep/ div {
+      ::ng-deep div {
         margin-bottom: 0;
         border: none;
       }

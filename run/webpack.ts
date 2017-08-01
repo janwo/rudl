@@ -6,8 +6,8 @@ import * as chalk from 'chalk';
 class WebpackManager {
 	static start() {
 		// Create webpack compiler.
-		const webpackCompiler = Webpack(Config.frontend.webpack.config);
-		
+		const webpackCompiler: Webpack.Compiler = Webpack(Config.frontend.webpack.config);
+
 		// Listen on "done" to output stats.
 		webpackCompiler.plugin('done', (stats: any) => {
 			let colorize = stats.hasErrors() ? chalk.bold.red : chalk.green;
@@ -33,7 +33,7 @@ class WebpackManager {
 					version: true
 				}));
 			} else if (stats.hasErrors()) {
-				stats.toJson().errors.forEach((error: string) => console.log(colorize(error)));
+				stats.toJson().errors.forEach((error: string) => console.log(colorize(`Webpack found errors: ${error}`)));
 			}
 		});
 		

@@ -48,7 +48,7 @@
     styled-button {
       flex: 0 0 auto;
 
-      & /deep/ button {
+      & ::ng-deep button {
         margin-bottom: 0;
       }
     }

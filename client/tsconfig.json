@@ -19,6 +19,7 @@
   },
   "angularCompilerOptions": {
     "skipMetadataEmit": true,
-    "genDir": "."
+    "genDir": ".",
+    "entryModule": "app/app.module#AppModule"
   }
 }

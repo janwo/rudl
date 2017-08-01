@@ -17,7 +17,7 @@ $list-horizontal-item-width: 15rem;
     &.single-column-layout,
     &.two-columns-layout,
     &.three-columns-layout {
-      & > /deep/ * {
+      & > ::ng-deep * {
         flex: 0 0 auto;
         width: 100%;
       }
@@ -27,7 +27,7 @@ $list-horizontal-item-width: 15rem;
       flex-wrap: nowrap;
       overflow: auto;
 
-      & > /deep/ * {
+      & > ::ng-deep * {
         width: $list-horizontal-item-width;
         margin-right: $list-margin;
 
@@ -38,17 +38,17 @@ $list-horizontal-item-width: 15rem;
     }
 
     @include breakpoint('small') {
-      &.two-columns-layout > /deep/ * {
+      &.two-columns-layout > ::ng-deep * {
         width: 100% / 2;
       }
 
-      &.three-columns-layout > /deep/ * {
+      &.three-columns-layout > ::ng-deep * {
         width: 100% / 3;
       }
     }
 
     &.margins:not(.horizontal-layout) {
-      & > /deep/ * {
+      & > ::ng-deep * {
         margin-top: $list-margin;
 
         &:nth-child(1) {
@@ -60,7 +60,7 @@ $list-horizontal-item-width: 15rem;
         &.two-columns-layout {
           justify-content: space-between;
 
-          & > /deep/ * {
+          & > ::ng-deep * {
             width: calc(50% - #{$list-margin / 2});
 
             &:nth-child(2) {
@@ -72,7 +72,7 @@ $list-horizontal-item-width: 15rem;
         &.three-columns-layout {
           justify-content: space-between;
 
-          & > /deep/ * {
+          & > ::ng-deep * {
             width: calc(100% / 3 - #{$list-margin / 2});
 
             &:nth-child(2),

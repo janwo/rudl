@@ -11,7 +11,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./.cache:/root/.cache
+      - ./.cache:/root/.npm
       - ./.env:/root/app/.env
       - ./server:/root/app/server
       - ./client:/root/app/client
@@ -19,7 +19,7 @@ services:
       - ./test:/root/app/test
       - ./letsencrypt:/root/app/letsencrypt
       - ./logs:/root/app/logs
-      - ./yarn.lock:/root/app/yarn.lock
+      - ./package-lock.json:/root/app/package-lock.json
       - ./db/files:/root/app/db/files
     depends_on:
       - redis

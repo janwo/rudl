@@ -12,11 +12,11 @@
       padding-bottom: map_get($base-padding, 'smaller');
 
       checkbox {
-        /deep/ * {
+        ::ng-deep * {
           color: map_get($base-colors, 'background-highlighted');
         }
 
-        &:not(.checked) /deep/ i {
+        &:not(.checked) ::ng-deep i {
           color: inactive(map_get($base-colors, 'background-highlighted'));
         }
       }
