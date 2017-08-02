@@ -38,6 +38,3 @@ db/neo4j/*
 
 # Let's Encrypt
 letsencrypt/
-
-# Cache
-.cache

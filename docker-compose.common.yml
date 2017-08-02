@@ -11,7 +11,6 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./.cache:/root/.npm
       - ./.env:/root/app/.env
       - ./server:/root/app/server
       - ./client:/root/app/client
