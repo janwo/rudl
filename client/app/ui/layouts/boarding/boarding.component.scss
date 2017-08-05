@@ -59,7 +59,6 @@ $boarding-image-max-size: $boarding-size * 2 / 3;
 
         small {
           color: map_get($base-colors, 'secondary-text');
-          margin-top: map_get($base-padding, 'default');
         }
 
         styled-button {
