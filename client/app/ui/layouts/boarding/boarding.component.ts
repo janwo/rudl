@@ -6,7 +6,6 @@ import {ButtonStyles} from '../../widgets/control/styled-button.component';
 import {UserService} from '../../../services/user.service';
 import {Title} from '@angular/platform-browser';
 import {Ng2DeviceService } from "ng2-device-detector";
-import {Observable} from "rxjs/Observable";
 
 @Component({
 	templateUrl: 'boarding.component.html',

@@ -138,6 +138,14 @@
           <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="inAppLocationWarning" datatype="html">
+        <source>In-App browsers might not work. Please open rudl in your default browser to minimize possible difficulties.</source>
+        <target>In-App browser funktionieren vielleicht nicht. Bitte öffne rudl in deinem Standardbrowser, um Schwierigkeiten zu minimieren.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">39</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="landingTitle" datatype="html">
         <source>Be part of the community and connect now!</source>
         <target>Sei Teil der Community, verbinde dich jetzt!</target>
@@ -263,7 +271,7 @@
         <target>Auswahl ist kein Bild oder überschreitet Maximalgröße.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/settings/settings-profile.component.ts</context>
-          <context context-type="linenumber">24</context>
+          <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="legalCopyright" datatype="html">

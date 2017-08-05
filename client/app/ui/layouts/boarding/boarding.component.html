@@ -36,6 +36,7 @@
             <styled-button [style]="permissionButtonStyle" [text]="permissionStatus == 'denied' ? 'Nochmal versuchen' : ( permissionStatus == 'granted' ? 'Danke!' : (permissionStatus == 'granting' ? 'Bitte warten...' : 'Berechtigung geben'))"
                            [disabled]="permissionStatus == 'granted' || permissionStatus == 'granting' " (click)="grantPermission()"></styled-button>
             <styled-button *ngIf="permissionStatus == 'denied' && getHelpLink()" [style]="helpButtonStyle" [text]="'Brauchst du Hilfe?'" (click)="openHelpLink()"></styled-button>
+            <small *ngIf="permissionStatus == 'denied'" i18n="@@inAppLocationWarning">In-App browsers might not work. Please open rudl in your default browser to minimize possible difficulties.</small>
         </div>
     </carousel-slide>
 </carousel>

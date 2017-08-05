@@ -121,6 +121,13 @@
           <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="inAppLocationWarning" datatype="html">
+        <source>In-App browsers might not work. Please open rudl in your default browser to minimize possible difficulties.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/boarding/boarding.component.ts</context>
+          <context context-type="linenumber">39</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="landingTitle" datatype="html">
         <source>Be part of the community and connect now!</source>
         <context-group purpose="location">
