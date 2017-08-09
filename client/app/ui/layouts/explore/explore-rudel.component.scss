@@ -25,10 +25,10 @@
       margin-left: map_get($base-padding, 'default');
       display: flex;
       flex-direction: column;
+    }
 
-      emoji {
-        flex: 0 0 auto;
-      }
+    emoji {
+      flex: 0 0 auto;
     }
   }
 }
