@@ -48,13 +48,18 @@ export const PluginsConfig: PluginsConfiguration = [
 						{
 							module: 'good-squeeze',
 							name: 'Squeeze',
-							args: [{ops: '*'}]
+							args: [
+								{
+									log: '*',
+									response: '*',
+									request: '*',
+									error: '*',
+									ops: '*'
+								}
+							]
 						}, {
 							module: 'white-out',
 							args: whiteOutArgs
-						}, {
-							module: 'good-squeeze',
-							name: 'SafeJson'
 						}, {
 							module: 'rotating-file-stream',
 							args: [
