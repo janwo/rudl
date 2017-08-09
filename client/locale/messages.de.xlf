@@ -350,12 +350,28 @@
           <context context-type="linenumber">38</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="didyouknow" datatype="html">
+        <source>Did you know?</source>
+        <target>Wusstest du schon?</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-rudel.component.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="didyouknowhowtocreaterudel" datatype="html">
+        <source>Create rudel by entering the title of your new rudel into the search field.</source>
+        <target>Erstelle Rudel, indem du den Titel deines neuen Rudels in die Suche eingibst.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-rudel.component.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="suggestedRudel" datatype="html">
         <source>Suggested Rudel</source>
         <target>Empfohlende Rudel</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/explore/explore-rudel.component.ts</context>
-          <context context-type="linenumber">2</context>
+          <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
       <trans-unit id="popularRudel" datatype="html">
@@ -363,7 +379,7 @@
         <target>Beliebte Rudel</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/explore/explore-rudel.component.ts</context>
-          <context context-type="linenumber">19</context>
+          <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="recentRudel" datatype="html">
@@ -371,7 +387,7 @@
         <target>Neue Rudel</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/explore/explore-rudel.component.ts</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="mailsettings" datatype="html">
