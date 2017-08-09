@@ -17,6 +17,12 @@ export class RoutesBinder {
 		});
 		
 		server.route(routes);
+
+		// Redirect to non-www route.
+        server.ext('onRequest', (request, reply) => {
+            if(request.info.hostname.startsWith('www.')) return reply.redirect(`${request.connection.info.protocol}://${request.info.hostname.substr(4)}${request.url.path}`);
+            return reply.continue();
+        });
 	}
 }
 
