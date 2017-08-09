@@ -1,3 +1,11 @@
+<div class="card info-box">
+    <emoji [emoji]="wolfEmoji"></emoji>
+    <div>
+        <h4>Wusstest du schon?</h4>
+        <span>Erstelle Rudel, indem du den Titel deines neuen Rudels in die Suche eingibst.</span>
+    </div>
+</div>
+
 <ng-container *ngIf="suggestedRudel && suggestedRudel.length > 0; else loadingSuggestedRudel">
     <h1 i18n="@@suggestedRudel">Suggested Rudel</h1>
     <item-wrapper [horizontal]="true">

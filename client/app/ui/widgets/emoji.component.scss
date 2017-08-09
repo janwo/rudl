@@ -17,7 +17,7 @@ $emoji-size: 3rem;
     height: 100%;
     width: 100%;
     flex: 0 0 auto;
+    background: map_get($base-colors, 'emoji-background') center;
     background-size: cover;
-    background-color: map_get($base-colors, 'emoji-background');
   }
 }

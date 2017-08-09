@@ -80,7 +80,7 @@ const appRoutes: Routes = [
 
             // Boarding required.
 			{path: 'explore', component: ExploreComponent, canActivate: [BoardingGuard], children: [
-				{path: '', redirectTo: 'expeditions', pathMatch: 'full'},
+				{path: '', redirectTo: 'rudel', pathMatch: 'full'},
 				{path: 'rudel', component: ExploreRudelComponent},
 				{path: 'user', component: ExploreUserComponent},
 				{path: 'expeditions', component: ExploreExpeditionsComponent}

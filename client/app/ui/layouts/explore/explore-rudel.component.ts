@@ -14,7 +14,8 @@ import {Title} from "@angular/platform-browser";
 	styleUrls: ['explore-rudel.component.scss']
 })
 export class ExploreRudelComponent implements OnInit, OnDestroy {
-	
+
+	wolfEmoji: string = require('../../../../../db/files/icons/wolf.svg');
 	suggestedRudelSubscription: Subscription;
 	suggestedRudel: Rudel[];
 	recentRudelSubscription: Subscription;

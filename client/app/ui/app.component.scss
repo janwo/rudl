@@ -46,7 +46,7 @@
     font-family: $base-heading-font-family;
     font-weight: $base-heading-font-weight;
     margin-top: $size * 1.5;
-    margin-bottom: $size;
+    margin-bottom: $size / 2;
     font-size: $size;
 
     &:first-child {

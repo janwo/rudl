@@ -14,4 +14,21 @@
       right: 0;
     }
   }
+
+  .info-box {
+    display: flex;
+    align-items: center;
+    margin: map_get($base-padding, 'default') auto;
+    max-width: map_get($base-max-width, 'small');
+
+    div {
+      margin-left: map_get($base-padding, 'default');
+      display: flex;
+      flex-direction: column;
+
+      emoji {
+        flex: 0 0 auto;
+      }
+    }
+  }
 }
