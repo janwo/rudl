@@ -61,6 +61,9 @@ export const PluginsConfig: PluginsConfiguration = [
 							module: 'white-out',
 							args: whiteOutArgs
 						}, {
+							module: 'good-squeeze',
+							name: 'SafeJson'
+						}, {
 							module: 'rotating-file-stream',
 							args: [
 								'log', {
