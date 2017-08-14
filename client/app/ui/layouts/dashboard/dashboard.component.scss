@@ -10,7 +10,11 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
 
 :host {
   display: block;
-  flex: 1 0 auto;
+  padding-top: $header-vertical-padding-mobile * 2 + $header-content-size;
+
+  @include breakpoint('small') {
+    padding-top: $header-vertical-padding * 2 + $header-content-size;
+  }
 
   header {
     display: flex;
@@ -22,7 +26,10 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
     padding-left: $header-horizontal-padding-mobile;
     padding-right: $header-horizontal-padding-mobile;
     height: $header-vertical-padding-mobile * 2 + $header-content-size;
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 100;
 
     @include breakpoint('small') {
@@ -88,7 +95,8 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
 
         menu {
           flex: 1 1 auto;
-          justify-content: center;
+          padding-top: map_get($base-padding, 'smaller');
+          padding-bottom: map_get($base-padding, 'smaller');
 
           @include breakpoint(null, 'small') {
             .search-menu-item ::ng-deep span {
@@ -134,11 +142,6 @@ $header-horizontal-padding-mobile: map_get($base-padding, 'smaller');
     flex-direction: column;
     overflow: auto;
     position: relative;
-    height: calc(100vh - #{$header-vertical-padding-mobile * 2 + $header-content-size});
-
-    @include breakpoint('small') {
-      height: calc(100vh - #{$header-vertical-padding * 2 + $header-content-size});
-    }
 
     app-footer {
       flex: 0 0 auto;

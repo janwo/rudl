@@ -1,5 +1,5 @@
 <header>
-    <logo></logo>
+    <logo [shrink]="true"></logo>
     <div class="stretched" *ngIf="userStatus?.loggedIn && userStatus.user.onBoard">
         <div class="search" [ngClass]="{active: inSearchMode}">
             <search-bar #searchBar></search-bar>

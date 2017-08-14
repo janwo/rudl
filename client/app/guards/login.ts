@@ -13,9 +13,11 @@ export class LoginGuard implements CanActivate {
 		return this.userService.getAuthenticatedUserObservable().map((userStatus: UserStatus) => {
 			if (!userStatus.loggedIn) {
 				let loginUrl = this.router.createUrlTree(['/sign-up']);
-				if (!this.router.isActive(loginUrl, false)) this.router.navigateByUrl(loginUrl);
+				if (!this.router.isActive(loginUrl, false)) this.router.navigateByUrl(loginUrl, {
+                    replaceUrl: true
+				});
 			}
-			
+
 			return userStatus.loggedIn;
 		});
 	}

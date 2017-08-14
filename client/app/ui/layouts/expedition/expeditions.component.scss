@@ -4,9 +4,11 @@
 :host {
   display: block;
   @include setup-max-width();
-  padding: map_get($base-padding, 'default');
+  @include setup-default-padding();
 
   menu {
+    padding-top: map_get($base-padding, 'smaller');
+    padding-bottom: map_get($base-padding, 'smaller');
     margin-bottom: map_get($base-padding, 'default');
   }
 }

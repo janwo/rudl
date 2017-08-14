@@ -112,6 +112,7 @@ import {SignInComponent} from "./ui/layouts/authentication/sign-in.component";
 import {SignUpComponent} from "./ui/layouts/authentication/sign-up.component";
 import {SetPasswordComponent} from "./ui/layouts/authentication/set-password.component";
 import {BrowserModule} from "@angular/platform-browser";
+import {LandingContentComponent} from "./ui/layouts/landing/landing-content.component";
 
 @NgModule({
 	declarations: [
@@ -189,6 +190,7 @@ import {BrowserModule} from "@angular/platform-browser";
 		LegalComponent,
 		FormControlWrapper,
 		UserComponent,
+		LandingContentComponent,
 		ExploreExpeditionsComponent,
 		ExploreRudelComponent,
 		UserRudelComponent,

@@ -145,15 +145,15 @@
       <trans-unit id="landingBigTitle" datatype="html">
         <source>I´ve visited a new city and already met great people. Check!</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/layouts/landing/landing.component.ts</context>
-          <context context-type="linenumber">13</context>
+          <context context-type="sourcefile">app/ui/layouts/landing/landing-content.component.ts</context>
+          <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
       <trans-unit id="landingBigDescription" datatype="html">
         <source>At rudl you get in touch with new, like-minded people to organize your free time more transparent and efficiently.</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/layouts/landing/landing.component.ts</context>
-          <context context-type="linenumber">14</context>
+          <context context-type="sourcefile">app/ui/layouts/landing/landing-content.component.ts</context>
+          <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
       <trans-unit id="expeditionRudelInfo" datatype="html">

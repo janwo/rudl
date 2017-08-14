@@ -12,6 +12,11 @@ $legal-horizontal-padding-mobile: map_get($base-padding, 'smaller');
   display: flex;
   flex-direction: column;
   flex: 1 0 auto;
+  padding-top: $legal-vertical-padding-mobile * 2 + $legal-content-size;
+
+  @include breakpoint('small') {
+    padding-top: $legal-vertical-padding * 2 + $legal-content-size;
+  }
 
   header {
     flex: 0 0 auto;
@@ -24,7 +29,10 @@ $legal-horizontal-padding-mobile: map_get($base-padding, 'smaller');
     padding-left: $legal-horizontal-padding-mobile;
     padding-right: $legal-horizontal-padding-mobile;
     height: $legal-vertical-padding-mobile * 2 + $legal-content-size;
-    position: relative;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
     z-index: 100;
 
     @include breakpoint('small') {
@@ -35,15 +43,12 @@ $legal-horizontal-padding-mobile: map_get($base-padding, 'smaller');
   }
 
   section {
-    margin-top: map_get($base-padding, 'default');
-    padding: $legal-vertical-padding-mobile $legal-horizontal-padding-mobile;
+    @include setup-default-padding();
     @include setup-max-width();
 
-    @include breakpoint('small') {
-      padding: $legal-vertical-padding $legal-horizontal-padding;
-    }
-
     menu {
+      padding-top: map_get($base-padding, 'smaller');
+      padding-bottom: map_get($base-padding, 'smaller');
       margin-bottom: map_get($base-padding, 'default');
     }
   }

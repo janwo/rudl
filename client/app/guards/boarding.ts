@@ -13,7 +13,9 @@ export class BoardingGuard implements CanActivate {
 		return this.userService.getAuthenticatedUserObservable().map((userStatus: UserStatus) => {
 			if (!userStatus.user.onBoard) {
 				let boardingUrl = this.router.createUrlTree(['/boarding']);
-				if (!this.router.isActive(boardingUrl, false)) this.router.navigateByUrl(boardingUrl);
+				if (!this.router.isActive(boardingUrl, false)) this.router.navigateByUrl(boardingUrl, {
+                    replaceUrl: true
+                });
 			}
 			
 			return userStatus.user.onBoard;

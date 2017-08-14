@@ -22,15 +22,16 @@ $logo-font-weight: $base-heading-font-weight;
     span {
       font-family: $logo-font-family;
       font-weight: $logo-font-weight;
-      font-size: $logo-size * 0.75;
+      font-size: $logo-size;
       color: map_get($base-colors, 'primary');
       margin-left: map_get($base-padding, 'small');
-      display: none;
 
-      @include breakpoint('small') {
-        margin-left: map_get($base-padding, 'smaller');
-        font-size: $logo-size;
-        display: block;
+      &.shrink {
+        display: none;
+
+        @include breakpoint('small') {
+          display: block;
+        }
       }
     }
   }

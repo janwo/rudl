@@ -1,0 +1,45 @@
+@import '../../variables.scss';
+@import "../../mixins.scss";
+
+$landing-page-vertical-padding: map_get($base-padding, 'smaller');
+$landing-page-horizontal-padding: map_get($base-padding, 'default');
+$landing-page-indicator-size: 2rem;
+
+:host {
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: $landing-page-vertical-padding $landing-page-horizontal-padding;
+
+  @include breakpoint(null, 'small') {
+    min-height: 15rem;
+  }
+
+  .background {
+    height: auto;
+    width: 100%;
+    animation: zoomIn 30s ease-in-out infinite alternate;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  h1 {
+    position: relative;
+    max-width: map_get($base-breakpoints, 'small');
+    margin-top: map_get($base-padding, 'large');
+    margin-left: map_get($base-padding, 'large');
+
+    span {
+      color: inactive(map_get($base-colors, 'primary'));
+
+      &:first-child {
+        color: map_get($base-colors, 'primary');
+      }
+    }
+  }
+}
