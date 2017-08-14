@@ -6,6 +6,9 @@ import {root} from '../config';
 export default {
 	name: 'rudl - Production Environment',
 	frontend: {
+		metadata: {
+			"google-site-verification": process.env.GOOGLE_SITE_VERIFICATION
+		},
 		webpack: {
 			config: [
 				(Config: any) => {
@@ -40,6 +43,8 @@ export default {
 		}
 	},
 	backend: {
+		domain: process.env.DOMAIN || 'https://localhost',
+		ssl: true,
 		excludeRoutes: [
 			'test-routes'
 		],
@@ -47,6 +52,9 @@ export default {
 			file: {
 				enabled: true
 			}
+		},
+		ses: {
+			operational: true
 		}
 	}
 };

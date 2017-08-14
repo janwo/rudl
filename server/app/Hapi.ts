@@ -43,46 +43,43 @@ export function hapiServer(): Promise<Server> {
 	});
 	
 	console.log(`Server uses "${Config.env}" environment...`);
-	switch (Config.env) {
-		default:
-			// Create server connection.
-			server.connection({
-				port: Config.backend.ssl ? Config.backend.ports.https : Config.backend.ports.http,
-				host: Config.backend.host
-			});
-			break;
-		
-		case 'secure':
-			// Load SSL key and certificate.
-			let gle = ge.create({
-                app: () => {},
-                debug: Config.debug,
-                configDir: root('letsencrypt'),
-				server: Config.debug ? 'staging': 'https://acme-v01.api.letsencrypt.org/directory',
-                approveDomains: (opts: any, certs: any, cb: (x: any, y: any) => {}) => {
-                    if (certs) {
-                        opts.domains = certs.altnames;
-                    } else {
-                        let domain = /^(https?:\/\/)?[\d.]*([\S][^\/]+)/i.exec(Config.backend.domain)[2];
-                        opts.domains = [
-                            domain,
-                            `www.${domain}`
-                        ];
-                        opts.email = Config.backend.mails.admin;
-                        opts.agreeTos = true;
-                    }
 
-                    cb(null, {options: opts, certs: certs});
-                }
-			}).listen(Config.backend.ports.http, Config.backend.ports.https);
+	// Enable SSL?
+	if(Config.backend.ssl) {
+		let gle = ge.create({
+			app: () => {},
+			debug: Config.debug,
+			configDir: root('letsencrypt'),
+			server: Config.debug ? 'staging': 'https://acme-v01.api.letsencrypt.org/directory',
+			approveDomains: (opts: any, certs: any, cb: (x: any, y: any) => {}) => {
+				if (certs) {
+					opts.domains = certs.altnames;
+				} else {
+					let domain = /^(https?:\/\/)?[\d.]*([\S][^\/]+)/i.exec(Config.backend.domain)[2];
+					opts.domains = [
+						domain,
+						`www.${domain}`
+					];
+					opts.email = Config.backend.mails.admin;
+					opts.agreeTos = true;
+				}
 
-			// Create server connection.
-			server.connection({
-				listener: gle,
-				tls: true,
-				autoListen: false
-			});
-			break;
+				cb(null, {options: opts, certs: certs});
+			}
+		}).listen(Config.backend.ports.http, Config.backend.ports.https);
+
+		// Create server connection.
+		server.connection({
+			listener: gle,
+			tls: true,
+			autoListen: false
+		});
+	} else {
+		// Use default
+        server.connection({
+            port: Config.backend.ports.http,
+            host: Config.backend.host
+        });
 	}
 	
 	// Setup plugins.

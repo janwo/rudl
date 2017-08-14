@@ -19,7 +19,7 @@ export const StrategyConfig: StrategyConfiguration = {
 		password: Config.backend.providers.google.password,
 		clientId: Config.backend.providers.google.clientID,
 		clientSecret: Config.backend.providers.google.clientSecret,
-		isSecure: Config.env === 'secure'
+		isSecure: Config.backend.ssl
 	}
 };
 
@@ -81,7 +81,7 @@ export function handleGoogle(request: any, reply: any): void {
 	]));
 	
 	transactionSession.finishTransaction(promise).then((values: [void, string, WelcomeMailOptions]) => {
-		if(values[2]) return MailManager.sendWelcomeMail(values[2]);
+		if(values[2]) MailManager.sendWelcomeMail(values[2]);
 		reply.view('local-storage', {
 			title: 'Authentication in Progress...',
 			key: Config.backend.jwt.name,

@@ -3,8 +3,7 @@ import {PluginsConfiguration} from '../binders/PluginsBinder';
 
 const whiteOutArgs = [
 	{
-		password: 'censor',
-		age: 'censor'
+		password: 'censor'
 	}
 ];
 
@@ -68,7 +67,8 @@ export const PluginsConfig: PluginsConfiguration = [
 							args: [
 								'log', {
 									interval: '1d',
-									path: Config.backend.log.file.dirPath
+									path: Config.backend.log.file.dirPath,
+                                    compress: true
 								}
 							]
 						}
