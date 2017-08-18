@@ -84,6 +84,7 @@ export module AuthController {
 	}
 	
 	export function saveUserDataCache(userDataCache: UserDataCache): Promise<UserDataCache> {
+    	userDataCache.updatedAt = Math.trunc(Date.now() / 1000);
 		return new Promise<UserDataCache>((resolve, reject) => {
 			// Retrieve user in redis.
 			DatabaseManager.redisClient.set(AuthController.generateRedisKey(userDataCache.userId), JSON.stringify(userDataCache), err => {
