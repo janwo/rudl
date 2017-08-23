@@ -1,3 +1,3 @@
 // Run backend server.
-import {hapiServer} from '../server/app/Hapi';
-hapiServer().catch((err: any) => console.error(err));
+import {server} from '../server/app/Server';
+server().catch((err: any) => console.error(err));

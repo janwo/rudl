@@ -108,13 +108,9 @@ export module RudelController {
 				return dot.transform(transformationRecipe, transformationObject);
 			});
 		};
-		
-		let now = Date.now();
+
 		let transformed = rudel instanceof Array ? Promise.all(rudel.map(createPublicRudel)) : createPublicRudel(rudel);
-		return transformed.then((result: any | Array<any>) => {
-			console.log(`Building profile of ${result instanceof Array ? result.length + ' rudel' : '1 rudel'} took ${Date.now() - now} millis`);
-			return result;
-		});
+		return transformed.then((result: any | Array<any>) => result);
 	}
 	
 	export function findByUser(transaction: Transaction, user: User, ownsOnly = false, skip = 0, limit = 25): Promise<Rudel[]> {

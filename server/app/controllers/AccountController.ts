@@ -271,13 +271,9 @@ export module AccountController {
 					}));
 				});
 			};
-			
-			let now = Date.now();
+
 			let transformed = notification instanceof Array ? Promise.all(notification.map(createPublicNotification)) : createPublicNotification(notification);
-			return transformed.then((result: any | Array<any>) => {
-				console.log(`Building profile of ${result instanceof Array ? result.length + ' notifications' : '1 notification'} took ${Date.now() - now} millis`);
-				return result;
-			});
+			return transformed.then((result: any | Array<any>) => result);
 		}
 
 		export function remove(transaction: Transaction, type: NotificationType, subject: Node, delta: number): Promise<void> {

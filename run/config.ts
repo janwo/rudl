@@ -71,7 +71,8 @@ export const Config: {
 		ports: {
 			http: number,
 			https: number,
-			nodeDebug: number
+            nodeDebug: number,
+            prometheusSummary: number
 		},
 		domain: string,
 		icons: any,

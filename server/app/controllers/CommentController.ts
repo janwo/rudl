@@ -91,13 +91,9 @@ export module CommentController {
 				}));
 			});
 		};
-		
-		let now = Date.now();
+
 		let transformed = comment instanceof Array ? Promise.all(comment.map(createPublicComment)) : createPublicComment(comment);
-		return transformed.then((result: any | Array<any>) => {
-			console.log(`Building profile of ${result instanceof Array ? result.length + ' comments' : '1 comment'} took ${Date.now() - now} millis`);
-			return result;
-		});
+		return transformed.then((result: any | Array<any>) => result);
 	}
 	
 	export function getOwner(transaction: Transaction, comment: Comment): Promise<User> {

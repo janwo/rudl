@@ -35,6 +35,12 @@ db/files/*
 db/neo4j/*
 !db/neo4j/conf/
 !db/neo4j/plugins/
+!db/grafana/
+db/grafana/*
+!db/grafana/grafana.db
+!db/prometheus/
+db/prometheus/*
+!db/prometheus/prometheus.yml
 
 # Let's Encrypt
 letsencrypt/

@@ -155,7 +155,8 @@ export default {
 		ports: {
 			http: process.env.BACKEND_SERVER_PORT_HTTP || 80,
 			https: process.env.BACKEND_SERVER_PORT_HTTPS || 443,
-			nodeDebug: process.env.BACKEND_SERVER_PORT_NODE_DEBUG || 9229
+			nodeDebug: process.env.BACKEND_SERVER_PORT_NODE_DEBUG || 9229,
+			prometheusSummary: process.env.BACKEND_SERVER_PORT_PROMETHEUS_SUMMARY ||7788
 		},
 		icons: require('../../db/files/icons/data.json'),
 		jwt: {

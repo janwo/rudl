@@ -172,13 +172,9 @@ export module UserController {
 				return dot.transform(transformationRecipe, transformationObject) as any;
 			});
 		};
-		
-		let now = Date.now();
+
 		let transformed = user instanceof Array ? Promise.all(user.map(createPublicUser)) : createPublicUser(user);
-		return transformed.then((result: any | Array<any>) => {
-			console.log(`Building profile of ${result instanceof Array ? result.length + ' users' : '1 user'} took ${Date.now() - now} millis`);
-			return result;
-		});
+		return transformed.then((result: any | Array<any>) => result);
 	}
 	
 	export function likers(transaction: Transaction, user: User, skip: number = 0, limit: number = 25): Promise<User[]> {

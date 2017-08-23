@@ -75,13 +75,9 @@ export module ListController {
 				return dot.transform(transformationRecipe, transformationObject);
 			});
 		};
-		
-		let now = Date.now();
+
 		let transformed = list instanceof Array ? Promise.all(list.map(createPublicList)) : createPublicList(list);
-		return transformed.then((result: any | Array<any>) => {
-			console.log(`Building profile of ${result instanceof Array ? result.length + ' lists' : '1 list'} took ${Date.now() - now} millis`);
-			return result;
-		});
+		return transformed.then((result: any | Array<any>) => result);
 	}
 	
 	export interface ListStatistics {

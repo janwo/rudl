@@ -8,8 +8,10 @@ services:
       - LANGUAGE
       - DOMAIN
     ports:
-      - "80:80"
-      - "443:443"
+      - 80:80
+      - 443:443
+    expose:
+      - 7788
     volumes:
       - ./.env:/root/app/.env
       - ./server:/root/app/server
@@ -27,15 +29,42 @@ services:
     image: redis
     volumes:
       - ./db/redis:/data
+    environment:
+      - REDIS_APPENDONLY=yes
+      - REDIS_APPENDFSYNC=always
   neo4j:
     image: neo4j
     environment:
       - NEO4J_AUTH=${NEO4J_AUTH}
     ports:
-      - "7474:7474"
-      - "7687:7687"
+      - 7474:7474
+      - 7687:7687
     volumes:
       - ./db/neo4j/conf:/var/lib/neo4j/conf
       - ./db/neo4j/data:/var/lib/neo4j/data
       - ./db/neo4j/plugins:/plugins
       - ./db/neo4j/logs:/logs
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./db/grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+    depends_on:
+      - prometheus
+  prometheus:
+    image: prom/prometheus
+    command:
+      - "-config.file=/etc/prometheus/prometheus.yml"
+      - "-storage.local.path=/var/lib/prometheus/data"
+    expose:
+      - 9090
+    volumes:
+      - ./db/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./db/prometheus/data:/var/lib/prometheus/data
+    links:
+      - app
+    depends_on:
+      - app

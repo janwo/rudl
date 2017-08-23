@@ -131,12 +131,9 @@ export module ExpeditionController {
 				return Promise.resolve(dot.transform(transformationRecipe, transformationObject));
 			});
 		};
-		let now = Date.now();
+
 		let transformed = expedition instanceof Array ? Promise.all(expedition.map(createPublicExpedition)) : createPublicExpedition(expedition);
-		return transformed.then((result: any | Array<any>) => {
-			console.log(`Building profile of ${result instanceof Array ? result.length + ' expeditions' : '1 expedition'} took ${Date.now() - now} millis`);
-			return result;
-		});
+		return transformed.then((result: any | Array<any>) => result);
 	}
 	
 	export interface ExpeditionStatistics {

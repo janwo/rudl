@@ -16,8 +16,8 @@ import {UserController} from "./UserController";
 
 export module AuthController {
 
-    export function generateRedisKey(id: string) : string {
-        return `user-${id}`;
+    export function generateRedisKey(id: string, suffix: string = null) : string {
+        return suffix ? `user-${id}#${suffix}` : `user-${id}`;
     }
 	
 	export function hashPassword(password: string): string {

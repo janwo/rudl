@@ -107,6 +107,7 @@
     "normalize.css": "^7.0.0",
     "null-loader": "^0.1.1",
     "postcss-loader": "^2.0.6",
+    "prom-client": "^10.0.4",
     "random-seed": "^0.3.0",
     "redis": "^2.8.0",
     "reflect-metadata": "^0.1.10",
