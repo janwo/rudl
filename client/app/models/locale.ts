@@ -23,11 +23,8 @@ export module Locale {
 		return bestLanguage ? translations[bestLanguage] : null;
 	}
 	
-	export function getBestLanguage(languages: Array<Language>, knownLanguages: Array<Language>): Language {
-		for (let i = 0; i < knownLanguages.length; i++) {
-			if (languages.indexOf(knownLanguages[i]) >= 0) return languages[i] as Language; //TODO Remove "as Language" in further ts versions
-		}
-		
+	export function getBestLanguage(languages: Language[], knownLanguages: Array<Language>): Language {
+		for (let i = 0; i < knownLanguages.length; i++) if (languages.indexOf(knownLanguages[i]) >= 0) return knownLanguages[i];
 		return null;
 	}
 }
