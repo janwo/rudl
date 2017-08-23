@@ -39,7 +39,7 @@ export class MonitorManager {
 
         server.on('response', (request: any) => {
             MonitorManager.observe(request.firedAt, {
-                route: request.route.path.replace(/\?/g, ''),
+                route: request.route.path,
                 code: request.response ? request.response.statusCode : 0,
                 method: request.method.toLowerCase()
             });

@@ -2,13 +2,13 @@
     <ul>
         <li class="translation" [formGroupName]="i"
                 *ngFor="let takenTranslationControl of takenTranslations.controls; let i = index" [@row]>
-            <dropdown-menu #menu [arrowAlignment]="'left'">
+            <!--<dropdown-menu #menu [arrowAlignment]="'left'">
                 <menu-item *ngFor="let availableTranslationControl of availableTranslations.controls"
                         [title]="languageNames[availableTranslationControl.value.language]"
                         (click)="switchLanguage(takenTranslationControl.value.language, availableTranslationControl.value.language)"></menu-item>
             </dropdown-menu>
             <styled-button [disabled]="availableTranslations.controls.length == 0" [style]="buttonStyle"
-                    (click)="menu.toggle()" [flag]="takenTranslationControl.value.language"></styled-button>
+                    (click)="menu.toggle()" [flag]="takenTranslationControl.value.language"></styled-button>-->
             <form-control-wrapper [errorMessages]="{
 				required: 'Bitte fülle die Übersetzung aus.',
 				minlength: 'Die Übersetzung ist zu kurz (mindestens 5 Zeichen).'
@@ -19,6 +19,6 @@
                     (click)="deleteLanguage(takenTranslationControl.value.language)"></styled-button>
         </li>
     </ul>
-    <styled-button class="add-button" [disabled]="availableTranslations.length == 0" (click)="addLanguage()"
-            [style]="buttonStyle" [text]="'Sprache hinzufügen'"></styled-button>
+    <!--<styled-button class="add-button" [disabled]="availableTranslations.length == 0" (click)="addLanguage()"
+            [style]="buttonStyle" [text]="'Sprache hinzufügen'"></styled-button>-->
 </form>
