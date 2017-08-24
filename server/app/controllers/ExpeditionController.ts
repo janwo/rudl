@@ -500,7 +500,7 @@ export module ExpeditionController {
 		status: AttendeeStatus,
 		user: User
 	}[]> {
-		return transaction.run("MATCH(e:Expedition {id : $expeditionId}), (relatedUser:User {id: $relatedUserId}) WITH relatedUser, e CALL apoc.index.search('User', $query) YIELD node WITH node as u, e, relatedUser WHERE (u)-[:LIKES_USER]->(relatedUser) OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) RETURN {user: properties(u), status: {isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0}} as u SKIP $skip LIMIT $limit", {
+		return transaction.run("MATCH(e:Expedition {id : $expeditionId}), (relatedUser:User {id: $relatedUserId}) WITH relatedUser, e CALL apoc.index.search('User', $query) YIELD node WITH node as u, e, relatedUser OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) RETURN {user: properties(u), status: {isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0}} as u SKIP $skip LIMIT $limit", {
 			expeditionId: expedition.id,
 			query: `${DatabaseManager.neo4jFunctions.escapeLucene(query)}~`,
 			relatedUserId: relatedUser.id,
