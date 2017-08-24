@@ -98,8 +98,13 @@ export function server(): Promise<Server> {
 		// Setup MonitorManager.
         MonitorManager.register(server);
         MonitorManager.metrics.seenUsers = new prometheus.Counter({
-            name:'seen_users',
+            name:'seen_users_total',
             help: 'Shows the number of unique users within 24 hours.'
+        });
+        MonitorManager.metrics.newUsers = new prometheus.Counter({
+            name:'new_users_total',
+            help: 'Shows the number of unique users within 24 hours.',
+			labelNames: ['verification_method']
         });
 
 		// Move all 404 errors within public routes to index file.

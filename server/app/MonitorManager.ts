@@ -8,8 +8,8 @@ export class MonitorManager {
 
     private static internalMetrics = {
         duration: new client.Summary({
-            name: 'http_request_duration',
-            help: 'The HTTP request latencies in microseconds.',
+            name: 'http_request_duration_seconds',
+            help: 'The HTTP request latencies in seconds.',
             labelNames: ['route'],
             percentiles: [0.5, 0.9, 0.99]
         }),
@@ -27,7 +27,7 @@ export class MonitorManager {
     }
 
     private static observe(start, options) {
-        MonitorManager.internalMetrics.duration.observe({route: options.route}, MonitorManager.diff(start));
+        MonitorManager.internalMetrics.duration.observe({route: options.route}, MonitorManager.diff(start) / 1000);
         MonitorManager.internalMetrics.total.inc(options, 1);
     }
 

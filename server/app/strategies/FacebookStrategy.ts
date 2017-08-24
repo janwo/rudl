@@ -9,6 +9,8 @@ import {TransactionSession} from '../Database';
 import {UserAuthProvider} from '../models/user/UserAuthProvider';
 import * as shortid from 'shortid';
 import {MailManager, WelcomeMailOptions} from '../Mail';
+import {MonitorManager} from "../MonitorManager";
+import {Counter} from "prom-client";
 
 export const StrategyConfig: StrategyConfiguration = {
 	isDefault: false,
@@ -47,7 +49,7 @@ export function handleFacebook(request: any, reply: any): void {
 	let transactionSession = new TransactionSession();
 	let transaction = transactionSession.beginTransaction();
 	let promise = AuthController.authByProvider(provider).then((user: User) => {
-		// Create User?
+		// Create User? Return mail options, if not.
 		return user ? {
 			mail: null,
 			user: user
@@ -60,6 +62,12 @@ export function handleFacebook(request: any, reply: any): void {
 				password: AuthController.hashPassword(faker.internet.password(10)),
 				mail: profile.email || profile.id + '@facebook.com'
 			}).then(user => {
+			    // Track.
+                (MonitorManager.metrics.newUsers as Counter).inc({
+                    verification_method: StrategyConfig.strategyName
+                }, 1, Date.now());
+
+                // Return mail options.
 				return {
 					mail: {
 						to: user.mail,

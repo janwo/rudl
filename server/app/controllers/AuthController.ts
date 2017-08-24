@@ -13,6 +13,8 @@ import Session from 'neo4j-driver/types/v1/session';
 import {MailManager} from "../Mail";
 import * as Boom from "boom";
 import {UserController} from "./UserController";
+import {MonitorManager} from "../MonitorManager";
+import {Counter} from "prom-client";
 
 export module AuthController {
 
@@ -221,6 +223,12 @@ export module AuthController {
             ]));
 
             transactionSession.finishTransaction(promise).then((values: [string, User]) => {
+                // Track.
+                (MonitorManager.metrics.newUsers as Counter).inc({
+                    verification_method: 'email'
+                }, 1, Date.now());
+
+                // Send mail.
                 let promise : Promise<any> = MailManager.sendWelcomeMail({
                     to: values[1].mail,
                     name: values[1].firstName,
