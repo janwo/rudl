@@ -26,9 +26,9 @@ export class MonitorManager {
         return Date.now() - start;
     }
 
-    private static observe(start, options) {
-        MonitorManager.internalMetrics.duration.observe({route: options.route}, MonitorManager.diff(start) / 1000);
-        MonitorManager.internalMetrics.total.inc(options, 1);
+    private static observe(start: number, route: string, code: string, method: string ) {
+        MonitorManager.internalMetrics.duration.labels(route).observe(MonitorManager.diff(start) / 1000);
+        MonitorManager.internalMetrics.total.labels(code, method, route).inc(1);
     }
 
     static register(server: Server) {
@@ -37,13 +37,7 @@ export class MonitorManager {
             return reply.continue();
         });
 
-        server.on('response', (request: any) => {
-            MonitorManager.observe(request.firedAt, {
-                route: request.route.path,
-                code: request.response ? request.response.statusCode : 0,
-                method: request.method.toLowerCase()
-            });
-        });
+        server.on('response', (request: any) => MonitorManager.observe(request.firedAt, request.route.path,request.response ? request.response.statusCode : 0, request.method.toLowerCase()));
 
         http.createServer((request: any, reply: any) => {
             reply.writeHead(200, 'OK', {'content-type': 'text/plain'});

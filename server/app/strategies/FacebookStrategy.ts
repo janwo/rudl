@@ -63,9 +63,7 @@ export function handleFacebook(request: any, reply: any): void {
 				mail: profile.email || profile.id + '@facebook.com'
 			}).then(user => {
 			    // Track.
-                (MonitorManager.metrics.newUsers as Counter).inc({
-                    verification_method: StrategyConfig.strategyName
-                }, 1, Date.now());
+                (MonitorManager.metrics.newUsers as Counter).labels(StrategyConfig.strategyName).inc(1, Date.now());
 
                 // Return mail options.
 				return {

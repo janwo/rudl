@@ -224,9 +224,7 @@ export module AuthController {
 
             transactionSession.finishTransaction(promise).then((values: [string, User]) => {
                 // Track.
-                (MonitorManager.metrics.newUsers as Counter).inc({
-                    verification_method: 'email'
-                }, 1, Date.now());
+                (MonitorManager.metrics.newUsers as Counter).labels('email').inc(1, Date.now());
 
                 // Send mail.
                 let promise : Promise<any> = MailManager.sendWelcomeMail({
