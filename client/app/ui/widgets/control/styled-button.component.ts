@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
 	templateUrl: 'styled-button.component.html',
@@ -7,11 +8,11 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 })
 export class StyledButtonComponent {
 	
-	@Input() text: string = null;
-	@Input() icon: string = null;
-    @Input() link: string = null;
-    @Input() externalLink: string = null;
-	@Input() flag: string = null;
+	@Input() text: string;
+	@Input() icon: string;
+    @Input() link: string[];
+    @Input() externalLink: string;
+	@Input() flag: string;
 	@Input() disabled: boolean = false;
 	@Input() style: ButtonStyles = ButtonStyles.filled;
 	@Output() click: EventEmitter<Event> = new EventEmitter();
@@ -27,11 +28,13 @@ export class StyledButtonComponent {
 		this.click.emit(event);
 		
 		// Route to new location.
-		if(this.link) window.location.assign(this.link);
+		if(this.link) this.router.navigate(this.link, {
+            relativeTo: this.route
+        });
         if(this.externalLink) window.open(this.externalLink);
 	}
 	
-	constructor() {}
+	constructor(private router: Router, private route: ActivatedRoute) {}
 	
 	getStyleClass(): string {
 		switch (this.style) {
