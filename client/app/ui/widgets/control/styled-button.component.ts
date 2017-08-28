@@ -31,7 +31,16 @@ export class StyledButtonComponent {
 		if(this.link) this.router.navigate(this.link, {
             relativeTo: this.route
         });
-        if(this.externalLink) window.open(this.externalLink);
+
+        if(this.externalLink) {
+            const blankIndicator = 'blank:';
+            if (this.externalLink.startsWith(blankIndicator)) {
+                window.open(this.externalLink.substr(blankIndicator.length));
+				return;
+            }
+
+            window.location.assign(this.externalLink);
+        }
 	}
 	
 	constructor(private router: Router, private route: ActivatedRoute) {}

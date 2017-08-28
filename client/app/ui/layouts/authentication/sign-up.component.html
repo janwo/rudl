@@ -1,9 +1,7 @@
 <small class="terms-info" i18n="@@signUpTerms">By signing up I accept the <a [routerLink]="['/legal/privacy']">Privacy Policy</a> and <a [routerLink]="['/legal/terms']">Terms and Conditions</a>.</small>
 <div class="social-login">
-	<styled-button [style]="facebookButtonStyle" [link]="'/oauth/facebook'"
-            [text]="'Registrieren via Facebook'"></styled-button>
-    <styled-button [style]="googleButtonStyle" [link]="'/oauth/google'"
-            [text]="'Registrieren via Google'"></styled-button>
+	<styled-button [style]="facebookButtonStyle" [externalLink]="'/oauth/facebook'" [text]="'Registrieren via Facebook'"></styled-button>
+    <styled-button [style]="googleButtonStyle" [externalLink]="'/oauth/google'" [text]="'Registrieren via Google'"></styled-button>
 </div>
 
 <p class="text-divider">
