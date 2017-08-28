@@ -63,7 +63,6 @@ export class SignInComponent implements OnInit {
         this.userService.signIn(this.form.value).subscribe(success => {
             this.pendingRequest = false;
             this.loginFailed = !success;
-            if(success) this.router.navigate(['/']);
         });
     }
 }
