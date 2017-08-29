@@ -176,17 +176,23 @@ export module UserController {
 		let transformed = user instanceof Array ? Promise.all(user.map(createPublicUser)) : createPublicUser(user);
 		return transformed.then((result: any | Array<any>) => result);
 	}
+
+    export function likers(transaction: Transaction, user: User, skip: number = 0, limit: number = 0): Promise<User[]> {
+	    let query = `MATCH(:User {id: $userId})<-[:LIKES_USER]-(likers:User) RETURN COALESCE(properties(likers), []) as likers SKIP $skip`;
+	    if(limit > 0) query += ' LIMIT $limit';
+
+        return transaction.run(query, {
+            userId: user.id,
+            skip: skip,
+            limit: limit
+        }).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'likers'));
+    }
 	
-	export function likers(transaction: Transaction, user: User, skip: number = 0, limit: number = 25): Promise<User[]> {
-		return transaction.run(`MATCH(:User {id: $userId})<-[:LIKES_USER]-(likers:User) RETURN COALESCE(properties(likers), []) as likers SKIP $skip LIMIT $limit`, {
-			userId: user.id,
-			skip: skip,
-			limit: limit
-		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'likers'));
-	}
-	
-	export function likees(transaction: Transaction, user: User, skip: number = 0, limit: number = 25): Promise<User[]> {
-		return transaction.run(`MATCH(:User {id: $userId})-[:LIKES_USER]->(likees:User) RETURN COALESCE(properties(likees), []) as likees SKIP $skip LIMIT $limit`, {
+	export function likees(transaction: Transaction, user: User, skip: number = 0, limit: number = 0): Promise<User[]> {
+	    let query = `MATCH(:User {id: $userId})-[:LIKES_USER]->(likees:User) RETURN COALESCE(properties(likees), []) as likees SKIP $skip`;
+        if(limit > 0) query += ' LIMIT $limit';
+
+		return transaction.run(query, {
 			userId: user.id,
 			skip: skip,
 			limit: limit

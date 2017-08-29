@@ -11,6 +11,7 @@ import Transaction from 'neo4j-driver/types/v1/transaction';
 import {StatementResult} from 'neo4j-driver/types/v1/result';
 import * as shortid from 'shortid';
 import {AccountController} from './AccountController';
+import {NotificationType} from "../models/notification/Notification";
 
 export const LOCATION_RADIUS_METERS = 30000;
 
@@ -220,14 +221,24 @@ export module RudelController {
             }).then(() => {});
         });
     }
-	
-	export function likers(transaction: Transaction, rudel: Rudel, skip = 0, limit = 25): Promise<User[]> {
-		return transaction.run(`MATCH(:Rudel {id: $rudelId})<-[:LIKES_RUDEL]-(likers:User) RETURN COALESCE(properties(likers), []) as likers SKIP $skip LIMIT $limit`, {
-			rudelId: rudel.id,
-			skip: skip,
-			limit: limit
-		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'likers'));
-	}
+
+    export function likers(transaction: Transaction, rudel: Rudel, skip = 0, limit = 0): Promise<User[]> {
+        let query = `MATCH(:Rudel {id: $rudelId})<-[:LIKES_RUDEL]-(likers:User) RETURN COALESCE(properties(likers), []) as likers SKIP $skip`;
+        if(limit > 0) query += ' LIMIT $limit';
+
+        return transaction.run(query, {
+            rudelId: rudel.id,
+            skip: skip,
+            limit: limit
+        }).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'likers'));
+    }
+
+    export function getUserLikers(transaction: Transaction, user: User, rudel: Rudel): Promise<User[]> {
+        return transaction.run(`MATCH(:Rudel {id: $rudelId})<-[:LIKES_RUDEL]-(likers:User)-[:LIKES_USER]->(:User {id: $userId}) RETURN COALESCE(properties(likers), []) as likers`, {
+            rudelId: rudel.id,
+			userId: user.id
+        }).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'likers'));
+    }
 
     export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Rudel[]> {
         return transaction.run('MATCH (r:Rudel)<-[:LIKES_RUDEL]-(u1:User {id: $userId}) WITH COUNT(r) as userLikes, u1 MATCH (u2:User)-[:LIKES_RUDEL]->(r:Rudel)<-[:LIKES_RUDEL]-(u1) WHERE NOT u2 = u1 WITH u1, u2, toFloat(COUNT(DISTINCT r)) / userLikes as similarity WHERE similarity > 0.3 MATCH (r:Rudel)<-[:LIKES_RUDEL]-(u2) WHERE NOT (r)<-[:LIKES_RUDEL]-(u1) AND NOT (r)<-[:DISLIKES_RUDEL]-(u1) WITH DISTINCT r SKIP $skip LIMIT $limit RETURN properties(r) as r', {
@@ -271,9 +282,12 @@ export module RudelController {
 				translations: request.payload.translations,
 				icon: request.payload.icon
 			}).then(rudel => {
-				return RudelController.like(transaction, rudel, request.auth.credentials).then(() => {
-					return RudelController.getPublicRudel(transaction, rudel, request.auth.credentials);
-				});
+				return Promise.all([
+				    RudelController.like(transaction, rudel, request.auth.credentials),
+                    UserController.likers(transaction, request.auth.credentials).then(likers => {
+                        return AccountController.NotificationController.set(transaction, NotificationType.ADDED_RUDEL, likers, rudel, request.auth.credentials);
+                    })
+                ]).then(() => RudelController.getPublicRudel(transaction, rudel, request.auth.credentials));
 			});
 			
 			reply.api(promise, transactionSession);
@@ -401,9 +415,12 @@ export module RudelController {
 			let transaction = transactionSession.beginTransaction();
 			let promise: Promise<any> = RudelController.get(transaction, request.params.id).then((rudel: Rudel) => {
 				if (!rudel) return Promise.reject(Boom.notFound('Rudel not found!'));
-				return RudelController.like(transaction, rudel, request.auth.credentials).then(() => {
-					return RudelController.getPublicRudel(transaction, rudel, request.auth.credentials);
-				});
+				return Promise.all([
+				    RudelController.like(transaction, rudel, request.auth.credentials),
+                    UserController.likers(transaction, request.auth.credentials).then(likers => {
+                        return AccountController.NotificationController.set(transaction, NotificationType.LIKES_RUDEL, likers, rudel, request.auth.credentials)
+                    })
+                ]).then(() => RudelController.getPublicRudel(transaction, rudel, request.auth.credentials));
 			});
 			
 			reply.api(promise, transactionSession);

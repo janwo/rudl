@@ -4,8 +4,9 @@ import {NotificationType} from '../../../../../server/app/models/notification/No
 import {ExpeditionPreview} from '../../../models/expedition';
 import {RudelPreview} from '../../../models/rudel';
 import * as moment from 'moment';
-import {Locale} from "../../../../../server/app/models/Translations";
 import {UserPreview} from "../../../models/user";
+import {UserService} from "../../../services/user.service";
+import {Locale} from "../../../models/locale";
 
 @Component({
 	templateUrl: 'notification-item.component.html',
@@ -15,6 +16,8 @@ import {UserPreview} from "../../../models/user";
 export class NotificationItemComponent implements OnChanges, OnInit {
 	
 	@Input() notification: Notification;
+
+	constructor(private userService: UserService) {}
 
 	message: string;
 	formattedDate: string;
@@ -52,8 +55,10 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 				break;
 
             case NotificationType.LIKES_RUDEL:
+            case NotificationType.ADDED_RUDEL:
                 this.link = ['/rudel', (this.notification.subject as RudelPreview).id];
                 this.emoji = (this.notification.subject as RudelPreview).links.icon;
+                (this.notification.subject as RudelPreview).name = Locale.getBestTranslation((this.notification.subject as RudelPreview).translations, this.userService.getAuthenticatedUser().user.languages);
                 break;
 
             case NotificationType.LIKES_USER:
@@ -81,7 +86,7 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 				break;
 
             case NotificationType.LIKES_RUDEL:
-                this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} interessiert sich für **${(this.notification.subject as ExpeditionPreview).title}**.`;
+                this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} interessiert sich für **${(this.notification.subject as RudelPreview).name}**.`;
                 break;
 
             case NotificationType.LIKES_USER:
@@ -120,6 +125,10 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 			case NotificationType.REJECTED_APPLICATION_FOR_EXPEDITION:
 				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat deine Anfrage in **${(this.notification.subject as ExpeditionPreview).title}** abgelehnt.`;
 				break;
+				
+            case NotificationType.ADDED_RUDEL:
+                this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat **${(this.notification.subject as RudelPreview).name}** erstellt.`;
+                break;
 		}
 	}
 }

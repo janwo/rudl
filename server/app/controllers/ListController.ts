@@ -181,8 +181,11 @@ export module ListController {
 		}).then(() => {});
 	}
 	
-	export function likers(transaction: Transaction, list: List, skip = 0, limit = 25): Promise<User[]> {
-		return transaction.run(`MATCH(:List {id: $listId})<-[:LIKES_LIST]-(likers:User) RETURN COALESCE(properties(likers), []) as likers SKIP $skip LIMIT $limit`, {
+	export function likers(transaction: Transaction, list: List, skip = 0, limit = 0): Promise<User[]> {
+		let query = `MATCH(:List {id: $listId})<-[:LIKES_LIST]-(likers:User) RETURN COALESCE(properties(likers), []) as likers SKIP $skip`;
+		if(limit > 0) query += ' LIMIT $limit';
+
+		return transaction.run(query, {
 			listId: list.id,
 			skip: skip,
 			limit: limit

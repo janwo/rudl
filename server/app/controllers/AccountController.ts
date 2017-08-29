@@ -244,6 +244,7 @@ export module AccountController {
 						break;
 
                     case NotificationType.LIKES_RUDEL:
+                    case NotificationType.ADDED_RUDEL:
                         subjectProfilePromise = RudelController.getPublicRudel(transaction, notification.subject as any as Rudel, relatedUser, true);
                         break;
 

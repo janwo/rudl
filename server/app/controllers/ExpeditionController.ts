@@ -596,7 +596,10 @@ export module ExpeditionController {
 					return Promise.all([
 						ExpeditionController.setOwner(transaction, expedition, request.auth.credentials),
 						ExpeditionController.approveUser(transaction, expedition, request.auth.credentials, request.auth.credentials),
-						ExpeditionController.setRudel(transaction, expedition, rudel)
+						ExpeditionController.setRudel(transaction, expedition, rudel),
+                        RudelController.getUserLikers(transaction, request.auth.credentials, rudel).then(likers => {
+                            return AccountController.NotificationController.set(transaction, NotificationType.ADDED_EXPEDITION, likers, expedition, request.auth.credentials)
+                        })
 					]).then(() => expedition);
 				}).then((expedition: Expedition) => ExpeditionController.getPublicExpedition(transaction, expedition, request.auth.credentials));
 			});
