@@ -125,7 +125,7 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 			case NotificationType.REJECTED_APPLICATION_FOR_EXPEDITION:
 				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat deine Anfrage in **${(this.notification.subject as ExpeditionPreview).title}** abgelehnt.`;
 				break;
-				
+
             case NotificationType.ADDED_RUDEL:
                 this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat **${(this.notification.subject as RudelPreview).name}** erstellt.`;
                 break;

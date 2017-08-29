@@ -29,9 +29,6 @@ services:
     image: redis
     volumes:
       - ./db/redis:/data
-    environment:
-      - REDIS_APPENDONLY=yes
-      - REDIS_APPENDFSYNC=always
   neo4j:
     image: neo4j
     environment:
