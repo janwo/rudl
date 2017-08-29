@@ -6,8 +6,7 @@ import {MailManager} from '../Mail';
 export const ScheduleConfig = {
 	rule: {
 		second: 0,
-		minute: 0,
-		hour: 8
+		minute: 0
 	},
 	job: () => {
 		// Send notification mails.
