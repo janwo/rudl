@@ -26,7 +26,6 @@ import {RudelItemComponent} from './ui/widgets/rudel/rudel-item.component';
 import {ItemWrapperComponent} from './ui/widgets/wrapper/item-wrapper.component';
 import {StackCardComponent, StackComponent} from './ui/widgets/stack/stack.component';
 import {ModalComponent} from './ui/widgets/modal/modal.component';
-import {FanComponent} from './ui/widgets/wrapper/fan.component';
 import {SearchComponent} from './ui/layouts/search/search.component';
 import {HighlightPipe} from './pipes/highlight.pipe';
 import {FormatPipe} from './pipes/format.pipe';
@@ -202,7 +201,6 @@ import {LandingContentComponent} from "./ui/layouts/landing/landing-content.comp
 		FooterComponent,
 		ListLikersComponent,
 		ListRudelComponent,
-		FanComponent,
 		LocationSearchComponent,
 		ExploreUserComponent,
 		SafePipe,

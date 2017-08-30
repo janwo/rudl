@@ -1,13 +1,16 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {UserService, UserStatus} from '../../../services/user.service';
 import {Title} from '@angular/platform-browser';
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
 	templateUrl: 'landing-content.component.html',
 	styleUrls: ['landing-content.component.scss']
 })
-export class LandingContentComponent implements OnInit {
+export class LandingContentComponent implements OnInit, OnDestroy {
+
+    subscription: Subscription;
 
     constructor(
         private router: Router,
@@ -17,10 +20,14 @@ export class LandingContentComponent implements OnInit {
     ngOnInit(): void {
         this.title.setTitle('Entdecke den Puls deiner Stadt! | rudl.me');
 
-        this.userService.getAuthenticatedUserObservable().subscribe(((user: UserStatus) => {
+        this.subscription = this.userService.getAuthenticatedUserObservable().subscribe(((user: UserStatus) => {
             if (user.loggedIn) this.router.navigate(['/explore'], {
                 replaceUrl: true
             });
         }));
+    }
+
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
     }
 }

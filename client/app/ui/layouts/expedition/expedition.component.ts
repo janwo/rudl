@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Expedition, ExpeditionRequestResponse} from '../../../models/expedition';
 import * as moment from 'moment';
@@ -7,14 +7,16 @@ import {ButtonStyles} from '../../widgets/control/styled-button.component';
 import {ModalComponent} from '../../widgets/modal/modal.component';
 import {ExpeditionService} from '../../../services/expedition.service';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Subscription} from "rxjs/Subscription";
 
 @Component({
 	templateUrl: 'expedition.component.html',
 	styleUrls: ['expedition.component.scss']
 })
-export class ExpeditionComponent implements OnInit {
+export class ExpeditionComponent implements OnInit, OnDestroy {
 	
 	expedition: BehaviorSubject<Expedition> = new BehaviorSubject(null);
+	expeditionSubscription: Subscription;
 	formattedDate: string;
 	formattedLocation: string;
 	attendanceStatus: string;
@@ -45,7 +47,7 @@ export class ExpeditionComponent implements OnInit {
 	
 	ngOnInit() {
 		// Define expedition subscription.
-		this.expedition.asObservable().filter((expedition: Expedition) => !!expedition).subscribe((expedition: Expedition) => {
+		this.expeditionSubscription = this.expedition.asObservable().filter((expedition: Expedition) => !!expedition).subscribe((expedition: Expedition) => {
 			this.formattedDate = `${expedition.date.accuracy > 0 ? 'ca. ' : ''}${moment(expedition.date.isoString).format("llll")}`;
 			
 			let distance = this.userService.getUsersDistance(expedition.location);
@@ -86,5 +88,9 @@ export class ExpeditionComponent implements OnInit {
 			// Show delete message.
 			this.router.navigate(['/expeditions/deleted-message']);
 		});
+	}
+
+	ngOnDestroy() {
+        this.expeditionSubscription.unsubscribe();
 	}
 }
