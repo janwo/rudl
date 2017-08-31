@@ -133,7 +133,10 @@ export const Config: {
 		ses: {
 			accessKeyId: string,
 			secretAccessKey: string,
-			from: string,
+			from: {
+				broadcast: string,
+				answerable: string
+			},
 			sendingRate?: number,
 			region?: string,
 			operational: boolean

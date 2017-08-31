@@ -222,7 +222,10 @@ export default {
 		ses: {
 			accessKeyId: process.env.AWS_ID,
 			secretAccessKey: process.env.AWS_SECRET,
-			from: 'noreply@rudl.me',
+			from: {
+				broadcast: 'noreply@rudl.me',
+				answerable: 'we@rudl.me'
+            },
 			sendingRate: 14,
 			region: 'eu-west-1',
 			operational: false

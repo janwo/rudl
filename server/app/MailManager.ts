@@ -1,6 +1,6 @@
 import * as nodemailer from 'nodemailer';
 import * as aws from 'aws-sdk';
-import {SentMessageInfo, Transporter} from 'nodemailer';
+import {SendMailOptions, SentMessageInfo, Transporter} from 'nodemailer';
 import {Config} from '../../run/config';
 import * as Bull from 'bull';
 import * as Path from 'path';
@@ -51,13 +51,18 @@ export class MailManager {
 		this.queue.process(job => {
 			// Send Mail.
 			return new Promise((resolve, reject) => {
-			    let mailOptions = {
-                    from: Config.backend.ses.from,
+			    let mailOptions: SendMailOptions = {
+                    from: Config.backend.ses.from.broadcast,
                     to: job.data.to,
                     subject: job.data.subject,
                     html: job.data.html,
                     text: job.data.text
                 };
+
+			    if(job.data.answerable) {
+			        mailOptions.from = Config.backend.ses.from.answerable;
+                    mailOptions.replyTo = Config.backend.ses.from.answerable;
+                }
 
 				if(Config.backend.ses.operational) {
                     MailManager.instance.transporter.sendMail(mailOptions, (error: Error, info: SentMessageInfo) => {
@@ -89,7 +94,8 @@ export class MailManager {
 				to: options.to,
 				subject: results.subject,
 				text: results.text,
-				html: results.html
+				html: results.html,
+                answerable: false
 			});
 		});
 	}
@@ -108,7 +114,8 @@ export class MailManager {
                 to: options.to,
                 subject: results.subject,
                 text: results.text,
-                html: results.html
+                html: results.html,
+                answerable: false
             });
         });
     }
@@ -129,7 +136,8 @@ export class MailManager {
                 to: options.to,
                 subject: results.subject,
                 text: results.text,
-                html: results.html
+                html: results.html,
+                answerable: false
             });
         });
     }
@@ -150,7 +158,8 @@ export class MailManager {
                 to: options.to,
                 subject: results.subject,
                 text: results.text,
-                html: results.html
+                html: results.html,
+                answerable: options.answerable
             });
         });
     }
@@ -182,11 +191,13 @@ export interface NewsletterMailOptions {
     name: string;
     subject: string;
     text: string;
+    answerable: boolean;
     locale: Locale;
 }
 
 export interface MailOptions {
 	to: string;
+	answerable: boolean,
 	subject: string,
 	text: string,
 	html: string
