@@ -7,8 +7,7 @@ import {getBestLanguage, Locale} from "../models/Translations";
 
 export const ScheduleConfig = {
 	rule: {
-		second: 0,
-		minute: 50
+		second: 0
 	},
 	job: () => {
 		// Send notification mails.
@@ -17,6 +16,7 @@ export const ScheduleConfig = {
 			users: User[],
 			newsletters: Newsletter[]
         }) => {
+		    console.log(result);
 		    let mailJobs: NewsletterMailOptions[] = [];
             result.users.forEach(user => {
                 result.newsletters.forEach(newsletter => {
