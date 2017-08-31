@@ -209,7 +209,7 @@ export class DatabaseManager {
             let convert = (obj: any) => {
                 if (typeof obj == 'object') {
                     if (Neo4j.isInt(obj)) return obj.toNumber();
-                    if (obj instanceof Array) return obj;
+                    if (obj instanceof Array) return obj.map(obj => convert(obj));
                     for (let key in obj) {
                         if (!obj.hasOwnProperty(key)) continue;
                         obj[key] = convert(obj[key]);
