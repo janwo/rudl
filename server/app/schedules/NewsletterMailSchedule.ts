@@ -8,7 +8,7 @@ import {getBestLanguage, Locale} from "../models/Translations";
 export const ScheduleConfig = {
 	rule: {
 		second: 0,
-		minute: 0
+		minute: 50
 	},
 	job: () => {
 		// Send notification mails.
