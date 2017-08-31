@@ -66,7 +66,6 @@ export class MailManager {
 	
 	static sendMail(options: MailOptions): Promise<void> {
 		if (!MailManager.instance) MailManager.instance = new MailManager();
-		console.log('Add mail to queue');
 		return MailManager.instance.queue.add(options).then(() => {});
 	}
 
@@ -136,6 +135,8 @@ export class MailManager {
 
         return template.render({
             name: options.name,
+            subject: options.subject,
+            text: options.text,
             notificationSettingsLink: 'https://rudl.me/settings/notifications',
             address: address
         }, options.locale as any).then((results: EmailTemplateResults) => {
