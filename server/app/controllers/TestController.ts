@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import {User, UserRoles} from '../models/user/User';
-import {DatabaseManager, TransactionSession} from '../Database';
+import {DatabaseManager, TransactionSession} from '../DatabaseManager';
 import {Rudel} from '../models/rudel/Rudel';
 import * as faker from 'faker';
 import {Config} from '../../../run/config';

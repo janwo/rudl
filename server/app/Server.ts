@@ -3,13 +3,13 @@ import {RoutesBinder} from './binders/RoutesBinder';
 import {StrategiesBinder} from './binders/StrategiesBinder';
 import {DecoratorsBinder} from './binders/DecoratorsBinder';
 import {PluginsBinder} from './binders/PluginsBinder';
-import {DatabaseManager} from './Database';
+import {DatabaseManager} from './DatabaseManager';
 import * as Fs from 'fs';
 import * as ge from 'greenlock-express';
 import * as Path from 'path';
 import {Server} from 'hapi';
 import 'vision';
-import {Schedule} from './Schedule';
+import {ScheduleManager} from './ScheduleManager';
 import {MonitorManager} from "./MonitorManager";
 import * as prometheus from 'prom-client';
 
@@ -141,7 +141,7 @@ export function server(): Promise<Server> {
 		});
 	}).then(() => {
 		console.log(`Setting up schedules...`);
-		Schedule.start();
+		ScheduleManager.start();
 		
 		return server.start().then(() => {
 			console.log(`Server is running...`);

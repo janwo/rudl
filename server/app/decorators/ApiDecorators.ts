@@ -1,6 +1,6 @@
 import {DecoratorsConfiguration} from '../binders/DecoratorsBinder';
 import * as Boom from 'boom';
-import {TransactionSession} from '../Database';
+import {TransactionSession} from '../DatabaseManager';
 
 export const DecoratorsConfig: DecoratorsConfiguration = [
 	{

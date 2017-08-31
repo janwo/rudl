@@ -2,7 +2,7 @@ import {Config} from '../../../run/config';
 import {DecodedToken} from '../models/Token';
 import {StrategyConfiguration} from '../binders/StrategiesBinder';
 import {AuthController} from '../controllers/AuthController';
-import {DatabaseManager} from "../Database";
+import {DatabaseManager} from "../DatabaseManager";
 import {MonitorManager} from "../MonitorManager";
 import {Counter} from "prom-client";
 

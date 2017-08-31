@@ -3,7 +3,7 @@ import * as Path from 'path';
 import * as schedule from 'node-schedule';
 import {JobCallback, RecurrenceRule} from 'node-schedule';
 
-export class Schedule {
+export class ScheduleManager {
 	
 	public static start(): void {
 		Glob.sync(Path.resolve(__dirname, `./schedules/**/*.ts`)).forEach(file => {

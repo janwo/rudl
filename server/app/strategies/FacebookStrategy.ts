@@ -5,10 +5,10 @@ import {AuthController} from '../controllers/AuthController';
 import {AccountController} from '../controllers/AccountController';
 import * as Boom from 'boom';
 import * as faker from 'faker';
-import {TransactionSession} from '../Database';
+import {TransactionSession} from '../DatabaseManager';
 import {UserAuthProvider} from '../models/user/UserAuthProvider';
 import * as shortid from 'shortid';
-import {MailManager, WelcomeMailOptions} from '../Mail';
+import {MailManager, WelcomeMailOptions} from '../MailManager';
 import {MonitorManager} from "../MonitorManager";
 import {Counter} from "prom-client";
 

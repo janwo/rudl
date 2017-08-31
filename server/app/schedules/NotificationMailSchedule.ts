@@ -1,7 +1,7 @@
 import {AccountController} from '../controllers/AccountController';
-import {DatabaseManager} from '../Database';
+import {DatabaseManager} from '../DatabaseManager';
 import {User} from '../models/user/User';
-import {MailManager} from '../Mail';
+import {MailManager} from '../MailManager';
 
 export const ScheduleConfig = {
 	rule: {

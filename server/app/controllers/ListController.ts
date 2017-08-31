@@ -1,7 +1,7 @@
 import * as Boom from 'boom';
 import * as dot from 'dot-object';
 import {User} from '../models/user/User';
-import {DatabaseManager, TransactionSession} from '../Database';
+import {DatabaseManager, TransactionSession} from '../DatabaseManager';
 import {List} from '../models/list/List';
 import {UserController} from './UserController';
 import * as shortid from 'shortid';

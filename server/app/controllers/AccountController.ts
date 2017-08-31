@@ -4,7 +4,7 @@ import {Config} from '../../../run/config';
 import {User, UserRoles, UserSettings} from '../models/user/User';
 import {Node} from '../models/Node';
 import {Notification, NotificationType} from '../models/notification/Notification';
-import {DatabaseManager, TransactionSession} from '../Database';
+import {DatabaseManager, TransactionSession} from '../DatabaseManager';
 import {UserController} from './UserController';
 import * as sharp from 'sharp';
 import Transaction from 'neo4j-driver/types/v1/transaction';

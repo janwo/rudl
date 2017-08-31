@@ -1,6 +1,6 @@
 import * as Boom from 'boom';
 import * as dot from 'dot-object';
-import {DatabaseManager, TransactionSession} from '../Database';
+import {DatabaseManager, TransactionSession} from '../DatabaseManager';
 import {Rudel} from '../models/rudel/Rudel';
 import {User} from '../models/user/User';
 import {UserController} from './UserController';

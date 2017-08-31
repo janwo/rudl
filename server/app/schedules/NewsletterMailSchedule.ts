@@ -1,7 +1,7 @@
 import {AccountController} from '../controllers/AccountController';
-import {DatabaseManager} from '../Database';
+import {DatabaseManager} from '../DatabaseManager';
 import {User} from '../models/user/User';
-import {MailManager, NewsletterMailOptions} from '../Mail';
+import {MailManager, NewsletterMailOptions} from '../MailManager';
 import {Newsletter} from "../models/newsletter/Newsletter";
 import {getBestLanguage, Locale} from "../models/Translations";
 

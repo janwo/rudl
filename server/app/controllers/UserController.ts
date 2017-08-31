@@ -3,7 +3,7 @@ import * as dot from 'dot-object';
 import Transaction from 'neo4j-driver/types/v1/transaction';
 import {Config} from '../../../run/config';
 import {User} from '../models/user/User';
-import {DatabaseManager, TransactionSession} from '../Database';
+import {DatabaseManager, TransactionSession} from '../DatabaseManager';
 import {AccountController} from './AccountController';
 import {UtilController} from './UtilController';
 import {StatementResult} from 'neo4j-driver/types/v1/result';
