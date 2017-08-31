@@ -13,6 +13,12 @@ Handlebars.registerHelper('pluralize', (number: number, single: string, plural: 
 	return plural;
 });
 
+Handlebars.registerHelper('breaklines', (text: string) => {
+    text = Handlebars.Utils.escapeExpression(text);
+    text = text.replace(/(\r\n|\n|\r)/gm, '<br>');
+    return new Handlebars.SafeString(text);
+});
+
 const address = [
     'rudl // Jan Wolf',
     'Kleine Helle 41',
