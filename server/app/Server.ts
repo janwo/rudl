@@ -103,7 +103,7 @@ export function server(): Promise<Server> {
         });
         MonitorManager.metrics.newUsers = new prometheus.Counter({
             name:'new_users_total',
-            help: 'Shows the number of unique users within 24 hours.',
+            help: 'Shows the number of new users.',
 			labelNames: ['verification_method']
         });
 

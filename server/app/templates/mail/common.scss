@@ -22,11 +22,17 @@ body {
   }
 
   p {
-    font-size: 24px;
     padding: 0;
+    font-size: 24px;
     margin: 40px auto;
     display: block;
     color: $primary-text;
+
+    &.text {
+      font-size: 16px;
+      text-align: left;
+      line-height: 1.5;
+    }
 
     span {
       color: $primary;

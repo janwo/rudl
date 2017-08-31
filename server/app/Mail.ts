@@ -13,6 +13,12 @@ Handlebars.registerHelper('pluralize', (number: number, single: string, plural: 
 	return plural;
 });
 
+const address = [
+    'rudl // Jan Wolf',
+    'Kleine Helle 41',
+    '28195 Bremen'
+];
+
 export class MailManager {
 	
 	static instance: MailManager;
@@ -62,20 +68,17 @@ export class MailManager {
 		if (!MailManager.instance) MailManager.instance = new MailManager();
 		return MailManager.instance.queue.add(options).then(() => {});
 	}
+
 	static sendWelcomeMail(options: WelcomeMailOptions): Promise<void> {
 		let dir = Path.resolve(__dirname, './templates/mail/welcome');
 		let template = new EmailTemplate.EmailTemplate(dir);
 		
-		return (template.render({
+		return template.render({
 			name: options.name,
 			provider: options.provider,
 			notificationSettingsLink: 'https://rudl.me/settings/notifications',
-			address: [
-				'rudl // Jan Wolf',
-				'Kleine Helle 41',
-				'28195 Bremen'
-			]
-		}, options.locale as any) as any as Promise<any>).then((results: EmailTemplateResults) => {
+			address: address
+		}, options.locale as any).then((results: EmailTemplateResults) => {
 			return MailManager.sendMail({
 				to: options.to,
 				subject: results.subject,
@@ -93,11 +96,7 @@ export class MailManager {
             name: options.name,
             resetPasswordLink: options.resetPasswordLink,
             notificationSettingsLink: 'https://rudl.me/settings/notifications',
-            address: [
-                'rudl // Jan Wolf',
-                'Kleine Helle 41',
-                '28195 Bremen'
-            ]
+            address: address
         }, options.locale).then((results: EmailTemplateResults) => {
             return MailManager.sendMail({
                 to: options.to,
@@ -107,31 +106,46 @@ export class MailManager {
             });
         });
     }
-	
-	
-	static sendNotificationMail(options: NotificationMailOptions): Promise<void> {
-		let dir = Path.resolve(__dirname, './templates/mail/notification');
-		let template = new EmailTemplate.EmailTemplate(dir);
-		
-		return (template.render({
-			name: options.name,
-			unread: options.unread,
-			notificationsLink: 'https://rudl.me/notifications',
-			notificationSettingsLink: 'https://rudl.me/settings/notifications',
-			address: [
-				'rudl // Jan Wolf',
-				'Kleine Helle 41',
-				'28195 Bremen'
-			]
-		}, options.locale as any) as any as Promise<any>).then((results: EmailTemplateResults) => {
-			return MailManager.sendMail({
-				to: options.to,
-				subject: results.subject,
-				text: results.text,
-				html: results.html
-			});
-		});
-	}
+
+
+    static sendNotificationMail(options: NotificationMailOptions): Promise<void> {
+        let dir = Path.resolve(__dirname, './templates/mail/notification');
+        let template = new EmailTemplate.EmailTemplate(dir);
+
+        return template.render({
+            name: options.name,
+            unread: options.unread,
+            notificationsLink: 'https://rudl.me/notifications',
+            notificationSettingsLink: 'https://rudl.me/settings/notifications',
+            address: address
+        }, options.locale as any).then((results: EmailTemplateResults) => {
+            return MailManager.sendMail({
+                to: options.to,
+                subject: results.subject,
+                text: results.text,
+                html: results.html
+            });
+        });
+    }
+
+
+    static sendNewsletterMails(options: NewsletterMailOptions): Promise<void> {
+        let dir = Path.resolve(__dirname, './templates/mail/newsletter');
+        let template = new EmailTemplate.EmailTemplate(dir);
+
+        return template.render({
+            name: options.name,
+            notificationSettingsLink: 'https://rudl.me/settings/notifications',
+            address: address
+        }, options.locale as any).then((results: EmailTemplateResults) => {
+            return MailManager.sendMail({
+                to: options.to,
+                subject: results.subject,
+                text: results.text,
+                html: results.html
+            });
+        });
+    }
 }
 
 export interface WelcomeMailOptions {
@@ -149,9 +163,17 @@ export interface ResetPasswordMailOptions {
 }
 
 export interface NotificationMailOptions {
-	to: string;
-	name: string;
-	unread: number;
+    to: string;
+    name: string;
+    unread: number;
+    locale: Locale;
+}
+
+export interface NewsletterMailOptions {
+    to: string;
+    name: string;
+    subject: string;
+    text: string;
     locale: Locale;
 }
 
