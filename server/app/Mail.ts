@@ -66,6 +66,7 @@ export class MailManager {
 	
 	static sendMail(options: MailOptions): Promise<void> {
 		if (!MailManager.instance) MailManager.instance = new MailManager();
+		console.log('Add mail to queue');
 		return MailManager.instance.queue.add(options).then(() => {});
 	}
 
