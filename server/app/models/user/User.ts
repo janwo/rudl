@@ -1,6 +1,7 @@
 import * as Joi from 'joi';
 import {Node} from '../Node';
 import {Locale} from '../Translations';
+import {Location} from '../Location';
 
 export class UserRoles {
 	static user = 'user';
@@ -25,10 +26,7 @@ export interface User extends Node {
 	onBoard: boolean;
 	id: string;
 	scope: Array<string>;
-	location: {
-		longitude: number,
-		latitude: number,
-	};
+	location: Location;
 	languages: Locale[];
 	mail: string;
 	password: string;

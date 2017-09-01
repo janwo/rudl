@@ -28,6 +28,10 @@ export class DatabaseManager {
 				'id',
 				'mail'
 			],
+            spatial: {
+                longitude: 'location_longitude',
+                latitude: 'location_latitude'
+            },
 			fulltext: {
 				User: [
 					'username',

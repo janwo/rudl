@@ -16,8 +16,8 @@ import {NotificationType} from "../models/notification/Notification";
 export const LOCATION_RADIUS_METERS = 30000;
 
 export module RudelController {
-	
-	export function create(transaction: Transaction, recipe: {
+
+    export function create(transaction: Transaction, recipe: {
 		translations: Translations,
 		icon: string
 	}): Promise<Rudel> {
@@ -230,13 +230,6 @@ export module RudelController {
             rudelId: rudel.id,
             skip: skip,
             limit: limit
-        }).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'likers'));
-    }
-
-    export function getUserLikers(transaction: Transaction, user: User, rudel: Rudel): Promise<User[]> {
-        return transaction.run(`MATCH(:Rudel {id: $rudelId})<-[:LIKES_RUDEL]-(likers:User)-[:LIKES_USER]->(:User {id: $userId}) RETURN COALESCE(properties(likers), []) as likers`, {
-            rudelId: rudel.id,
-			userId: user.id
         }).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'likers'));
     }
 

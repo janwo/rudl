@@ -1,4 +1,4 @@
-import {Translations} from '../user/Translations';
+import {Translations} from '../Translations';
 
 export interface Newsletter {
 	ready: boolean;

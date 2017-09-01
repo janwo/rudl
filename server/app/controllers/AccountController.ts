@@ -20,7 +20,6 @@ import {Rudel} from '../models/rudel/Rudel';
 import {UtilController} from './UtilController';
 import {StatementResult} from 'neo4j-driver/types/v1/result';
 import {CommentController} from "./CommentController";
-import {Observable} from "rxjs/Observable";
 
 export module AccountController {
 	
@@ -50,8 +49,8 @@ export module AccountController {
 				id: recipe.id,
 				scope: [UserRoles.user],
 				location: {
-					longitude: null,
-					latitude: null
+					longitude: 0,
+					latitude: 0
 				},
 				languages: [
 					//TODO: dynamic language
@@ -115,7 +114,7 @@ export module AccountController {
         user.updatedAt = now;
 
         // Save.
-        return transaction.run("MERGE (u:User { id: $user.id }) ON CREATE SET u = $flattenUser ON MATCH SET u = $flattenUser", {
+        return transaction.run(`MERGE (u:User { id: $user.id }) ON CREATE SET u = $flattenUser ON MATCH SET u = $flattenUser WITH u OPTIONAL MATCH (u)<-[r:RTREE_REFERENCE]-() DETACH DELETE r WITH u CALL spatial.addNode("User", u) yield node RETURN COUNT(*)`, {
             user: user,
             flattenUser: DatabaseManager.neo4jFunctions.flatten(user)
         }).then(() => {});
@@ -285,10 +284,10 @@ export module AccountController {
            }).then(() => {});
         }
 		
-		export function set(transaction: Transaction, type: NotificationType, recipients: User[], subject: Node, sender: User = null): Promise<void> {
-            let params = {
+		export function set(transaction: Transaction, type: NotificationType, recipients: Array<string | User>, subject: Node, sender: User = null): Promise<void> {
+            let params: any = {
                 type: type,
-                recipientIds: recipients.map(recipient => recipient.id),
+                recipientIds: recipients.map(recipient => typeof recipient === 'string' ? recipient : recipient.id),
                 subjectId: subject.id,
                 senderId: sender ? sender.id: null,
                 hasSender: !!sender,

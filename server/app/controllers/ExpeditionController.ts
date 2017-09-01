@@ -17,6 +17,7 @@ import {AccountController} from './AccountController';
 import {StatementResult} from 'neo4j-driver/types/v1/result';
 import {NotificationType} from '../models/notification/Notification';
 import {CommentController} from './CommentController';
+import {Location} from '../models/Location';
 
 export module ExpeditionController {
 	
@@ -593,12 +594,21 @@ export module ExpeditionController {
 				if(moment().diff(request.payload.expedition.date) > 0) return Promise.reject(Boom.badRequest('Date is in the past!'));
 				
 				return ExpeditionController.create(transaction, request.payload.expedition).then((expedition: Expedition) => {
+                    // Create function to gather all surrounding likers of the corresponding rudel.
+					let getNotificationSubjects = (rudel: Rudel, user: User, location: Location): Promise<string[]> => {
+					    return transaction.run(`CALL spatial.closest("User", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as u WITH u WHERE (u)-[:LIKES_RUDEL]->(:Rudel {id: $rudelId}) AND u.id <> $userId RETURN u.id`, {
+                            rudelId: rudel.id,
+                            userId: user.id,
+                            location: location
+                        }).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u'));
+					};
+
 					return Promise.all([
 						ExpeditionController.setOwner(transaction, expedition, request.auth.credentials),
 						ExpeditionController.approveUser(transaction, expedition, request.auth.credentials, request.auth.credentials),
 						ExpeditionController.setRudel(transaction, expedition, rudel),
-                        RudelController.getUserLikers(transaction, request.auth.credentials, rudel).then(likers => {
-                            return AccountController.NotificationController.set(transaction, NotificationType.ADDED_EXPEDITION, likers, expedition, request.auth.credentials)
+                        getNotificationSubjects(rudel, request.auth.credentials, expedition.location).then(subjects => {
+                            return AccountController.NotificationController.set(transaction, NotificationType.ADDED_EXPEDITION, subjects, expedition, request.auth.credentials);
                         })
 					]).then(() => expedition);
 				}).then((expedition: Expedition) => ExpeditionController.getPublicExpedition(transaction, expedition, request.auth.credentials));
