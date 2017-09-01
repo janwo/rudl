@@ -172,7 +172,7 @@
       </trans-unit>
       <trans-unit id="landingBigDescription" datatype="html">
         <source>At rudl you get in touch with new, like-minded people to organize your free time more transparent and efficiently.</source>
-        <target>Bei rudl einfach und entspannt die eigene Stadt kennenlernen, gleichgesinnte Menschen finden und die Freizeitgestaltung transparenter und einfach planbar gestalten.</target>
+        <target>Bei rudl einfach und entspannt die eigene Stadt kennenlernen, gleichgesinnte Menschen finden und die Freizeit transparenter und einfach planbar gestalten.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/landing/landing-content.component.ts</context>
           <context context-type="linenumber">4</context>
@@ -244,7 +244,7 @@
       </trans-unit>
       <trans-unit id="setTimeTitle" datatype="html">
         <source>Set the time</source>
-        <target>Gebe den Zeitpunkt an</target>
+        <target>Gib den Zeitpunkt an</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/rudel/rudel-create-expedition.component.ts</context>
           <context context-type="linenumber">65</context>
@@ -416,7 +416,7 @@
       </trans-unit>
       <trans-unit id="deleteAccountDescription" datatype="html">
         <source>You want to terminate your membership? Enter your username in the input field and click on &quot;Terminate membership&quot; to terminate your membership irreversibly.</source>
-        <target>Möchtest du deine Mitgliedschaft unwiederruflich beenden? Dann gebe bitte deinen Usernamen in das Eingabefeld ein und bestätige mit Klick auf "Mitgliedschaft beenden".</target>
+        <target>Möchtest du deine Mitgliedschaft unwiederruflich beenden? Dann gib bitte deinen Usernamen in das Eingabefeld ein und bestätige mit Klick auf "Mitgliedschaft beenden".</target>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/settings/settings-other.component.ts</context>
           <context context-type="linenumber">4</context>
