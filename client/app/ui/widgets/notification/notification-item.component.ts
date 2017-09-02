@@ -82,7 +82,7 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 				break;
 			
 			case NotificationType.ADDED_EXPEDITION:
-				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat **${(this.notification.subject as ExpeditionPreview).title}** erstellt.`;
+				this.message = `In deiner Nähe hat ${this.notification.sender.firstName} ${this.notification.sender.lastName} den Streifzug **${(this.notification.subject as ExpeditionPreview).title}** erstellt. Nimm teil!`;
 				break;
 
             case NotificationType.LIKES_RUDEL:
@@ -127,7 +127,7 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 				break;
 
             case NotificationType.ADDED_RUDEL:
-                this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat **${(this.notification.subject as RudelPreview).name}** erstellt.`;
+                this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat das Rudel **${(this.notification.subject as RudelPreview).name}** gegründet. Schließe dich an!`;
                 break;
 		}
 	}
