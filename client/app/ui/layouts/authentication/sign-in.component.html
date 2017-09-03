@@ -9,14 +9,14 @@
 
 <form [formGroup]="form">
     <ng-container *ngIf="expanded">
-        <form-control-wrapper [description]="'Gebe deine **E-Mail** an' | format" [errorMessages]="{
-            required: 'Bitte gebe eine E-Mail-Adresse an.',
+        <form-control-wrapper [description]="'Gib deine **E-Mail** an' | format" [errorMessages]="{
+            required: 'Bitte gib eine E-Mail-Adresse an.',
             email: 'Deine E-Mail-Adresse ist nicht korrekt.'
         }">
             <input formControlName="mail" type="email">
         </form-control-wrapper>
-        <form-control-wrapper [description]="'Gebe dein **Passwort** ein' | format" [errorMessages]="{
-            required: 'Bitte gebe ein Passwort an.',
+        <form-control-wrapper [description]="'Gib dein **Passwort** ein' | format" [errorMessages]="{
+            required: 'Bitte gib ein Passwort an.',
             minlength: 'Dein Passwort ist zu kurz (mindestens 6 Zeichen).'
         }" [infoMessage]="formControlCount(form.get('password').value, 32)">
             <input formControlName="password" maxlength="32" type="password">

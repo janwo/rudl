@@ -2,30 +2,30 @@
 <section>
     <form class="profile-content" [formGroup]="form">
         <form-control-wrapper [errorMessages]="{
-                            required: 'Gebe einen Vornamen an.',
+                            required: 'Gib einen Vornamen an.',
                             pattern: 'Dein Vorname ist zu kurz.'
                         }" [infoMessage]="formControlCount(form.get('firstName').value, 24)">
             <input maxlength="24" formControlName="firstName" type="text"
-                   placeholder="Gebe einen Vornamen an...">
+                   placeholder="Gib einen Vornamen an...">
         </form-control-wrapper>
         <form-control-wrapper [errorMessages]="{
-                            required: 'Gebe einen Nachnamen an.',
+                            required: 'Gib einen Nachnamen an.',
                             pattern: 'Dein Nachnamen ist zu kurz.'
                         }" [infoMessage]="formControlCount(form.get('lastName').value, 24)">
             <input maxlength="24" formControlName="lastName" type="text"
-                   placeholder="Gebe einen Nachnamen an...">
+                   placeholder="Gib einen Nachnamen an...">
         </form-control-wrapper>
         <form-control-wrapper [errorMessages]="{
-                            required: 'Gebe einen Usernamen an.',
+                            required: 'Gib einen Usernamen an.',
                             minlength: 'Dein Username ist zu kurz.',
                             pattern: 'Dein Username enthält unerlaubte Zeichen.',
                             taken: 'Der Nutzername ist vergeben. ' + usernameSuggestion + ' ist noch frei.'
                         }" [infoMessage]="formControlCount(form.get('username').value, 16)">
             <input maxlength="16" formControlName="username" type="text"
-                   placeholder="Gebe einen Usernamen an...">
+                   placeholder="Gib einen Usernamen an...">
         </form-control-wrapper>
         <form-control-wrapper [errorMessages]="{}" [infoMessage]="formControlCount(form.get('profileText').value, 60)">
-            <textarea maxlength="60" formControlName="profileText" placeholder="Gebe einen Profiltext an..."></textarea>
+            <textarea maxlength="60" formControlName="profileText" placeholder="Gib einen Profiltext an..."></textarea>
         </form-control-wrapper>
         <styled-button [style]="profileSubmitButtonStyle" [text]="'Änderungen übernehmen'" (click)="submit()" [disabled]="pendingProfileUpdate"></styled-button>
     </form>

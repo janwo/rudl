@@ -10,34 +10,34 @@
 
 <form [formGroup]="form">
     <ng-container *ngIf="expanded">
-        <form-control-wrapper [description]="'Gebe deinen **Nutzernamen** an' | format" [errorMessages]="{
-            required: 'Bitte gebe einen Usernamen an.',
+        <form-control-wrapper [description]="'Gib deinen **Nutzernamen** an' | format" [errorMessages]="{
+            required: 'Bitte gib einen Usernamen an.',
             minlength: 'Dein Username ist zu kurz (mindestens 5 Zeichen).',
             pattern: 'Dein Username darf nur Kleinbuchstaben, Zahlen und Unterstriche enthalten.',
             taken: 'Der Nutzername ist vergeben. ' + usernameSuggestion + ' ist noch frei.'
         }" [infoMessage]="formControlCount(form.get('username').value, 16)">
             <input formControlName="username" maxlength="16" placeholder="{{placeholders.username}}" type="text">
         </form-control-wrapper>
-        <form-control-wrapper [description]="'Gebe deine **E-Mail** ein' | format" [errorMessages]="{
-            required: 'Bitte gebe eine E-Mail-Adresse an.',
+        <form-control-wrapper [description]="'Gib deine **E-Mail** ein' | format" [errorMessages]="{
+            required: 'Bitte gib eine E-Mail-Adresse an.',
             email: 'Deine E-Mail-Adresse ist nicht korrekt.',
             taken: 'Die E-Mail ist vergeben.'
         }">
             <input formControlName="mail" placeholder="{{placeholders.mail}}" type="email">
         </form-control-wrapper>
-        <form-control-wrapper [description]="'Gebe ein starkes **Passwort** ein' | format" [errorMessages]="{
-            required: 'Bitte gebe ein Passwort an.',
+        <form-control-wrapper [description]="'Gib ein starkes **Passwort** ein' | format" [errorMessages]="{
+            required: 'Bitte gib ein Passwort an.',
             minlength: 'Dein Passwort ist zu kurz (mindestens 6 Zeichen).'
         }" [infoMessage]="formControlCount(form.get('password').value, 32)">
             <input formControlName="password" maxlength="32" placeholder="{{placeholders.password}}" type="password">
         </form-control-wrapper>
-        <form-control-wrapper [description]="'Gebe dein **Vornamen** an' | format" [errorMessages]="{
-            required: 'Bitte gebe einen Vornamen an.'
+        <form-control-wrapper [description]="'Gib dein **Vornamen** an' | format" [errorMessages]="{
+            required: 'Bitte gib einen Vornamen an.'
         }" [infoMessage]="formControlCount(form.get('firstName').value, 24)">
             <input maxlength="24" formControlName="firstName" placeholder="{{placeholders.firstName}}" type="text">
         </form-control-wrapper>
-        <form-control-wrapper [description]="'Gebe deinen **Nachnamen** an' | format" [errorMessages]="{
-            required: 'Bitte gebe einen Nachnamen an.'
+        <form-control-wrapper [description]="'Gib deinen **Nachnamen** an' | format" [errorMessages]="{
+            required: 'Bitte gib einen Nachnamen an.'
         }" [infoMessage]="formControlCount(form.get('lastName').value, 24)">
             <input maxlength="24" formControlName="lastName" placeholder="{{placeholders.lastName}}" type="text">
         </form-control-wrapper>

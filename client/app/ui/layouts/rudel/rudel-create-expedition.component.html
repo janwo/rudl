@@ -5,14 +5,14 @@
             <div class="content">
                 <form-control-wrapper [errorMessages]="{
 						minlength: 'Der Titel ist zu kurz (mindestens 5 Zeichen).',
-						required: 'Gebe einen Titel an.'
+						required: 'Gib einen Titel an.'
 					}" [infoMessage]="formControlCount(form.get('general').get('description').value, 50)">
                     <input maxlength="50" formControlName="title" type="text"
-                            placeholder="Gebe dem Streifzug einen Namen...">
+                            placeholder="Gib dem Streifzug einen Namen...">
                 </form-control-wrapper>
                 <form-control-wrapper [errorMessages]="{
 						minlength: 'Die Beschreibung ist zu kurz (mindestens 5 Zeichen).',
-						required: 'Gebe eine Beschreibung an.'
+						required: 'Gib eine Beschreibung an.'
 					}" [infoMessage]="formControlCount(form.get('general').get('description').value, 300)">
                     <textarea maxlength="300" formControlName="description"
                             placeholder="Beschreibe den Streifzug kurz..."></textarea>
@@ -53,7 +53,7 @@
         <carousel-slide class="split" formGroupName="time">
             <div class="content">
                 <form-control-wrapper [errorMessages]="{
-					required: 'Gebe ein Datum an.'
+					required: 'Gib ein Datum an.'
 					}">
                     <datetime formControlName="date"></datetime>
                 </form-control-wrapper>
