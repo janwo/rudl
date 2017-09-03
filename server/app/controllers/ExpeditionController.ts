@@ -596,7 +596,7 @@ export module ExpeditionController {
 				return ExpeditionController.create(transaction, request.payload.expedition).then((expedition: Expedition) => {
                     // Create function to gather all surrounding likers of the corresponding rudel.
 					let getNotificationSubjects = (rudel: Rudel, user: User, location: Location): Promise<string[]> => {
-					    return transaction.run(`CALL spatial.closest("User", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as u WITH u WHERE (u)-[:LIKES_RUDEL]->(:Rudel {id: $rudelId}) AND u.id <> $userId RETURN u.id`, {
+					    return transaction.run(`CALL spatial.closest("User", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as u WITH u WHERE (u)-[:LIKES_RUDEL]->(:Rudel {id: $rudelId}) AND u.id <> $userId RETURN u.id as u`, {
                             rudelId: rudel.id,
                             userId: user.id,
                             location: location
