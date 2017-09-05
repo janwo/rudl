@@ -18,6 +18,7 @@ import {StatementResult} from 'neo4j-driver/types/v1/result';
 import {NotificationType} from '../models/notification/Notification';
 import {CommentController} from './CommentController';
 import {Location} from '../models/Location';
+import * as _ from "lodash";
 
 export module ExpeditionController {
 	
@@ -607,7 +608,10 @@ export module ExpeditionController {
 						ExpeditionController.setOwner(transaction, expedition, request.auth.credentials),
 						ExpeditionController.approveUser(transaction, expedition, request.auth.credentials, request.auth.credentials),
 						ExpeditionController.setRudel(transaction, expedition, rudel),
-                        getNotificationSubjects(rudel, request.auth.credentials, expedition.location).then(subjects => {
+                        Promise.all([
+                        	getNotificationSubjects(rudel, request.auth.credentials, expedition.location),
+							UserController.likers(transaction, request.auth.credentials).then(users => users.map(user => user.id))
+						]).then((results: [string[], string[]]) => _.union(results[0], results[1])).then(subjects => {
                             return AccountController.NotificationController.set(transaction, NotificationType.ADDED_EXPEDITION, subjects, expedition, request.auth.credentials);
                         })
 					]).then(() => expedition);

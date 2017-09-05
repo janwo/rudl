@@ -17,7 +17,8 @@ import {UserService} from "../../../services/user.service";
 	styleUrls: ['explore-user.component.scss']
 })
 export class ExploreUserComponent implements OnInit, OnDestroy {
-	
+
+    waveEmoji: string = require('../../../../../db/files/icons/spy.svg');
 	suggestedUsersSubscription: Subscription;
 	suggestedUsers: User[];
 	recentUsersSubscription: Subscription;

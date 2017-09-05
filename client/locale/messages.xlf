@@ -389,39 +389,51 @@
           <context context-type="linenumber">14</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="didyouknow" datatype="html">
+        <source>Did you know?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-expeditions.component.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-rudel.component.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-user.component.ts</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="didyouknowhowtocreaterudel" datatype="html">
+        <source>Create expeditions for any type of activity. Expeditions are not limited to events and you can also define entry restrictions.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-expeditions.component.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-rudel.component.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="suggestedExpeditions" datatype="html">
         <source>Suggested Expeditions</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/explore/explore-expeditions.component.ts</context>
-          <context context-type="linenumber">2</context>
+          <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
       <trans-unit id="popularExpeditions" datatype="html">
         <source>Popular Expeditions</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/explore/explore-expeditions.component.ts</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">28</context>
         </context-group>
       </trans-unit>
       <trans-unit id="recentExpeditions" datatype="html">
         <source>Recent Expeditions</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/explore/explore-expeditions.component.ts</context>
-          <context context-type="linenumber">38</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="didyouknow" datatype="html">
-        <source>Did you know?</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/layouts/explore/explore-rudel.component.ts</context>
-          <context context-type="linenumber">4</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="didyouknowhowtocreaterudel" datatype="html">
-        <source>Create rudel by entering the title of your new rudel into the search field.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/layouts/explore/explore-rudel.component.ts</context>
-          <context context-type="linenumber">5</context>
+          <context context-type="linenumber">46</context>
         </context-group>
       </trans-unit>
       <trans-unit id="suggestedRudel" datatype="html">
@@ -480,18 +492,25 @@
           <context context-type="linenumber">6</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="didyouknowwhyfollowusers" datatype="html">
+        <source>If you follow an user, you will receive notifications as soon as the user creates a new rudel or expedition.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-user.component.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="suggestedUsers" datatype="html">
         <source>Suggested Users</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/explore/explore-user.component.ts</context>
-          <context context-type="linenumber">2</context>
+          <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
       <trans-unit id="recentUsers" datatype="html">
         <source>Recent Users</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/explore/explore-user.component.ts</context>
-          <context context-type="linenumber">19</context>
+          <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
       <trans-unit id="failedPasswordRequest" datatype="html">
@@ -527,7 +546,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/authentication/sign-up.component.ts</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">50</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/authentication/set-password.component.ts</context>
@@ -538,28 +557,28 @@
         <source>Or sign in via mail</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/authentication/sign-in.component.ts</context>
-          <context context-type="linenumber">9</context>
+          <context context-type="linenumber">7</context>
         </context-group>
       </trans-unit>
       <trans-unit id="loginFailed" datatype="html">
         <source>Your mail or password is incorrect! <x id="START_LINK" ctype="x-a"/>Forgot password?<x id="CLOSE_LINK" ctype="x-a"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/authentication/sign-in.component.ts</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
       <trans-unit id="notRegisteredYet" datatype="html">
         <source>Not registered yet?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/authentication/sign-in.component.ts</context>
-          <context context-type="linenumber">31</context>
+          <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
       <trans-unit id="signUp" datatype="html">
         <source>Sign Up</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/authentication/sign-in.component.ts</context>
-          <context context-type="linenumber">32</context>
+          <context context-type="linenumber">30</context>
         </context-group>
       </trans-unit>
       <trans-unit id="signUpTerms" datatype="html">
@@ -573,21 +592,21 @@
         <source>Or register via mail</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/authentication/sign-up.component.ts</context>
-          <context context-type="linenumber">10</context>
+          <context context-type="linenumber">8</context>
         </context-group>
       </trans-unit>
       <trans-unit id="registerFailed" datatype="html">
         <source>Registration failed, try again!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/authentication/sign-up.component.ts</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">44</context>
         </context-group>
       </trans-unit>
       <trans-unit id="alreadyRegistered" datatype="html">
         <source>Already registered yourself?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/authentication/sign-up.component.ts</context>
-          <context context-type="linenumber">51</context>
+          <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="failedPasswordChange" datatype="html">

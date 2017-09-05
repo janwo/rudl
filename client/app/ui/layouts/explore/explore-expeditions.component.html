@@ -1,3 +1,11 @@
+<div class="card info-box">
+    <emoji [emoji]="coffeeEmoji"></emoji>
+    <div>
+        <h4 i18n="@@didyouknow">Did you know?</h4>
+        <span i18n="@@didyouknowhowtocreaterudel">Create expeditions for any type of activity. Expeditions are not limited to events and you can also define entry restrictions.</span>
+    </div>
+</div>
+
 <ng-container *ngIf="suggestedExpeditions && suggestedExpeditions.length > 0; else loadingSuggestedExpeditions">
     <h1 i18n="@@suggestedExpeditions">Suggested Expeditions</h1>
     <item-wrapper [horizontal]="true">

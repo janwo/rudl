@@ -14,7 +14,8 @@ import {ButtonStyles} from "../../widgets/control/styled-button.component";
 	styleUrls: ['explore-expeditions.component.scss']
 })
 export class ExploreExpeditionsComponent implements OnInit, OnDestroy {
-	
+
+    coffeeEmoji: string = require('../../../../../db/files/icons/coffee.svg');
 	suggestedExpeditionsSubscription: Subscription;
 	suggestedExpeditions: Expedition[];
 	recentExpeditionsSubscription: Subscription;

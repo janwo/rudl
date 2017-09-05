@@ -1,3 +1,11 @@
+<div class="card info-box">
+    <emoji [emoji]="waveEmoji"></emoji>
+    <div>
+        <h4 i18n="@@didyouknow">Did you know?</h4>
+        <span i18n="@@didyouknowwhyfollowusers">If you follow an user, you will receive notifications as soon as the user creates a new rudel or expedition.</span>
+    </div>
+</div>
+
 <ng-container *ngIf="suggestedUsers && suggestedUsers.length > 0; else loadingSuggestedUsers">
     <h1 i18n="@@suggestedUsers">Suggested Users</h1>
     <item-wrapper [horizontal]="true">
