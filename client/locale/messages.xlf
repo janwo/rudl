@@ -404,14 +404,10 @@
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="didyouknowhowtocreaterudel" datatype="html">
-        <source>Create expeditions for any type of activity. Expeditions are not limited to events and you can also define entry restrictions.</source>
+      <trans-unit id="didyouknowexpeditionscapabilities" datatype="html">
+        <source>Create expeditions for any type of activity. Expeditions are not limited to classic events.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/explore/explore-expeditions.component.ts</context>
-          <context context-type="linenumber">5</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">app/ui/layouts/explore/explore-rudel.component.ts</context>
           <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
@@ -434,6 +430,13 @@
         <context-group purpose="location">
           <context context-type="sourcefile">app/ui/layouts/explore/explore-expeditions.component.ts</context>
           <context context-type="linenumber">46</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="didyouknowhowtocreaterudel" datatype="html">
+        <source>Create rudel by entering the title of your new rudel into the search field.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app/ui/layouts/explore/explore-rudel.component.ts</context>
+          <context context-type="linenumber">5</context>
         </context-group>
       </trans-unit>
       <trans-unit id="suggestedRudel" datatype="html">

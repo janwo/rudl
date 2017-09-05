@@ -18,7 +18,7 @@ import {UserService} from "../../../services/user.service";
 })
 export class ExploreUserComponent implements OnInit, OnDestroy {
 
-    waveEmoji: string = require('../../../../../db/files/icons/spy.svg');
+    waveEmoji: string = require('../../../../../db/files/icons/wave.svg');
 	suggestedUsersSubscription: Subscription;
 	suggestedUsers: User[];
 	recentUsersSubscription: Subscription;
