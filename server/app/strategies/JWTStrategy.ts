@@ -27,7 +27,7 @@ export const StrategyConfig: StrategyConfiguration = {
 
                     // Track login.
                     let now = Date.now();
-                    DatabaseManager.redisClient.set(key, now.toString(), 'PX', now, () => {
+                    DatabaseManager.redisClient.set(key, now.toString(), 'EX', 60 * 60 * 24, () => {
                         (MonitorManager.metrics.seenUsers as Counter).inc(1, now);
                         callback(null, true, user);
                     });
