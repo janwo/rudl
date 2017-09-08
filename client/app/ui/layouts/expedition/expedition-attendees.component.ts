@@ -99,7 +99,8 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	getUserInfo(status: ExpeditionAttendeeStatus): string {
 		if(status.isAttendee) return 'Nimmt teil';
 		if(status.isInvitee) return 'Ist eingeladen';
-		if(status.isApplicant) return 'Wartet auf Annahme';
+        if(status.isApplicant) return 'Wartet auf Annahme';
+        if(status.isRecommendee) return 'Hinweis erhalten';
 		return null;
 	}
 	

@@ -8,9 +8,8 @@
                            *ngIf="invitee.status.isInvitee || invitee.status.isAttendee" [disabled]="pendingRequest"></styled-button>
         </ng-container>
         <ng-template #recommendUser>
-            <styled-button *ngIf="!invitee.status.isInvitee && !invitee.status.isAttendee && !invitee.status.isRecommendee" [icon]="'add_circle_outline'" [style]="overflowButtonStyle" (click)="approveUser.next(invitee.user)"
+            <styled-button *ngIf="!invitee.status.isInvitee && !invitee.status.isApplicant && !invitee.status.isAttendee && !invitee.status.isRecommendee" [icon]="'record_voice_over'" [style]="overflowButtonStyle" (click)="approveUser.next(invitee.user)"
                            [disabled]="pendingRequest"></styled-button>
-            <styled-button [icon]="'remove_circle_outline'" [style]="overflowButtonStyle" *ngIf="invitee.status.isInvitee || invitee.status.isAttendee || invitee.status.isRecommendee" [disabled]="true"></styled-button>
         </ng-template>
          </user-item>
 </item-wrapper>

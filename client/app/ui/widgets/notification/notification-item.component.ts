@@ -133,11 +133,11 @@ export class NotificationItemComponent implements OnChanges, OnInit {
                 break;
 
             case NotificationType.RECEIVED_RUDEL_RECOMMENDATION:
-                this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat dir das Rudel **${(this.notification.subject as RudelPreview).name}** empfohlen. Schließe dich an!`;
+                this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat dich auf das Rudel **${(this.notification.subject as RudelPreview).name}** hingewiesen. Schließe dich an!`;
                 break;
 
             case NotificationType.RECEIVED_EXPEDITION_RECOMMENDATION:
-                this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat dir den Streifzug **${(this.notification.subject as ExpeditionPreview).title}** empfohlen. Nimm teil!`;
+                this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat dich auf den Streifzug **${(this.notification.subject as ExpeditionPreview).title}** hingewiesen. Nimm teil!`;
                 break;
         }
 	}
