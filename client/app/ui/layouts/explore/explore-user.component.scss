@@ -18,7 +18,7 @@
   .info-box {
     display: flex;
     align-items: center;
-    margin: map_get($base-padding, 'default') auto;
+    margin: map_get($base-padding, 'smaller') auto;
     max-width: map_get($base-max-width, 'small');
 
     div {

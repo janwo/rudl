@@ -95,8 +95,8 @@
     menu {
       padding-top: map_get($base-padding, 'smaller');
       padding-bottom: map_get($base-padding, 'smaller');
-      margin-top: map_get($base-padding, 'default');
-      margin-bottom: map_get($base-padding, 'default');
+      margin-top: map_get($base-padding, 'smaller');
+      margin-bottom: map_get($base-padding, 'smaller');
     }
   }
 }
