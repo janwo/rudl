@@ -220,7 +220,7 @@ export module UserController {
 	}
 
     export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<User[]> {
-        return transaction.run('MATCH (r:Rudel)<-[:LIKES_RUDEL]-(u1:User {id: $userId}) WITH COUNT(r) as rudelLikes, u1 MATCH (u2:User)-[:LIKES_RUDEL]->(r:Rudel)<-[:LIKES_RUDEL]-(u1) WHERE NOT u2 = u1 AND NOT (u1)-[:LIKES_USER]->(u2) WITH u1, u2, toFloat(COUNT(DISTINCT r)) / rudelLikes as similarity ORDER BY similarity DESC SKIP $skip LIMIT $limit RETURN properties(u2) as u', {
+        return transaction.run('MATCH (r:Rudel)<-[:LIKES_RUDEL]-(u1:User {id: $userId}) WITH COUNT(r) as rudelLikes, u1 MATCH (u2:User)-[:LIKES_RUDEL]->(r:Rudel)<-[:LIKES_RUDEL]-(u1) WHERE NOT u2 = u1 AND NOT (u1)-[:LIKES_USER]->(u2) NOT (u1)-[:DISLIKES_USER]->(u2) WITH u1, u2, toFloat(COUNT(DISTINCT r)) / rudelLikes as similarity ORDER BY similarity DESC SKIP $skip LIMIT $limit RETURN properties(u2) as u', {
             userId: user.id,
             skip: skip,
             limit: limit
