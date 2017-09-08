@@ -1,20 +1,23 @@
-<ng-container *ngIf="parent.expedition.getValue().relations.isOwned">
-    <input class="add-invitee" placeholder="Nutzer suchen oder einladen..."
-            (keyup)="searchUser.next($event.target.value)">
-    <item-wrapper class="invitees-like" [columns]="2" *ngIf="inviteesLike; else loadingInviteesLike"
-            [ngClass]="{empty: inviteesLike.length == 0}">
-        <user-item *ngFor="let invitee of inviteesLike" [user]="invitee.user" [info]="getUserInfo(invitee.status)">
-            <styled-button *ngIf="invitee.user.id != parent.expedition.getValue().owner.id && !invitee.status.isInvitee && !invitee.status.isAttendee" [icon]="'add_circle_outline'" [style]="overflowButtonStyle" (click)="approveUser.next(invitee.user)"
-                    [disabled]="pendingRequest"></styled-button>
+<input class="add-invitee" placeholder="Teilnehmer suchen oder einladen..." (keyup)="searchUser.next($event.target.value)">
+<item-wrapper class="invitees-like" [columns]="2" *ngIf="inviteesLike; else loadingInviteesLike" [ngClass]="{empty: inviteesLike.length == 0}">
+    <user-item *ngFor="let invitee of inviteesLike" [user]="invitee.user" [info]="getUserInfo(invitee.status)">
+        <ng-container *ngIf="parent.expedition.getValue().relations.isOwned; else recommendUser">
+            <styled-button *ngIf="!invitee.status.isInvitee && !invitee.status.isAttendee" [icon]="'add_circle_outline'" [style]="overflowButtonStyle" (click)="approveUser.next(invitee.user)"
+                           [disabled]="pendingRequest"></styled-button>
             <styled-button [icon]="'remove_circle_outline'" [style]="overflowButtonStyle" (click)="rejectUser.next(invitee.user)"
-                    *ngIf="invitee.user.id != parent.expedition.getValue().owner.id && (invitee.status.isInvitee || invitee.status.isAttendee)" [disabled]="pendingRequest"></styled-button>
-        </user-item>
-    </item-wrapper>
-    
-    <ng-template #loadingInviteesLike>
-        <loading></loading>
-    </ng-template>
-</ng-container>
+                           *ngIf="invitee.status.isInvitee || invitee.status.isAttendee" [disabled]="pendingRequest"></styled-button>
+        </ng-container>
+        <ng-template #recommendUser>
+            <styled-button *ngIf="!invitee.status.isInvitee && !invitee.status.isAttendee && !invitee.status.isRecommendee" [icon]="'add_circle_outline'" [style]="overflowButtonStyle" (click)="approveUser.next(invitee.user)"
+                           [disabled]="pendingRequest"></styled-button>
+            <styled-button [icon]="'remove_circle_outline'" [style]="overflowButtonStyle" *ngIf="invitee.status.isInvitee || invitee.status.isAttendee || invitee.status.isRecommendee" [disabled]="true"></styled-button>
+        </ng-template>
+         </user-item>
+</item-wrapper>
+
+<ng-template #loadingInviteesLike>
+    <loading></loading>
+</ng-template>
 <item-wrapper class="attendees" [columns]="2" *ngIf="attendees; else loadingAttendees">
     <user-item *ngFor="let attendee of attendees" [user]="attendee.user" [info]="getUserInfo(attendee.status)">
         <styled-button *ngIf="parent.expedition.getValue().relations.isOwned && attendee.user.id != parent.expedition.getValue().owner.id && !attendee.status.isInvitee && !attendee.status.isAttendee" [icon]="'add_circle_outline'" [style]="overflowButtonStyle" (click)="approveUser.next(attendee.user)"

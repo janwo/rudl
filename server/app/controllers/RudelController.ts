@@ -179,7 +179,7 @@ export module RudelController {
 		return transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:LIKES_RUDEL]->(r) WITH u, r CREATE UNIQUE (u)-[:LIKES_RUDEL {createdAt: $now}]->(r) WITH u, r OPTIONAL MATCH (u)-[dlr:DISLIKES_RUDEL]->(r) DETACH DELETE dlr WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE UNIQUE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
 			userId: user.id,
 			rudelId: rudel.id,
-			now: new Date().getTime() / 1000
+			now: Math.trunc(Date.now() / 1000)
 		}).then(() => {});
 	}
 
@@ -198,7 +198,7 @@ export module RudelController {
         let deleteRelationships = transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:DISLIKES_RUDEL]->(r) WITH u, r CREATE UNIQUE (u)-[:DISLIKES_RUDEL {createdAt: $now}]->(r) WITH u, r OPTIONAL MATCH (u)-[or:OWNS_RUDEL]->(r) OPTIONAL MATCH (u)-[fr:LIKES_RUDEL]->(r) DETACH DELETE fr, or", {
             userId: user.id,
             rudelId: rudel.id,
-            now: new Date().getTime() / 1000
+            now: Math.trunc(Date.now() / 1000)
         });
 
         return Promise.all([
@@ -208,7 +208,7 @@ export module RudelController {
             return this.likers(transaction, rudel, 0, 1).then((likers: User[]) => {
                 if(likers.length > 0) return transaction.run("MATCH(r:Rudel {id: $rudelId}), (u:User {id: $newOwnerId}) WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
                     rudelId: rudel.id,
-                    now: new Date().getTime() / 1000,
+                    now: Math.trunc(Date.now() / 1000),
                     newOwnerId: likers.shift().id
                 });
 
@@ -278,7 +278,7 @@ export module RudelController {
 				return Promise.all([
 				    RudelController.like(transaction, rudel, request.auth.credentials),
                     UserController.likers(transaction, request.auth.credentials).then(likers => {
-                        return AccountController.NotificationController.set(transaction, NotificationType.ADDED_RUDEL, likers, rudel, request.auth.credentials);
+                        return AccountController.NotificationController.set(transaction, NotificationType.CREATES_RUDEL, likers, rudel, request.auth.credentials);
                     })
                 ]).then(() => RudelController.getPublicRudel(transaction, rudel, request.auth.credentials));
 			});

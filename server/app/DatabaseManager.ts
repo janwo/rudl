@@ -157,10 +157,14 @@ export class DatabaseManager {
 			name: 'BELONGS_TO_LIST',
 			isRelationship: true
 		},
-		userOwnsComment: {
-			name: 'OWNS_COMMENT',
-			isRelationship: true
-		},
+        userOwnsComment: {
+            name: 'OWNS_COMMENT',
+            isRelationship: true
+        },
+        recommendeeOfExpedition: {
+            name: 'RECOMMENDEE_OF_EXPEDITION',
+            isRelationship: true
+        },
 		commentBelongsToNode: {
 			name: 'BELONGS_TO_NODE',
 			isRelationship: true

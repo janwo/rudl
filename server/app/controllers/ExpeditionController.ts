@@ -183,7 +183,7 @@ export module ExpeditionController {
 			userId: user.id,
 			limit: limit,
 			skip: skip,
-			after: new Date().getTime() / 1000 - 43200
+			after: Math.trunc(Date.now() / 1000 - 43200)
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'e'));
 	}
 	
@@ -192,7 +192,7 @@ export module ExpeditionController {
 			userId: user.id,
 			limit: limit,
 			skip: skip,
-			before: new Date().getTime() / 1000 + 43200
+			before: Math.trunc(Date.now() / 1000 + 43200)
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'e'));
 	}
 	
@@ -205,7 +205,7 @@ export module ExpeditionController {
 			},
 			limit: limit,
 			skip: skip,
-			after: new Date().getTime() / 1000 - 43200
+			after: Math.trunc(Date.now() / 1000 - 43200)
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'e'));
 	}
 	
@@ -218,7 +218,7 @@ export module ExpeditionController {
 			},
 			limit: limit,
 			skip: skip,
-			before: new Date().getTime() / 1000 + 43200
+			before: Math.trunc(Date.now() / 1000 + 43200)
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'e'));
 	}
 	
@@ -250,7 +250,7 @@ export module ExpeditionController {
 				return transaction.run(query, {
 					expeditionId: expedition.id,
 					userId: user.id,
-					now: new Date().getTime() / 1000
+					now: Math.trunc(Date.now() / 1000)
 				});
 			}
 			
@@ -269,8 +269,8 @@ export module ExpeditionController {
 				return transaction.run(query, {
 					expeditionId: expedition.id,
 					userId: user.id,
-					now: new Date().getTime() / 1000
-				}).then((result: StatementResult) => (result.summary.counters.relationshipsCreated() as any as number) > 0);
+					now: Math.trunc(Date.now() / 1000)
+				}).then((result: StatementResult) => result.summary.counters.relationshipsCreated() > 0);
 			};
 			
 			let inviteUser = (): Promise<boolean> => {
@@ -280,35 +280,72 @@ export module ExpeditionController {
 				return transaction.run(query, {
 					expeditionId: expedition.id,
 					userId: user.id,
-					now: new Date().getTime() / 1000
-				}).then((result: StatementResult) => (result.summary.counters.relationshipsCreated() as any as number) > 0);
+					now: Math.trunc(Date.now() / 1000)
+				}).then((result: StatementResult) => result.summary.counters.relationshipsCreated() > 0);
 			};
-			
-			let addUser = (): Promise<boolean> => {
-				let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}), (r:Rudel)<-[:BELONGS_TO_RUDEL]-(e)
+
+            let addUser = (): Promise<boolean> => {
+                let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}), (r:Rudel)<-[:BELONGS_TO_RUDEL]-(e)
 				WHERE NOT (e)<-[:JOINS_EXPEDITION]-(u) AND NOT (e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u)
 				CREATE UNIQUE (e)<-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]-(u)-[:LIKES_RUDEL]->(r)
 				WITH u, r
 				OPTIONAL MATCH (u)-[dlr:DISLIKES_RUDEL]->(r)
 				DETACH DELETE dlr`;
-				return transaction.run(query, {
-					expeditionId: expedition.id,
-					userId: user.id,
-					now: new Date().getTime() / 1000
-				}).then((result: StatementResult) => (result.summary.counters.relationshipsCreated() as any as number) > 0);
-			};
+                return transaction.run(query, {
+                    expeditionId: expedition.id,
+                    userId: user.id,
+                    now: Math.trunc(Date.now() / 1000)
+                }).then((result: StatementResult) => result.summary.counters.relationshipsCreated() > 0);
+            };
+
+            let recommendUser = (): Promise<boolean> => {
+                let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId})
+				WHERE NOT (e)<-[:RECOMMENDEE_OF_EXPEDITION]-(u)
+				CREATE UNIQUE (e)<-[:RECOMMENDEE_OF_EXPEDITION {createdAt: $now}]-(u)`;
+                return transaction.run(query, {
+                    expeditionId: expedition.id,
+                    userId: user.id,
+                    now: Math.trunc(Date.now() / 1000)
+                }).then((result: StatementResult) => result.summary.counters.relationshipsCreated() > 0);
+            };
+
+            let notifyAttendingLikers = (expedition: Expedition, user: User): Promise<void> => {
+                return transaction.run(`MATCH (:User {id: $userId})<-[:LIKES_USER]-(u:User)-[:JOINS_EXPEDITION]->(:Expedition {id: $expeditionId}) RETURN u.id as u`, {
+                    expeditionId: expedition.id,
+                    userId: user.id
+                }).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u')).then(subjects => {
+                    return AccountController.NotificationController.set(
+                        transaction,
+                        NotificationType.JOINS_EXPEDITION,
+                        _.union(subjects, owner.id),
+                        expedition,
+                        relatedUser
+                    );
+                });
+            };
 			
 			// If owner is approving someone...
 			if (relatedUser.id == owner.id) {
 				return inviteUser().then(invited => {
 					return findJoins().then(accepted => {
-						if(invited || accepted) return AccountController.NotificationController.set(
-							transaction,
-							accepted ? NotificationType.ACCEPTED_APPLICATION_FOR_EXPEDITION : NotificationType.INVITED_TO_EXPEDITION,
-							[user],
-							expedition,
-							relatedUser
-						);
+						if(accepted) return Promise.all([
+                            AccountController.NotificationController.set(
+                                transaction,
+                                NotificationType.ACCEPTS_APPLICATION_FOR_EXPEDITION ,
+                                [user],
+                                expedition,
+                                relatedUser
+                            ),
+                            notifyAttendingLikers(expedition, user)
+                        ]).then(() => {});
+
+						if(invited) return AccountController.NotificationController.set(
+                            transaction,
+                            NotificationType.INVITED_TO_EXPEDITION ,
+                            [user],
+                            expedition,
+                            relatedUser
+                        );
 					});
 				});
 			}
@@ -317,16 +354,41 @@ export module ExpeditionController {
 			if (user.id == relatedUser.id) {
 				return addUser().then(applied => {
 					return Promise.resolve(expedition.needsApproval ? findJoins() : inviteUser().then(() => findJoins())).then(joined => {
-						if (applied || joined) return AccountController.NotificationController.set(
-							transaction,
-							joined ? (expedition.needsApproval ? NotificationType.ACCEPTED_INVITATION_FOR_EXPEDITION : NotificationType.JOINED_EXPEDITION ) : NotificationType.APPLIED_FOR_EXPEDITION,
-							[owner],
-							expedition,
-							relatedUser
-						);
+						if (joined) {
+                            let promises = expedition.needsApproval ? [
+                                AccountController.NotificationController.set(
+                                    transaction,
+                                    NotificationType.ACCEPTS_INVITATION_FOR_EXPEDITION,
+                                    [owner],
+                                    expedition,
+                                    relatedUser
+                                )
+                            ] : [];
+                            promises.push(notifyAttendingLikers(expedition, relatedUser));
+						    return Promise.all(promises).then(() => {});
+                        }
+
+						if(applied) return AccountController.NotificationController.set(
+                            transaction,
+                            NotificationType.APPLIES_FOR_EXPEDITION,
+                            [owner],
+                            expedition,
+                            relatedUser
+                        );
 					});
 				});
 			}
+
+			// If another user recommends expedition to someone.
+			return recommendUser().then(recommended => {
+                if(recommended) return AccountController.NotificationController.set(
+                    transaction,
+                    NotificationType.RECEIVED_EXPEDITION_RECOMMENDATION,
+                    [user],
+                    expedition,
+                    relatedUser
+                );
+            });
 		});
 	}
 	
@@ -338,7 +400,7 @@ export module ExpeditionController {
 		CALL apoc.refactor.setType(pje, 'JOINS_EXPEDITION') YIELD output
 		RETURN {}`, {
 			expeditionId: expedition.id,
-			now: new Date().getTime() / 1000
+			now: Math.trunc(Date.now() / 1000)
 		}).then(() => {});
 	}
 	
@@ -359,7 +421,7 @@ export module ExpeditionController {
 				}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'deleted').shift()).then((deleted: any) => {
 					if(deleted.joined || deleted.applied) return AccountController.NotificationController.set(
 						transaction,
-						deleted.joined ? NotificationType.REJECTED_FROM_EXPEDITION : NotificationType.REJECTED_APPLICATION_FOR_EXPEDITION,
+						deleted.joined ? NotificationType.REJECTED_FROM_EXPEDITION : NotificationType.REJECTS_APPLICATION_FOR_EXPEDITION,
 						[user],
 						expedition,
 						relatedUser
@@ -382,7 +444,7 @@ export module ExpeditionController {
 				}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'deleted').shift()).then((deleted: any) => {
 					if(deleted.joined || deleted.invited) return AccountController.NotificationController.set(
 						transaction,
-						deleted.joined ? NotificationType.LEFT_EXPEDITION : NotificationType.REJECTED_INVITATION_FOR_EXPEDITION,
+						deleted.joined ? NotificationType.LEFTS_EXPEDITION : NotificationType.REJECTS_INVITATION_FOR_EXPEDITION,
 						[owner],
 						expedition,
 						user
@@ -394,12 +456,13 @@ export module ExpeditionController {
 	
 	export interface AttendeeStatus {
 		isApplicant: boolean;
-		isAttendee: boolean;
+        isAttendee: boolean;
+        isRecommendee: boolean;
 		isInvitee: boolean;
 	}
 	
 	export function getAttendeeStatus(transaction: Transaction, expedition: Expedition, user: User): Promise<AttendeeStatus> {
-		return transaction.run(`MATCH (e:Expedition {id: $expeditionId}), (u:User {id: $userId}) WITH u, e OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) RETURN {isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0} as as`, {
+		return transaction.run(`MATCH (e:Expedition {id: $expeditionId}), (u:User {id: $userId}) WITH u, e OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[recommendee:RECEIVED_EXPEDITION_RECOMMENDATION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) RETURN {isRecommendee: COUNT(recommendee) > 0, isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0} as as`, {
 			expeditionId: expedition.id,
 			userId: user.id
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'as').shift());
@@ -502,7 +565,7 @@ export module ExpeditionController {
 		status: AttendeeStatus,
 		user: User
 	}[]> {
-		return transaction.run("MATCH(e:Expedition {id : $expeditionId}), (relatedUser:User {id: $relatedUserId}) WITH relatedUser, e CALL apoc.index.search('User', $query) YIELD node WITH node as u, e, relatedUser OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) RETURN {user: properties(u), status: {isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0}} as u SKIP $skip LIMIT $limit", {
+		return transaction.run("MATCH(e:Expedition {id : $expeditionId}), (relatedUser:User {id: $relatedUserId}) WITH relatedUser, e CALL apoc.index.search('User', $query) YIELD node WITH node as u, e, relatedUser WHERE u.id <> relatedUser.id OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[recommendee:RECEIVED_EXPEDITION_RECOMMENDATION]->(e) RETURN {user: properties(u), status: {isInvitee: COUNT(invitee) > 0, isRecommendee: COUNT(recommendee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0}} as u SKIP $skip LIMIT $limit", {
 			expeditionId: expedition.id,
 			query: `${DatabaseManager.neo4jFunctions.escapeLucene(query)}~`,
 			relatedUserId: relatedUser.id,
@@ -612,7 +675,7 @@ export module ExpeditionController {
                         	getNotificationSubjects(rudel, request.auth.credentials, expedition.location),
 							UserController.likers(transaction, request.auth.credentials).then(users => users.map(user => user.id))
 						]).then((results: [string[], string[]]) => _.union(results[0], results[1])).then(subjects => {
-                            return AccountController.NotificationController.set(transaction, NotificationType.ADDED_EXPEDITION, subjects, expedition, request.auth.credentials);
+                            return AccountController.NotificationController.set(transaction, NotificationType.CREATES_EXPEDITION, subjects, expedition, request.auth.credentials);
                         })
 					]).then(() => expedition);
 				}).then((expedition: Expedition) => ExpeditionController.getPublicExpedition(transaction, expedition, request.auth.credentials));

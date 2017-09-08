@@ -196,7 +196,7 @@ export module ListController {
 		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WHERE NOT (u)-[:LIKES_LIST]->(l) WITH u, l CREATE UNIQUE (u)-[:LIKES_LIST {createdAt: $now}]->(l) WITH u, l OPTIONAL MATCH (u)-[dll:DISLIKES_LIST]->(l) DETACH DELETE dll WITH u, l OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, l, u WHERE count = 0 CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
 			userId: user.id,
 			listId: list.id,
-			now: new Date().getTime() / 1000
+			now: Math.trunc(Date.now() / 1000)
 		}).then(() => {});
 	}
 	
@@ -204,12 +204,12 @@ export module ListController {
 		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WHERE NOT (u)-[:DISLIKES_LIST]->(l) WITH u, l CREATE UNIQUE (u)-[:DISLIKES_LIST {createdAt: $now}]->(l) WITH u, l OPTIONAL MATCH (u)-[ol:OWNS_LIST]->(l) OPTIONAL MATCH (u)-[ll:LIKES_LIST]->(l) DETACH DELETE ll, ol", {
 			userId: user.id,
 			listId: list.id,
-			now: new Date().getTime() / 1000
+			now: Math.trunc(Date.now() / 1000)
 		}).then(() => {
 			return this.likers(transaction, list, 0, 1).then((likers: User[]) => {
 				if(likers.length > 0) return transaction.run("MATCH(l:List {id: $listId}), (u:User {id: $newOwnerId}) CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
 					listId: list.id,
-					now: new Date().getTime() / 1000,
+					now: Math.trunc(Date.now() / 1000),
 					newOwnerId: likers.shift().id
 				});
 				

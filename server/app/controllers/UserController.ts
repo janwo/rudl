@@ -204,7 +204,7 @@ export module UserController {
 		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:LIKES_USER]->(followee) WITH user, followee CREATE UNIQUE (user)-[:LIKES_USER {createdAt: $now}]->(followee) WITH user, followee OPTIONAL MATCH (user)-[dlu:DISLIKES_USER]->(followee) DETACH DELETE dlu", {
 			userId: user.id,
 			followeeUserId: aimedUser.id,
-			now: new Date().getTime() / 1000
+			now: Math.trunc(Date.now() / 1000)
 		}).then((result: any) => {
 			if(result.summary.counters.relationshipsCreated() > 0) return AccountController.NotificationController.set(transaction, NotificationType.LIKES_USER, [aimedUser], aimedUser, user);
 		});
@@ -215,7 +215,7 @@ export module UserController {
 		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:DISLIKES_USER]->(followee) WITH user, followee CREATE UNIQUE (user)-[:DISLIKES_USER {createdAt: $now}]->(followee) WITH user, followee OPTIONAL MATCH (user)-[lu:LIKES_USER]->(followee) DETACH DELETE lu", {
 			userId: user.id,
 			followeeUserId: aimedUser.id,
-			now: new Date().getTime() / 1000
+			now: Math.trunc(Date.now() / 1000)
 		}).then(() => {});
 	}
 

@@ -227,23 +227,25 @@ export module AccountController {
 				let userProfilePromise = notification.sender ? UserController.getPublicUser(transaction, notification.sender, relatedUser, true) : null;
 				let subjectProfilePromise;
 				switch(notification.type) {
-                    case NotificationType.COMMENTED_EXPEDITION:
-                    case NotificationType.ADDED_EXPEDITION:
-					case NotificationType.JOINED_EXPEDITION:
-					case NotificationType.LEFT_EXPEDITION:
+                    case NotificationType.COMMENTS_EXPEDITION:
+                    case NotificationType.CREATES_EXPEDITION:
+					case NotificationType.JOINS_EXPEDITION:
+					case NotificationType.LEFTS_EXPEDITION:
 					case NotificationType.REJECTED_FROM_EXPEDITION:
 					case NotificationType.INVITED_TO_EXPEDITION:
-					case NotificationType.ACCEPTED_INVITATION_FOR_EXPEDITION:
-					case NotificationType.REJECTED_INVITATION_FOR_EXPEDITION:
-					case NotificationType.APPLIED_FOR_EXPEDITION:
-					case NotificationType.ACCEPTED_APPLICATION_FOR_EXPEDITION:
-					case NotificationType.REJECTED_APPLICATION_FOR_EXPEDITION:
+					case NotificationType.ACCEPTS_INVITATION_FOR_EXPEDITION:
+					case NotificationType.REJECTS_INVITATION_FOR_EXPEDITION:
+					case NotificationType.APPLIES_FOR_EXPEDITION:
+					case NotificationType.ACCEPTS_APPLICATION_FOR_EXPEDITION:
+					case NotificationType.REJECTS_APPLICATION_FOR_EXPEDITION:
                     case NotificationType.EXPEDITION_IS_TODAY:
+                    case NotificationType.RECEIVED_EXPEDITION_RECOMMENDATION:
 						subjectProfilePromise = ExpeditionController.getPublicExpedition(transaction, notification.subject as any as Expedition, relatedUser, true);
 						break;
 
                     case NotificationType.LIKES_RUDEL:
-                    case NotificationType.ADDED_RUDEL:
+                    case NotificationType.CREATES_RUDEL:
+                    case NotificationType.RECEIVED_RUDEL_RECOMMENDATION:
                         subjectProfilePromise = RudelController.getPublicRudel(transaction, notification.subject as any as Rudel, relatedUser, true);
                         break;
 
@@ -284,14 +286,14 @@ export module AccountController {
            }).then(() => {});
         }
 		
-		export function set(transaction: Transaction, type: NotificationType, recipients: Array<string | User>, subject: Node, sender: User = null): Promise<void> {
+		export function set(transaction: Transaction, type: NotificationType, recipients: Array<User | string>, subject: Node, sender: User = null): Promise<void> {
             let params: any = {
                 type: type,
                 recipientIds: recipients.map(recipient => typeof recipient === 'string' ? recipient : recipient.id),
                 subjectId: subject.id,
                 senderId: sender ? sender.id: null,
                 hasSender: !!sender,
-                now: Math.trunc(new Date().getTime() / 1000)
+                now: Math.trunc(Date.now() / 1000)
             };
 
             let matches = [

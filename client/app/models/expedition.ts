@@ -52,7 +52,8 @@ export interface ExpeditionRecipe {
 
 export interface ExpeditionAttendeeStatus {
 	isApplicant: boolean,
-	isInvitee: boolean,
+    isRecommendee: boolean,
+    isInvitee: boolean,
 	isAttendee: boolean
 }
 

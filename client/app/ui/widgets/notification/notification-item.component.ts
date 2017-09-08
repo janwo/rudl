@@ -38,24 +38,26 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 		
 		// Define subject type.
 		switch(this.notification.type) {
-			case NotificationType.JOINED_EXPEDITION:
-			case NotificationType.LEFT_EXPEDITION:
+			case NotificationType.JOINS_EXPEDITION:
+			case NotificationType.LEFTS_EXPEDITION:
 			case NotificationType.REJECTED_FROM_EXPEDITION:
 			case NotificationType.INVITED_TO_EXPEDITION:
-			case NotificationType.ACCEPTED_INVITATION_FOR_EXPEDITION:
-			case NotificationType.REJECTED_INVITATION_FOR_EXPEDITION:
-			case NotificationType.APPLIED_FOR_EXPEDITION:
-			case NotificationType.ACCEPTED_APPLICATION_FOR_EXPEDITION:
-			case NotificationType.REJECTED_APPLICATION_FOR_EXPEDITION:
-			case NotificationType.ADDED_EXPEDITION:
+			case NotificationType.ACCEPTS_INVITATION_FOR_EXPEDITION:
+			case NotificationType.REJECTS_INVITATION_FOR_EXPEDITION:
+			case NotificationType.APPLIES_FOR_EXPEDITION:
+			case NotificationType.ACCEPTS_APPLICATION_FOR_EXPEDITION:
+			case NotificationType.REJECTS_APPLICATION_FOR_EXPEDITION:
+			case NotificationType.CREATES_EXPEDITION:
 			case NotificationType.EXPEDITION_IS_TODAY:
-            case NotificationType.COMMENTED_EXPEDITION:
+            case NotificationType.COMMENTS_EXPEDITION:
+            case NotificationType.RECEIVED_EXPEDITION_RECOMMENDATION:
 				this.link = ['/expeditions', (this.notification.subject as ExpeditionPreview).id];
 				this.emoji = (this.notification.subject as ExpeditionPreview).links.icon;
 				break;
 
             case NotificationType.LIKES_RUDEL:
-            case NotificationType.ADDED_RUDEL:
+            case NotificationType.CREATES_RUDEL:
+            case NotificationType.RECEIVED_RUDEL_RECOMMENDATION:
                 this.link = ['/rudel', (this.notification.subject as RudelPreview).id];
                 this.emoji = (this.notification.subject as RudelPreview).links.icon;
                 (this.notification.subject as RudelPreview).name = Locale.getBestTranslation((this.notification.subject as RudelPreview).translations, this.userService.getAuthenticatedUser().user.languages);
@@ -68,7 +70,7 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 		
 		// Define message.
 		switch(this.notification.type) {
-			case NotificationType.APPLIED_FOR_EXPEDITION:
+			case NotificationType.APPLIES_FOR_EXPEDITION:
 				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} ist an der Teilnahme von **${(this.notification.subject as ExpeditionPreview).title}** interessiert.`;
 				this.link.push('attendees');
 				break;
@@ -81,7 +83,7 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat dich in **${(this.notification.subject as ExpeditionPreview).title}** eingeladen.`;
 				break;
 			
-			case NotificationType.ADDED_EXPEDITION:
+			case NotificationType.CREATES_EXPEDITION:
 				this.message = `In deiner Nähe hat ${this.notification.sender.firstName} ${this.notification.sender.lastName} den Streifzug **${(this.notification.subject as ExpeditionPreview).title}** erstellt. Nimm teil!`;
 				break;
 
@@ -93,16 +95,16 @@ export class NotificationItemComponent implements OnChanges, OnInit {
                 this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} folgt dir jetzt.`;
                 break;
 
-            case NotificationType.COMMENTED_EXPEDITION:
+            case NotificationType.COMMENTS_EXPEDITION:
                 this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat etwas in die Diskussion für **${(this.notification.subject as ExpeditionPreview).title}** gepostet.`;
                 this.link.push('discussion');
                 break;
 			
-			case NotificationType.JOINED_EXPEDITION:
+			case NotificationType.JOINS_EXPEDITION:
 				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} nimmt an **${(this.notification.subject as ExpeditionPreview).title}** teil.`;
 				break;
 				
-			case NotificationType.LEFT_EXPEDITION:
+			case NotificationType.LEFTS_EXPEDITION:
 				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} nimmt nicht mehr an **${(this.notification.subject as ExpeditionPreview).title}** teil.`;
 				break;
 				
@@ -110,25 +112,33 @@ export class NotificationItemComponent implements OnChanges, OnInit {
 				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat dich aus **${(this.notification.subject as ExpeditionPreview).title}** entfernt.`;
 				break;
 				
-			case NotificationType.ACCEPTED_INVITATION_FOR_EXPEDITION:
+			case NotificationType.ACCEPTS_INVITATION_FOR_EXPEDITION:
 				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat deine Einladung in **${(this.notification.subject as ExpeditionPreview).title}** angenommen.`;
 				break;
 				
-			case NotificationType.REJECTED_INVITATION_FOR_EXPEDITION:
+			case NotificationType.REJECTS_INVITATION_FOR_EXPEDITION:
 				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat deine Einladung in **${(this.notification.subject as ExpeditionPreview).title}** abgelehnt.`;
 				break;
 				
-			case NotificationType.ACCEPTED_APPLICATION_FOR_EXPEDITION:
+			case NotificationType.ACCEPTS_APPLICATION_FOR_EXPEDITION:
 				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat deine Anfrage in **${(this.notification.subject as ExpeditionPreview).title}** angenommen.`;
 				break;
 				
-			case NotificationType.REJECTED_APPLICATION_FOR_EXPEDITION:
+			case NotificationType.REJECTS_APPLICATION_FOR_EXPEDITION:
 				this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat deine Anfrage in **${(this.notification.subject as ExpeditionPreview).title}** abgelehnt.`;
 				break;
 
-            case NotificationType.ADDED_RUDEL:
+            case NotificationType.CREATES_RUDEL:
                 this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat das Rudel **${(this.notification.subject as RudelPreview).name}** gegründet. Schließe dich an!`;
                 break;
-		}
+
+            case NotificationType.RECEIVED_RUDEL_RECOMMENDATION:
+                this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat dir das Rudel **${(this.notification.subject as RudelPreview).name}** empfohlen. Schließe dich an!`;
+                break;
+
+            case NotificationType.RECEIVED_EXPEDITION_RECOMMENDATION:
+                this.message = `${this.notification.sender.firstName} ${this.notification.sender.lastName} hat dir den Streifzug **${(this.notification.subject as ExpeditionPreview).title}** empfohlen. Nimm teil!`;
+                break;
+        }
 	}
 }

@@ -137,10 +137,10 @@ export module CommentController {
 					message: request.payload.message
 				}).then((comment: Comment) => {
 					let createNotificationPromise = Promise.all([
-                        AccountController.NotificationController.remove(transaction, NotificationType.COMMENTED_EXPEDITION, expedition, 24 * 60 * 60),
+                        AccountController.NotificationController.remove(transaction, NotificationType.COMMENTS_EXPEDITION, expedition, 24 * 60 * 60),
                         ExpeditionController.getAllAttendees(transaction, expedition, [request.auth.credentials])
                     ]).then((values: [void, User[]]) => {
-                        return AccountController.NotificationController.set(transaction, NotificationType.COMMENTED_EXPEDITION, values[1], expedition, request.auth.credentials);
+                        return AccountController.NotificationController.set(transaction, NotificationType.COMMENTS_EXPEDITION, values[1], expedition, request.auth.credentials);
                     });
                     let assignCommentPromise = CommentController.assign(transaction, comment, request.auth.credentials, expedition);
 					return Promise.all([

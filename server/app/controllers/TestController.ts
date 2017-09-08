@@ -15,8 +15,8 @@ export module TestController {
 		let firstName = faker.name.firstName();
 		let lastName = faker.name.lastName();
 		let date: number[] = [
-			faker.date.past().getTime() / 1000,
-			faker.date.past().getTime() / 1000
+			Math.trunc(faker.date.past().getTime() / 1000),
+			Math.trunc(faker.date.past().getTime() / 1000)
 		].sort();
 		
 		// Return.
@@ -46,8 +46,8 @@ export module TestController {
 	export function generateRudel(): Rudel {
 		let translations: string[] = ['de', 'en', 'fr', 'es'];
 		let date: number[] = [
-			faker.date.past().getTime() / 1000,
-			faker.date.past().getTime() / 1000
+			Math.trunc(faker.date.past().getTime() / 1000),
+			Math.trunc(faker.date.past().getTime() / 1000)
 		].sort();
 		let rudel: Rudel = {
 			id: shortid.generate(),
