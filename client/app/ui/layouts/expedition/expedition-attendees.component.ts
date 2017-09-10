@@ -18,7 +18,8 @@ import {Title} from '@angular/platform-browser';
 export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	
 	attendeesSubscription: Subscription;
-	inviteLikeSubscription: Subscription;
+    inviteLikeSubscription: Subscription;
+    recommendeeSubscription: Subscription;
 	pendingRequestsSubscription: Subscription;
 	attendees: {
 		user: User,
@@ -29,7 +30,8 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 		status: ExpeditionAttendeeStatus
 	}[] = [];
 	searchUser: Subject<string> = new BehaviorSubject(null);
-	approveUser: Subject<User> = new Subject();
+    approveUser: Subject<User> = new Subject();
+    recommendUser: Subject<User> = new Subject();
 	rejectUser: Subject<User> = new Subject();
 	pendingRequest = false;
 	overflowButtonStyle: ButtonStyles = ButtonStyles.filledInverse;
@@ -41,42 +43,51 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	
 	ngOnInit() {
 		this.title.setTitle(`Teilnehmer - Streifzug "${this.parent.expedition.getValue().title}" | rudl.me`);
-		
-		// Define subscriptions for changed user statuses.
-		let approveObservable = this.approveUser.asObservable().flatMap(user => {
-			this.pendingRequest = true;
-			return this.expeditionService.approve(this.parent.expedition.getValue().id, user.username);
-		});
+
+        // Define observables for changed user statuses.
+        let approveObservable = this.approveUser.asObservable().flatMap(user => {
+            this.pendingRequest = true;
+            return this.expeditionService.approve(this.parent.expedition.getValue().id, user.username);
+        });
 		
 		let rejectObservable = this.rejectUser.asObservable().flatMap(user => {
 			this.pendingRequest = true;
 			return this.expeditionService.reject(this.parent.expedition.getValue().id, user.username);
 		});
-		
-		this.pendingRequestsSubscription = Observable.merge(approveObservable, rejectObservable).subscribe((expeditionRequestResponse: ExpeditionRequestResponse) => {
-			this.pendingRequest = false;
-			this.parent.expedition.next(expeditionRequestResponse.expedition);
-			let item = {
-				user: expeditionRequestResponse.user,
-				status: expeditionRequestResponse.status
-			};
-			
-			if (this.attendees) {
-				let index = this.attendees.findIndex(val => val.user.id == expeditionRequestResponse.user.id);
-				
-				// Exchange item.
-				if (index < 0)
-					this.attendees = [item].concat(this.attendees);
-				else
-					this.attendees.splice(index, 1, item);
-			}
-			
-			if (this.inviteesLike) {
-				let index = this.inviteesLike.findIndex(val => val.user.id == expeditionRequestResponse.user.id);
-				if (index >= 0) this.inviteesLike.splice(index, 1, item);
-			}
-		});
-		
+
+        let recommendeeObservable = this.recommendUser.asObservable().flatMap(user => {
+            this.pendingRequest = true;
+            return this.expeditionService.approve(this.parent.expedition.getValue().id, user.username);
+        });
+
+        let finishRequest = (expeditionRequestResponse: ExpeditionRequestResponse, updateInviteesOnly: boolean = false) => {
+            this.pendingRequest = false;
+            this.parent.expedition.next(expeditionRequestResponse.expedition);
+            let item = {
+                user: expeditionRequestResponse.user,
+                status: expeditionRequestResponse.status
+            };
+
+            if (!updateInviteesOnly && this.attendees) {
+                let index = this.attendees.findIndex(val => val.user.id == expeditionRequestResponse.user.id);
+
+                // Exchange item.
+                if (index < 0)
+                    this.attendees = [item].concat(this.attendees);
+                else
+                    this.attendees.splice(index, 1, item);
+            }
+
+            if (this.inviteesLike) {
+                let index = this.inviteesLike.findIndex(val => val.user.id == expeditionRequestResponse.user.id);
+                if (index >= 0) this.inviteesLike.splice(index, 1, item);
+            }
+        };
+
+        // Define subscriptions for recommendations.
+		this.pendingRequestsSubscription = Observable.merge(approveObservable, rejectObservable).subscribe((expeditionRequestResponse: ExpeditionRequestResponse) => finishRequest(expeditionRequestResponse));
+        this.recommendeeSubscription = recommendeeObservable.subscribe((expeditionRequestResponse: ExpeditionRequestResponse) => finishRequest(expeditionRequestResponse, true));
+
 		// Define scroll subscription.
 		this.attendeesSubscription = this.scrollService.hasScrolledToBottom().map(() => this.attendees ? this.attendees.filter(attendee => attendee.status.isAttendee || attendee.status.isApplicant || attendee.status.isInvitee).length : 0).startWith(0).distinctUntilChanged().flatMap((offset: number) => {
 			return this.expeditionService.attendees(this.parent.expedition.getValue().id, offset, 25);
@@ -105,7 +116,8 @@ export class ExpeditionAttendeesComponent implements OnInit, OnDestroy {
 	}
 	
 	ngOnDestroy(): void {
-		this.attendeesSubscription.unsubscribe();
-		this.attendeesSubscription.unsubscribe();
+		this.inviteLikeSubscription.unsubscribe();
+        this.recommendeeSubscription.unsubscribe();
+        this.attendeesSubscription.unsubscribe();
 	}
 }
