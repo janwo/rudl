@@ -113,7 +113,8 @@ export module ExpeditionController {
 						'statistics.invitees': 'statistics.invitees',
 						'statistics.applicants': 'statistics.applicants',
 						'statistics.isAttendee': 'relations.isAttendee',
-						'statistics.isInvitee': 'relations.isInvitee',
+                        'statistics.isInvitee': 'relations.isInvitee',
+                        'statistics.isRecommendee': 'relations.isRecommendee',
 						'statistics.isApplicant': 'relations.isApplicant'
 					});
 					
@@ -144,7 +145,8 @@ export module ExpeditionController {
 		applicants: number,
 		isAttendee: boolean,
 		isInvitee: boolean,
-		isApplicant: boolean
+		isApplicant: boolean,
+		isRecommendee: boolean
 	}
 	
 	export function getStatistics(transaction: Transaction, expedition: Expedition, relatedUser: User): Promise<ExpeditionStatistics> {
@@ -156,7 +158,8 @@ export module ExpeditionController {
 			"OPTIONAL MATCH (expedition)<-[pje:POSSIBLY_JOINS_EXPEDITION]-() WITH attendees, invitees, COUNT(pje) as applicants, expedition, relatedUser",
 			"OPTIONAL MATCH (expedition)<-[je:JOINS_EXPEDITION]-(relatedUser) WITH attendees, invitees, applicants, COUNT(je) > 0 as isAttendee, expedition, relatedUser",
 			"OPTIONAL MATCH (expedition)-[pje:POSSIBLY_JOINS_EXPEDITION]->(relatedUser) WITH attendees, invitees, applicants, isAttendee, COUNT(pje) > 0 as isInvitee, expedition, relatedUser",
-			"OPTIONAL MATCH (expedition)<-[pje:POSSIBLY_JOINS_EXPEDITION]-(relatedUser) WITH attendees, invitees, applicants, isAttendee, isInvitee, COUNT(pje) > 0 as isApplicant, expedition, relatedUser"
+            "OPTIONAL MATCH (expedition)<-[pje:POSSIBLY_JOINS_EXPEDITION]-(relatedUser) WITH attendees, invitees, applicants, isAttendee, isInvitee, COUNT(pje) > 0 as isApplicant, expedition, relatedUser",
+            "OPTIONAL MATCH (expedition)<-[roe:RECOMMENDEE_OF_EXPEDITION]-(relatedUser) WITH attendees, invitees, applicants, isAttendee, isInvitee, isApplicant, COUNT(roe) > 0 as isRecommendee, expedition, relatedUser"
 		];
 		
 		let transformations: string[] = [
@@ -165,7 +168,8 @@ export module ExpeditionController {
 			"applicants: applicants",
 			"isAttendee: isAttendee",
 			"isInvitee: isInvitee",
-			"isApplicant: isApplicant"
+            "isApplicant: isApplicant",
+            "isRecommendee: isRecommendee"
 		];
 		
 		// Add final query.

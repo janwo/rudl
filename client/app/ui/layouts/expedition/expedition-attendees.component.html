@@ -1,13 +1,13 @@
 <input class="add-invitee" placeholder="Teilnehmer suchen oder einladen..." (keyup)="searchUser.next($event.target.value)">
 <item-wrapper class="invitees-like" [columns]="2" *ngIf="inviteesLike; else loadingInviteesLike" [ngClass]="{empty: inviteesLike.length == 0}">
     <user-item *ngFor="let invitee of inviteesLike" [user]="invitee.user" [info]="getUserInfo(invitee.status)">
-        <ng-container *ngIf="parent.expedition.getValue().relations.isOwned; else recommendUser">
+        <ng-container *ngIf="parent.expedition.getValue().relations.isOwned; else recommendUserTemplate">
             <styled-button *ngIf="!invitee.status.isInvitee && !invitee.status.isAttendee" [icon]="'add_circle_outline'" [style]="overflowButtonStyle" (click)="approveUser.next(invitee.user)"
                            [disabled]="pendingRequest"></styled-button>
             <styled-button [icon]="'remove_circle_outline'" [style]="overflowButtonStyle" (click)="rejectUser.next(invitee.user)"
                            *ngIf="invitee.status.isInvitee || invitee.status.isAttendee" [disabled]="pendingRequest"></styled-button>
         </ng-container>
-        <ng-template #recommendUser>
+        <ng-template #recommendUserTemplate>
             <styled-button *ngIf="!invitee.status.isInvitee && !invitee.status.isApplicant && !invitee.status.isAttendee && !invitee.status.isRecommendee" [icon]="'record_voice_over'" [style]="overflowButtonStyle" (click)="recommendUser.next(invitee.user)"
                            [disabled]="pendingRequest"></styled-button>
         </ng-template>

@@ -22,7 +22,8 @@ export interface Expedition extends ExpeditionPreview {
 	relations: {
 		isApplicant: boolean;
 		isInvitee: boolean;
-		isAttendee: boolean;
+        isAttendee: boolean;
+        isRecommendee: boolean;
 		isOwned: boolean;
 	};
 	statistics: {
