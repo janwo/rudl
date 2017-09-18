@@ -43,7 +43,7 @@ export const RoutesConfig: RoutesConfiguration = {
 				},
 				validate: {
 					payload: {
-						file: Joi.required()
+						file: Joi.any().required()
 					}
 				},
 				auth: {
