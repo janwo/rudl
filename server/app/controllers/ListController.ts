@@ -168,7 +168,7 @@ export module ListController {
 	}
 	
 	export function addRudel(transaction: Transaction, list: List, rudel: Rudel): Promise<void> {
-		return transaction.run("MATCH(l:List {id : $listId }), (r:Rudel {id: $rudelId}) CREATE UNIQUE (l)<-[:BELONGS_TO_LIST]-(r)", {
+		return transaction.run("MATCH(l:List {id : $listId }), (r:Rudel {id: $rudelId}) MERGE (l)<-[:BELONGS_TO_LIST]-(r)", {
 			listId: list.id,
 			rudelId: rudel.id
 		}).then(() => {});
@@ -193,7 +193,7 @@ export module ListController {
 	}
 	
 	export function follow(transaction: Transaction, list: List, user: User): Promise<void> {
-		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WHERE NOT (u)-[:LIKES_LIST]->(l) WITH u, l CREATE UNIQUE (u)-[:LIKES_LIST {createdAt: $now}]->(l) WITH u, l OPTIONAL MATCH (u)-[dll:DISLIKES_LIST]->(l) DETACH DELETE dll WITH u, l OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, l, u WHERE count = 0 CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
+		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WHERE NOT (u)-[:LIKES_LIST]->(l) WITH u, l MERGE (u)-[ll:LIKES_LIST]->(l) ON CREATE SET ll.createdAt = $now WITH u, l OPTIONAL MATCH (u)-[dll:DISLIKES_LIST]->(l) DETACH DELETE dll WITH u, l OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, l, u WHERE count = 0 CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
 			userId: user.id,
 			listId: list.id,
 			now: Math.trunc(Date.now() / 1000)
@@ -201,7 +201,7 @@ export module ListController {
 	}
 	
 	export function unfollow(transaction: Transaction, list: List, user: User): Promise<void> {
-		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WHERE NOT (u)-[:DISLIKES_LIST]->(l) WITH u, l CREATE UNIQUE (u)-[:DISLIKES_LIST {createdAt: $now}]->(l) WITH u, l OPTIONAL MATCH (u)-[ol:OWNS_LIST]->(l) OPTIONAL MATCH (u)-[ll:LIKES_LIST]->(l) DETACH DELETE ll, ol", {
+		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WHERE NOT (u)-[:DISLIKES_LIST]->(l) WITH u, l MERGE (u)-[dl:DISLIKES_LIST]->(l) ON CREATE SET dl.createdAt = $now WITH u, l OPTIONAL MATCH (u)-[ol:OWNS_LIST]->(l) OPTIONAL MATCH (u)-[ll:LIKES_LIST]->(l) DETACH DELETE ll, ol", {
 			userId: user.id,
 			listId: list.id,
 			now: Math.trunc(Date.now() / 1000)

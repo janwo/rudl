@@ -44,3 +44,6 @@ db/prometheus/*
 
 # Let's Encrypt
 letsencrypt/
+
+# Run
+run/environments/local.ts

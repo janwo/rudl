@@ -40,7 +40,7 @@ export module CommentController {
 	}
 	
 	export function assign<T extends Node>(transaction: Transaction, comment: Comment, user: User, node: T): Promise<void> {
-		return transaction.run(`MATCH(c:Comment {id: $commentId}), (u:User {id: $userId}), (n {id: $nodeId}) OPTIONAL MATCH (c)-[r]-() DETACH DELETE r WITH c, u, n CREATE UNIQUE (u)-[:OWNS_COMMENT]->(c)-[:BELONGS_TO_NODE]->(n)`, {
+		return transaction.run(`MATCH(c:Comment {id: $commentId}), (u:User {id: $userId}), (n {id: $nodeId}) OPTIONAL MATCH (c)-[r]-() DETACH DELETE r WITH c, u, n MERGE (u)-[:OWNS_COMMENT]->(c)-[:BELONGS_TO_NODE]->(n)`, {
 			nodeId: node.id,
 			userId: user.id,
 			commentId: comment.id

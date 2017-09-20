@@ -247,7 +247,11 @@ export module ExpeditionController {
 				let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}), (r:Rudel)<-[:BELONGS_TO_RUDEL]-(e)
 				WHERE NOT (e)-[:JOINS_EXPEDITION]-(u)
 				WITH e, u, r
-				CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:LIKES_RUDEL]->(r)
+				MERGE (e)<-[je:JOINS_EXPEDITION]-(u)
+				ON CREATE SET je.createdAt = $now
+				WITH e, u, r
+				MERGE (u)-[lr:LIKES_RUDEL]->(r)
+				ON CREATE SET lr.createdAt = $now 
 				WITH e, u
 				MATCH (u)-[pje:POSSIBLY_JOINS_EXPEDITION]-(e)
 				DETACH DELETE pje`;
@@ -267,7 +271,11 @@ export module ExpeditionController {
 						WHERE (e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u) AND (e)-[:POSSIBLY_JOINS_EXPEDITION]->(u)
 						DETACH DELETE pje
 						WITH u, r, e
-						CREATE UNIQUE (e)<-[:JOINS_EXPEDITION {createdAt: $now}]-(u)-[:LIKES_RUDEL]->(r)
+						MERGE (e)<-[je:JOINS_EXPEDITION]-(u)
+						ON CREATE SET je.createdAt = $now
+						WITH u, r, e 
+						MERGE (u)-[lr:LIKES_RUDEL]->(r)
+					    ON CREATE SET lr.createdAt = $now
 						WITH u, r, e
 						OPTIONAL MATCH (u)-[dlr:DISLIKES_RUDEL]->(r) OPTIONAL MATCH (u)-[recommendee:RECOMMENDEE_OF_EXPEDITION]->(e)
 						DETACH DELETE dlr, recommendee`;
@@ -281,7 +289,8 @@ export module ExpeditionController {
 			let inviteUser = (): Promise<boolean> => {
 				let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId})
 				WHERE NOT (e)-[:JOINS_EXPEDITION]-(u) AND NOT (e)-[:POSSIBLY_JOINS_EXPEDITION]->(u)
-				CREATE UNIQUE (e)-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]->(u)`;
+				MERGE (e)-[pje:POSSIBLY_JOINS_EXPEDITION]->(u) 
+				ON CREATE SET pje.createdAt = $now`;
 				return transaction.run(query, {
 					expeditionId: expedition.id,
 					userId: user.id,
@@ -292,7 +301,11 @@ export module ExpeditionController {
             let addUser = (): Promise<boolean> => {
                 let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}), (r:Rudel)<-[:BELONGS_TO_RUDEL]-(e)
 				WHERE NOT (e)<-[:JOINS_EXPEDITION]-(u) AND NOT (e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u)
-				CREATE UNIQUE (e)<-[:POSSIBLY_JOINS_EXPEDITION {createdAt: $now}]-(u)-[:LIKES_RUDEL]->(r)
+				MERGE (e)<-[pje:POSSIBLY_JOINS_EXPEDITION]-(u)
+				ON CREATE SET pje.createdAt = $now 
+				WITH u, r, e
+				MERGE (u)-[lr:LIKES_RUDEL]->(r) 
+				ON CREATE SET lr.createdAt = $now 
 				WITH u, r
 				OPTIONAL MATCH (u)-[dlr:DISLIKES_RUDEL]->(r)
 				DETACH DELETE dlr`;
@@ -306,7 +319,8 @@ export module ExpeditionController {
             let recommendUser = (): Promise<boolean> => {
                 let query = `MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId})
 				WHERE NOT (e)<-[:RECOMMENDEE_OF_EXPEDITION]-(u) AND NOT (e)<-[:JOINS_EXPEDITION]-(u) AND NOT (e)<-[:POSSIBLY_JOINS_EXPEDITION]-(u)
-				CREATE UNIQUE (e)<-[:RECOMMENDEE_OF_EXPEDITION {createdAt: $now}]-(u)`;
+				MERGE (e)<-[roe:RECOMMENDEE_OF_EXPEDITION]-(u)
+				ON CREATE SET roe.createdAt = $now`;
                 return transaction.run(query, {
                     expeditionId: expedition.id,
                     userId: user.id,

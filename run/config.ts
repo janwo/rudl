@@ -156,7 +156,7 @@ export const Config: {
 	let merged = _.mergeWith(
 		require('./environments/all').default,
 		require(`./environments/${process.env.ENV}`).default,
-		(Fs.existsSync('./environments/local.ts') && require('./environments/local').default) || {},
+		(Fs.existsSync(Path.resolve(__dirname, './environments/local.ts')) && require('./environments/local').default) || {},
 		(objValue: any, srcValue: any, key: string) => {
 			if (key == 'config' && _.isArray(objValue)) {
 				return objValue.concat(srcValue);
@@ -175,7 +175,8 @@ export const Config: {
 		merged.frontend.webpack.devServer.config = merged.frontend.webpack.devServer.config.map((configFunction: any) => configFunction(merged));
 		merged.frontend.webpack.devServer.config = _.merge.apply(_.merge, [{}].concat(merged.frontend.webpack.devServer.config));
 	}
-	
+
+    console.log(`Config name resolved to "${merged.name}"...`);
 	return merged;
 })();
 

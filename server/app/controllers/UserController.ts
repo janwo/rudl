@@ -198,7 +198,7 @@ export module UserController {
 	
 	export function like(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
 		if (aimedUser.id === user.id) return Promise.reject<void>('Users cannot follow themselves.');
-		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:LIKES_USER]->(followee) WITH user, followee CREATE UNIQUE (user)-[:LIKES_USER {createdAt: $now}]->(followee) WITH user, followee OPTIONAL MATCH (user)-[dlu:DISLIKES_USER]->(followee) DETACH DELETE dlu", {
+		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:LIKES_USER]->(followee) WITH user, followee MERGE (user)-[lu:LIKES_USER]->(followee) ON CREATE SET lu.createdAt = $now WITH user, followee OPTIONAL MATCH (user)-[dlu:DISLIKES_USER]->(followee) DETACH DELETE dlu", {
 			userId: user.id,
 			followeeUserId: aimedUser.id,
 			now: Math.trunc(Date.now() / 1000)
@@ -209,7 +209,7 @@ export module UserController {
 	
 	export function dislike(transaction: Transaction, user: User, aimedUser: User): Promise<void> {
 		if (aimedUser.id === user.id) return Promise.reject<void>('Users cannot unfollow themselves.');
-		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:DISLIKES_USER]->(followee) WITH user, followee CREATE UNIQUE (user)-[:DISLIKES_USER {createdAt: $now}]->(followee) WITH user, followee OPTIONAL MATCH (user)-[lu:LIKES_USER]->(followee) DETACH DELETE lu", {
+		return transaction.run("MATCH(user:User {id: $userId}), (followee:User {id: $followeeUserId}) WHERE NOT (user)-[:DISLIKES_USER]->(followee) WITH user, followee MERGE (user)-[du:DISLIKES_USER]->(followee) ON CREATE SET du.createdAt = $now WITH user, followee OPTIONAL MATCH (user)-[lu:LIKES_USER]->(followee) DETACH DELETE lu", {
 			userId: user.id,
 			followeeUserId: aimedUser.id,
 			now: Math.trunc(Date.now() / 1000)

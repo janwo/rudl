@@ -176,7 +176,7 @@ export module RudelController {
 	}
 
 	export function like(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
-		return transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:LIKES_RUDEL]->(r) WITH u, r CREATE UNIQUE (u)-[:LIKES_RUDEL {createdAt: $now}]->(r) WITH u, r OPTIONAL MATCH (u)-[dlr:DISLIKES_RUDEL]->(r) DETACH DELETE dlr WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE UNIQUE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
+		return transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:LIKES_RUDEL]->(r) WITH u, r MERGE (u)-[lr:LIKES_RUDEL]->(r) ON CREATE SET lr.createdAt = $now WITH u, r OPTIONAL MATCH (u)-[dlr:DISLIKES_RUDEL]->(r) DETACH DELETE dlr WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 MERGE (r)<-[or:OWNS_RUDEL]-(u) ON CREATE SET or.createdAt = $now", {
 			userId: user.id,
 			rudelId: rudel.id,
 			now: Math.trunc(Date.now() / 1000)
@@ -195,7 +195,7 @@ export module RudelController {
 
     export function dislike(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
         let deleteExpeditions = ExpeditionController.removeExpeditions(transaction, rudel, user);
-        let deleteRelationships = transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:DISLIKES_RUDEL]->(r) WITH u, r CREATE UNIQUE (u)-[:DISLIKES_RUDEL {createdAt: $now}]->(r) WITH u, r OPTIONAL MATCH (u)-[or:OWNS_RUDEL]->(r) OPTIONAL MATCH (u)-[fr:LIKES_RUDEL]->(r) DETACH DELETE fr, or", {
+        let deleteRelationships = transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:DISLIKES_RUDEL]->(r) WITH u, r MERGE (u)-[dr:DISLIKES_RUDEL]->(r) ON CREATE SET dr.createdAt = $now WITH u, r OPTIONAL MATCH (u)-[or:OWNS_RUDEL]->(r) OPTIONAL MATCH (u)-[fr:LIKES_RUDEL]->(r) DETACH DELETE fr, or", {
             userId: user.id,
             rudelId: rudel.id,
             now: Math.trunc(Date.now() / 1000)

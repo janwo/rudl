@@ -43,8 +43,8 @@ export function server(): Promise<Server> {
 			}
 		}
 	});
-	
-	console.log(`Server uses "${Config.env}" environment...`);
+
+    console.log(`Server uses "${Config.env}" environment...`);
 
 	// Enable SSL?
 	if(Config.backend.ssl) {
