@@ -98,10 +98,7 @@ export module UserController {
 			// Modify user information.
 			return Promise.all(promises).then((values: [UserStatistics, number]) => {
 				// Add default links.
-				let links: any = {
-					likers: `${Config.backend.domain}/api/users/${user.username}/likers`,
-					likees: `${Config.backend.domain}/api/users/${user.username}/following`
-				};
+				let links: any = {};
 				
 				// Add avatar links?
 				if (user.avatarId) {
