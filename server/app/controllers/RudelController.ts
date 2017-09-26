@@ -234,7 +234,7 @@ export module RudelController {
     }
 
     export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Rudel[]> {
-        return transaction.run('MATCH (r:Rudel)<-[:LIKES_RUDEL]-(u1:User {id: $userId}) WITH COUNT(r) as userLikes, u1 MATCH (u2:User)-[:LIKES_RUDEL]->(r:Rudel)<-[:LIKES_RUDEL]-(u1) WHERE NOT u2 = u1 WITH u1, u2, toFloat(COUNT(DISTINCT r)) / userLikes as similarity ORDER BY similarity DESC MATCH (r:Rudel)<-[:LIKES_RUDEL]-(u2) WHERE NOT (r)<-[:LIKES_RUDEL]-(u1) AND NOT (r)<-[:DISLIKES_RUDEL]-(u1) WITH DISTINCT r SKIP $skip LIMIT $limit RETURN properties(r) as r', {
+        return transaction.run('MATCH (u1:User {id: $userId})-[:LIKES_RUDEL]->(intersection:Rudel)<-[:LIKES_RUDEL]-(u2:User) WHERE u2 <> u1 WITH u1, COUNT(DISTINCT intersection) as intersection, u2 MATCH (rudel_u1:Rudel)<-[:LIKES_RUDEL]-(u1), (u2)-[:LIKES_RUDEL]->(rudel_u2:Rudel) WITH COLLECT(DISTINCT rudel_u1) as rudel_u1, u1, intersection, u2, COLLECT(DISTINCT rudel_u2) as rudel_u2 WITH u1, length(rudel_u1 + filter(x IN rudel_u2 WHERE NOT x IN rudel_u1)) as union, intersection, u2 WITH toFloat(intersection) / union as similarity, u1, u2 ORDER BY similarity DESC MATCH (r:Rudel)<-[:LIKES_RUDEL]-(u2) WHERE NOT (r)<-[:LIKES_RUDEL]-(u1) AND NOT (r)<-[:DISLIKES_RUDEL]-(u1) WITH DISTINCT r SKIP $skip LIMIT $limit RETURN properties(r) as r', {
             userId: user.id,
             skip: skip,
             limit: limit
