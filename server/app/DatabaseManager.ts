@@ -268,7 +268,7 @@ export class DatabaseManager {
 			});
 			
 			// Spatial.
-			if(collection.spatial) promises.push(session.run(`CALL spatial.layers() YIELD name as names WITH collect(names) as layers WHERE NOT "${collection.name}" IN layers CALL spatial.addPointLayerXY('${collection.name}', '${collection.spatial.longitude}', '${collection.spatial.latitude}') YIELD node RETURN COUNT(*)`));
+			if(collection.spatial) promises.push(session.run(`CALL spatial.layers() YIELD name AS names WITH collect(names) AS layers WHERE NOT "${collection.name}" IN layers CALL spatial.addPointLayerXY('${collection.name}', '${collection.spatial.longitude}', '${collection.spatial.latitude}') YIELD node RETURN COUNT(*)`));
 			
 			// Fulltext.
 			Object.keys(collection.fulltext || {}).forEach((key: string) => {
@@ -308,8 +308,8 @@ export class DatabaseManager {
             let session: Session = DatabaseManager.neo4jClient.session();
             let waitForNeo4jConnection = () => {
 				session.run(
-                        "MATCH (n) RETURN 'Number of Nodes: ' + COUNT(n) as output UNION" +
-                        " MATCH ()-[]->() RETURN 'Number of Relationships: ' + COUNT(*) as output UNION" +
+                        "MATCH (n) RETURN 'Number of Nodes: ' + COUNT(n) AS output UNION" +
+                        " MATCH ()-[]->() RETURN 'Number of Relationships: ' + COUNT(*) AS output UNION" +
                         " CALL db.labels() YIELD label RETURN 'Number of Labels: ' + COUNT(*) AS output UNION" +
                         " CALL db.relationshipTypes() YIELD relationshipType RETURN 'Number of Relationships Types: ' + COUNT(*) AS output UNION" +
                         " CALL db.propertyKeys() YIELD propertyKey RETURN 'Number of Property Keys: ' + COUNT(*) AS output UNION" +

@@ -14,7 +14,7 @@ export const ScheduleConfig = {
 	job: () => {
 		// Send notification mails.
 		let session = DatabaseManager.neo4jClient.session();
-		return session.run(`MATCH(n:Newsletter {ready: true, sent: false}) SET n.sent = true WITH COLLECT(properties(n)) as newsletters MATCH(ns:Settings {newsletterMails: true})<-[:USER_SETTINGS]-(u:User) WITH COLLECT(properties(u)) as users, newsletters RETURN {users: users, newsletters: newsletters} as result`).then((result: any) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'result').shift()).then((result: {
+		return session.run(`MATCH(n:Newsletter {ready: true, sent: false}) SET n.sent = true WITH COLLECT(properties(n)) AS newsletters MATCH(ns:Settings {newsletterMails: true})<-[:USER_SETTINGS]-(u:User) WITH COLLECT(properties(u)) AS users, newsletters RETURN {users: users, newsletters: newsletters} AS result`).then((result: any) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'result').shift()).then((result: {
 			users: User[],
 			newsletters: Newsletter[]
         }) => {

@@ -16,7 +16,7 @@ export const ScheduleConfig = {
         // Send notification mails.
         let session = DatabaseManager.neo4jClient.session();
         let transaction = session.beginTransaction();
-        return transaction.run(`MATCH (e:Expedition)<-[:JOINS_EXPEDITION]-(u:User) WHERE e.date > $now AND e.date < $now + 86400 WITH properties(e) as e, COLLECT(properties(u)) as u RETURN {expedition: e, users: u} as result`, {
+        return transaction.run(`MATCH (e:Expedition)<-[:JOINS_EXPEDITION]-(u:User) WHERE e.date > $now AND e.date < $now + 86400 WITH properties(e) AS e, COLLECT(properties(u)) AS u RETURN {expedition: e, users: u} AS result`, {
             now: Math.trunc(Date.now() / 1000)
         }).then((result: any) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'result')).then((results: {
             expedition: Expedition,

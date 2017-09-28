@@ -115,7 +115,7 @@ export module RudelController {
 	}
 	
 	export function findByUser(transaction: Transaction, user: User, ownsOnly = false, skip = 0, limit = 25): Promise<Rudel[]> {
-		return transaction.run(`MATCH(:User {id : $userId })-[:${ownsOnly ? 'OWNS_RUDEL' : 'LIKES_RUDEL'}]->(r:Rudel) RETURN COALESCE(properties(r), []) as r SKIP $skip LIMIT $limit`, {
+		return transaction.run(`MATCH(:User {id : $userId })-[:${ownsOnly ? 'OWNS_RUDEL' : 'LIKES_RUDEL'}]->(r:Rudel) RETURN COALESCE(properties(r), []) AS r SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			skip: skip,
 			limit: limit
@@ -123,13 +123,13 @@ export module RudelController {
 	}
 	
 	export function get(transaction: Transaction, rudelId: string): Promise<Rudel> {
-		return transaction.run("MATCH(r:Rudel {id: $rudelId}) RETURN COALESCE(properties(r), []) as r LIMIT 1", {
+		return transaction.run("MATCH(r:Rudel {id: $rudelId}) RETURN COALESCE(properties(r), []) AS r LIMIT 1", {
 			rudelId: rudelId
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'r').shift());
 	}
 	
 	export function findByFulltext(transaction: Transaction, query: string, skip = 0, limit = 25): Promise<Rudel[]> {
-		return transaction.run('CALL apoc.index.search("Rudel", $query) YIELD node WITH properties(node) as r RETURN r SKIP $skip LIMIT $limit', {
+		return transaction.run('CALL apoc.index.search("Rudel", $query) YIELD node WITH properties(node) AS r RETURN r SKIP $skip LIMIT $limit', {
 			query: `${DatabaseManager.neo4jFunctions.escapeLucene(query)}~`,
 			skip: skip,
 			limit: limit
@@ -146,10 +146,10 @@ export module RudelController {
 	export function getStatistics(transaction: Transaction, rudel: Rudel, relatedUser: User): Promise<RudelStatistics> {
 		let queries: string[] = [
 			"MATCH (rudel:Rudel {id: $rudelId})",
-			"OPTIONAL MATCH (rudel)<-[fr:LIKES_RUDEL]-() WITH COUNT(fr) as likersCount, rudel",
-			"OPTIONAL MATCH (rudel)-[btl:BELONGS_TO_LIST]->() WITH COUNT(btl) as listsCount, likersCount, rudel",
-			"OPTIONAL MATCH (rudel)<-[btr:BELONGS_TO_RUDEL]-() WITH COUNT(btr) as expeditionsCount, likersCount, rudel, listsCount",
-			"OPTIONAL MATCH (rudel)<-[fr:LIKES_RUDEL]-(:User {id: $relatedUserId}) WITH likersCount, listsCount, COUNT(fr) > 0 as isLiked, expeditionsCount"
+			"OPTIONAL MATCH (rudel)<-[fr:LIKES_RUDEL]-() WITH COUNT(fr) AS likersCount, rudel",
+			"OPTIONAL MATCH (rudel)-[btl:BELONGS_TO_LIST]->() WITH COUNT(btl) AS listsCount, likersCount, rudel",
+			"OPTIONAL MATCH (rudel)<-[btr:BELONGS_TO_RUDEL]-() WITH COUNT(btr) AS expeditionsCount, likersCount, rudel, listsCount",
+			"OPTIONAL MATCH (rudel)<-[fr:LIKES_RUDEL]-(:User {id: $relatedUserId}) WITH likersCount, listsCount, COUNT(fr) > 0 AS isLiked, expeditionsCount"
 		];
 		
 		let transformations: string[] = [
@@ -170,13 +170,13 @@ export module RudelController {
 	}
 	
 	export function getOwner(transaction: Transaction, rudel: Rudel): Promise<User> {
-		return transaction.run(`MATCH(:Rudel {id: $rudelId})<-[:OWNS_RUDEL]-(owner:User) RETURN COALESCE(properties(owner), []) as owner LIMIT 1`, {
+		return transaction.run(`MATCH(:Rudel {id: $rudelId})<-[:OWNS_RUDEL]-(owner:User) RETURN COALESCE(properties(owner), []) AS owner LIMIT 1`, {
 			rudelId: rudel.id
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'owner').shift());
 	}
 
 	export function like(transaction: Transaction, rudel: Rudel, user: User): Promise<void> {
-		return transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:LIKES_RUDEL]->(r) WITH u, r MERGE (u)-[lr:LIKES_RUDEL]->(r) ON CREATE SET lr.createdAt = $now WITH u, r OPTIONAL MATCH (u)-[dlr:DISLIKES_RUDEL]->(r) DETACH DELETE dlr WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 MERGE (r)<-[or:OWNS_RUDEL]-(u) ON CREATE SET or.createdAt = $now", {
+		return transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) WHERE NOT (u)-[:LIKES_RUDEL]->(r) WITH u, r MERGE (u)-[lr:LIKES_RUDEL]->(r) ON CREATE SET lr.createdAt = $now WITH u, r OPTIONAL MATCH (u)-[dlr:DISLIKES_RUDEL]->(r) DETACH DELETE dlr WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) AS count, r, u WHERE count = 0 MERGE (r)<-[or:OWNS_RUDEL]-(u) ON CREATE SET or.createdAt = $now", {
 			userId: user.id,
 			rudelId: rudel.id,
 			now: Math.trunc(Date.now() / 1000)
@@ -187,7 +187,7 @@ export module RudelController {
 		latitude: number,
 		longitude: number
 	}[]> {
-        return transaction.run(`CALL spatial.closest("Expedition", $location, ${LOCATION_RADIUS_METERS / 1000}) YIELD node as e WHERE (e)-[:BELONGS_TO_RUDEL]->(:Rudel {id: $rudelId}) AND e.needsApproval = false RETURN {latitude: e.location_latitude, longitude: e.location_longitude} as l LIMIT 10`, {
+        return transaction.run(`CALL spatial.closest("Expedition", $location, ${LOCATION_RADIUS_METERS / 1000}) YIELD node AS e WHERE (e)-[:BELONGS_TO_RUDEL]->(:Rudel {id: $rudelId}) AND e.needsApproval = false RETURN {latitude: e.location_latitude, longitude: e.location_longitude} AS l LIMIT 10`, {
             location: user.location,
             rudelId: rudel.id
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'l'));
@@ -206,7 +206,7 @@ export module RudelController {
             deleteRelationships
         ]).then(() => {
             return this.likers(transaction, rudel, 0, 1).then((likers: User[]) => {
-                if(likers.length > 0) return transaction.run("MATCH(r:Rudel {id: $rudelId}), (u:User {id: $newOwnerId}) WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) as count, r, u WHERE count = 0 CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
+                if(likers.length > 0) return transaction.run("MATCH(r:Rudel {id: $rudelId}), (u:User {id: $newOwnerId}) WITH u, r OPTIONAL MATCH (r)<-[or:OWNS_RUDEL]-(:User) WITH COUNT(or) AS count, r, u WHERE count = 0 CREATE (r)<-[:OWNS_RUDEL {createdAt: $now}]-(u)", {
                     rudelId: rudel.id,
                     now: Math.trunc(Date.now() / 1000),
                     newOwnerId: likers.shift().id
@@ -223,7 +223,7 @@ export module RudelController {
     }
 
     export function likers(transaction: Transaction, rudel: Rudel, skip = 0, limit = 0): Promise<User[]> {
-        let query = `MATCH(:Rudel {id: $rudelId})<-[:LIKES_RUDEL]-(likers:User) RETURN COALESCE(properties(likers), []) as likers SKIP $skip`;
+        let query = `MATCH(:Rudel {id: $rudelId})<-[:LIKES_RUDEL]-(likers:User) RETURN COALESCE(properties(likers), []) AS likers SKIP $skip`;
         if(limit > 0) query += ' LIMIT $limit';
 
         return transaction.run(query, {
@@ -234,7 +234,7 @@ export module RudelController {
     }
 
     export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Rudel[]> {
-        return transaction.run('MATCH (u1:User {id: $userId})-[:LIKES_RUDEL]->(intersection:Rudel)<-[:LIKES_RUDEL]-(u2:User) WHERE u2 <> u1 WITH u1, COUNT(DISTINCT intersection) as intersection, u2 MATCH (rudel_u1:Rudel)<-[:LIKES_RUDEL]-(u1), (u2)-[:LIKES_RUDEL]->(rudel_u2:Rudel) WITH COLLECT(DISTINCT rudel_u1) as rudel_u1, u1, intersection, u2, COLLECT(DISTINCT rudel_u2) as rudel_u2 WITH u1, length(rudel_u1 + filter(x IN rudel_u2 WHERE NOT x IN rudel_u1)) as union, intersection, u2 WITH toFloat(intersection) / union as similarity, u1, u2 ORDER BY similarity DESC MATCH (r:Rudel)<-[:LIKES_RUDEL]-(u2) WHERE NOT (r)<-[:LIKES_RUDEL]-(u1) AND NOT (r)<-[:DISLIKES_RUDEL]-(u1) WITH DISTINCT r SKIP $skip LIMIT $limit RETURN properties(r) as r', {
+        return transaction.run('MATCH (u1:User {id: $userId})-[:LIKES_RUDEL]->(intersection:Rudel)<-[:LIKES_RUDEL]-(u2:User) WHERE u2 <> u1 WITH u1, COUNT(DISTINCT intersection) AS intersection, u2 MATCH (rudel_u1:Rudel)<-[:LIKES_RUDEL]-(u1), (u2)-[:LIKES_RUDEL]->(rudel_u2:Rudel) WITH COLLECT(DISTINCT rudel_u1) AS rudel_u1, u1, intersection, u2, COLLECT(DISTINCT rudel_u2) AS rudel_u2 WITH u1, length(rudel_u1 + filter(x IN rudel_u2 WHERE NOT x IN rudel_u1)) AS union, intersection, u2 WITH toFloat(intersection) / union AS similarity, u1, u2 ORDER BY similarity DESC MATCH (r:Rudel)<-[:LIKES_RUDEL]-(u2) WHERE NOT (r)<-[:LIKES_RUDEL]-(u1) AND NOT (r)<-[:DISLIKES_RUDEL]-(u1) WITH DISTINCT r SKIP $skip LIMIT $limit RETURN properties(r) AS r', {
             userId: user.id,
             skip: skip,
             limit: limit
@@ -242,7 +242,7 @@ export module RudelController {
     }
 	
 	export function popular(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Rudel[]> {
-		return transaction.run('MATCH(r:Rudel), (u:User {id: $userId}) WHERE NOT (r)<-[:DISLIKES_RUDEL]-(u) WITH r, size((r)<-[:LIKES_RUDEL]-()) as popularity ORDER BY popularity DESC SKIP $skip LIMIT $limit RETURN properties(r) as r', {
+		return transaction.run('MATCH(r:Rudel), (u:User {id: $userId}) WHERE NOT (r)<-[:DISLIKES_RUDEL]-(u) WITH r, size((r)<-[:LIKES_RUDEL]-()) AS popularity ORDER BY popularity DESC SKIP $skip LIMIT $limit RETURN properties(r) AS r', {
 			userId: user.id,
 			skip: skip,
 			limit: limit
@@ -250,7 +250,7 @@ export module RudelController {
 	}
 	
 	export function recent(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Rudel[]> {
-		return transaction.run('MATCH(r:Rudel), (u:User {id: $userId}) WHERE NOT (r)<-[:DISLIKES_RUDEL]-(u) WITH r ORDER BY r.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(r) as r', {
+		return transaction.run('MATCH(r:Rudel), (u:User {id: $userId}) WHERE NOT (r)<-[:DISLIKES_RUDEL]-(u) WITH r ORDER BY r.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(r) AS r', {
 			userId: user.id,
 			skip: skip,
 			limit: limit

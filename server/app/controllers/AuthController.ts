@@ -28,7 +28,7 @@ export module AuthController {
 	
 	export function authByProvider(provider: UserAuthProvider): Promise<User> {
 		let session = DatabaseManager.neo4jClient.session();
-		return session.run("MATCH(:UserAuthProvider {provider: $provider.provider, identifier: $provider.identifier})<-[:USES_AUTH_PROVIDER]-(u:User) RETURN properties(u) as u LIMIT 1", {
+		return session.run("MATCH(:UserAuthProvider {provider: $provider.provider, identifier: $provider.identifier})<-[:USES_AUTH_PROVIDER]-(u:User) RETURN properties(u) AS u LIMIT 1", {
 			provider: provider
 		}).then((results: any) => {
 			session.close();
@@ -56,7 +56,7 @@ export module AuthController {
 	export function authByToken(token: DecodedToken): Promise<User> {
 		return this.getTokenData(token).then(() => {
 			let session: Session = DatabaseManager.neo4jClient.session();
-			return session.run(`MATCH(u:User {id: $userId}) RETURN COALESCE(properties(u), []) as u LIMIT 1`, {
+			return session.run(`MATCH(u:User {id: $userId}) RETURN COALESCE(properties(u), []) AS u LIMIT 1`, {
 				userId: token.userId
 			}).then((results: any) => {
 				session.close();

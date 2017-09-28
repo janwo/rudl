@@ -153,13 +153,13 @@ export module ExpeditionController {
 		// Set queries.
 		let queries: string[] = [
 			"MATCH (expedition:Expedition {id: $expeditionId}), (relatedUser:User {id: $relatedUserId})",
-			"OPTIONAL MATCH (expedition)<-[je:JOINS_EXPEDITION]-() WITH COUNT(je) as attendees, expedition, relatedUser",
-			"OPTIONAL MATCH (expedition)-[pje:POSSIBLY_JOINS_EXPEDITION]->() WITH attendees, COUNT(pje) as invitees, expedition, relatedUser",
-			"OPTIONAL MATCH (expedition)<-[pje:POSSIBLY_JOINS_EXPEDITION]-() WITH attendees, invitees, COUNT(pje) as applicants, expedition, relatedUser",
-			"OPTIONAL MATCH (expedition)<-[je:JOINS_EXPEDITION]-(relatedUser) WITH attendees, invitees, applicants, COUNT(je) > 0 as isAttendee, expedition, relatedUser",
-			"OPTIONAL MATCH (expedition)-[pje:POSSIBLY_JOINS_EXPEDITION]->(relatedUser) WITH attendees, invitees, applicants, isAttendee, COUNT(pje) > 0 as isInvitee, expedition, relatedUser",
-            "OPTIONAL MATCH (expedition)<-[pje:POSSIBLY_JOINS_EXPEDITION]-(relatedUser) WITH attendees, invitees, applicants, isAttendee, isInvitee, COUNT(pje) > 0 as isApplicant, expedition, relatedUser",
-            "OPTIONAL MATCH (expedition)<-[roe:RECOMMENDEE_OF_EXPEDITION]-(relatedUser) WITH attendees, invitees, applicants, isAttendee, isInvitee, isApplicant, COUNT(roe) > 0 as isRecommendee, expedition, relatedUser"
+			"OPTIONAL MATCH (expedition)<-[je:JOINS_EXPEDITION]-() WITH COUNT(je) AS attendees, expedition, relatedUser",
+			"OPTIONAL MATCH (expedition)-[pje:POSSIBLY_JOINS_EXPEDITION]->() WITH attendees, COUNT(pje) AS invitees, expedition, relatedUser",
+			"OPTIONAL MATCH (expedition)<-[pje:POSSIBLY_JOINS_EXPEDITION]-() WITH attendees, invitees, COUNT(pje) AS applicants, expedition, relatedUser",
+			"OPTIONAL MATCH (expedition)<-[je:JOINS_EXPEDITION]-(relatedUser) WITH attendees, invitees, applicants, COUNT(je) > 0 AS isAttendee, expedition, relatedUser",
+			"OPTIONAL MATCH (expedition)-[pje:POSSIBLY_JOINS_EXPEDITION]->(relatedUser) WITH attendees, invitees, applicants, isAttendee, COUNT(pje) > 0 AS isInvitee, expedition, relatedUser",
+            "OPTIONAL MATCH (expedition)<-[pje:POSSIBLY_JOINS_EXPEDITION]-(relatedUser) WITH attendees, invitees, applicants, isAttendee, isInvitee, COUNT(pje) > 0 AS isApplicant, expedition, relatedUser",
+            "OPTIONAL MATCH (expedition)<-[roe:RECOMMENDEE_OF_EXPEDITION]-(relatedUser) WITH attendees, invitees, applicants, isAttendee, isInvitee, isApplicant, COUNT(roe) > 0 AS isRecommendee, expedition, relatedUser"
 		];
 		
 		let transformations: string[] = [
@@ -183,7 +183,7 @@ export module ExpeditionController {
 	}
 	
 	export function findUpcomingByUser(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e WHERE e.date > $after WITH e ORDER BY e.date SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
+		return transaction.run(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e WHERE e.date > $after WITH e ORDER BY e.date SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) AS e`, {
 			userId: user.id,
 			limit: limit,
 			skip: skip,
@@ -192,7 +192,7 @@ export module ExpeditionController {
 	}
 	
 	export function findDoneByUser(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e WHERE e.date < $before WITH e ORDER BY e.date DESC SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
+		return transaction.run(`MATCH(u:User {id: $userId}) OPTIONAL MATCH (u)-[:JOINS_EXPEDITION]->(e:Expedition) WITH e WHERE e.date < $before WITH e ORDER BY e.date DESC SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) AS e`, {
 			userId: user.id,
 			limit: limit,
 			skip: skip,
@@ -201,7 +201,7 @@ export module ExpeditionController {
 	}
 	
 	export function findUpcomingByRudel(transaction: Transaction, rudel: Rudel, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) AND e.date > $after WITH e ORDER BY e.date SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
+		return transaction.run(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node AS e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) AND e.date > $after WITH e ORDER BY e.date SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) AS e`, {
 			rudelId: rudel.id,
 			location: {
 				latitude: user.location.latitude,
@@ -214,7 +214,7 @@ export module ExpeditionController {
 	}
 	
 	export function findDoneByRudel(transaction: Transaction, rudel: Rudel, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) AND e.date < $before WITH e ORDER BY e.date DESC SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) as e`, {
+		return transaction.run(`MATCH(r:Rudel {id: $rudelId}) WITH r CALL spatial.withinDistance("Expedition", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node AS e WITH r, e WHERE (r)<-[:BELONGS_TO_RUDEL]-(e) AND e.date < $before WITH e ORDER BY e.date DESC SKIP $skip LIMIT $limit RETURN COALESCE(properties(e), []) AS e`, {
 			rudelId: rudel.id,
 			location: {
 				latitude: user.location.latitude,
@@ -227,13 +227,13 @@ export module ExpeditionController {
 	}
 	
 	export function get(transaction: Transaction, expeditionId: string): Promise<Expedition> {
-		return transaction.run(`MATCH(e:Expedition {id: $expeditionId}) RETURN COALESCE(properties(e), []) as e LIMIT 1`, {
+		return transaction.run(`MATCH(e:Expedition {id: $expeditionId}) RETURN COALESCE(properties(e), []) AS e LIMIT 1`, {
 			expeditionId: expeditionId
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'e').shift());
 	}
 	
 	export function findByFulltext(transaction: Transaction, query: string, limit = 0, skip = 25): Promise<Expedition[]> {
-		return transaction.run('CALL apoc.index.search("Expedition", $query) YIELD node WITH properties(node) as e RETURN e SKIP $skip LIMIT $limit', {
+		return transaction.run('CALL apoc.index.search("Expedition", $query) YIELD node WITH properties(node) AS e RETURN e SKIP $skip LIMIT $limit', {
 			query: `${DatabaseManager.neo4jFunctions.escapeLucene(query)}~`,
 			skip: skip,
 			limit: limit
@@ -329,7 +329,7 @@ export module ExpeditionController {
             };
 
             let notifyAttendingLikers = (expedition: Expedition, user: User): Promise<void> => {
-                return transaction.run(`MATCH (:User {id: $userId})<-[:LIKES_USER]-(u:User)-[:JOINS_EXPEDITION]->(:Expedition {id: $expeditionId}) RETURN u.id as u`, {
+                return transaction.run(`MATCH (:User {id: $userId})<-[:LIKES_USER]-(u:User)-[:JOINS_EXPEDITION]->(:Expedition {id: $expeditionId}) RETURN u.id AS u`, {
                     expeditionId: expedition.id,
                     userId: user.id
                 }).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u')).then(subjects => {
@@ -433,8 +433,8 @@ export module ExpeditionController {
 				OPTIONAL MATCH (e)<-[je:JOINS_EXPEDITION]-(u)
 				OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment)<-[:OWNS_COMMENT]-(u)
 				DETACH DELETE c, pjeAll, pje, je
-				WITH count(pje) > 0 as applied, count(je) > 0 as joined
-				RETURN {applied: applied, joined: joined} as deleted`, {
+				WITH count(pje) > 0 AS applied, count(je) > 0 AS joined
+				RETURN {applied: applied, joined: joined} AS deleted`, {
 					expeditionId: expedition.id,
 					userId: user.id
 				}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'deleted').shift()).then((deleted: any) => {
@@ -456,8 +456,8 @@ export module ExpeditionController {
 				OPTIONAL MATCH (e)<-[je:JOINS_EXPEDITION]-(u)
 				OPTIONAL MATCH (e)<-[:BELONGS_TO_NODE]-(c:Comment)<-[:OWNS_COMMENT]-(u)
 				DETACH DELETE c, pjeAll, pje, je
-				WITH count(pje) > 0 as invited, count(je) > 0 as joined
-				RETURN {invited: invited, joined: joined} as deleted`, {
+				WITH count(pje) > 0 AS invited, count(je) > 0 AS joined
+				RETURN {invited: invited, joined: joined} AS deleted`, {
 					expeditionId: expedition.id,
 					userId: user.id
 				}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'deleted').shift()).then((deleted: any) => {
@@ -481,7 +481,7 @@ export module ExpeditionController {
 	}
 	
 	export function getAttendeeStatus(transaction: Transaction, expedition: Expedition, user: User): Promise<AttendeeStatus> {
-		return transaction.run(`MATCH (e:Expedition {id: $expeditionId}), (u:User {id: $userId}) WITH u, e OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[recommendee:RECOMMENDEE_OF_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) RETURN {isRecommendee: COUNT(recommendee) > 0, isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0} as as`, {
+		return transaction.run(`MATCH (e:Expedition {id: $expeditionId}), (u:User {id: $userId}) WITH u, e OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[recommendee:RECOMMENDEE_OF_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) RETURN {isRecommendee: COUNT(recommendee) > 0, isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0} AS as`, {
 			expeditionId: expedition.id,
 			userId: user.id
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'as').shift());
@@ -557,7 +557,7 @@ export module ExpeditionController {
 	}
 	
 	export function getOwner(transaction: Transaction, expedition: Expedition): Promise<User> {
-		return transaction.run("MATCH(:Expedition {id : $expeditionId })<-[:OWNS_EXPEDITION]-(u:User) RETURN COALESCE(properties(u), []) as u LIMIT 1", {
+		return transaction.run("MATCH(:Expedition {id : $expeditionId })<-[:OWNS_EXPEDITION]-(u:User) RETURN COALESCE(properties(u), []) AS u LIMIT 1", {
 			expeditionId: expedition.id
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'u').shift());
 	}
@@ -566,7 +566,7 @@ export module ExpeditionController {
 		status: AttendeeStatus,
 		user: User
 	}[]> {
-		return transaction.run(`MATCH(e:Expedition {id : $expeditionId})-[pje]-(u:User) WHERE (e)-[:POSSIBLY_JOINS_EXPEDITION]-(u) OR (e)-[:JOINS_EXPEDITION]-(u) WITH e, u, pje.createdAt as date OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[recommendee:RECOMMENDEE_OF_EXPEDITION]->(e) WITH u, invitee, attendee, applicant, recommendee, date ORDER BY date DESC RETURN {user: properties(u), status: {isRecommendee: COUNT(recommendee) > 0, isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0}} as u SKIP $skip LIMIT $limit`, {
+		return transaction.run(`MATCH(e:Expedition {id : $expeditionId})-[pje]-(u:User) WHERE (e)-[:POSSIBLY_JOINS_EXPEDITION]-(u) OR (e)-[:JOINS_EXPEDITION]-(u) WITH e, u, pje.createdAt AS date OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[recommendee:RECOMMENDEE_OF_EXPEDITION]->(e) WITH u, invitee, attendee, applicant, recommendee, date ORDER BY date DESC RETURN {user: properties(u), status: {isRecommendee: COUNT(recommendee) > 0, isInvitee: COUNT(invitee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0}} AS u SKIP $skip LIMIT $limit`, {
 			expeditionId: expedition.id,
 			skip: skip,
 			limit: limit
@@ -574,7 +574,7 @@ export module ExpeditionController {
 	}
 
 	export function getAllAttendees(transaction: Transaction, expedition: Expedition, exclude: User[]): Promise<User[]> {
-		return transaction.run(`MATCH(:Expedition {id : $expeditionId})<-[:JOINS_EXPEDITION]-(u:User) WHERE NOT u.id IN $excludeIds RETURN properties(u) as u`, {
+		return transaction.run(`MATCH(:Expedition {id : $expeditionId})<-[:JOINS_EXPEDITION]-(u:User) WHERE NOT u.id IN $excludeIds RETURN properties(u) AS u`, {
 			expeditionId: expedition.id,
 			excludeIds: exclude.map(user => user.id)
 		}).then((result: StatementResult) =>  DatabaseManager.neo4jFunctions.unflatten(result.records, 'u'));
@@ -584,7 +584,7 @@ export module ExpeditionController {
 		status: AttendeeStatus,
 		user: User
 	}[]> {
-		return transaction.run("MATCH(e:Expedition {id : $expeditionId}), (relatedUser:User {id: $relatedUserId}) WITH relatedUser, e CALL apoc.index.search('User', $query) YIELD node WITH node as u, e, relatedUser WHERE u.id <> relatedUser.id OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[recommendee:RECOMMENDEE_OF_EXPEDITION]->(e) RETURN {user: properties(u), status: {isInvitee: COUNT(invitee) > 0, isRecommendee: COUNT(recommendee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0}} as u SKIP $skip LIMIT $limit", {
+		return transaction.run("MATCH(e:Expedition {id : $expeditionId}), (relatedUser:User {id: $relatedUserId}) WITH relatedUser, e CALL apoc.index.search('User', $query) YIELD node WITH node AS u, e, relatedUser WHERE u.id <> relatedUser.id OPTIONAL MATCH(u)<-[invitee:POSSIBLY_JOINS_EXPEDITION]-(e) OPTIONAL MATCH(u)-[attendee:JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[applicant:POSSIBLY_JOINS_EXPEDITION]->(e) OPTIONAL MATCH(u)-[recommendee:RECOMMENDEE_OF_EXPEDITION]->(e) RETURN {user: properties(u), status: {isInvitee: COUNT(invitee) > 0, isRecommendee: COUNT(recommendee) > 0, isApplicant: COUNT(applicant) > 0, isAttendee: COUNT(attendee) > 0}} AS u SKIP $skip LIMIT $limit", {
 			expeditionId: expedition.id,
 			query: `${DatabaseManager.neo4jFunctions.escapeLucene(query)}~`,
 			relatedUserId: relatedUser.id,
@@ -601,20 +601,20 @@ export module ExpeditionController {
 	}
 	
 	export function getRudel(transaction: Transaction, expedition: Expedition): Promise<Rudel> {
-		return transaction.run("MATCH(:Expedition {id : $expeditionId })-[:BELONGS_TO_RUDEL]->(r:Rudel) RETURN COALESCE(properties(r), []) as r LIMIT 1", {
+		return transaction.run("MATCH(:Expedition {id : $expeditionId })-[:BELONGS_TO_RUDEL]->(r:Rudel) RETURN COALESCE(properties(r), []) AS r LIMIT 1", {
 			expeditionId: expedition.id
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'r').shift());
 	}
 	
 	export function isAttendee(transaction: Transaction, expedition: Expedition, user: User): Promise<boolean> {
-		return transaction.run("MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) OPTIONAL MATCH (e)<-[je:JOINS_EXPEDITION]-(u) RETURN COUNT(je) > 0 as je", {
+		return transaction.run("MATCH(e:Expedition {id : $expeditionId }), (u:User {id: $userId}) OPTIONAL MATCH (e)<-[je:JOINS_EXPEDITION]-(u) RETURN COUNT(je) > 0 AS je", {
 			expeditionId: expedition.id,
 			userId: user.id
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'je').shift());
 	}
 	
 	export function nearby(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run(`CALL spatial.closest("Expedition", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
+		return transaction.run(`CALL spatial.closest("Expedition", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node AS e RETURN properties(e) AS e SKIP $skip LIMIT $limit`, {
 			location: {
 				latitude: user.location.latitude,
 				longitude: user.location.longitude
@@ -625,7 +625,7 @@ export module ExpeditionController {
 	}
 
     export function suggested(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-        return transaction.run(`MATCH (u:User {id: $user.id}) WITH u CALL spatial.closest("Expedition", $user.location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH e, u WHERE (e)-[:BELONGS_TO_RUDEL]->(:Rudel)<-[:LIKES_RUDEL]-(u) AND NOT (e)<-[:JOINS_EXPEDITION]-(u) AND e.date > $now AND e.date < $now + 604800 WITH e ORDER BY e.date SKIP $skip LIMIT $limit RETURN properties(e) as e`, {
+        return transaction.run(`MATCH (u:User {id: $user.id}) WITH u CALL spatial.closest("Expedition", $user.location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node AS e WITH e, u WHERE (e)-[:BELONGS_TO_RUDEL]->(:Rudel)<-[:LIKES_RUDEL]-(u) AND NOT (e)<-[:JOINS_EXPEDITION]-(u) AND e.date > $now AND e.date < $now + 604800 WITH e ORDER BY e.date SKIP $skip LIMIT $limit RETURN properties(e) AS e`, {
             user: user,
             now: Math.trunc(Date.now() / 1000),
             limit: limit,
@@ -634,7 +634,7 @@ export module ExpeditionController {
     }
 
 	export function popular(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-		return transaction.run(`MATCH (u:User {id: $user.id}) CALL spatial.closest("Expedition", $user.location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH e WHERE e.date > $now AND NOT (e)-[:BELONGS_TO_RUDEL]->(:Rudel)<-[:DISLIKES_RUDEL]-(u) WITH e, size((e)<-[:JOINS_EXPEDITION]-()) as popularity ORDER BY popularity DESC RETURN properties(e) as e SKIP $skip LIMIT $limit`, {
+		return transaction.run(`MATCH (u:User {id: $user.id}) CALL spatial.closest("Expedition", $user.location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node AS e WITH e WHERE e.date > $now AND NOT (e)-[:BELONGS_TO_RUDEL]->(:Rudel)<-[:DISLIKES_RUDEL]-(u) WITH e, size((e)<-[:JOINS_EXPEDITION]-()) AS popularity ORDER BY popularity DESC RETURN properties(e) AS e SKIP $skip LIMIT $limit`, {
 			user: user,
 			now: Math.trunc(Date.now() / 1000),
 			limit: limit,
@@ -643,7 +643,7 @@ export module ExpeditionController {
 	}
 
     export function recent(transaction: Transaction, user: User, skip = 0, limit = 25): Promise<Expedition[]> {
-        return transaction.run(`MATCH (u:User {id: $user.id}) CALL spatial.closest("Expedition", $user.location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as e WITH e, u WHERE e.date > $now AND NOT (e)-[:BELONGS_TO_RUDEL]->(:Rudel)<-[:DISLIKES_RUDEL]-(u) WITH e ORDER BY e.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(e) as e`, {
+        return transaction.run(`MATCH (u:User {id: $user.id}) CALL spatial.closest("Expedition", $user.location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node AS e WITH e, u WHERE e.date > $now AND NOT (e)-[:BELONGS_TO_RUDEL]->(:Rudel)<-[:DISLIKES_RUDEL]-(u) WITH e ORDER BY e.createdAt DESC SKIP $skip LIMIT $limit RETURN properties(e) AS e`, {
             user: user,
             now: Math.trunc(Date.now() / 1000),
             limit: limit,
@@ -679,7 +679,7 @@ export module ExpeditionController {
 				return ExpeditionController.create(transaction, request.payload.expedition).then((expedition: Expedition) => {
                     // Create function to gather all surrounding likers of the corresponding rudel.
 					let getNotificationSubjects = (rudel: Rudel, user: User, location: Location): Promise<string[]> => {
-					    return transaction.run(`CALL spatial.closest("User", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node as u WITH u WHERE (u)-[:LIKES_RUDEL]->(:Rudel {id: $rudelId}) AND u.id <> $userId RETURN u.id as u`, {
+					    return transaction.run(`CALL spatial.closest("User", $location, ${SEARCH_RADIUS_METERS / 1000}) YIELD node AS u WITH u WHERE (u)-[:LIKES_RUDEL]->(:Rudel {id: $rudelId}) AND u.id <> $userId RETURN u.id AS u`, {
                             rudelId: rudel.id,
                             userId: user.id,
                             location: location

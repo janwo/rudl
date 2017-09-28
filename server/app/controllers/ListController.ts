@@ -89,9 +89,9 @@ export module ListController {
 	export function getStatistics(transaction: Transaction, list: List, relatedUser: User): Promise<ListStatistics> {
 		let queries: string[] = [
 			"MATCH (list:List {id: $listId})",
-			"OPTIONAL MATCH (list)<-[fl:LIKES_LIST]-() WITH COUNT(fl) as likersCount, list",
-			"OPTIONAL MATCH (list)<-[btl:BELONGS_TO_LIST]-() WITH COUNT(btl) as rudelCount, likersCount",
-			"OPTIONAL MATCH (list)<-[fl:LIKES_LIST]-(:User {id: $relatedUserId}) WITH likersCount, rudelCount, COUNT(fl) > 0 as isLiked"
+			"OPTIONAL MATCH (list)<-[fl:LIKES_LIST]-() WITH COUNT(fl) AS likersCount, list",
+			"OPTIONAL MATCH (list)<-[btl:BELONGS_TO_LIST]-() WITH COUNT(btl) AS rudelCount, likersCount",
+			"OPTIONAL MATCH (list)<-[fl:LIKES_LIST]-(:User {id: $relatedUserId}) WITH likersCount, rudelCount, COUNT(fl) > 0 AS isLiked"
 		];
 		
 		let transformations: string[] = [
@@ -111,7 +111,7 @@ export module ListController {
 	}
 	
 	export function findByUser(transaction: Transaction, user: User, ownsOnly = false, skip = 0, limit = 25): Promise<List[]> {
-		return transaction.run(`MATCH(:User {id: $userId})-[:${ownsOnly ? 'OWNS_LIST' : 'LIKES_LIST'}]->(l:List) RETURN COALESCE(properties(l), []) as l SKIP $skip LIMIT $limit`, {
+		return transaction.run(`MATCH(:User {id: $userId})-[:${ownsOnly ? 'OWNS_LIST' : 'LIKES_LIST'}]->(l:List) RETURN COALESCE(properties(l), []) AS l SKIP $skip LIMIT $limit`, {
 			userId: user.id,
 			limit: limit,
 			skip: skip
@@ -140,19 +140,19 @@ export module ListController {
 	}
 	
 	export function getOwner(transaction: Transaction, list: List): Promise<User> {
-		return transaction.run(`MATCH(:List {id: $listId})<-[:OWNS_LIST]-(owner:User) RETURN COALESCE(properties(owner), []) as owner LIMIT 1`, {
+		return transaction.run(`MATCH(:List {id: $listId})<-[:OWNS_LIST]-(owner:User) RETURN COALESCE(properties(owner), []) AS owner LIMIT 1`, {
 			listId: list.id
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'owner').shift());
 	}
 	
 	export function get(transaction: Transaction, listId: string): Promise<List> {
-		return transaction.run(`MATCH(l:List {id: $listId}) RETURN COALESCE(properties(l), []) as l LIMIT 1`, {
+		return transaction.run(`MATCH(l:List {id: $listId}) RETURN COALESCE(properties(l), []) AS l LIMIT 1`, {
 			listId: listId
 		}).then((result: StatementResult) => DatabaseManager.neo4jFunctions.unflatten(result.records, 'l').shift());
 	}
 	
 	export function findByFulltext(transaction: Transaction, query: string, skip = 0, limit = 25): Promise<List[]> {
-		return transaction.run('CALL apoc.index.search("List", $query) YIELD node WITH properties(node) as l RETURN l SKIP $skip LIMIT $limit', {
+		return transaction.run('CALL apoc.index.search("List", $query) YIELD node WITH properties(node) AS l RETURN l SKIP $skip LIMIT $limit', {
 			query: `${DatabaseManager.neo4jFunctions.escapeLucene(query)}~`,
 			skip: skip,
 			limit: limit
@@ -160,7 +160,7 @@ export module ListController {
 	}
 	
 	export function getRudel(transaction: Transaction, list: List, skip = 0, limit = 25): Promise<Rudel[]> {
-		return transaction.run("MATCH(:List {id : $listId })-[:BELONGS_TO_LIST]->(r:Rudel) RETURN COALESCE(properties(r), []) as r SKIP $skip LIMIT $limit", {
+		return transaction.run("MATCH(:List {id : $listId })-[:BELONGS_TO_LIST]->(r:Rudel) RETURN COALESCE(properties(r), []) AS r SKIP $skip LIMIT $limit", {
 			listId: list.id,
 			limit: limit,
 			skip: skip
@@ -182,7 +182,7 @@ export module ListController {
 	}
 	
 	export function likers(transaction: Transaction, list: List, skip = 0, limit = 0): Promise<User[]> {
-		let query = `MATCH(:List {id: $listId})<-[:LIKES_LIST]-(likers:User) RETURN COALESCE(properties(likers), []) as likers SKIP $skip`;
+		let query = `MATCH(:List {id: $listId})<-[:LIKES_LIST]-(likers:User) RETURN COALESCE(properties(likers), []) AS likers SKIP $skip`;
 		if(limit > 0) query += ' LIMIT $limit';
 
 		return transaction.run(query, {
@@ -193,7 +193,7 @@ export module ListController {
 	}
 	
 	export function follow(transaction: Transaction, list: List, user: User): Promise<void> {
-		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WHERE NOT (u)-[:LIKES_LIST]->(l) WITH u, l MERGE (u)-[ll:LIKES_LIST]->(l) ON CREATE SET ll.createdAt = $now WITH u, l OPTIONAL MATCH (u)-[dll:DISLIKES_LIST]->(l) DETACH DELETE dll WITH u, l OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) as count, l, u WHERE count = 0 CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
+		return transaction.run("MATCH(u:User {id: $userId}), (l:List {id: $listId}) WHERE NOT (u)-[:LIKES_LIST]->(l) WITH u, l MERGE (u)-[ll:LIKES_LIST]->(l) ON CREATE SET ll.createdAt = $now WITH u, l OPTIONAL MATCH (u)-[dll:DISLIKES_LIST]->(l) DETACH DELETE dll WITH u, l OPTIONAL MATCH (l)<-[ol:OWNS_LIST]-(:User) WITH COUNT(ol) AS count, l, u WHERE count = 0 CREATE (l)<-[:OWNS_LIST {createdAt: $now}]-(u)", {
 			userId: user.id,
 			listId: list.id,
 			now: Math.trunc(Date.now() / 1000)
@@ -225,7 +225,7 @@ export module ListController {
 		list: List,
 		hasRudel: boolean
 	}[]> {
-		return transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) MATCH (u)-[:OWNS_LIST]->(l:List) SKIP $skip LIMIT $limit WITH l, r OPTIONAL MATCH (l)<-[btl:BELONGS_TO_LIST]-(r) WITH {list: properties(l), hasRudel: COUNT(btl) > 0} as map RETURN COALESCE(properties(map), []) as map", {
+		return transaction.run("MATCH(u:User {id: $userId}), (r:Rudel {id: $rudelId}) MATCH (u)-[:OWNS_LIST]->(l:List) SKIP $skip LIMIT $limit WITH l, r OPTIONAL MATCH (l)<-[btl:BELONGS_TO_LIST]-(r) WITH {list: properties(l), hasRudel: COUNT(btl) > 0} AS map RETURN COALESCE(properties(map), []) AS map", {
 			userId: user.id,
 			rudelId: rudel.id,
 			limit: limit,
