@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:latest
 MAINTAINER Jan Wolf <we@rudl.me>
 
 WORKDIR /root/app
