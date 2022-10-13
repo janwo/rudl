@@ -184,7 +184,7 @@ export default {
 				port: process.env.NEO4J_PORT || 7687,
 				database: process.env.NEO4J_DB || 'rudl',
 				user: process.env.NEO4J_USER || 'rudl',
-				password: process.env.NEO4J_PASSWORD || 'sgZ$LGKJhs_df872_3f$dxvhGR$REDsfd'
+				password: process.env.NEO4J_PASSWORD 
 			}
 		},
 		maxUploadBytes: {
